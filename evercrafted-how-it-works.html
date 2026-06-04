@@ -722,6 +722,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
       <button class="cta-btn" type="submit">Join waitlist →</button>
     </form>
     <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:.9rem" id="cta-msg">No spam. Founding pricing locked at signup.</div>
+    <div style="margin-top:1.25rem"><a href="evercrafted-try.html" style="color:rgba(255,255,255,.9);font-size:13px;font-weight:500;letter-spacing:.04em;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:2px">Or try a memory of your own now →</a></div>
   </div>
 </section>
 
@@ -817,9 +818,18 @@ function toggleFaq(btn) {
 }
 
 // CTA
-function handleCTA(e) {
+async function handleCTA(e) {
   e.preventDefault();
   const email = document.getElementById('cta-email').value;
+  // apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
+  const apiBase = (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '';
+  try {
+    await fetch(`${apiBase}/api/waitlist`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source: 'how-it-works' }),
+    });
+  } catch (err) { console.warn('Waitlist:', err.message); }
   document.getElementById('cta-msg').textContent = `✓ ${email} is on the list. We will be in touch.`;
   document.getElementById('cta-msg').style.color = 'rgba(255,255,255,.85)';
   document.getElementById('cta-email').value = '';
