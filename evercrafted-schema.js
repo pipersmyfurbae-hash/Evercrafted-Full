@@ -217,7 +217,10 @@
   //   • Secondary/bridge — fan out from the anchor toward the counterweight.
   //   • Accent/texture/filler — tucked into the gaps across the floral region.
   //   • True-to-scale — unit size = bloom diameter ÷ wreath diameter.
-  const ROLE_BAND   = { greenery:0.82, structural:0.72, focal:0.56, secondary:0.60, bridge:0.50, accent:0.66, texture:0.62, filler:0.62 }; // radius (fraction of ring) the role sits at
+  // radius each role sits at, as a fraction of the OUTER radius. Elements live in
+  // the ring annulus (~0.6–1.0), per real working radii: accents protrude near the
+  // outer edge, focal/secondary on the work radius, base/structural tucked inner.
+  const ROLE_BAND   = { greenery:0.80, structural:0.66, focal:0.78, secondary:0.77, bridge:0.72, accent:0.90, texture:0.74, filler:0.73 };
   const ROLE_Z      = { structural:2, greenery:4, bridge:5, secondary:6, texture:7, focal:8, accent:9, filler:6 };                          // paint / stacking order
   const ROLE_SPREAD = { greenery:15, structural:13, focal:8,  secondary:12, bridge:12, accent:17, texture:17, filler:19 };                  // cluster tightness (deg)
   const BEH_SIZE    = { heavy:1.25, mid:1, light:0.82, wispy:0.64 };
@@ -250,7 +253,18 @@
       // assign this slot's centre angle by its compositional job
       let centerDeg;
       if (full) {
-        centerDeg = s + span * ((idx + 0.5) / n);                              // balanced ring
+        // RADIAL SYMMETRY: focal points at equal intervals from the bottom (1→180°,
+        // 3→60/180/300° triangle, 4→cross), secondary offset between them, rest even.
+        if (role === 'focal') {
+          const nF = Math.max(1, focalSlots.length);
+          centerDeg = 180 + focalIdx * (360 / nF);
+          focalIdx++;
+        } else if (role === 'secondary' || role === 'bridge') {
+          const nF = Math.max(1, focalSlots.length);
+          centerDeg = 180 + (360 / (2 * nF)) + idx * (360 / n);
+        } else {
+          centerDeg = (idx + 0.5) * (360 / n);
+        }
       } else if (role === 'greenery' || role === 'structural') {
         centerDeg = s + span * ((idx + 0.5) / n);                              // base spine, whole arc
       } else if (role === 'focal') {
@@ -279,7 +293,7 @@
 
       for (let u = 0; u < unitCount; u++) {
         const deg = centerDeg + (seeded(si * 97 + u * 13 + 1) - 0.5) * spreadDeg * wfac;
-        const r   = Math.max(0.18, Math.min(0.96, band + (seeded(si * 53 + u * 29 + 7) - 0.5) * 0.16));
+        const r   = Math.max(0.58, Math.min(0.98, band + (seeded(si * 53 + u * 29 + 7) - 0.5) * 0.12));
         const rad = (deg - 90) * Math.PI / 180;
         units.push({
           slotIndex: si, role, z, deg, r,
