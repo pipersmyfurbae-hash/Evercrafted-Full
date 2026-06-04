@@ -137,8 +137,9 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
 <div class="hdr">
   <div class="eyebrow">Evercrafted Studio · Inventory System</div>
   <h1>Floral Inventory Tagger</h1>
-  <div class="sub">Photo upload · Text / product name · Manual form — all three paths, one schema</div>
+  <div class="sub">Photo upload · Text / product name · Manual form — all three paths, one schema. <a href="evercrafted-inventory-dashboard.html" onclick="return ecGoTo('dashboard','evercrafted-inventory-dashboard.html')" style="color:var(--sage,#6b7c5c);font-weight:600">View inventory →</a> &nbsp;(background removal / cutouts are done there, per item)</div>
 </div>
+<script>function ecGoTo(tool, url){ if(window.parent && window.parent!==window){ window.parent.postMessage({ecNav:tool},'*'); return false; } location.href=url; return false; }</script>
 
 <div class="grid">
 

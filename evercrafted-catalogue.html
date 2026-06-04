@@ -59,7 +59,7 @@ h1{font-family:var(--serif);font-weight:400;font-size:clamp(1.8rem,4vw,2.6rem);l
   <div class="top">
     <div class="logo">Ever<span>crafted</span></div>
     <div class="top-links">
-      <a href="evercrafted-inventory-dashboard.html">Inventory →</a>
+      <a href="evercrafted-inventory-dashboard.html" onclick="return ecGoTo('dashboard','evercrafted-inventory-dashboard.html')">Inventory →</a>
       <a href="evercrafted-marketing-site.html">Site</a>
     </div>
   </div>
@@ -80,6 +80,7 @@ h1{font-family:var(--serif);font-weight:400;font-size:clamp(1.8rem,4vw,2.6rem);l
 
 <script>
 const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
+function ecGoTo(tool, url) { if (window.parent && window.parent !== window) { window.parent.postMessage({ ecNav: tool }, '*'); return false; } location.href = url; return false; }
 let ITEMS = [];
 let ADDED = new Set();        // skus already in inventory
 const SELECTED = new Set();   // catalogue ids selected
