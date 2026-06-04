@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Bret — Evercrafted</title>
+<meta name="description" content="Evercrafted was built by Bret, a faux botanical artist and wreath maker based in Columbus, Ohio with 25 years of experience — because great design decisions were taking longer than the builds themselves.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Dancing+Script:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--off:#F9F7F4;--paper:#F2EFE9;--warm:#EDE8E0;
+  --black:#1A1A1A;--charcoal:#2E2E2E;--ink:#4A4A4A;--muted:#787878;--faint:#A8A8A8;
+  --green:#4A6741;--gl:#6B8F67;--gp:#EEF2ED;--gd:rgba(74,103,65,.10);
+  --gold:#9A7A40;--goldl:#C4A06A;--goldp:#F5EFE4;
+  --bd:#E4DFD8;--bdd:#CCC7BE;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',system-ui,sans-serif;
+  --script:'Dancing Script',cursive;
+  --sh:0 1px 4px rgba(0,0,0,.06);
+  --sm:0 4px 20px rgba(0,0,0,.08);
+  --sl:0 12px 48px rgba(0,0,0,.10);
+  --tr:220ms ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--off);color:var(--black);line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 2.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;background:rgba(249,247,244,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);box-shadow:var(--sh)}
+.nav-logo{font-family:var(--serif);font-size:1.4rem;font-weight:400;letter-spacing:.03em;color:var(--black);text-decoration:none}
+.nav-logo span{color:var(--green)}
+.nav-links{display:flex;align-items:center;gap:1.75rem}
+.nav-links a{font-size:13px;font-weight:500;color:var(--ink);letter-spacing:.04em;text-decoration:none;transition:color var(--tr)}
+.nav-links a:hover{color:var(--green)}
+.nav-links a.active{color:var(--green)}
+.nav-cta{padding:7px 18px;border-radius:100px;background:var(--black);color:var(--white);font-size:12px;font-weight:500;letter-spacing:.06em;transition:all var(--tr);border:1px solid var(--black);text-decoration:none}
+.nav-cta:hover{background:var(--green);border-color:var(--green);color:var(--white)}
+@media(max-width:768px){.nav-links .hide-sm{display:none}.nav{padding:0 1.25rem}}
+
+/* HERO */
+.hero{padding:calc(60px + 5rem) 0 0;background:var(--paper);position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none}
+.hb-ring{position:absolute;border-radius:50%;border:1px solid rgba(74,103,65,.06)}
+.hb-1{width:800px;height:800px;top:-300px;right:-250px}
+.hb-2{width:400px;height:400px;bottom:0;left:-100px;border-color:rgba(154,122,64,.05)}
+.hero-inner{max-width:1100px;margin:0 auto;padding:0 2.5rem;position:relative}
+@media(max-width:768px){.hero-inner{padding:0 1.25rem}}
+
+.hero-overline{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:1.1rem;display:flex;align-items:center;gap:.6rem}
+.hero-overline::before{content:'';height:1px;width:24px;background:var(--green);opacity:.5}
+
+.hero-split{display:grid;grid-template-columns:1fr 420px;gap:5rem;align-items:end;padding-bottom:5rem}
+@media(max-width:900px){.hero-split{grid-template-columns:1fr;gap:2.5rem;padding-bottom:3rem}}
+
+.hero-h1{font-family:var(--serif);font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1.06;letter-spacing:-.02em;margin-bottom:1.5rem}
+.hero-h1 em{font-style:italic;color:var(--green)}
+.hero-h1 .sc{font-family:var(--script);font-weight:600;font-size:1.05em;color:var(--gold);display:block;line-height:1.15}
+
+.hero-body{font-size:17px;color:var(--ink);line-height:1.75;max-width:520px;font-weight:300;margin-bottom:1.75rem}
+.hero-body p{margin-bottom:1rem}
+.hero-body p:last-child{margin-bottom:0}
+
+.hero-sig{margin-top:1.75rem;display:flex;align-items:center;gap:.9rem}
+.sig-mark{font-family:var(--script);font-size:2rem;font-weight:600;color:var(--green);line-height:1}
+.sig-detail{font-size:12px;color:var(--muted);line-height:1.5}
+.sig-detail strong{display:block;font-size:13px;font-weight:600;color:var(--charcoal)}
+
+.hero-portrait{position:relative}
+.portrait-frame{background:var(--warm);border-radius:20px;aspect-ratio:3/4;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;border:1px solid var(--bd);box-shadow:var(--sl)}
+.portrait-fill{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:2rem}
+.portrait-initials{font-family:var(--serif);font-size:5rem;font-weight:300;color:rgba(74,103,65,.25);line-height:1}
+.portrait-name-card{position:absolute;bottom:-1px;left:-1px;right:-1px;background:rgba(249,247,244,.96);backdrop-filter:blur(8px);border:1px solid var(--bd);border-radius:0 0 20px 20px;padding:1rem 1.25rem}
+.pnc-name{font-family:var(--serif);font-size:1.25rem;font-weight:400;color:var(--black);margin-bottom:.15rem}
+.pnc-role{font-size:12px;color:var(--muted);font-weight:400}
+.pnc-loc{font-size:11px;color:var(--faint);margin-top:.2rem;display:flex;align-items:center;gap:.35rem}
+.pnc-loc::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* PULL QUOTE */
+.pull-quote-section{background:var(--white);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd)}
+.pull-quote-inner{max-width:820px;margin:0 auto;padding:4rem 2.5rem;text-align:center}
+@media(max-width:768px){.pull-quote-inner{padding:3rem 1.25rem}}
+.pq-text{font-family:var(--serif);font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:400;line-height:1.35;color:var(--charcoal);font-style:italic;position:relative}
+.pq-text::before{content:'\201C';font-size:5rem;color:var(--green);opacity:.2;position:absolute;top:-1.5rem;left:-1rem;font-style:normal;line-height:1}
+@media(max-width:768px){.pq-text::before{left:0}}
+.pq-attr{margin-top:1.5rem;font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+
+/* STORY SECTION */
+.story-section{background:var(--off);padding:6rem 0}
+.container{max-width:1100px;margin:0 auto;padding:0 2.5rem}
+@media(max-width:768px){.container{padding:0 1.25rem}}
+.story-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start}
+@media(max-width:840px){.story-grid{grid-template-columns:1fr;gap:3rem}}
+
+.story-overline{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:1rem;display:flex;align-items:center;gap:.6rem}
+.story-overline::before{content:'';height:1px;width:20px;background:var(--green);opacity:.5}
+.story-h2{font-family:var(--serif);font-size:clamp(2rem,3.5vw,2.9rem);font-weight:400;line-height:1.15;letter-spacing:-.01em;margin-bottom:1.5rem}
+.story-h2 em{font-style:italic;color:var(--green)}
+.story-body{font-size:16px;color:var(--ink);line-height:1.8;font-weight:300}
+.story-body p{margin-bottom:1.25rem}
+.story-body p:last-child{margin-bottom:0}
+.story-body strong{font-weight:600;color:var(--charcoal)}
+
+.story-aside{display:flex;flex-direction:column;gap:1.25rem;margin-top:2rem}
+.aside-card{background:var(--white);border:1px solid var(--bd);border-radius:14px;padding:1.25rem 1.5rem;box-shadow:var(--sh)}
+.ac-num{font-family:var(--serif);font-size:2.2rem;font-weight:400;color:var(--green);line-height:1;margin-bottom:.3rem}
+.ac-label{font-size:13px;font-weight:500;color:var(--charcoal);margin-bottom:.25rem}
+.ac-body{font-size:13px;color:var(--muted);line-height:1.55}
+
+/* PHILOSOPHY */
+.philosophy-section{background:var(--paper);padding:6rem 0}
+.phil-intro{max-width:680px;margin-bottom:3.5rem}
+.phil-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+@media(max-width:840px){.phil-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.phil-grid{grid-template-columns:1fr}}
+.phil-card{background:var(--white);border:1px solid var(--bd);border-radius:14px;padding:1.5rem;box-shadow:var(--sh);transition:all .22s ease}
+.phil-card:hover{transform:translateY(-2px);box-shadow:var(--sm);border-color:var(--bdd)}
+.pc-accent{width:32px;height:3px;border-radius:2px;background:var(--green);margin-bottom:1rem;transition:width .22s ease}
+.phil-card:hover .pc-accent{width:48px}
+.pc-title{font-family:var(--serif);font-size:1.2rem;font-weight:500;color:var(--black);margin-bottom:.6rem}
+.pc-body{font-size:14px;color:var(--ink);line-height:1.65}
+
+/* TIMELINE */
+.timeline-section{background:var(--white);padding:6rem 0}
+.tl-intro{max-width:580px;margin-bottom:3.5rem}
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:'';position:absolute;left:0;top:8px;bottom:8px;width:1px;background:var(--bd)}
+.tl-item{position:relative;padding:0 0 2.5rem 2rem}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-2rem;top:6px;width:10px;height:10px;border-radius:50%;background:var(--white);border:2px solid var(--bdd);transform:translateX(-4px);transition:all var(--tr)}
+.tl-item:hover .tl-dot{background:var(--green);border-color:var(--green)}
+.tl-year{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:.35rem}
+.tl-title{font-family:var(--serif);font-size:1.2rem;font-weight:500;color:var(--black);margin-bottom:.4rem}
+.tl-body{font-size:14px;color:var(--ink);line-height:1.65;max-width:560px}
+
+/* VALUES BAND */
+.values-band{background:var(--black);padding:5rem 0}
+.vb-inner{max-width:1100px;margin:0 auto;padding:0 2.5rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+@media(max-width:768px){.vb-inner{grid-template-columns:1fr;gap:2.5rem;padding:0 1.25rem}}
+.vb-left h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--white);line-height:1.2;margin-bottom:1rem}
+.vb-left h2 em{font-style:italic;color:var(--goldl)}
+.vb-left p{font-size:15px;color:rgba(255,255,255,.55);line-height:1.7;font-weight:300}
+.vb-right{display:flex;flex-direction:column;gap:1rem}
+.vv{display:flex;gap:.9rem;align-items:flex-start}
+.vv-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;margin-top:.5rem}
+.vv-text{font-size:14px;color:rgba(255,255,255,.7);line-height:1.6}
+.vv-text strong{color:var(--white);font-weight:500;display:block;margin-bottom:.15rem}
+
+/* CTA */
+.cta-section{background:var(--green);padding:5.5rem 0;text-align:center}
+.cta-section h2{font-family:var(--serif);font-size:clamp(2.2rem,4vw,3.2rem);font-weight:400;color:var(--white);margin-bottom:.75rem;line-height:1.2}
+.cta-section p{font-size:16px;color:rgba(255,255,255,.7);max-width:480px;margin:0 auto 2rem;font-weight:300;line-height:1.65}
+.cta-links{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
+.cta-btn{padding:13px 28px;border-radius:100px;font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:.05em;cursor:pointer;transition:all var(--tr);text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;border:1.5px solid transparent}
+.cta-btn-primary{background:var(--white);color:var(--green);border-color:var(--white)}
+.cta-btn-primary:hover{background:var(--off);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+.cta-btn-ghost{background:transparent;color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.3)}
+.cta-btn-ghost:hover{border-color:rgba(255,255,255,.7);color:var(--white)}
+
+/* FOOTER */
+footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
+.foot-inner{max-width:1100px;margin:0 auto;padding:0 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;font-size:12px}
+.foot-logo{font-family:var(--serif);font-size:1.2rem;color:var(--white);font-weight:400}
+.foot-logo span{color:var(--goldl)}
+.foot-links{display:flex;gap:1.5rem}
+.foot-links a{color:rgba(255,255,255,.45);text-decoration:none;transition:color var(--tr)}
+.foot-links a:hover{color:rgba(255,255,255,.8)}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.reveal.vis{opacity:1;transform:none}
+.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="evercrafted-marketing-site.html" class="nav-logo">Ever<span>crafted</span></a>
+  <div class="nav-links">
+    <a href="evercrafted-marketing-site.html" class="hide-sm">Home</a>
+    <a href="evercrafted-how-it-works.html" class="hide-sm">How it works</a>
+    <a href="#" class="active">About</a>
+    <a href="evercrafted-marketing-site.html#waitlist" class="nav-cta">Join waitlist</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg">
+    <div class="hb-ring hb-1"></div>
+    <div class="hb-ring hb-2"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-overline">The maker behind the platform</div>
+    <div class="hero-split">
+      <div class="reveal">
+        <h1 class="hero-h1">
+          25 years making.<br>
+          Still losing time to <em>deciding.</em><br>
+          <span class="sc">Not anymore.</span>
+        </h1>
+        <div class="hero-body">
+          <p>My name is Bret. I have been designing and building custom faux botanical wreaths for clients in Columbus, Ohio for over 25 years. I love the actual work — the layering, the balance, the moment a piece finally feels right.</p>
+          <p>What I did not love was how long it took to get there. Not the building. The deciding. Every commission started the same way — a client with a feeling they could not quite describe, and me trying to translate that into a wreath while staring at my inventory wondering where to begin.</p>
+          <p>Evercrafted is what I built when I got tired of that gap. It is a design tool that starts where the feeling starts — and handles everything between the memory and the build.</p>
+        </div>
+        <div class="hero-sig">
+          <div class="sig-mark">Bret</div>
+          <div class="sig-detail">
+            <strong>Bret — Founder, Evercrafted Studio</strong>
+            25 years · Faux botanical artist · Columbus, Ohio
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal rd2">
+        <div class="hero-portrait">
+          <div class="portrait-frame">
+            <div class="portrait-fill">
+              <div class="portrait-initials">B</div>
+              <div style="font-size:11px;color:rgba(74,103,65,.4);letter-spacing:.08em;text-align:center">Photo coming soon</div>
+            </div>
+          </div>
+          <div class="portrait-name-card">
+            <div class="pnc-name">Bret</div>
+            <div class="pnc-role">Founder · Evercrafted Studio</div>
+            <div class="pnc-loc">Columbus, Ohio · 25 years in faux botanicals</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PULL QUOTE -->
+<div class="pull-quote-section">
+  <div class="pull-quote-inner reveal">
+    <div class="pq-text">The building was never the hard part. It was all the time spent before the first stem went in — trying to figure out what a piece was supposed to say.</div>
+    <div class="pq-attr">Bret · Founder, Evercrafted</div>
+  </div>
+</div>
+
+<!-- STORY -->
+<section class="story-section">
+  <div class="container">
+    <div class="story-grid">
+
+      <div class="reveal">
+        <div class="story-overline">The real problem</div>
+        <h2 class="story-h2">Every wreath maker faces<br>the same <em>invisible wall</em></h2>
+        <div class="story-body">
+          <p>You know how to build. After years in this craft — maybe a season, maybe a decade, maybe more — you have the materials, the taste, and the instincts. None of that is the problem.</p>
+          <p>The problem is the time between a client saying <em>"I want something that feels like my grandmother"</em> and the moment you actually pick up the first stem. That gap — where you are scrolling Pinterest, staring at your inventory, second-guessing every combination — is where the hours go.</p>
+          <p>It is not a skill problem. It is a translation problem. <strong>There was no system for moving from a feeling to a decision.</strong> Not after one year of making. Not after twenty-five. The gap between what a client describes and the moment you reach for the first stem does not close on its own — it just gets more familiar.</p>
+          <p>After 25 years of this work — hundreds of commissions, thousands of design decisions — I had enough of making those decisions slowly. I built a system that could do the translation for me. One that understood what a feeling looked like in physical materials and could tell me exactly what to reach for and why.</p>
+          <p>That system became Evercrafted.</p>
+        </div>
+      </div>
+
+      <div class="reveal rd2">
+        <div class="story-aside">
+          <div class="aside-card">
+            <div class="ac-num">25</div>
+            <div class="ac-label">Years working with faux botanicals</div>
+            <div class="ac-body">A quarter century of commissions taught me more about how clients describe what they want than any design course ever could.</div>
+          </div>
+          <div class="aside-card">
+            <div class="ac-num">100s</div>
+            <div class="ac-label">Of client conversations</div>
+            <div class="ac-body">Across 25 years of commissions — grief, joy, memory, celebration, the full range of what people want to mark. Every brief started with a feeling that needed to become something real and buildable.</div>
+          </div>
+          <div class="aside-card">
+            <div class="ac-num">1</div>
+            <div class="ac-label">Core belief behind all of it</div>
+            <div class="ac-body">If the design decisions were easier to make, the work itself would be better — and the people making it would spend more time actually making.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="philosophy-section">
+  <div class="container">
+    <div class="phil-intro reveal">
+      <div class="story-overline">Design philosophy</div>
+      <h2 class="story-h2">What I believe about<br><em>wreath design</em></h2>
+      <p style="font-size:16px;color:var(--ink);line-height:1.7;font-weight:300;max-width:540px">These are the principles I built into Evercrafted — because a tool should reflect the way good designers actually think.</p>
+    </div>
+    <div class="phil-grid">
+      <div class="phil-card reveal">
+        <div class="pc-accent"></div>
+        <div class="pc-title">Feeling before form</div>
+        <div class="pc-body">A great wreath starts with understanding what it is meant to say. The materials come after. If you reach for the flowers before you know the feeling, you are guessing — and it shows.</div>
+      </div>
+      <div class="phil-card reveal rd1">
+        <div class="pc-accent"></div>
+        <div class="pc-title">Asymmetry is the point</div>
+        <div class="pc-body">Nature is not symmetrical. The most compelling wreaths are not either. Tension, movement, and intentional negative space are what make a piece look alive instead of assembled.</div>
+      </div>
+      <div class="phil-card reveal rd2">
+        <div class="pc-accent"></div>
+        <div class="pc-title">The silence matters</div>
+        <div class="pc-body">Negative space is not empty — it is breathing room. A wreath that fills every inch gives the eye nowhere to rest. What you leave out is as important as what you put in.</div>
+      </div>
+      <div class="phil-card reveal">
+        <div class="pc-accent"></div>
+        <div class="pc-title">Repetition is the enemy</div>
+        <div class="pc-body">Every design should bring something the last one did not. The moment your work starts to look familiar — even to you — it is time to change the way you are making decisions.</div>
+      </div>
+      <div class="phil-card reveal rd1">
+        <div class="pc-accent"></div>
+        <div class="pc-title">Inventory should work for you</div>
+        <div class="pc-body">Your collection of materials is not a storage problem. It is a design resource. The more you understand what each piece brings to a design, the faster and better your decisions get.</div>
+      </div>
+      <div class="phil-card reveal rd2">
+        <div class="pc-accent"></div>
+        <div class="pc-title">Build what you decide</div>
+        <div class="pc-body">The hours are in the deciding, not the building. Get the design right on paper — or on screen — and the build becomes the enjoyable part it was always meant to be.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section">
+  <div class="container">
+    <div class="tl-intro reveal">
+      <div class="story-overline">How we got here</div>
+      <h2 class="story-h2">From one maker's<br><em>frustration</em> to a platform</h2>
+    </div>
+    <div class="timeline reveal rd1">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">25 years ago</div>
+        <div class="tl-title">The first custom commissions</div>
+        <div class="tl-body">Started designing and building custom faux botanical wreaths in Columbus — a craft that became a career, and a career that became a calling. Even then, every client had a feeling they wanted the piece to hold, and turning that feeling into a design took far longer than the build itself.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">Over two decades</div>
+        <div class="tl-title">The pattern became clear</div>
+        <div class="tl-body">Every commission followed the same arc. A conversation full of feeling and meaning, then a design process that felt like starting over every time. The building was fast. The deciding was slow. That ratio was wrong.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">The turning point</div>
+        <div class="tl-title">Building a system that could translate</div>
+        <div class="tl-body">Started building what would become Evercrafted — a way to move from a client's words directly into design decisions. Not a mood board, not a color picker. A real tool that understood emotion as a design input.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-year">Now</div>
+        <div class="tl-title">Opening it up to other makers</div>
+        <div class="tl-body">Evercrafted is the tool I built for my own practice — now being shaped into something other wreath artists can use. The waitlist is open. The platform is in development. The first makers get in before the public launch, with founding pricing that stays with them.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES BAND -->
+<div class="values-band">
+  <div class="vb-inner">
+    <div class="vb-left reveal">
+      <h2>Built on one<br><em>simple idea.</em></h2>
+      <p>The makers who care most about their work deserve tools that match that care. Evercrafted was built to give serious wreath artists the kind of design intelligence that used to take years to develop — and hours to apply.</p>
+    </div>
+    <div class="vb-right reveal rd2">
+      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Made by someone with 25 years in this craft</strong>Not a tech product trying to enter the faux floral space. A maker's tool built from the inside out, by someone who has been doing the work since before most of the current tools existed.</div></div>
+      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Designed around the client conversation</strong>Because that is where every wreath really starts — with a feeling that needs to become something real.</div></div>
+      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Built to respect your taste</strong>Evercrafted makes decisions faster — it does not make them for you. Every suggestion is yours to change.</div></div>
+      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Committed to the makers who show up first</strong>Founding members get pricing that never changes, and direct input on what gets built next.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container reveal">
+    <h2>Come make something.</h2>
+    <p>Join the waitlist for early access, founding member pricing, and a direct line to what gets built next.</p>
+    <div class="cta-links">
+      <a href="evercrafted-marketing-site.html#waitlist" class="cta-btn cta-btn-primary">Join the waitlist →</a>
+      <a href="evercrafted-how-it-works.html" class="cta-btn cta-btn-ghost">See how it works</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-logo">Ever<span>crafted</span></div>
+    <div class="foot-links">
+      <a href="evercrafted-marketing-site.html">Home</a>
+      <a href="evercrafted-how-it-works.html">How it works</a>
+      <a href="evercrafted-marketing-site.html#pricing">Pricing</a>
+      <a href="evercrafted-marketing-site.html#waitlist">Waitlist</a>
+    </div>
+    <div style="font-size:11px">© 2025 Evercrafted Studio</div>
+  </div>
+</footer>
+
+<script>
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+</script>
+</body>
+</html>

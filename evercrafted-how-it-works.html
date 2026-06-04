@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How It Works — Evercrafted</title>
+<meta name="description" content="See how Evercrafted turns a memory or feeling into a physically buildable luxury wreath blueprint — step by step.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Dancing+Script:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--off:#F9F7F4;--paper:#F2EFE9;--warm:#EDE8E0;
+  --black:#1A1A1A;--charcoal:#2E2E2E;--ink:#4A4A4A;--muted:#787878;--faint:#A8A8A8;
+  --green:#4A6741;--gl:#6B8F67;--gp:#EEF2ED;--gd:rgba(74,103,65,.10);
+  --gold:#9A7A40;--goldl:#C4A06A;--goldp:#F5EFE4;--goldd:rgba(154,122,64,.10);
+  --dust:#7A5A80;--dustp:#F5EEF4;--dustd:rgba(122,90,128,.10);
+  --blue:#4A6785;--bluep:#EEF4F9;--blued:rgba(74,103,133,.10);
+  --bd:#E4DFD8;--bdd:#CCC7BE;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',system-ui,sans-serif;
+  --script:'Dancing Script',cursive;
+  --sh:0 1px 4px rgba(0,0,0,.06);
+  --sm:0 4px 20px rgba(0,0,0,.08);
+  --sl:0 12px 48px rgba(0,0,0,.10);
+  --tr:220ms ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--off);color:var(--black);line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 2.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;background:rgba(249,247,244,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);box-shadow:var(--sh)}
+.nav-logo{font-family:var(--serif);font-size:1.4rem;font-weight:400;letter-spacing:.03em;color:var(--black);text-decoration:none}
+.nav-logo span{color:var(--green)}
+.nav-links{display:flex;align-items:center;gap:1.75rem}
+.nav-links a{font-size:13px;font-weight:500;color:var(--ink);letter-spacing:.04em;text-decoration:none;transition:color var(--tr)}
+.nav-links a:hover{color:var(--green)}
+.nav-links a.active{color:var(--green)}
+.nav-cta{padding:7px 18px;border-radius:100px;background:var(--black);color:var(--white);font-size:12px;font-weight:500;letter-spacing:.06em;transition:all var(--tr);border:1px solid var(--black);text-decoration:none}
+.nav-cta:hover{background:var(--green);border-color:var(--green);color:var(--white)}
+@media(max-width:768px){.nav-links .hide-sm{display:none}.nav{padding:0 1.25rem}}
+
+/* HERO */
+.hero{padding:calc(60px + 5rem) 0 4rem;background:var(--paper);position:relative;overflow:hidden;text-align:center}
+.hero-bg{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hb-ring{position:absolute;border-radius:50%;border:1px solid rgba(74,103,65,.07)}
+.hb-1{width:700px;height:700px;top:-250px;right:-200px}
+.hb-2{width:500px;height:500px;bottom:-200px;left:-150px;border-color:rgba(154,122,64,.05)}
+.hero-inner{max-width:780px;margin:0 auto;padding:0 2rem;position:relative}
+.hero-overline{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:1.1rem;display:flex;align-items:center;justify-content:center;gap:.6rem}
+.hero-overline::before,.hero-overline::after{content:'';height:1px;width:24px;background:var(--green);opacity:.5}
+.hero-h1{font-family:var(--serif);font-size:clamp(2.8rem,6vw,5rem);font-weight:400;line-height:1.08;letter-spacing:-.02em;margin-bottom:1.25rem}
+.hero-h1 em{font-style:italic;color:var(--green)}
+.hero-h1 .sc{font-family:var(--script);font-weight:600;font-size:1.05em;color:var(--gold)}
+.hero-lead{font-size:18px;color:var(--ink);line-height:1.7;max-width:580px;margin:0 auto 2.5rem;font-weight:300}
+.hero-pill-row{display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;margin-bottom:2.5rem}
+.hpill{padding:6px 16px;border-radius:100px;border:1px solid var(--bd);background:var(--white);font-size:12px;font-weight:500;color:var(--ink);letter-spacing:.03em}
+.hero-scroll-hint{font-size:11px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase;display:flex;align-items:center;justify-content:center;gap:.6rem;margin-top:2rem}
+.scroll-line{width:28px;height:1px;background:var(--faint)}
+
+/* PIPELINE RAIL */
+.rail-section{background:var(--white);position:sticky;top:60px;z-index:50;border-bottom:1px solid var(--bd);box-shadow:0 2px 12px rgba(0,0,0,.04)}
+.rail{max-width:1100px;margin:0 auto;padding:0 2rem;display:flex;align-items:stretch;overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail-step{display:flex;align-items:center;gap:.6rem;padding:1rem 1.25rem;font-size:12px;font-weight:500;color:var(--faint);letter-spacing:.04em;white-space:nowrap;cursor:pointer;border-bottom:2px solid transparent;transition:all var(--tr);text-decoration:none;position:relative}
+.rail-step:hover{color:var(--ink)}
+.rail-step.active{color:var(--green);border-bottom-color:var(--green)}
+.rail-num{width:20px;height:20px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.rail-arrow{color:var(--bd);font-size:11px;padding:0 .1rem}
+
+/* SECTION SHARED */
+.step-section{padding:6rem 0;position:relative}
+.step-section:nth-child(even){background:var(--paper)}
+.step-section:nth-child(odd){background:var(--white)}
+.container{max-width:1100px;margin:0 auto;padding:0 2.5rem}
+@media(max-width:768px){.container{padding:0 1.25rem}}
+.step-grid{display:grid;grid-template-columns:1fr 1fr;gap:4.5rem;align-items:center}
+.step-grid.flip{direction:rtl}
+.step-grid.flip > *{direction:ltr}
+@media(max-width:840px){.step-grid,.step-grid.flip{grid-template-columns:1fr;gap:2.5rem;direction:ltr}}
+.step-overline{display:flex;align-items:center;gap:.6rem;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;margin-bottom:.9rem}
+.step-overline .s-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.step-h2{font-family:var(--serif);font-size:clamp(2rem,3.5vw,2.9rem);font-weight:400;line-height:1.15;letter-spacing:-.01em;margin-bottom:1rem}
+.step-h2 em{font-style:italic}
+.step-lead{font-size:16px;color:var(--ink);line-height:1.7;margin-bottom:1.5rem;font-weight:300}
+.step-points{display:flex;flex-direction:column;gap:.9rem}
+.sp{display:flex;gap:.8rem;align-items:flex-start}
+.sp-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:.45rem}
+.sp-text{font-size:14px;color:var(--ink);line-height:1.6}
+.sp-text strong{font-weight:600;color:var(--black)}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.reveal.vis{opacity:1;transform:none}
+.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+
+/* ── STEP VISUALS ── */
+.vis-box{border-radius:20px;border:1px solid var(--bd);box-shadow:var(--sl);overflow:hidden;background:var(--white)}
+
+/* Step 1 — memory input */
+.mem-card{padding:1.75rem}
+.mem-label{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);margin-bottom:.6rem}
+.mem-textarea{width:100%;background:var(--off);border:1px solid var(--bd);border-radius:10px;padding:1rem 1.1rem;font-family:var(--serif);font-size:1rem;font-style:italic;color:var(--charcoal);line-height:1.7;resize:none;outline:none;transition:border-color .2s;min-height:100px}
+.mem-textarea:focus{border-color:var(--green)}
+.mem-chip-row{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1rem}
+.mem-chip{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500}
+.mc-g{background:var(--gp);color:var(--green);border:1px solid rgba(74,103,65,.2)}
+.mc-o{background:var(--goldp);color:var(--gold);border:1px solid rgba(154,122,64,.2)}
+.mc-p{background:var(--dustp);color:var(--dust);border:1px solid rgba(122,90,128,.2)}
+.mc-n{background:var(--off);color:var(--muted);border:1px solid var(--bd)}
+.mem-formula{margin-top:1rem;padding:.6rem .9rem;background:var(--gp);border-radius:8px;font-size:12px;color:var(--green);display:flex;align-items:center;gap:.5rem;font-weight:500}
+
+/* Step 2 — emotion wheel */
+.ew-wrap{padding:1.5rem;display:flex;flex-direction:column;gap:1rem}
+.ew-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.ew-card{padding:.7rem .9rem;border-radius:10px;border:1px solid transparent}
+.ew-card.core{border-color:rgba(74,103,65,.2);background:var(--gp)}
+.ew-card.outer{border-color:var(--bd);background:var(--off)}
+.ew-badge{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.ew-name{font-size:13px;font-weight:500;color:var(--black)}
+.ew-desc{font-size:11px;color:var(--muted);margin-top:.15rem;line-height:1.4}
+.ew-arrow-row{display:flex;align-items:center;justify-content:center;gap:.75rem;font-size:11px;color:var(--faint);padding:.25rem 0}
+
+/* Step 3 — tagging */
+.tag-card{padding:1.5rem}
+.tc-row{display:flex;gap:.75rem;padding:.75rem 0;border-bottom:1px solid var(--bd);align-items:flex-start}
+.tc-row:last-child{border:none;padding-bottom:0}
+.tc-img{width:48px;height:48px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;overflow:hidden}
+.tc-right{flex:1;min-width:0}
+.tc-name{font-size:12px;font-weight:600;color:var(--black);margin-bottom:.35rem}
+.tc-tags{display:flex;flex-wrap:wrap;gap:3px}
+.tc-tag{font-size:9px;padding:1px 6px;border-radius:20px;font-weight:600}
+.tct-role{background:var(--gp);color:var(--green)}
+.tct-arch{background:var(--goldp);color:var(--gold)}
+.tct-emot{background:var(--dustp);color:var(--dust)}
+.tct-fin{background:var(--off);color:var(--muted);border:1px solid var(--bd)}
+.tct-pass1{background:rgba(74,103,65,.15);color:#3a5a30}
+.tct-pass2{background:rgba(122,90,128,.15);color:#6a3a78}
+
+/* Step 4 — two-pass engine */
+.engine-card{padding:1.5rem}
+.pass-band{border-radius:10px;padding:1rem;margin-bottom:.7rem}
+.pb1{background:rgba(74,103,65,.06);border:1px solid rgba(74,103,65,.15)}
+.pb2{background:rgba(122,90,128,.06);border:1px solid rgba(122,90,128,.15)}
+.pass-label{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:.6rem;display:flex;align-items:center;gap:.5rem}
+.pl1{color:var(--green)}.pl2{color:var(--dust)}
+.pass-slots{display:flex;flex-wrap:wrap;gap:.4rem}
+.pslot{padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600}
+.ps1f{background:var(--gp);color:var(--green);border:1px solid rgba(74,103,65,.25)}
+.ps2f{background:var(--dustp);color:var(--dust);border:1px solid rgba(122,90,128,.25)}
+.psb{background:rgba(180,60,60,.08);color:#8a3030;border:1px solid rgba(180,60,60,.2);text-decoration:line-through;opacity:.6}
+.gate-note{font-size:10px;color:var(--muted);margin-top:.6rem;display:flex;align-items:flex-start;gap:.4rem;line-height:1.5}
+.gate-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:.3rem}
+
+/* Step 5 — polar canvas */
+.polar-card{padding:1.5rem;display:flex;flex-direction:column;align-items:center;gap:.9rem}
+.polar-svg-wrap{position:relative;display:inline-block}
+.polar-legend{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;width:100%}
+.pl-dot{display:inline-flex;align-items:center;gap:.35rem;font-size:10px;color:var(--muted)}
+.pld{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* Step 6 — export */
+.export-tabs{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:0}
+.etab{padding:.6rem 1rem;font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--faint);cursor:pointer;border-bottom:2px solid transparent;transition:all var(--tr)}
+.etab.on{color:var(--green);border-bottom-color:var(--green)}
+.export-panels{padding:1.25rem 1.5rem}
+.exp-panel{display:none}
+.exp-panel.on{display:block}
+.prompt-box{font-size:11px;line-height:1.8;color:var(--ink);font-style:italic;background:var(--off);padding:.9rem 1rem;border-radius:8px;border:1px solid var(--bd)}
+.prompt-box strong{font-style:normal;font-weight:600;color:var(--green)}
+.build-steps{display:flex;flex-direction:column;gap:.5rem}
+.bs{display:flex;gap:.7rem;align-items:flex-start;font-size:12px;color:var(--ink)}
+.bs-num{width:20px;height:20px;border-radius:50%;background:var(--gp);color:var(--green);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.stem-table{width:100%;font-size:12px;border-collapse:collapse}
+.stem-table th{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);padding:.4rem .6rem;text-align:left;border-bottom:1px solid var(--bd)}
+.stem-table td{padding:.45rem .6rem;border-bottom:1px solid var(--off);color:var(--ink)}
+.stem-table tr:last-child td{border:none}
+
+/* COMPARISON */
+.compare-section{background:var(--black);padding:5rem 0}
+.compare-section .container{text-align:center}
+.compare-h{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--white);margin-bottom:.75rem}
+.compare-h em{font-style:italic;color:var(--goldl)}
+.compare-lead{font-size:16px;color:rgba(255,255,255,.55);max-width:520px;margin:0 auto 3rem;font-weight:300}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;max-width:780px;margin:0 auto}
+@media(max-width:600px){.compare-grid{grid-template-columns:1fr}}
+.compare-card{border-radius:16px;padding:1.75rem;text-align:left}
+.cc-before{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.cc-after{background:rgba(74,103,65,.12);border:1px solid rgba(74,103,65,.3)}
+.cc-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.ccl-before{color:rgba(255,255,255,.3)}
+.ccl-after{color:var(--gl)}
+.cc-items{display:flex;flex-direction:column;gap:.6rem}
+.cci{font-size:13px;display:flex;gap:.6rem;align-items:flex-start;line-height:1.5}
+.cci-before{color:rgba(255,255,255,.45)}
+.cci-after{color:rgba(255,255,255,.8)}
+.cci::before{font-size:11px;flex-shrink:0;margin-top:.1rem}
+.cci-before::before{content:'—';color:rgba(255,255,255,.2)}
+.cci-after::before{content:'✓';color:var(--gl);font-weight:700}
+
+/* FAQ */
+.faq-section{background:var(--off);padding:5.5rem 0}
+.faq-inner{max-width:720px;margin:0 auto}
+.faq-h{font-family:var(--serif);font-size:2.4rem;font-weight:400;text-align:center;margin-bottom:2.5rem}
+.faq-h em{font-style:italic;color:var(--green)}
+.faq-item{border-bottom:1px solid var(--bd)}
+.faq-q{width:100%;background:none;border:none;text-align:left;padding:1.1rem 0;font-family:var(--sans);font-size:15px;font-weight:500;color:var(--black);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;transition:color var(--tr)}
+.faq-q:hover{color:var(--green)}
+.faq-icon{font-size:18px;color:var(--faint);flex-shrink:0;transition:transform .3s ease;font-weight:300;line-height:1}
+.faq-item.open .faq-icon{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s ease;font-size:14px;color:var(--ink);line-height:1.7;padding:0}
+.faq-item.open .faq-a{max-height:300px;padding-bottom:1.1rem}
+
+/* CTA BAND */
+.cta-band{background:var(--green);padding:5rem 0;text-align:center}
+.cta-band h2{font-family:var(--serif);font-size:clamp(2.2rem,4vw,3.2rem);font-weight:400;color:var(--white);margin-bottom:.9rem;line-height:1.2}
+.cta-band p{font-size:16px;color:rgba(255,255,255,.7);max-width:480px;margin:0 auto 2rem;font-weight:300}
+.cta-form{display:flex;gap:.6rem;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+.cta-input{flex:1;min-width:200px;padding:13px 20px;border-radius:100px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:var(--white);font-family:var(--sans);font-size:14px;outline:none;-webkit-appearance:none}
+.cta-input::placeholder{color:rgba(255,255,255,.5)}
+.cta-input:focus{border-color:rgba(255,255,255,.6)}
+.cta-btn{padding:13px 26px;border-radius:100px;background:var(--white);color:var(--green);font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.05em;border:none;cursor:pointer;transition:all var(--tr);white-space:nowrap}
+.cta-btn:hover{background:var(--off);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+
+/* FOOTER */
+footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
+.foot-inner{max-width:1100px;margin:0 auto;padding:0 2.5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;font-size:12px}
+.foot-logo{font-family:var(--serif);font-size:1.2rem;color:var(--white);font-weight:400}
+.foot-logo span{color:var(--goldl)}
+.foot-links{display:flex;gap:1.5rem}
+.foot-links a{color:rgba(255,255,255,.45);text-decoration:none;transition:color var(--tr);font-size:12px}
+.foot-links a:hover{color:rgba(255,255,255,.8)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="evercrafted-marketing-site.html" class="nav-logo">Ever<span>crafted</span></a>
+  <div class="nav-links">
+    <a href="evercrafted-marketing-site.html" class="hide-sm">Home</a>
+    <a href="#" class="active">How it works</a>
+    <a href="evercrafted-marketing-site.html#pricing" class="hide-sm">Pricing</a>
+    <a href="evercrafted-marketing-site.html#waitlist" class="nav-cta">Join waitlist</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"><div class="hb-ring hb-1"></div><div class="hb-ring hb-2"></div></div>
+  <div class="hero-inner">
+    <div class="hero-overline">The Evercrafted experience</div>
+    <h1 class="hero-h1">From <em>feeling</em> to<br><span class="sc">blueprint</span></h1>
+    <p class="hero-lead">No style quizzes. No mood boards. You describe what a piece should feel like — and Evercrafted turns that into something you can actually build.</p>
+    <div class="hero-pill-row">
+      <span class="hpill">Memory input</span>
+      <span class="hpill">Emotion mapping</span>
+      <span class="hpill">Inventory tagging</span>
+      <span class="hpill">Design intelligence</span>
+      <span class="hpill">Composition</span>
+      <span class="hpill">Export pipeline</span>
+    </div>
+    <div class="hero-scroll-hint"><span class="scroll-line"></span>Scroll through each stage<span class="scroll-line"></span></div>
+  </div>
+</div>
+
+<!-- PIPELINE RAIL -->
+<div class="rail-section" id="rail-section">
+  <nav class="rail" id="rail">
+    <a href="#step-1" class="rail-step active" data-step="1"><span class="rail-num">1</span>Memory input</a>
+    <span class="rail-arrow">›</span>
+    <a href="#step-2" class="rail-step" data-step="2"><span class="rail-num">2</span>Emotion mapping</a>
+    <span class="rail-arrow">›</span>
+    <a href="#step-3" class="rail-step" data-step="3"><span class="rail-num">3</span>Inventory tagging</a>
+    <span class="rail-arrow">›</span>
+    <a href="#step-4" class="rail-step" data-step="4"><span class="rail-num">4</span>Design intelligence</a>
+    <span class="rail-arrow">›</span>
+    <a href="#step-5" class="rail-step" data-step="5"><span class="rail-num">5</span>Composition</a>
+    <span class="rail-arrow">›</span>
+    <a href="#step-6" class="rail-step" data-step="6"><span class="rail-num">6</span>Export pipeline</a>
+  </nav>
+</div>
+
+<!-- ═══════════════ STEP 1 ═══════════════ -->
+<section class="step-section" id="step-1">
+  <div class="container">
+    <div class="step-grid">
+      <div class="reveal">
+        <div class="step-overline" style="color:var(--green)">
+          <span class="s-num" style="background:var(--gp);color:var(--green)">1</span>
+          Stage one
+        </div>
+        <h2 class="step-h2">You share what<br><em>this piece is for</em></h2>
+        <p class="step-lead">There are no color pickers, no style quizzes, no dropdown menus. You describe what this wreath should hold — a person, a place, a season, a feeling. Plain language is the only input you need.</p>
+        <div class="step-points">
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>Any level of detail works.</strong> A single word like "grief" or a paragraph about your grandmother's garden — both produce valid blueprints.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>The language doesn't need to be floral.</strong> "Cold morning light through old windows" produces a far more distinctive design than "dusty blue and silver."</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>Client commissions work exactly the same way.</strong> Take their words directly. What they tell you becomes what you build.</span></div>
+        </div>
+      </div>
+      <div class="reveal rd2">
+        <div class="vis-box">
+          <div class="mem-card">
+            <div class="mem-label">Memory input</div>
+            <textarea class="mem-textarea" readonly>My grandmother's garden in late September — tall cosmos swaying, the smell of dried lavender, that warmth before the cold arrived. She always wore grey linen and smelled like earth and flowers mixed together.</textarea>
+            <div class="mem-chip-row">
+              <span class="mem-chip mc-g">nostalgia</span>
+              <span class="mem-chip mc-g">sadness</span>
+              <span class="mem-chip mc-g">trust</span>
+              <span class="mem-chip mc-o">anticipation</span>
+              <span class="mem-chip mc-p">longing</span>
+            </div>
+            <div class="mem-formula">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+              Formula selected: Crescent · Soft weight · Draping direction
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STEP 2 ═══════════════ -->
+<section class="step-section" id="step-2">
+  <div class="container">
+    <div class="step-grid flip">
+      <div class="reveal">
+        <div class="step-overline" style="color:var(--gold)">
+          <span class="s-num" style="background:var(--goldp);color:var(--gold)">2</span>
+          Stage two
+        </div>
+        <h2 class="step-h2">The feeling becomes<br><em>physical character</em></h2>
+        <p class="step-lead">Grief reaches differently than joy. Peace holds still while longing moves. Evercrafted reads what you wrote and translates it into real choices — what shapes go in, how they sit, how they feel — before anything is placed.</p>
+        <div class="step-points">
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The emotional core</strong> of your memory shapes the heaviest, most present pieces — the ones that hold the whole design together and define what the wreath looks like from across the room.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The quieter, more layered feelings</strong> — the subtle ones, the bittersweet ones — shape the details that fill in around the main blooms. The finishes, the accent pieces, the quieter moments between the blooms.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The depth of feeling shapes the weight of the design.</strong> A raw, close grief makes different choices than a soft, distant nostalgia. The design matches the feeling — not just the words.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>When a feeling contains its opposite</strong> — joy and loss together, peace threaded with longing — the composition holds both. It doesn't resolve the tension. It makes it visible.</span></div>
+        </div>
+      </div>
+      <div class="reveal rd2">
+        <div class="vis-box">
+          <div class="ew-wrap">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)">Emotion profile · grandmother's garden</div>
+            <div>
+              <div class="ew-arrow-row" style="justify-content:flex-start;gap:.4rem;margin-bottom:.4rem"><span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--green)">The heart of the memory — primary pieces</span></div>
+              <div class="ew-row">
+                <div class="ew-card core"><div class="ew-badge" style="color:var(--green)">Sadness · primary</div><div class="ew-name">Sadness</div><div class="ew-desc">Weeping · matte · neutral-dark · draping</div></div>
+                <div class="ew-card core"><div class="ew-badge" style="color:var(--green)">Trust · primary</div><div class="ew-name">Trust</div><div class="ew-desc">Still · matte · grounded · unified</div></div>
+              </div>
+            </div>
+            <div class="ew-arrow-row">↓ deeper character emerges</div>
+            <div>
+              <div class="ew-arrow-row" style="justify-content:flex-start;gap:.4rem;margin-bottom:.4rem"><span style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dust)">The quieter feelings underneath — detail pieces</span></div>
+              <div class="ew-row">
+                <div class="ew-card outer"><div class="ew-badge" style="color:var(--dust)">Nostalgia · blend</div><div class="ew-name">Nostalgia</div><div class="ew-desc">Soft blend · matte · muted warmth</div></div>
+                <div class="ew-card outer"><div class="ew-badge" style="color:var(--dust)">Longing · outer</div><div class="ew-name">Longing</div><div class="ew-desc">Gentle movement · matte · quiet</div></div>
+              </div>
+            </div>
+            <div style="padding:.6rem .9rem;background:var(--goldp);border-radius:8px;font-size:11px;color:var(--gold);font-weight:500;display:flex;align-items:center;gap:.5rem">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Soft feeling · gentle sweep · open breathing room → Crescent composition
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STEP 3 ═══════════════ -->
+<section class="step-section" id="step-3">
+  <div class="container">
+    <div class="step-grid">
+      <div class="reveal">
+        <div class="step-overline" style="color:var(--dust)">
+          <span class="s-num" style="background:var(--dustp);color:var(--dust)">3</span>
+          Stage three
+        </div>
+        <h2 class="step-h2">Your materials<br><em>learn their language</em></h2>
+        <p class="step-lead">Every piece in your collection gets understood. Drop a photo, paste a product name, or describe it yourself. Evercrafted reads what it sees and figures out where that piece belongs — what it brings to a design, and what kind of feeling it carries.</p>
+        <div class="step-points">
+          <div class="sp"><span class="sp-dot" style="background:var(--dust)"></span><span class="sp-text"><strong>Every piece gets described in terms the design engine understands</strong> — what job it does, how it moves, how it looks in the light, and what feeling it carries.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--dust)"></span><span class="sp-text"><strong>Not everything is meant to lead.</strong> Some pieces are the ones the eye finds first. Others fill in quietly around them. Evercrafted knows which is which.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--dust)"></span><span class="sp-text"><strong>Three ways to tag:</strong> drop a photo, paste a product name from any supplier, or fill a guided form by hand. All three produce the same result.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--dust)"></span><span class="sp-text"><strong>Every suggestion is transparent.</strong> Where the system is certain, it shows you. Where it's less sure, it tells you that too — so you always make the final call.</span></div>
+        </div>
+      </div>
+      <div class="reveal rd2">
+        <div class="vis-box">
+          <div class="tag-card">
+            <div class="tc-row">
+              <div class="tc-img" style="background:linear-gradient(135deg,#3a3832,#1e1c18)"></div>
+              <div class="tc-right">
+                <div class="tc-name">Matte Charcoal Manzanita Branch</div>
+                <div class="tc-tags">
+                  <span class="tc-tag tct-pass1">Foundation</span>
+                  <span class="tc-tag tct-role">structural</span>
+                  <span class="tc-tag tct-arch">commanding</span>
+                  <span class="tc-tag tct-fin">matte</span>
+                  <span class="tc-tag tct-emot">grief</span>
+                </div>
+              </div>
+            </div>
+            <div class="tc-row">
+              <div class="tc-img" style="background:linear-gradient(135deg,#c4a0a0,#a08080)"></div>
+              <div class="tc-right">
+                <div class="tc-name">Dusty Mauve Peony</div>
+                <div class="tc-tags">
+                  <span class="tc-tag tct-pass1">Foundation</span>
+                  <span class="tc-tag tct-role">focal</span>
+                  <span class="tc-tag tct-arch">soft</span>
+                  <span class="tc-tag tct-fin">matte</span>
+                  <span class="tc-tag tct-emot">nostalgia</span>
+                </div>
+              </div>
+            </div>
+            <div class="tc-row">
+              <div class="tc-img" style="background:linear-gradient(135deg,#8a9a8a,#6a8060)"></div>
+              <div class="tc-right">
+                <div class="tc-name">Weeping Silver Eucalyptus</div>
+                <div class="tc-tags">
+                  <span class="tc-tag tct-pass1">Foundation</span>
+                  <span class="tc-tag tct-role">structural</span>
+                  <span class="tc-tag tct-arch">draping</span>
+                  <span class="tc-tag tct-fin">matte</span>
+                  <span class="tc-tag tct-emot">peace</span>
+                </div>
+              </div>
+            </div>
+            <div class="tc-row">
+              <div class="tc-img" style="background:linear-gradient(135deg,#b0b8b8,#909898)"></div>
+              <div class="tc-right">
+                <div class="tc-name">Matte Silver-Leaf Spray</div>
+                <div class="tc-tags">
+                  <span class="tc-tag tct-pass2">Detail</span>
+                  <span class="tc-tag tct-role">secondary</span>
+                  <span class="tc-tag tct-arch">flowing</span>
+                  <span class="tc-tag tct-fin">metallic</span>
+                  <span class="tc-tag tct-emot">reflective</span>
+                </div>
+              </div>
+            </div>
+            <div class="tc-row">
+              <div class="tc-img" style="background:linear-gradient(135deg,#9a8ab0,#7a6a90)"></div>
+              <div class="tc-right">
+                <div class="tc-name">Dusty Lavender Bundle</div>
+                <div class="tc-tags">
+                  <span class="tc-tag tct-pass2">Detail</span>
+                  <span class="tc-tag tct-role">texture</span>
+                  <span class="tc-tag tct-arch">delicate</span>
+                  <span class="tc-tag tct-fin">raw</span>
+                  <span class="tc-tag tct-emot">nostalgia</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STEP 4 ═══════════════ -->
+<section class="step-section" id="step-4">
+  <div class="container">
+    <div class="step-grid flip">
+      <div class="reveal">
+        <div class="step-overline" style="color:var(--blue)">
+          <span class="s-num" style="background:var(--bluep);color:var(--blue)">4</span>
+          Stage four
+        </div>
+        <h2 class="step-h2">Designed to<br><em>surprise you.</em></h2>
+        <p class="step-lead">Every blueprint pulls from a different corner of your collection. The same memory, explored twice, produces two genuinely different designs — because Evercrafted is built to resist the comfortable and the predictable.</p>
+        <div class="step-points">
+          <div class="sp"><span class="sp-dot" style="background:var(--blue)"></span><span class="sp-text"><strong>The foundation layer</strong> builds from the emotional core of the memory. Each piece chosen here is what the eye finds first — the weight and shape of the whole design.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--blue)"></span><span class="sp-text"><strong>The detail layer</strong> fills in around the foundation. The quieter pieces, the textures, the small accents — chosen to sit beside the main blooms, not fight with them.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--blue)"></span><span class="sp-text"><strong>The result:</strong> every design is genuinely yours. No two designs land on the same combinations — even when they start from the same feeling. The comfortable and predictable are never the answer.</span></div>
+        </div>
+      </div>
+      <div class="reveal rd2">
+        <div class="vis-box">
+          <div class="engine-card">
+            <div class="pass-band pb1">
+              <div class="pass-label pl1">
+                <span style="width:16px;height:16px;border-radius:50%;background:var(--green);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700">1</span>
+                Foundation layer — the heart of the design
+              </div>
+              <div class="pass-slots">
+                <span class="pslot ps1f">Weeping Eucalyptus ✓</span>
+                <span class="pslot ps1f">Dusty Mauve Peony ✓</span>
+                <span class="pslot ps1f">Ivory Garden Rose ✓</span>
+                <span class="pslot psb">Slate Hydrangea ✗ would repeat a form already present</span>
+              </div>
+              <div class="gate-note"><span class="gate-dot"></span>Slate Hydrangea carries a form already present in this layer. Evercrafted finds the next piece that brings something new.</div>
+            </div>
+            <div class="pass-band pb2">
+              <div class="pass-label pl2">
+                <span style="width:16px;height:16px;border-radius:50%;background:var(--dust);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700">2</span>
+                Detail layer — the quieter pieces
+              </div>
+              <div class="pass-slots">
+                <span class="pslot ps2f">Silver Leaf Spray ✓</span>
+                <span class="pslot ps2f">Lavender Bundle ✓</span>
+                <span class="pslot ps2f">Sage Eucalyptus ✓</span>
+                <span class="pslot ps2f">Brunia Berry ✓</span>
+                <span class="pslot psb">Dried Thistle ✗ would say the same thing as something already chosen</span>
+              </div>
+              <div class="gate-note"><span class="gate-dot"></span>Dried Thistle would repeat something already there. Silver Brunia steps in — same quiet register, different voice.</div>
+            </div>
+            <div style="padding:.6rem .9rem;background:var(--gp);border-radius:8px;font-size:11px;color:var(--green);font-weight:500;display:flex;align-items:center;gap:.5rem;margin-top:.75rem">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              7 pieces chosen · 2 substitutions made · every element brings something different
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STEP 5 ═══════════════ -->
+<section class="step-section" id="step-5">
+  <div class="container">
+    <div class="step-grid">
+      <div class="reveal">
+        <div class="step-overline" style="color:var(--green)">
+          <span class="s-num" style="background:var(--gp);color:var(--green)">5</span>
+          Stage five
+        </div>
+        <h2 class="step-h2">Every piece finds<br><em>where it belongs</em></h2>
+        <p class="step-lead">Composition is not about filling space. It is about deciding what the eye finds, and when. Evercrafted maps each chosen piece to the part of the wreath where it will do its best work, leaving the rest of the form deliberately open.</p>
+        <div class="step-points">
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>Every design has a place where things happen and a place where they do not.</strong> The open side of the wreath is just as intentional as the blooms — bare grapevine, breathing room, space that makes the rest feel richer.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>Each piece has a natural home on the wreath.</strong> The heaviest, most important blooms sit closer to the center. Supporting pieces fill around them. Greenery spreads toward the edges and softens the whole shape.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>Quantities are never guessed.</strong> A large bloom takes up more space than a delicate wisp — so it gets fewer stems. A fine, airy piece gets more. The counts that come out are the counts that actually build the wreath.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>The AI reads the feeling. Evercrafted handles the design.</strong> Two separate jobs, done separately — so neither one compromises the other.</span></div>
+        </div>
+      </div>
+      <div class="reveal rd2">
+        <div class="vis-box">
+          <div class="polar-card">
+            <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);text-align:center">Grandmother's September Garden · Crescent composition · 22"</div>
+            <svg viewBox="0 0 280 280" style="width:100%;max-width:260px">
+              <circle cx="140" cy="140" r="125" fill="none" stroke="#E4DFD8" stroke-width=".5"/>
+              <circle cx="140" cy="140" r="95" fill="none" stroke="#E4DFD8" stroke-width=".5" stroke-dasharray="3 3"/>
+              <circle cx="140" cy="140" r="64" fill="none" stroke="#E4DFD8" stroke-width=".5" stroke-dasharray="2 2"/>
+              <circle cx="140" cy="140" r="34" fill="none" stroke="#E4DFD8" stroke-width=".5"/>
+              <!-- Active arc 210-330 (crescent — lower left to lower right) -->
+              <path d="M140 140 L57 80 A125 125 0 0 1 222 80 Z" fill="none" stroke="none"/>
+              <!-- Silence zone (upper portion) -->
+              <path d="M140 140 L222 80 A125 125 0 1 1 57 80 Z" fill="rgba(242,239,233,0.7)" stroke="none"/>
+              <!-- Active arc border -->
+              <path d="M57 80 A125 125 0 0 1 222 80" fill="none" stroke="#4A6741" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
+              <!-- Structural placements (P1, larger dots) -->
+              <circle cx="72" cy="118" r="10" fill="#3a3832" stroke="#4A6741" stroke-width="1.2" opacity=".9"/>
+              <circle cx="88" cy="88" r="9" fill="#8a9a8a" stroke="#4A6741" stroke-width="1.2" opacity=".9"/>
+              <!-- Focal placements -->
+              <circle cx="106" cy="72" r="8" fill="#c4a0a0" stroke="#6A5A80" stroke-width="1"/>
+              <circle cx="134" cy="63" r="7" fill="#e8e0d0" stroke="#6A5A80" stroke-width="1"/>
+              <!-- Secondary (P2) -->
+              <circle cx="165" cy="68" r="6" fill="#b0b8b8" stroke="#8a7d9e" stroke-width=".8"/>
+              <circle cx="195" cy="85" r="5" fill="#9a8ab0" stroke="#8a7d9e" stroke-width=".8"/>
+              <!-- Greenery edge -->
+              <circle cx="54" cy="148" r="4" fill="#7a9070" stroke="#4A6741" stroke-width=".8"/>
+              <circle cx="60" cy="100" r="4" fill="#7a9070" stroke="#4A6741" stroke-width=".8"/>
+              <circle cx="218" cy="108" r="4" fill="#7a9070" stroke="#4A6741" stroke-width=".8"/>
+              <circle cx="214" cy="150" r="3" fill="#c8b890" stroke="#9A7A40" stroke-width=".8"/>
+              <!-- Center -->
+              <circle cx="140" cy="140" r="8" fill="#F2EFE9" stroke="#E4DFD8"/>
+              <!-- Labels -->
+              <text x="140" y="50" text-anchor="middle" font-family="Jost,sans-serif" font-size="9" fill="#A8A8A8" letter-spacing=".08em">SILENCE ZONE</text>
+              <text x="80" y="175" text-anchor="middle" font-family="Jost,sans-serif" font-size="9" fill="#4A6741" letter-spacing=".06em">COMPOSITION</text>
+              <text x="200" y="175" text-anchor="middle" font-family="Jost,sans-serif" font-size="9" fill="#4A6741" letter-spacing=".06em">active sweep</text>
+            </svg>
+            <div class="polar-legend">
+              <span class="pl-dot"><span class="pld" style="background:#3a3832;border:1px solid #4A6741"></span>structural P1</span>
+              <span class="pl-dot"><span class="pld" style="background:#c4a0a0;border:1px solid #6A5A80"></span>focal P1</span>
+              <span class="pl-dot"><span class="pld" style="background:#b0b8b8;border:1px solid #8a7d9e"></span>secondary P2</span>
+              <span class="pl-dot"><span class="pld" style="background:#7a9070;border:1px solid #4A6741"></span>greenery P2</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════ STEP 6 ═══════════════ -->
+<section class="step-section" id="step-6">
+  <div class="container">
+    <div class="step-grid flip">
+      <div class="reveal">
+        <div class="step-overline" style="color:var(--gold)">
+          <span class="s-num" style="background:var(--goldp);color:var(--gold)">6</span>
+          Stage six
+        </div>
+        <h2 class="step-h2">Everything you need<br><em>to go make it.</em></h2>
+        <p class="step-lead">Knowing what to make is only half of it. Evercrafted gives you the visual to show a client, the quantities to shop or pull from stock, and the steps to actually build it — all from the same design, all at once.</p>
+        <div class="step-points">
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The render image</strong> — a production-ready prompt built from the actual florals in your design, not a generic description. Show clients before you build a single stem.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>Exact quantities</strong> — every material, with the precise count needed. Pulls directly from what you have in stock. No estimation, no waste.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The build sequence</strong> — step-by-step construction matched to your specific design. What goes on first, where it sits, how it finishes.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>A saved blueprint</strong> — your design lives in your account. Revisit it, adapt it for another season, share it with a collaborator, or use it as the starting point for something new.</span></div>
+        </div>
+      </div>
+      <div class="reveal rd2">
+        <div class="vis-box">
+          <div class="export-tabs">
+            <div class="etab on" onclick="switchExport('prompt',this)">Render prompt</div>
+            <div class="etab" onclick="switchExport('stems',this)">Stem counts</div>
+            <div class="etab" onclick="switchExport('build',this)">Build guide</div>
+          </div>
+          <div class="export-panels">
+            <div class="exp-panel on" id="ep-prompt">
+              <div class="prompt-box">
+                <strong>Luxury faux botanical wreath,</strong> crescent composition, 22-inch grapevine base, artisan-crafted. Emotional tone: nostalgia, sadness, trust. Structural foundation: Weeping Silver Eucalyptus, Charcoal Manzanita Branch — <strong>weeping and architectural forms</strong>, positioned in the foundational sweep. Focal blooms: Dusty Mauve Peony, Ivory Garden Rose. Secondary: Silver Leaf Spray, Lavender Bundle. Intentional negative space exposes raw grapevine. <strong>Premium silk florals</strong> — no fresh flowers, no plastic. Editorial product photography, shallow depth of field, matte aged plaster wall. --ar 4:5 --style raw --q 2
+              </div>
+            </div>
+            <div class="exp-panel" id="ep-stems">
+              <table class="stem-table">
+                <thead><tr><th>Floral</th><th>Zone</th><th>Weight</th><th>Stems</th></tr></thead>
+                <tbody>
+                  <tr><td>Charcoal Manzanita</td><td>structural</td><td>heavy</td><td>4</td></tr>
+                  <tr><td>Weeping Eucalyptus</td><td>structural</td><td>mid</td><td>5</td></tr>
+                  <tr><td>Dusty Mauve Peony</td><td>focal</td><td>heavy</td><td>4</td></tr>
+                  <tr><td>Ivory Garden Rose</td><td>focal</td><td>mid</td><td>5</td></tr>
+                  <tr><td>Silver Leaf Spray</td><td>secondary</td><td>light</td><td>8</td></tr>
+                  <tr><td>Lavender Bundle</td><td>texture</td><td>wispy</td><td>12</td></tr>
+                  <tr><td>Sage Eucalyptus</td><td>greenery</td><td>light</td><td>14</td></tr>
+                  <tr><td style="font-weight:600;color:var(--black)" colspan="3">Total</td><td style="font-weight:600;color:var(--green)">52</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="exp-panel" id="ep-build">
+              <div class="build-steps">
+                <div class="bs"><span class="bs-num">1</span><span>Soak grapevine base if needed. Identify your active sweep active arc and mark the 12 o'clock silence point with a small wire tie.</span></div>
+                <div class="bs"><span class="bs-num">2</span><span>Place structural layer first. Wire the Charcoal Manzanita at 8:00–9:00, weeping Silver Eucalyptus at 7:00–8:00. Secure with paddle wire, allow natural droop.</span></div>
+                <div class="bs"><span class="bs-num">3</span><span>Add the focal blooms. Cluster the Dusty Mauve Peony at roughly 9:00, the Ivory Rose just above. Vary the head angles — never two blooms facing the same direction.</span></div>
+                <div class="bs"><span class="bs-num">4</span><span>Build in the detail pieces. Tuck Silver Leaf Spray along the sweep. Scatter Lavender Bundles through the open spaces. Fill the outer edge with Sage Eucalyptus.</span></div>
+                <div class="bs"><span class="bs-num">5</span><span>Step back. Confirm silence zone is clean from 330° to 210°. Adjust any stems pulling toward the open negative space.</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="compare-section">
+  <div class="container">
+    <div class="reveal">
+      <h2 class="compare-h">Before and <em>after</em></h2>
+      <p class="compare-lead">What the design process looks like without Evercrafted — and with it.</p>
+    </div>
+    <div class="compare-grid reveal rd1">
+      <div class="compare-card cc-before">
+        <div class="cc-label ccl-before">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          Without Evercrafted
+        </div>
+        <div class="cc-items">
+          <div class="cci cci-before">Scroll Pinterest for 45 minutes hoping something sparks</div>
+          <div class="cci cci-before">Pick florals by eye — same "safe" choices every time</div>
+          <div class="cci cci-before">Guess at proportions and stem counts</div>
+          <div class="cci cci-before">Realise mid-build you're missing a key piece</div>
+          <div class="cci cci-before">Write your own Midjourney prompt from scratch</div>
+          <div class="cci cci-before">Every design starts to look like the last one</div>
+          <div class="cci cci-before">Can't explain to clients what makes this design theirs</div>
+        </div>
+      </div>
+      <div class="compare-card cc-after">
+        <div class="cc-label ccl-after">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          With Evercrafted
+        </div>
+        <div class="cc-items">
+          <div class="cci cci-after">Paste a memory. Blueprint generates in seconds</div>
+          <div class="cci cci-after">Each design draws from a different emotional space — genuinely, every time</div>
+          <div class="cci cci-after">Exact quantities — pulled from your actual inventory</div>
+          <div class="cci cci-after">Validates against what you actually own before generating</div>
+          <div class="cci cci-after">Production-ready render prompt exports automatically</div>
+          <div class="cci cci-after">A built-in intelligence ensures no two designs converge on the same combinations</div>
+          <div class="cci cci-after">Every design traces back to a named emotion and a real memory</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <div class="faq-inner">
+      <h2 class="faq-h reveal">Common <em>questions</em></h2>
+      <div id="faq-list" class="reveal rd1"></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cta-band">
+  <div class="container reveal">
+    <h2>Ready to try it?</h2>
+    <p>Join the waitlist for early access and founding member pricing locked in at signup.</p>
+    <form class="cta-form" onsubmit="handleCTA(event)">
+      <input class="cta-input" type="email" placeholder="Your email address" required id="cta-email">
+      <button class="cta-btn" type="submit">Join waitlist →</button>
+    </form>
+    <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:.9rem" id="cta-msg">No spam. Founding pricing locked at signup.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-logo">Ever<span>crafted</span></div>
+    <div class="foot-links">
+      <a href="evercrafted-marketing-site.html">Home</a>
+      <a href="evercrafted-marketing-site.html#pricing">Pricing</a>
+      <a href="evercrafted-marketing-site.html#waitlist">Waitlist</a>
+      <a href="#">Privacy</a>
+    </div>
+    <div style="font-size:11px">© 2025 Evercrafted Studio</div>
+  </div>
+</footer>
+
+<script>
+// NAV scroll active
+window.addEventListener('scroll', () => {
+  const sections = ['step-1','step-2','step-3','step-4','step-5','step-6'];
+  const mid = window.scrollY + window.innerHeight * 0.4;
+  let active = '1';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.offsetTop <= mid) active = id.split('-')[1];
+  });
+  document.querySelectorAll('.rail-step').forEach(s => {
+    s.classList.toggle('active', s.dataset.step === active);
+  });
+});
+
+// Reveal observer
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+// Export tabs
+function switchExport(id, btn) {
+  document.querySelectorAll('.etab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.exp-panel').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('ep-'+id).classList.add('on');
+}
+
+// FAQ data
+const FAQS = [
+  {
+    q: "Do I need to know anything about floral design to use Evercrafted?",
+    a: "No. If you know what you want a piece to feel like and you have materials to work with, Evercrafted handles the rest. The more of your collection you bring into the system, the richer and more distinctive each design becomes."
+  },
+  {
+    q: "How is this different from just using AI image generation?",
+    a: "Image generators produce pictures of wreaths. Evercrafted produces wreaths — with exact quantities, a placement map, and a construction sequence. The visual is something you get along the way. The wreath you can actually build is the point."
+  },
+  {
+    q: "What if the emotion reading does not feel right?",
+    a: "Every interpretation is yours to change before anything generates. The system makes its reading of your memory, then hands it back to you. Adjust anything that does not feel right — the design responds immediately."
+  },
+  {
+    q: "Can I use this for client commissions?",
+    a: "Yes — that is one of the primary use cases. Take your client's written description of what they want the piece to represent, paste it in, and let the system translate it. You get a design you can discuss with them and a visual for mockup approval before a single stem is cut."
+  },
+  {
+    q: "Does it work with any faux botanical supplier?",
+    a: "Yes. You bring in your materials however you source them — drop a photo, paste a product name, or describe it yourself. Whether your stock comes from Melrose, Silk Fair, DecoWoerner, or anywhere else, Evercrafted reads it the same way."
+  },
+  {
+    q: "What happens when I do not have a floral that matches the emotional character?",
+    a: "If your collection does not have an exact match, Evercrafted finds the next closest thing — a piece that carries a similar feeling. The design still feels true to where it started."
+  },
+  {
+    q: "Can I save and revisit designs across seasons?",
+    a: "Yes. Every design lives in your account. Studio tier and above lets you bring the same composition into a new season — different materials, same shape and feeling. Your autumn piece becomes a starting point for your winter one."
+  },
+];
+
+const faqList = document.getElementById('faq-list');
+FAQS.forEach((f, i) => {
+  const item = document.createElement('div');
+  item.className = 'faq-item';
+  item.innerHTML = `<button class="faq-q" onclick="toggleFaq(this)" aria-expanded="false">${f.q}<span class="faq-icon">+</span></button><div class="faq-a">${f.a}</div>`;
+  faqList.appendChild(item);
+});
+
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+// CTA
+function handleCTA(e) {
+  e.preventDefault();
+  const email = document.getElementById('cta-email').value;
+  document.getElementById('cta-msg').textContent = `✓ ${email} is on the list. We will be in touch.`;
+  document.getElementById('cta-msg').style.color = 'rgba(255,255,255,.85)';
+  document.getElementById('cta-email').value = '';
+}
+
+// Smooth scroll for rail links
+document.querySelectorAll('.rail-step').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.getElementById(a.getAttribute('href').slice(1));
+    if (target) window.scrollTo({ top: target.offsetTop - 120, behavior: 'smooth' });
+  });
+});
+</script>
+</body>
+</html>
