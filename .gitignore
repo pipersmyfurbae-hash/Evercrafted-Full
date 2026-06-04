@@ -6,8 +6,9 @@ node_modules/
 .env.local
 .env.*.local
 
-# Local waitlist fallback (use Supabase in production)
+# Local fallbacks (use Supabase in production)
 waitlist.json
+inventory.json
 
 # Vercel
 .vercel/

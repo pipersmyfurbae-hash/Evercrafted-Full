@@ -168,7 +168,9 @@ it falls back to appending to a local `waitlist.json` file (fine for local
 dev, but **not durable on Vercel** — serverless filesystems are ephemeral).
 
 - Project: **Evercrafted** → `https://qybnmlqesnbmgxayhllf.supabase.co`
-- Table: `public.waitlist` (`id, email, scene_title, memory, source, created_at`)
+- Tables: `public.waitlist` (`id, email, scene_title, memory, source, created_at`)
+  and `public.inventory` (the user-facing tagger saves here; falls back to a
+  local `inventory.json` when Supabase env vars are unset)
 - RLS is enabled with no public policies. The server uses the **service role**
   key, which bypasses RLS, so the table is not readable/writable by the browser.
 

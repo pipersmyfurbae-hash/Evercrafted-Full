@@ -66,7 +66,7 @@ app.use(cors({
     cb(new Error(`CORS: origin ${origin} not allowed`));
   },
 }));
-app.use(express.json());
+app.use(express.json({ limit: '12mb' })); // headroom for base64 photo uploads to /api/tag
 
 // ── Request logging ───────────────────────────────────────────────────────────
 app.use((req, res, next) => {
@@ -236,6 +236,104 @@ function parseJSON(text) {
   const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
   return JSON.parse(cleaned);
 }
+
+// ── Tagging vocabulary + normalisation (shared by /api/tag and /api/inventory) ──
+const TAG_ROLES     = ['focal','secondary','greenery','accent','structural','texture','bridge'];
+const TAG_BEHAVIORS = ['heavy','mid','light','wispy'];
+const TAG_MOVEMENTS = ['weeping','reaching','sweeping','architectural','cascading','still'];
+const TAG_FINISHES  = ['matte','satin','metallic','raw','gloss'];
+const TAG_PALETTES  = ['neutral-light','neutral-mid','neutral-dark','botanical-green','champagne','silver'];
+const TAG_EMOTIONS  = ['nostalgia','grief','sadness','peace','joy','longing','warmth','trust','awe','tenderness','melancholy','reverence','anticipation'];
+
+function normalizeTag(t) {
+  t = t || {};
+  const hex = (t.colorHex || '').toString().trim();
+  const validHex = /^#?[0-9a-fA-F]{6}$/.test(hex);
+  return {
+    role:      TAG_ROLES.includes(t.role)         ? t.role     : 'secondary',
+    pass:      t.pass === 1 ? 1 : 2,
+    behavior:  TAG_BEHAVIORS.includes(t.behavior) ? t.behavior : 'mid',
+    movement:  TAG_MOVEMENTS.includes(t.movement) ? t.movement : 'still',
+    finish:    TAG_FINISHES.includes(t.finish)    ? t.finish   : 'matte',
+    palette:   TAG_PALETTES.includes(t.palette)   ? t.palette  : 'neutral-mid',
+    ep:        TAG_EMOTIONS.includes(t.ep)        ? t.ep       : 'trust',
+    es:        TAG_EMOTIONS.includes(t.es)        ? t.es       : '',
+    intensity: Array.isArray(t.intensity) && t.intensity.length === 2
+                 ? [Math.min(3, Math.max(1, parseInt(t.intensity[0]) || 1)), Math.min(3, Math.max(1, parseInt(t.intensity[1]) || 2))]
+                 : [1, 2],
+    colorName: typeof t.colorName === 'string' ? t.colorName.slice(0, 40) : '',
+    colorHex:  validHex ? (hex.startsWith('#') ? hex : '#' + hex) : '',
+    confidence: (t.confidence && typeof t.confidence === 'object') ? t.confidence : undefined,
+  };
+}
+
+function parseDataUrl(img) {
+  const m = /^data:(image\/[a-zA-Z0-9.+-]+);base64,([\s\S]*)$/.exec(img || '');
+  if (m) return { media_type: m[1], data: m[2] };
+  return { media_type: 'image/jpeg', data: (img || '').replace(/^data:[^,]*,/, '') };
+}
+
+const TAG_SCHEMA_GUIDE = `You are tagging a single faux botanical product for the Evercrafted wreath design engine. Read the name, description, and photo (if given) and assign each field from the exact vocabulary below.
+
+ROLE — the job this piece does in a wreath:
+  focal=star bloom (peony, rose, dahlia, hydrangea, magnolia) · secondary=supporting bloom/berry cluster · greenery=foliage/eucalyptus/fern/ivy · accent=tiny detail spray or berry pick · structural=branch/twig/willow/manzanita · texture=dried/textural (pampas, cotton, thistle, wheat, pods)
+PASS — 1=foundation layer (structural, focal) · 2=detail layer (everything else)
+BEHAVIOR — heavy=large 4"+ blooms/branches · mid=medium 2-4" · light=small/delicate · wispy=very fine/airy
+MOVEMENT — weeping=droops/cascades down · reaching=grows up/out · sweeping=horizontal lateral flow · architectural=rigid geometric (bare branches) · cascading=falls in clusters · still=compact/rounded/no direction
+FINISH — matte=flat no shine · satin=soft sheen · metallic=gold/silver/champagne reflective · raw=natural dried · gloss=high lacquered shine
+PALETTE — neutral-light=white/cream/blush · neutral-mid=mauve/dusty rose/sage/tan · neutral-dark=burgundy/navy/charcoal/rust · botanical-green=any true green · champagne=warm gold/amber/wheat · silver=grey/pewter/platinum
+EP/ES — primary then secondary emotion from: nostalgia, grief, sadness, peace, joy, longing, warmth, trust, awe, tenderness, melancholy, reverence, anticipation
+INTENSITY — [min,max] on 1-3: 1=soft (peace, tenderness) · 2=medium (nostalgia, warmth) · 3=heavy (grief, awe)`;
+
+// ── POST /api/tag — suggest tags for a single item (text and/or photo) ─────────
+app.post('/api/tag', async (req, res) => {
+  try {
+    const name        = sanitizeInput(req.body.name);
+    const description = sanitizeInput(req.body.description);
+    const image       = typeof req.body.image === 'string' ? req.body.image : '';
+    if (!name && !description && !image) {
+      return res.status(400).json({ success: false, error: 'Provide a product name, description, or photo' });
+    }
+
+    const prompt = `${TAG_SCHEMA_GUIDE}
+
+Tag this single product.
+${name ? `Name: ${name}` : ''}
+${description ? `Description: ${description.slice(0, 600)}` : ''}
+${image ? 'A product photo is attached — study it for form, finish, colour, and movement.' : ''}
+
+Return ONLY one JSON object, no markdown, no backticks:
+{"role":"","pass":1,"behavior":"","movement":"","finish":"","palette":"","ep":"","es":"","intensity":[1,2],"colorName":"","colorHex":"#RRGGBB","confidence":{"role":"high|medium|low","movement":"high|medium|low","ep":"high|medium|low","finish":"high|medium|low"}}`;
+
+    const content = [{ type: 'text', text: prompt }];
+    if (image) {
+      const { media_type, data } = parseDataUrl(image);
+      content.push({ type: 'image', source: { type: 'base64', media_type, data } });
+    }
+
+    const callOnce = async () => {
+      const r = await client.messages.create({
+        model: MODEL,
+        max_tokens: 700,
+        system: 'You are a floral product tagging engine. Return ONLY a single valid JSON object. No prose, no markdown, no backticks.',
+        messages: [{ role: 'user', content }],
+      });
+      const text = r.content.find(b => b.type === 'text')?.text ?? '';
+      const m = text.match(/\{[\s\S]*\}/);
+      if (!m) throw new Error('No JSON object in tag response');
+      return JSON.parse(m[0]);
+    };
+
+    let raw;
+    try { raw = await callOnce(); }
+    catch { raw = await callOnce(); }
+
+    return res.json({ success: true, data: normalizeTag(raw) });
+  } catch (err) {
+    console.error('[/api/tag]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // ── POST /api/location ────────────────────────────────────────────────────────
 app.post('/api/location', async (req, res) => {
@@ -614,6 +712,94 @@ app.post('/api/waitlist', async (req, res) => {
     return res.json({ success: true });
   } catch (err) {
     console.error('[/api/waitlist]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── Inventory (saved tagged items) ────────────────────────────────────────────
+const INVENTORY_PATH = './inventory.json';
+
+function inventoryRow(b) {
+  const t = normalizeTag(b);
+  return {
+    owner:           (sanitizeInput(b.owner) || 'default').slice(0, 120),
+    name:            sanitizeInput(b.name).slice(0, 160),
+    sku:             sanitizeInput(b.sku).slice(0, 80),
+    price:           sanitizeInput(String(b.price ?? '')).slice(0, 20),
+    image_url:       (typeof b.imageUrl === 'string' ? b.imageUrl : '').slice(0, 2000),
+    description:     sanitizeInput(b.description).slice(0, 1000),
+    role: t.role, pass: (t.role === 'focal' || t.role === 'structural') ? 1 : 2, behavior: t.behavior, movement: t.movement,
+    finish: t.finish, palette: t.palette, ep: t.ep, es: t.es, blend: '',
+    intensity: t.intensity, color_name: t.colorName, color_hex: t.colorHex,
+    contrast: 'unified',
+    in_stock:        b.inStock === false ? false : true,
+    stock:           Number.isFinite(+b.stock) ? Math.max(0, parseInt(b.stock)) : 0,
+    recommended_qty: Number.isFinite(+b.recommendedQty) ? Math.max(1, parseInt(b.recommendedQty)) : 4,
+  };
+}
+
+function rowToClient(r) {
+  return {
+    id: r.id, owner: r.owner, name: r.name, sku: r.sku, price: r.price,
+    imageUrl: r.image_url, description: r.description,
+    role: r.role, pass: r.pass, behavior: r.behavior, movement: r.movement,
+    finish: r.finish, palette: r.palette, ep: r.ep, es: r.es,
+    intensity: r.intensity, colorName: r.color_name, colorHex: r.color_hex,
+    inStock: r.in_stock, stock: r.stock, recommendedQty: r.recommended_qty,
+    createdAt: r.created_at,
+  };
+}
+
+// POST /api/inventory — save a tagged item
+app.post('/api/inventory', async (req, res) => {
+  try {
+    if (!sanitizeInput(req.body.name)) {
+      return res.status(400).json({ success: false, error: 'name is required' });
+    }
+    const row = inventoryRow(req.body);
+
+    if (supabase) {
+      const { data, error } = await supabase.from('inventory').insert(row).select().single();
+      if (error) throw new Error(error.message);
+      console.log(`[/api/inventory] (supabase) saved ${row.name}`);
+      return res.json({ success: true, data: rowToClient(data) });
+    }
+
+    // Fallback: append to local inventory.json (local dev only — not durable on Vercel)
+    const clientRow = rowToClient({
+      ...row,
+      id: 'inv_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
+      created_at: new Date().toISOString(),
+    });
+    let list = [];
+    try { list = JSON.parse(fs.readFileSync(INVENTORY_PATH, 'utf8')); } catch {}
+    list.push(clientRow);
+    fs.writeFileSync(INVENTORY_PATH, JSON.stringify(list, null, 2));
+    console.log(`[/api/inventory] (file) saved ${row.name}`);
+    return res.json({ success: true, data: clientRow });
+  } catch (err) {
+    console.error('[/api/inventory POST]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/inventory — list saved items (optionally ?owner=...)
+app.get('/api/inventory', async (req, res) => {
+  try {
+    const owner = sanitizeInput(req.query.owner) || '';
+    if (supabase) {
+      let q = supabase.from('inventory').select('*').order('created_at', { ascending: false }).limit(1000);
+      if (owner) q = q.eq('owner', owner);
+      const { data, error } = await q;
+      if (error) throw new Error(error.message);
+      return res.json({ success: true, data: (data || []).map(rowToClient) });
+    }
+    let list = [];
+    try { list = JSON.parse(fs.readFileSync(INVENTORY_PATH, 'utf8')); } catch {}
+    if (owner) list = list.filter(x => x.owner === owner);
+    return res.json({ success: true, data: list.slice().reverse() });
+  } catch (err) {
+    console.error('[/api/inventory GET]', err.message);
     return res.status(500).json({ success: false, error: err.message });
   }
 });
