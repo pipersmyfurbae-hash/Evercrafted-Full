@@ -80,6 +80,11 @@ function shade(hex, amt){
     r=Math.max(0,Math.min(255,r+amt));g=Math.max(0,Math.min(255,g+amt));b=Math.max(0,Math.min(255,b+amt));
     return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join(''); }catch(e){ return hex; }
 }
+function rgba(hex, a){
+  try{ let h=hex.replace('#',''); if(h.length===3)h=h.split('').map(c=>c+c).join('');
+    const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
+    return `rgba(${r},${g},${b},${a})`; }catch(e){ return hex; }
+}
 // Build an SVG glyph for ONE placeable unit (a single bloom/sprig — never the whole spray)
 function floralSVG(item){
   const c = item.colorHex || PALETTE_HEX[item.palette] || '#c9b7a8';
@@ -130,8 +135,8 @@ function layout(design){
   placed.units.forEach(p => {
     const cx = 50 + p.x * (maxR * 100);
     const cy = 50 + p.y * (maxR * 100);
-    let sizePct = p.sizeFrac * 100;
-    sizePct = Math.max(4, Math.min(34, sizePct));
+    let sizePct = p.sizeFrac * 100 * 1.15;          // true-to-scale, slight overlap
+    sizePct = Math.max(5, Math.min(40, sizePct));
     const el = document.createElement('div');
     el.className = 'floral';
     el.style.left = cx + '%'; el.style.top = cy + '%';
@@ -139,16 +144,19 @@ function layout(design){
     el.style.zIndex = p.z; el.dataset.z = p.z; el.dataset.rot = p.rot;
     el.style.transform = 'translate(-50%,-50%) scale(.55) rotate(' + p.rot + 'deg)';
     el.title = (p.name || '') + ' · ' + p.role + (p.stemCount > 1 ? ` (from ${p.stemCount} stems)` : '');
-    el.innerHTML = p.assetUrl
-      ? `<img src="${p.assetUrl}" alt="" style="width:100%;height:100%;object-fit:contain">`
-      : floralSVG({ role: p.role, colorHex: p.colorHex, palette: p.palette });
+    // soft true-colour mass — translucent circle, true size; overlaps blend like watercolour
+    const col = p.colorHex || PALETTE_HEX[p.palette] || '#c9b7a8';
+    const isGreen = p.role === 'greenery' || p.role === 'structural';
+    el.style.borderRadius = '50%';
+    el.style.background = `radial-gradient(circle, ${rgba(col, isGreen ? 0.50 : 0.64)} 0%, ${rgba(col, 0.34)} 52%, ${rgba(col, 0)} 100%)`;
+    el.style.filter = 'blur(0.5px)';
+    el.style.mixBlendMode = 'multiply';
     stage.appendChild(el);
     FLORALS.push(el);
   });
 
   buildLegend(slots);
-  document.getElementById('note').textContent = slots.some(s=>s.assetUrl)
-    ? '' : 'Florals shown as styled placeholders. Add real cutout assets (Catalogue → make cutout) and they’ll composite here automatically.';
+  document.getElementById('note').textContent = 'Each mass is a floral in its true colour, drawn to scale at its real diameter — a placement study for building, not a photo. The hero render is generated separately.';
   play();
 }
 

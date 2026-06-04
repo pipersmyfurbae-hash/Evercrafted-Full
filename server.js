@@ -1027,11 +1027,14 @@ async function generateImage(prompt, aspect) {
 // POST /api/render — generate a wreath image from a render prompt
 app.post('/api/render', async (req, res) => {
   try {
-    const prompt = String(req.body.prompt || '').slice(0, 2000).trim();
-    if (!prompt) return res.status(400).json({ success: false, error: 'prompt is required' });
+    const raw = String(req.body.prompt || '').slice(0, 2000).trim();
+    if (!raw) return res.status(400).json({ success: false, error: 'prompt is required' });
     const m = await meter(sanitizeInput(req.body.owner), sanitizeInput(req.body.tier), 'renders');
     if (!m.ok) return res.status(402).json({ success: false, error: 'limit_reached', kind: 'renders', limit: m.limit, used: m.used, message: `You've used all ${m.limit} renders in your plan this month. Upgrade for more.` });
     const aspect = req.body.aspect === 'square' ? 'square' : 'portrait';
+    // Wreath-lock: image models (esp. FLUX) drift to bouquets/window-boxes. Lead with
+    // the circular ring form and forbid the wrong shapes, so the output is a WREATH.
+    const prompt = `A complete circular botanical wreath — round ring shape with an open hollow center, hanging flat and centered against the wall. ${raw} The subject is unmistakably a round hanging wreath, NOT a bouquet, NOT a vase or jar of flowers, NOT a table centerpiece, NOT a windowsill arrangement, NOT a flower box. Centered composition, full circular form visible.`;
     const url = await generateImage(prompt, aspect);
     if (!url) throw new Error('No image returned');
 
