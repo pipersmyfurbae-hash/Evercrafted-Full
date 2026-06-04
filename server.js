@@ -250,6 +250,7 @@ function normalizeTag(t) {
   const hex = (t.colorHex || '').toString().trim();
   const validHex = /^#?[0-9a-fA-F]{6}$/.test(hex);
   return {
+    name:      typeof t.name === 'string' ? t.name.slice(0, 120) : '',
     role:      TAG_ROLES.includes(t.role)         ? t.role     : 'secondary',
     pass:      t.pass === 1 ? 1 : 2,
     behavior:  TAG_BEHAVIORS.includes(t.behavior) ? t.behavior : 'mid',
@@ -302,8 +303,8 @@ ${name ? `Name: ${name}` : ''}
 ${description ? `Description: ${description.slice(0, 600)}` : ''}
 ${image ? 'A product photo is attached — study it for form, finish, colour, and movement.' : ''}
 
-Return ONLY one JSON object, no markdown, no backticks:
-{"role":"","pass":1,"behavior":"","movement":"","finish":"","palette":"","ep":"","es":"","intensity":[1,2],"colorName":"","colorHex":"#RRGGBB","confidence":{"role":"high|medium|low","movement":"high|medium|low","ep":"high|medium|low","finish":"high|medium|low"}}`;
+Return ONLY one JSON object, no markdown, no backticks (include a short descriptive "name" — generate one from the photo if no name was given):
+{"name":"","role":"","pass":1,"behavior":"","movement":"","finish":"","palette":"","ep":"","es":"","intensity":[1,2],"colorName":"","colorHex":"#RRGGBB","confidence":{"name":"high|medium|low","role":"high|medium|low","movement":"high|medium|low","ep":"high|medium|low","finish":"high|medium|low"}}`;
 
     const content = [{ type: 'text', text: prompt }];
     if (image) {

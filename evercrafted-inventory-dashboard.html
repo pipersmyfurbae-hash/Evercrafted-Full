@@ -289,21 +289,32 @@ const PASS_COLORS = { 1: { bg:'rgba(74,96,64,.85)', text:'#fff' }, 2: { bg:'rgba
 const ROLE_COLORS = { structural:'#4a6040', focal:'#6a5a80', secondary:'#9a7a40', greenery:'#3a6040', texture:'#8a5a30', accent:'#6a7080', filler:'#7a7060' };
 const FINISH_LABELS = { matte:'Matte', satin:'Satin', metallic:'Metallic ✦', gloss:'Gloss', raw:'Raw' };
 
-function loadInventory() {
-  try {
-    const raw = localStorage.getItem('ec_inventory');
-    inventory = raw ? JSON.parse(raw) : [];
-  } catch(e) { inventory = []; }
+// apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
+const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
+const PALETTE_SWATCH = {'neutral-light':'#EFE9DE','neutral-mid':'#C9B7A8','neutral-dark':'#4A3F38','botanical-green':'#7A8C6B','champagne':'#D7C49A','silver':'#C2C6C9'};
+function mapServerItem(i){
+  return {
+    id:i.id, name:i.name, pass:i.pass, role:i.role, movement:i.movement,
+    finish:i.finish, palette:i.palette, contrast:'unified',
+    color: i.colorHex || PALETTE_SWATCH[i.palette] || '#ccc',
+    ep:i.ep, es:i.es, blend:'', intensity:i.intensity, weight:i.behavior,
+    stock:i.stock, taggedAt:'', imageDataUrl: i.imageUrl||''
+  };
+}
 
-  if (!inventory.length) {
-    inventory = getSampleInventory();
+async function loadInventory() {
+  try {
+    const res = await fetch(`${CONFIG.apiBase}/api/inventory`);
+    const json = await res.json();
+    if (!json || !json.success) throw new Error('load failed');
+    inventory = (json.data || []).map(mapServerItem);
+  } catch(e) {
+    inventory = getSampleInventory(); // offline / server unreachable → demo data
   }
   applyFilters();
 }
 
-function saveInventory() {
-  try { localStorage.setItem('ec_inventory', JSON.stringify(inventory)); } catch(e) {}
-}
+function saveInventory() { /* server-backed now — no-op */ }
 
 function applyFilters() {
   const q = document.getElementById('search').value.toLowerCase();
@@ -516,21 +527,22 @@ function adjustStock(delta) {
   if (!item) return;
   item.stock = Math.max(0, (item.stock||0) + delta);
   document.getElementById('drawer-stock').textContent = item.stock;
-  saveInventory();
+  fetch(`${CONFIG.apiBase}/api/inventory/${item.id}`, {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({stock:item.stock})}).catch(()=>{});
   applyFilters();
 }
 
 function updateStock(id, val) {
   const item = inventory.find(i => i.id === id);
-  if (item) { item.stock = Math.max(0, parseInt(val)||0); saveInventory(); }
+  if (!item) return;
+  item.stock = Math.max(0, parseInt(val)||0);
+  fetch(`${CONFIG.apiBase}/api/inventory/${id}`, {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({stock:item.stock})}).catch(()=>{});
 }
 
-function deleteItem(id) {
+async function deleteItem(id) {
   if (!confirm('Remove this item from inventory?')) return;
-  inventory = inventory.filter(i => i.id !== id);
-  saveInventory();
+  try { await fetch(`${CONFIG.apiBase}/api/inventory/${id}`, {method:'DELETE'}); } catch(e) {}
   closeDrawer();
-  applyFilters();
+  await loadInventory();
 }
 
 function exportJSON() {

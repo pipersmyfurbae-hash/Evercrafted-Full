@@ -216,6 +216,18 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
       <span class="sb-tooltip">Memory Scene Builder</span>
     </a>
 
+    <a class="sb-item" id="nav-commercial" onclick="showPanel('commercial',this)" href="#">
+      <i class="ti ti-building-store"></i>
+      <span class="sb-item-label">Commercial Creator</span>
+      <span class="sb-tooltip">Commercial Creator</span>
+    </a>
+
+    <a class="sb-item" id="nav-try" onclick="showPanel('try',this)" href="#">
+      <i class="ti ti-sparkles"></i>
+      <span class="sb-item-label">Try (taste)</span>
+      <span class="sb-tooltip">Client taste experience</span>
+    </a>
+
     <a class="sb-item" id="nav-blueprint-v2" onclick="showPanel('blueprint-v2',this)" href="#">
       <i class="ti ti-vector-triangle"></i>
       <span class="sb-item-label">Blueprint Engine</span>
@@ -434,6 +446,16 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
       <iframe src="evercrafted-memory-scene.html" class="tool-frame" title="Memory Scene Builder"></iframe>
     </div>
 
+    <!-- COMMERCIAL CREATOR -->
+    <div class="page-panel" id="panel-commercial">
+      <iframe src="evercrafted-commercial-creator.html" class="tool-frame" title="Commercial Creator"></iframe>
+    </div>
+
+    <!-- TRY (client taste) -->
+    <div class="page-panel" id="panel-try">
+      <iframe src="evercrafted-try.html" class="tool-frame" title="Client taste experience"></iframe>
+    </div>
+
     <!-- BLUEPRINT V2 -->
     <div class="page-panel" id="panel-blueprint-v2">
       <iframe src="evercrafted-v2-engine.html" class="tool-frame" title="Blueprint Engine v2"></iframe>
@@ -490,12 +512,15 @@ function toggleMobileSidebar() {
 const PANEL_LABELS = {
   home: 'Home',
   'memory': 'Memory Scene Builder',
+  commercial: 'Commercial Creator',
+  try: 'Client taste experience',
   'blueprint-v2': 'Blueprint Engine v2',
   unified: 'Unified Engine',
   'blueprint-v1': 'Blueprint Engine v1',
   tagger: 'Floral Tagger',
   dashboard: 'Inventory Dashboard',
 };
+const STUDIO_API = (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '';
 
 function showPanel(id, navEl) {
   document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
@@ -510,10 +535,14 @@ function showPanel(id, navEl) {
   if (id === 'home') updateHomeStats();
 }
 
-function updateHomeStats() {
+async function updateHomeStats() {
   try {
-    const raw = localStorage.getItem('ec_inventory');
-    const inv = raw ? JSON.parse(raw) : [];
+    let inv = [];
+    try {
+      const res = await fetch(`${STUDIO_API}/api/inventory`);
+      const json = await res.json();
+      inv = (json && json.success) ? (json.data || []) : [];
+    } catch (e) { inv = []; }
     const p1 = inv.filter(i => i.pass === 1).length;
     const low = inv.filter(i => (i.stock || 0) < 5).length;
     const emotions = [...new Set(inv.map(i => i.blend || i.ep).filter(Boolean))].length;
@@ -522,12 +551,12 @@ function updateHomeStats() {
     document.getElementById('stat-low').textContent = low || '0';
     document.getElementById('stat-emotions').textContent = emotions || '0';
     // Recent inventory
-    const recent = inv.slice(-5).reverse();
+    const recent = inv.slice(0, 5);
     const el = document.getElementById('recent-inventory');
     if (recent.length) {
       el.innerHTML = recent.map(item => `
         <div class="recent-item" onclick="showPanel('dashboard',document.getElementById('nav-dashboard'))">
-          <span class="ri-dot" style="background:${item.color||'#ccc'}"></span>
+          <span class="ri-dot" style="background:${item.colorHex||item.color||'#ccc'}"></span>
           <div class="ri-info">
             <div class="ri-name">${item.name}</div>
             <div class="ri-meta">${item.role||'—'} · ${item.blend||item.ep||'—'} · ${item.finish||'—'}</div>
