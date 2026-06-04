@@ -87,7 +87,10 @@ textarea{resize:vertical;min-height:90px}
 <div class="wrap">
   <div class="top">
     <div class="logo">Ever<span>crafted</span></div>
-    <a href="evercrafted-marketing-site.html">← Back to site</a>
+    <div style="display:flex;gap:1.5rem;align-items:center">
+      <a href="evercrafted-inventory.html">View inventory →</a>
+      <a href="evercrafted-marketing-site.html">Site</a>
+    </div>
   </div>
 
   <div class="intro">
@@ -311,7 +314,7 @@ async function save(){
   const btn = document.getElementById('btn-save');
   btn.disabled = true; btn.innerHTML = '<span class="spinner"></span> Saving…';
   try{
-    const res = await fetch(`${CONFIG.apiBase}/api/inventory`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(rec)});
+    const res = await fetch(`${CONFIG.apiBase}/api/inventory`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ ...rec, image: currentImage || '' })});
     const json = await res.json();
     if(!json.success) throw new Error(json.error||'Save failed');
     setSave('Saved to inventory.','ok');

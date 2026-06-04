@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F5F2ED; --surface:#FFFFFF; --ink:#1C1A17; --charcoal:#3A3530;
+  --stone:#7A736A; --faint:#A89F95; --line:#E4DDD3; --sage:#6B7C5C; --sage-pale:#EEF0EB;
+  --serif:'Cormorant Garamond',Georgia,serif; --sans:'Jost',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);line-height:1.6;font-weight:300}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.5rem}
+.top{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 0;border-bottom:1px solid var(--line)}
+.logo{font-family:var(--serif);font-size:1.5rem}.logo span{color:var(--sage)}
+.top-links{display:flex;gap:1.5rem;align-items:center}
+.top-links a{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--stone)}
+.top-links a:hover{color:var(--ink)}
+.btn-tag{padding:8px 16px;border:1px solid var(--ink);border-radius:100px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.btn-tag:hover{background:var(--ink);color:#fff}
+.intro{padding:2.25rem 0 1rem}
+.eyebrow{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);margin-bottom:.5rem}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4vw,2.8rem);line-height:1.1}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:1.5rem 0}
+@media(max-width:680px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{background:var(--surface);padding:1rem 1.1rem}
+.stat-num{font-family:var(--serif);font-size:1.9rem;line-height:1}
+.stat-num.warn{color:#9A5A5A}
+.stat-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--stone);margin-top:.3rem}
+/* controls */
+.controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:1.25rem 0}
+.controls input,.controls select{padding:9px 12px;border:1px solid var(--line);border-radius:5px;background:var(--surface);font-family:var(--sans);font-size:13px;color:var(--ink);outline:none;font-weight:300}
+.controls input:focus,.controls select:focus{border-color:var(--sage)}
+.controls input[type=text]{flex:1;min-width:200px}
+.pill{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--stone);background:var(--sage-pale);border-radius:20px;padding:4px 10px;cursor:pointer}
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:1rem;padding:.5rem 0 4rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:6px;overflow:hidden;position:relative}
+.card-img{height:140px;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.6rem;color:rgba(0,0,0,.22)}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.card-body{padding:.7rem .85rem}
+.card-name{font-family:var(--serif);font-size:1.1rem;line-height:1.15;margin-bottom:.45rem}
+.tagline{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.55rem}
+.chip{font-size:9px;letter-spacing:.04em;text-transform:uppercase;padding:2px 7px;border-radius:20px;background:var(--cream);border:1px solid var(--line);color:var(--charcoal)}
+.chip.sage{background:var(--sage-pale);color:var(--sage);border-color:transparent}
+.stockrow{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:.55rem;margin-top:.2rem}
+.stepper{display:flex;align-items:center;gap:.4rem}
+.stepper button{width:24px;height:24px;border:1px solid var(--line);background:var(--cream);border-radius:5px;cursor:pointer;font-size:14px;line-height:1;color:var(--charcoal)}
+.stepper button:hover{border-color:var(--sage);color:var(--sage)}
+.stepper .qty{min-width:24px;text-align:center;font-size:13px;font-weight:500}
+.low{color:#9A5A5A}
+.del{font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);cursor:pointer;background:none;border:none}
+.del:hover{color:#9A5A5A}
+.muted{color:var(--faint);font-size:13px;padding:2rem 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">Ever<span>crafted</span></div>
+    <div class="top-links">
+      <a href="evercrafted-marketing-site.html">Site</a>
+      <a class="btn-tag" href="evercrafted-tagger.html">+ Tag a piece</a>
+    </div>
+  </div>
+
+  <div class="intro">
+    <div class="eyebrow">Inventory</div>
+    <h1>What you have</h1>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="controls">
+    <input type="text" id="q" placeholder="Search by name…" oninput="render()">
+    <select id="f-role" onchange="render()"><option value="">All roles</option></select>
+    <select id="f-ep" onchange="render()"><option value="">All feelings</option></select>
+    <select id="f-finish" onchange="render()"><option value="">All finishes</option></select>
+    <select id="sort" onchange="render()">
+      <option value="new">Newest</option>
+      <option value="name">Name A–Z</option>
+      <option value="stock">Stock: low first</option>
+      <option value="role">Role</option>
+    </select>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
+const SWATCH = {'neutral-light':'#EFE9DE','neutral-mid':'#C9B7A8','neutral-dark':'#4A3F38','botanical-green':'#7A8C6B','champagne':'#D7C49A','silver':'#C2C6C9'};
+let ITEMS = [];
+
+async function load(){
+  try{
+    const res = await fetch(`${CONFIG.apiBase}/api/inventory`);
+    const json = await res.json();
+    ITEMS = json.success ? (json.data||[]) : [];
+  }catch(e){ ITEMS = []; }
+  buildFilters(); renderStats(); render();
+}
+
+function uniq(key){ return [...new Set(ITEMS.map(i=>i[key]).filter(Boolean))].sort(); }
+function buildFilters(){
+  const set=(id,vals)=>{ const el=document.getElementById(id); const cur=el.value; el.innerHTML=el.children[0].outerHTML+vals.map(v=>`<option value="${v}">${v}</option>`).join(''); el.value=cur; };
+  set('f-role',uniq('role')); set('f-ep',uniq('ep')); set('f-finish',uniq('finish'));
+}
+function renderStats(){
+  const total=ITEMS.length;
+  const p1=ITEMS.filter(i=>i.pass===1).length;
+  const p2=total-p1;
+  const low=ITEMS.filter(i=>(i.stock||0)<5).length;
+  const feelings=new Set(ITEMS.map(i=>i.ep)).size;
+  document.getElementById('stats').innerHTML = [
+    ['Pieces',total,''],['Foundation',p1,''],['Detail',p2,''],['Low stock',low, low?'warn':''],['Feelings',feelings,'']
+  ].map(([l,n,c])=>`<div class="stat"><div class="stat-num ${c}">${n}</div><div class="stat-label">${l}</div></div>`).join('');
+}
+
+function render(){
+  const q=document.getElementById('q').value.toLowerCase();
+  const fr=document.getElementById('f-role').value, fe=document.getElementById('f-ep').value, ff=document.getElementById('f-finish').value;
+  const sort=document.getElementById('sort').value;
+  let list=ITEMS.filter(i=>
+    (!q || (i.name||'').toLowerCase().includes(q)) &&
+    (!fr || i.role===fr) && (!fe || i.ep===fe) && (!ff || i.finish===ff));
+  if(sort==='name') list.sort((a,b)=>(a.name||'').localeCompare(b.name||''));
+  else if(sort==='stock') list.sort((a,b)=>(a.stock||0)-(b.stock||0));
+  else if(sort==='role') list.sort((a,b)=>(a.role||'').localeCompare(b.role||''));
+  // 'new' = as returned (already newest-first)
+  const grid=document.getElementById('grid');
+  if(!list.length){ grid.innerHTML='<p class="muted">Nothing here yet — '+(ITEMS.length?'no matches for those filters.':'<a href="evercrafted-tagger.html" style="color:var(--sage)">tag your first piece</a>.')+'</p>'; return; }
+  grid.innerHTML=list.map(i=>{
+    const bg=i.colorHex||SWATCH[i.palette]||'#E4DDD3';
+    const img=i.imageUrl?`<div class="card-img"><img src="${i.imageUrl}" alt="" onerror="this.parentElement.innerHTML='${(i.name||'?').charAt(0)}';this.parentElement.style.background='${bg}'"></div>`
+                        :`<div class="card-img" style="background:${bg}">${(i.name||'?').charAt(0)}</div>`;
+    const s=i.stock||0;
+    return `<div class="card">${img}<div class="card-body">
+      <div class="card-name">${esc(i.name)}</div>
+      <div class="tagline"><span class="chip sage">${i.role}</span><span class="chip">${i.ep}</span><span class="chip">${i.movement}</span></div>
+      <div class="stockrow">
+        <div class="stepper">
+          <button onclick="bump('${i.id}',-1)">–</button>
+          <span class="qty ${s<5?'low':''}">${s}</span>
+          <button onclick="bump('${i.id}',1)">+</button>
+        </div>
+        <button class="del" onclick="del('${i.id}')">Remove</button>
+      </div>
+    </div></div>`;
+  }).join('');
+}
+
+async function bump(id,delta){
+  const it=ITEMS.find(x=>x.id===id); if(!it) return;
+  const next=Math.max(0,(it.stock||0)+delta);
+  it.stock=next; renderStats(); render();
+  try{ await fetch(`${CONFIG.apiBase}/api/inventory/${id}`,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({stock:next})}); }catch(e){}
+}
+async function del(id){
+  if(!confirm('Remove this piece from your inventory?')) return;
+  ITEMS=ITEMS.filter(x=>x.id!==id); renderStats(); render();
+  try{ await fetch(`${CONFIG.apiBase}/api/inventory/${id}`,{method:'DELETE'}); }catch(e){}
+}
+function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+load();
+</script>
+</body>
+</html>

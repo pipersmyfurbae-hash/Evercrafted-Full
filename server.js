@@ -750,15 +750,31 @@ function rowToClient(r) {
   };
 }
 
-// POST /api/inventory — save a tagged item
+// Upload a base64 photo to the Supabase Storage bucket, return its public URL
+async function uploadInventoryPhoto(imageData, owner) {
+  const { media_type, data } = parseDataUrl(imageData);
+  const ext = (media_type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+  const path = `${owner}/${Date.now()}-${Math.floor(Math.random() * 1e6)}.${ext}`;
+  const buf = Buffer.from(data, 'base64');
+  const { error } = await supabase.storage.from('inventory-photos').upload(path, buf, { contentType: media_type, upsert: false });
+  if (error) throw new Error(error.message);
+  return supabase.storage.from('inventory-photos').getPublicUrl(path).data.publicUrl;
+}
+
+// POST /api/inventory — save a tagged item (optionally with a photo to persist)
 app.post('/api/inventory', async (req, res) => {
   try {
     if (!sanitizeInput(req.body.name)) {
       return res.status(400).json({ success: false, error: 'name is required' });
     }
     const row = inventoryRow(req.body);
+    const imageData = typeof req.body.image === 'string' ? req.body.image : '';
 
     if (supabase) {
+      if (!row.image_url && imageData) {
+        try { row.image_url = await uploadInventoryPhoto(imageData, row.owner); }
+        catch (e) { console.warn('[/api/inventory] photo upload failed:', e.message); }
+      }
       const { data, error } = await supabase.from('inventory').insert(row).select().single();
       if (error) throw new Error(error.message);
       console.log(`[/api/inventory] (supabase) saved ${row.name}`);
@@ -766,6 +782,7 @@ app.post('/api/inventory', async (req, res) => {
     }
 
     // Fallback: append to local inventory.json (local dev only — not durable on Vercel)
+    if (!row.image_url && imageData) row.image_url = imageData; // store data URL locally
     const clientRow = rowToClient({
       ...row,
       id: 'inv_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
@@ -779,6 +796,53 @@ app.post('/api/inventory', async (req, res) => {
     return res.json({ success: true, data: clientRow });
   } catch (err) {
     console.error('[/api/inventory POST]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// PATCH /api/inventory/:id — update stock / in-stock flag
+app.patch('/api/inventory/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    const patch = {};
+    if (req.body.stock !== undefined)   patch.stock = Math.max(0, parseInt(req.body.stock) || 0);
+    if (req.body.inStock !== undefined) patch.in_stock = !!req.body.inStock;
+    if (!Object.keys(patch).length) return res.status(400).json({ success: false, error: 'nothing to update' });
+
+    if (supabase) {
+      const { data, error } = await supabase.from('inventory').update(patch).eq('id', id).select().single();
+      if (error) throw new Error(error.message);
+      return res.json({ success: true, data: rowToClient(data) });
+    }
+    let list = [];
+    try { list = JSON.parse(fs.readFileSync(INVENTORY_PATH, 'utf8')); } catch {}
+    const idx = list.findIndex(x => x.id === id);
+    if (idx < 0) return res.status(404).json({ success: false, error: 'not found' });
+    if ('stock' in patch)    list[idx].stock = patch.stock;
+    if ('in_stock' in patch) list[idx].inStock = patch.in_stock;
+    fs.writeFileSync(INVENTORY_PATH, JSON.stringify(list, null, 2));
+    return res.json({ success: true, data: list[idx] });
+  } catch (err) {
+    console.error('[/api/inventory PATCH]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE /api/inventory/:id
+app.delete('/api/inventory/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (supabase) {
+      const { error } = await supabase.from('inventory').delete().eq('id', id);
+      if (error) throw new Error(error.message);
+      return res.json({ success: true });
+    }
+    let list = [];
+    try { list = JSON.parse(fs.readFileSync(INVENTORY_PATH, 'utf8')); } catch {}
+    fs.writeFileSync(INVENTORY_PATH, JSON.stringify(list.filter(x => x.id !== id), null, 2));
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('[/api/inventory DELETE]', err.message);
     return res.status(500).json({ success: false, error: err.message });
   }
 });
