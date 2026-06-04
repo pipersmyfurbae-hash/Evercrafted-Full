@@ -26,6 +26,21 @@
     emotions:   ['nostalgia', 'grief', 'sadness', 'peace', 'joy', 'longing', 'warmth', 'trust', 'awe', 'tenderness', 'melancholy', 'reverence', 'anticipation'],
   };
 
+  // ── Emotion bridge: our 13 emotions → (valence, arousal) ────────────────────
+  // The console runs on a 2D valence/arousal model + 4 quadrants; our product
+  // runs on these 13 discrete emotions. This ONE table reconciles them, so the
+  // quadrant logic, design-trait derivation, and DNA can all sit on top of our
+  // real emotion vocabulary with no drift. Values in [-1, 1]:
+  //   valence  = unpleasant (−) … pleasant (+)
+  //   arousal  = calm/subdued (−) … energised (+)
+  const EMOTION_VA = {
+    nostalgia:    [ 0.20, -0.20],  grief:     [-0.80, -0.20],  sadness:      [-0.60, -0.40],
+    peace:        [ 0.60, -0.70],  joy:       [ 0.90,  0.60],  longing:      [-0.20,  0.10],
+    warmth:       [ 0.70, -0.20],  trust:     [ 0.55, -0.35],  awe:          [ 0.50,  0.70],
+    tenderness:   [ 0.70, -0.40],  melancholy:[-0.50, -0.50],  reverence:    [ 0.30, -0.30],
+    anticipation: [ 0.40,  0.55],
+  };
+
   // ── Physical realism: yield, unit size, stem length ────────────────────────
   // A stem/spray usually yields MORE THAN ONE placeable floral or sprig. These
   // drive (A) stem-count math and (B) how many units the visualizer places,
@@ -134,10 +149,12 @@
   // Slot-fill driven by role slots, poem-emotion tiers, and a variety gate that
   // prevents the same movement or emotion repeating within a tier. NOT a global
   // score ranking — that would converge on the same florals every time.
-  function runSlotFill(inventory, emotions, formula, intensity, poemEmotions, wreathDiam) {
+  function runSlotFill(inventory, emotions, formula, intensity, poemEmotions, wreathDiam, coverageOverride) {
     const pe = poemEmotions || {};
     const diam = (+wreathDiam > 0) ? +wreathDiam : 22;
-    const coverage = coverageFor(formula);
+    // coverage normally comes from the formula's arc; an emotion-derived override
+    // (from deriveDesignParams) can take its place to drive counts off feeling.
+    const coverage = (+coverageOverride > 0 && +coverageOverride <= 1) ? +coverageOverride : coverageFor(formula);
     const coveredLen = Math.PI * diam * coverage; // inches of ring actually dressed
     const tierEmotionMap = {
       'Foundation': pe.structural ? [pe.structural.toLowerCase(), ...emotions] : emotions,
@@ -315,6 +332,90 @@
     return { units, arc: { s, e: arc.e, span, full }, anchorDeg, counterDeg };
   }
 
-  return { VOCAB, normalizeTag, unitSpec, BUDGET, ZS, BU, SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill,
-           STEM_DENSITY, PLACE_YIELD, coverageFor, ROLE_BAND, ROLE_Z, placeSlots };
+  // ── THE EMOTION BRIDGE (single source of truth) ─────────────────────────────
+  // "AI interprets, geometry places." The AI yields emotions; these pure,
+  // deterministic functions turn emotion → design parameters → a suggested
+  // formula. No randomness. This is the keystone the drama slider, the DNA
+  // readout, the Evaluator, and the memory pipeline all hang from.
+  const _clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+  const _r2 = v => Math.round(v * 100) / 100;
+
+  function quadrantFor(v, a) {
+    return v >= 0 && a >= 0 ? 'Festive & Bright'
+         : v <  0 && a >= 0 ? 'Dramatic Tension'
+         : v >= 0 && a <  0 ? 'Cozy & Calm'
+         :                     'Vintage Melancholy';
+  }
+
+  // Accepts an emotions array, a comma/slash string, or an {ep, es, blend} object.
+  // The primary emotion is weighted higher than secondaries.
+  function emotionToVA(emotions) {
+    let list = [];
+    if (Array.isArray(emotions)) list = emotions;
+    else if (typeof emotions === 'string') list = emotions.split(/[,/]/);
+    else if (emotions && typeof emotions === 'object') list = [emotions.ep, emotions.es, emotions.blend];
+    list = list.filter(Boolean).map(e => String(e).toLowerCase().trim());
+    let sv = 0, sa = 0, w = 0;
+    list.forEach((e, i) => {
+      const va = EMOTION_VA[e];
+      if (!va) return;
+      const wt = i === 0 ? 1 : 0.6;
+      sv += va[0] * wt; sa += va[1] * wt; w += wt;
+    });
+    const valence = w ? sv / w : 0, arousal = w ? sa / w : 0;
+    return { valence, arousal, quadrant: quadrantFor(valence, arousal) };
+  }
+
+  // Suggest one of our canonical formulas from derived design params.
+  function _formulaFromParams(p) {
+    if (p.symmetry >= 0.72) return 'Garden Scatter';                 // balanced / radial
+    if (p.quadrant === 'Festive & Bright')  return p.coverage > 0.6 ? 'Bottom Heavy' : 'Focal Burst';
+    if (p.quadrant === 'Cozy & Calm')       return p.coverage < 0.45 ? 'Crescent' : 'Side Sweep';
+    if (p.quadrant === 'Dramatic Tension')  return 'Wild Asymmetry';
+    return 'Bottom Heavy';                                           // Vintage Melancholy: grounded, weeping
+  }
+
+  // emotion (or VA) → the design knobs our engine actually uses. This is the
+  // console's deriveCanonDNA, retargeted to OUR parameters (coverage, density,
+  // spread, symmetry, ratios) instead of the mock DNA fields.
+  function deriveDesignParams(input, opts) {
+    opts = opts || {};
+    const va = (input && typeof input === 'object' && 'valence' in input) ? input : emotionToVA(input);
+    const v = _clamp(va.valence, -1, 1), a = _clamp(va.arousal, -1, 1);
+    const absA = Math.abs(a);
+    const dist = Math.min(1, Math.hypot(v, a) / Math.SQRT2);
+    const quadrant = va.quadrant || quadrantFor(v, a);
+
+    const density       = _r2(_clamp(0.35 + absA * 0.50 + (v > 0 ? v * 0.12 : 0), 0.30, 0.95));
+    const negativeSpace = _r2(_clamp(absA * 0.35 + (v < 0 ? -v * 0.35 : 0), 0, 0.70));
+    const coverage      = _r2(_clamp(0.70 - negativeSpace * 0.55, 0.28, 0.78));
+    // asymmetric is the house style; only abundant/positive-energetic designs
+    // approach radial symmetry (Garden Scatter). Negative space pulls it down.
+    const symmetry      = _r2(_clamp(0.35 + (v > 0 ? v * 0.25 : 0) + (a > 0 ? a * 0.15 : 0) - negativeSpace * 0.30, 0, 1));
+    const spreadDeg     = Math.round(_clamp(40 + v * 30 + a * 10, 15, 90));
+    const greeneryRatio = _r2(_clamp(0.30 + dist * 0.25 + (v < 0 ? 0.08 : 0), 0.30, 0.70));
+    const focalRatio    = _r2(_clamp(0.32 - density * 0.22, 0.10, 0.30));
+    const focalDepth    = _r2(_clamp(0.40 + density * 0.50, 0.40, 0.95));
+    const styleSignature = quadrant === 'Festive & Bright' ? 'abundant'
+                         : quadrant === 'Cozy & Calm'      ? 'minimal'
+                         : quadrant === 'Dramatic Tension' ? 'editorial' : 'memorial';
+    const cp = (opts.colorPref || '').toLowerCase();
+    const colorBias = cp.includes('warm') ? 'warm' : cp.includes('cool') ? 'cool'
+                    : (cp.includes('split') || cp.includes('contrast')) ? 'split'
+                    : v > 0.2 ? 'warm' : v < -0.2 ? 'cool' : 'neutral';
+    const greeneryDirection = v > 0.2 ? 'outward' : v < -0.2 ? 'inward' : 'balanced';
+
+    const params = { valence: _r2(v), arousal: _r2(a), quadrant, distance: _r2(dist),
+      coverage, density, negativeSpace, symmetry, spreadDeg, greeneryRatio, focalRatio,
+      focalDepth, styleSignature, colorBias, greeneryDirection };
+    params.formula = _formulaFromParams(params);
+    return params;
+  }
+
+  // Public: emotion(s) → suggested canonical formula.
+  function suggestFormula(emotions) { return deriveDesignParams(emotions).formula; }
+
+  return { EC_CANON: 'v1', VOCAB, EMOTION_VA, normalizeTag, unitSpec, BUDGET, ZS, BU,
+           SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill, STEM_DENSITY, PLACE_YIELD, coverageFor,
+           ROLE_BAND, ROLE_Z, placeSlots, quadrantFor, emotionToVA, deriveDesignParams, suggestFormula };
 });
