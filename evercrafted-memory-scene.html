@@ -424,9 +424,8 @@ async function startGeneration() {
 
 // ── CONFIG ──────────────────────────────────────────────
 const CONFIG = {
-  apiBase: 'http://localhost:3001',
-  // Change to your Vercel URL when deployed:
-  // apiBase: 'https://your-project.vercel.app',
+  // apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
+  apiBase: (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '',
 };
 
 // ── CALL 1: Location researcher → server ─────────────────

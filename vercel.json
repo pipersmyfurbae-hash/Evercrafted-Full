@@ -3,13 +3,14 @@
   "builds": [
     {
       "src": "server.js",
-      "use": "@vercel/node"
-    }
+      "use": "@vercel/node",
+      "config": { "includeFiles": ["evercrafted-shop-data.json"] }
+    },
+    { "src": "*.html", "use": "@vercel/static" }
   ],
   "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "server.js"
-    }
+    { "src": "/api/(.*)", "dest": "server.js" },
+    { "src": "/", "dest": "/evercrafted-marketing-site.html" },
+    { "src": "/(.*\\.html)", "dest": "/$1" }
   ]
 }

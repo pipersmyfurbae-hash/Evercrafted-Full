@@ -33,14 +33,32 @@ function sanitizeInput(text) {
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+// ── Supabase (waitlist storage) ─────────────────────────────────────────────
+// Uses the service role key server-side so inserts bypass RLS. If the env vars
+// are not set, /api/waitlist falls back to writing the local waitlist.json file.
+let supabase = null;
+if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+  const { createClient } = require('@supabase/supabase-js');
+  supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
+    auth: { persistSession: false },
+  });
+}
+
 // ── CORS ──────────────────────────────────────────────────────────────────────
+const EXTRA_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean);
+
 app.use(cors({
   origin: (origin, cb) => {
     const allowed = [
       'http://localhost:3000',
+      'http://localhost:3001',
       'http://localhost:5500',
       'http://localhost:8080',
       'http://127.0.0.1:5500',
+      ...EXTRA_ORIGINS,
     ];
     // Allow file:// origins (origin is 'null' as a string) and listed origins
     if (!origin || origin === 'null' || allowed.includes(origin)) return cb(null, true);
@@ -551,11 +569,12 @@ app.post('/api/gaps', (req, res) => {
 // ── POST /api/waitlist ────────────────────────────────────────────────────────
 const WAITLIST_PATH = './waitlist.json';
 
-app.post('/api/waitlist', (req, res) => {
+app.post('/api/waitlist', async (req, res) => {
   try {
     const email       = sanitizeInput(req.body.email).slice(0, 254);
     const scene_title = sanitizeInput(req.body.scene_title);
     const memory      = sanitizeInput(req.body.memory);
+    const source      = sanitizeInput(req.body.source) || 'try-page';
     if (!email || typeof email !== 'string') {
       return res.status(400).json({ success: false, error: 'email is required' });
     }
@@ -564,16 +583,23 @@ app.post('/api/waitlist', (req, res) => {
       email:       email.trim().toLowerCase(),
       scene_title: scene_title || '',
       memory:      memory || '',
-      timestamp:   new Date().toISOString(),
-      source:      'try-page',
+      source,
     };
 
+    if (supabase) {
+      const { error } = await supabase.from('waitlist').insert(entry);
+      if (error) throw new Error(error.message);
+      console.log(`[/api/waitlist] (supabase) ${entry.email} — ${entry.scene_title}`);
+      return res.json({ success: true });
+    }
+
+    // Fallback: append to local waitlist.json (local dev only — not durable on Vercel)
     let list = [];
     try { list = JSON.parse(fs.readFileSync(WAITLIST_PATH, 'utf8')); } catch {}
-    list.push(entry);
+    list.push({ ...entry, timestamp: new Date().toISOString() });
     fs.writeFileSync(WAITLIST_PATH, JSON.stringify(list, null, 2));
 
-    console.log(`[/api/waitlist] ${entry.email} — ${entry.scene_title}`);
+    console.log(`[/api/waitlist] (file) ${entry.email} — ${entry.scene_title}`);
     return res.json({ success: true });
   } catch (err) {
     console.error('[/api/waitlist]', err.message);

@@ -270,7 +270,8 @@ input.qi-text::placeholder{color:var(--fa)}
 </div>
 
 <script>
-const CONFIG = { apiBase: 'http://localhost:3001' };
+// apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
+const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
 
 const STEPS = [
   { id:'memory', type:'textarea', eye:'The memory', q:'What should this wreath hold?', sub:'A person, a place, a season, a feeling. Plain language only.', placeholder:'My grandmother\'s garden in late September — cosmos swaying, dried lavender, that warmth before the cold arrived…', key:'memory' },
@@ -448,14 +449,25 @@ function showOutput(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function handleGate(e){
+async function handleGate(e){
   e.preventDefault();
   const email=document.getElementById('gate-email').value;
+  try{
+    await fetch(`${CONFIG.apiBase}/api/waitlist`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email,
+        scene_title: sceneData?.scene_title || '',
+        memory: answers.memory || '',
+        source: 'try-page',
+      }),
+    });
+  }catch(err){ console.warn('Waitlist:',err.message); }
   document.getElementById('gate-note').textContent=`✓ ${email} is on the list. Founding pricing locked in.`;
   document.getElementById('gate-note').style.color='var(--green)';
   document.getElementById('gate-note').style.fontWeight='500';
   document.getElementById('gate-email').value='';
-  // In production: POST to /api/waitlist with { email, scene_title: sceneData?.scene_title, memory: answers.memory }
 }
 
 function resetAll(){

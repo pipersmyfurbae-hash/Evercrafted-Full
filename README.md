@@ -160,12 +160,36 @@ Deterministic slot-fill. No AI call — pure inventory logic.
 
 ---
 
+## Waitlist storage (Supabase)
+
+`POST /api/waitlist` writes to the Supabase `waitlist` table when
+`SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are set. If they are not set,
+it falls back to appending to a local `waitlist.json` file (fine for local
+dev, but **not durable on Vercel** — serverless filesystems are ephemeral).
+
+- Project: **Evercrafted** → `https://qybnmlqesnbmgxayhllf.supabase.co`
+- Table: `public.waitlist` (`id, email, scene_title, memory, source, created_at`)
+- RLS is enabled with no public policies. The server uses the **service role**
+  key, which bypasses RLS, so the table is not readable/writable by the browser.
+
+Get the service role key from the Supabase dashboard:
+**Project Settings → API → `service_role` secret**. Keep it server-side only.
+
+---
+
 ## Deploying to Vercel
 
 1. Install the Vercel CLI: `npm i -g vercel`
-2. From the `evercrafted-api` directory: `vercel`
-3. Set the environment variable in Vercel dashboard:
-   - `ANTHROPIC_API_KEY` → your key
-4. Update your frontend's API base URL to the Vercel deployment URL.
+2. From the project directory: `vercel`
+3. Set environment variables in the Vercel dashboard (Project → Settings → Environment Variables):
+   - `ANTHROPIC_API_KEY` → your Anthropic key
+   - `SUPABASE_URL` → `https://qybnmlqesnbmgxayhllf.supabase.co`
+   - `SUPABASE_SERVICE_ROLE_KEY` → your Supabase service role key
+   - `ALLOWED_ORIGINS` → (optional) extra browser origins, comma-separated
+4. Deploy: `vercel --prod`
 
-The included `vercel.json` routes all requests to `server.js` as a serverless function.
+`vercel.json` serves the static `.html` pages and routes `/api/*` to
+`server.js` (a serverless function). The site root (`/`) serves the marketing
+page. The front-end `apiBase` auto-detects its environment: it calls
+`http://localhost:3001` when opened locally and the same origin in production —
+no manual URL edits needed.

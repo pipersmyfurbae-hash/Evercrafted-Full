@@ -199,7 +199,8 @@ input.qi-text::placeholder,textarea.qi::placeholder{color:var(--fa)}
 </div>
 
 <script>
-const CONFIG = { apiBase: 'http://localhost:3001' };
+// apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
+const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
 
 const STEPS = [
   { id:'buyer', type:'options', cols:2, eye:'The buyer', q:'Who is buying this wreath?', sub:'Think about your most likely customer for this piece.', key:'buyer',
