@@ -937,7 +937,7 @@ function renderBlueprint(r) {
       renderPrompt: document.getElementById('prompt-text')?.textContent || r.render_prompt || '',
       renderSurface: r.render_surface || '',
       location: r.map_query || (typeof answers !== 'undefined' ? (answers.location || '') : ''),
-      slots: filledSlots.filter(s => s.item).map(s => ({ role: s.role, tier: s.tier, name: s.item.name, stemCount: s.stemCount, ep: s.item.ep })),
+      slots: filledSlots.filter(s => s.item).map(s => ({ role: s.role, tier: s.tier, name: s.item.name, stemCount: s.stemCount, ep: s.item.ep, colorHex: s.item.color, behavior: s.item.behavior, movement: s.item.movement, palette: s.item.palette, assetUrl: s.item.assetUrl || '' })),
     },
   });
 
@@ -957,9 +957,15 @@ function buildSaveBar(design) {
   }
   bar.innerHTML = `<button id="save-design-btn" style="padding:10px 22px;border-radius:100px;border:none;background:var(--green,#4A6741);color:#fff;font-family:var(--sans,system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer">Save this design</button>
     <button id="gen-render-btn" style="padding:10px 22px;border-radius:100px;border:1px solid var(--green,#4A6741);background:transparent;color:var(--green,#4A6741);font-family:var(--sans,system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer">Generate render</button>
+    <button id="build-view-btn" style="padding:10px 22px;border-radius:100px;border:1px solid var(--green,#4A6741);background:transparent;color:var(--green,#4A6741);font-family:var(--sans,system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer">Build view</button>
     <span id="save-design-msg" style="font-size:12px;color:var(--mu,#888)"></span>`;
   document.getElementById('save-design-btn').onclick = () => saveDesign(design);
   document.getElementById('gen-render-btn').onclick = () => generateRender(design);
+  document.getElementById('build-view-btn').onclick = () => openBuildView(design);
+}
+function openBuildView(design) {
+  try { localStorage.setItem('ec_build', JSON.stringify({ title: design.title, formula: design.formula, totalStems: design.totalStems, slots: design.data.slots })); } catch (e) {}
+  window.open('evercrafted-build-view.html', '_blank');
 }
 async function generateRender(design) {
   const msg = document.getElementById('save-design-msg');

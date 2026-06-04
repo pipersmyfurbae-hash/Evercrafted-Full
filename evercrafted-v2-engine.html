@@ -881,7 +881,7 @@ async function saveDesign(){
   const msg=document.getElementById('save-msg');
   if(!r){ if(msg) msg.textContent='Run the engine first.'; return; }
   const tot=r.all.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0);
-  const slots=r.all.filter(s=>s.item).map(s=>({role:s.role,name:s.item.name,stemCount:s.stemCount,ep:s.item.ep,movement:s.item.movement}));
+  const slots=r.all.filter(s=>s.item).map(s=>({role:s.role,name:s.item.name,stemCount:s.stemCount,ep:s.item.ep,movement:s.item.movement,colorHex:s.item.color,behavior:s.item.weight,palette:s.item.palette,assetUrl:s.item.assetUrl||''}));
   const design={
     title:'Manual design — '+(r.formula||'wreath'),
     source:'manual', formula:r.formula||'', totalStems:tot,

@@ -94,6 +94,7 @@ async function load(){
       <div class="actions">
         <div style="display:flex;gap:1rem;align-items:center">
           <button class="toggle" onclick="document.getElementById('c-${d.id}').classList.toggle('open')">View details</button>
+          <a class="toggle" href="evercrafted-build-view.html?design=${d.id}" target="_blank">View build ↗</a>
           ${renderBtn}
         </div>
         <button class="del" onclick="del('${d.id}')">Delete</button>
