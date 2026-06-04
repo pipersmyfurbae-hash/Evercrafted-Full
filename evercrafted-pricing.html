@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Evercrafted</title>
+<meta name="description" content="Start free with Bloom. Grow into Craft, Studio, or Atelier. Every tier lets you design from memory — higher tiers give you the tools to go further.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Dancing+Script:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --white:#FFFFFF;--off:#F9F7F4;--paper:#F2EFE9;--warm:#EDE8E0;
+  --black:#1A1A1A;--charcoal:#2E2E2E;--ink:#4A4A4A;--muted:#787878;--faint:#A8A8A8;
+  --green:#4A6741;--gl:#6B8F67;--gp:#EEF2ED;--gd:rgba(74,103,65,.10);
+  --gold:#9A7A40;--goldl:#C4A06A;--goldp:#F5EFE4;--goldd:rgba(154,122,64,.10);
+  --blue:#4A6785;--bluep:#EEF4F9;
+  --dust:#7A5A80;--dustp:#F5EEF4;
+  --bd:#E4DFD8;--bdd:#CCC7BE;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',system-ui,sans-serif;
+  --script:'Dancing Script',cursive;
+  --sh:0 1px 4px rgba(0,0,0,.06);
+  --sm:0 4px 20px rgba(0,0,0,.08);
+  --sl:0 16px 56px rgba(0,0,0,.12);
+  --tr:220ms ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--off);color:var(--black);line-height:1.6;overflow-x:hidden}
+
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0 2.5rem;height:60px;display:flex;align-items:center;justify-content:space-between;background:rgba(249,247,244,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);box-shadow:var(--sh)}
+.nav-logo{font-family:var(--serif);font-size:1.4rem;font-weight:400;letter-spacing:.03em;color:var(--black);text-decoration:none}
+.nav-logo span{color:var(--green)}
+.nav-links{display:flex;align-items:center;gap:1.75rem}
+.nav-links a{font-size:13px;font-weight:500;color:var(--ink);letter-spacing:.04em;text-decoration:none;transition:color var(--tr)}
+.nav-links a:hover{color:var(--green)}
+.nav-links a.active{color:var(--green)}
+.nav-cta{padding:7px 18px;border-radius:100px;background:var(--black);color:var(--white);font-size:12px;font-weight:500;letter-spacing:.06em;transition:all var(--tr);border:1px solid var(--black);text-decoration:none}
+.nav-cta:hover{background:var(--green);border-color:var(--green);color:var(--white)}
+@media(max-width:768px){.nav-links .hide-sm{display:none}.nav{padding:0 1.25rem}}
+
+/* HERO */
+.hero{padding:calc(60px + 4rem) 0 3.5rem;background:var(--paper);text-align:center;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;pointer-events:none}
+.hb-ring{position:absolute;border-radius:50%;border:1px solid rgba(74,103,65,.06)}
+.hb-1{width:700px;height:700px;top:-300px;right:-200px}
+.hb-2{width:500px;height:500px;bottom:-200px;left:-150px;border-color:rgba(154,122,64,.05)}
+.hero-inner{max-width:680px;margin:0 auto;padding:0 2rem;position:relative}
+.hero-overline{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:.6rem}
+.hero-overline::before,.hero-overline::after{content:'';height:1px;width:20px;background:var(--green);opacity:.5}
+.hero-h1{font-family:var(--serif);font-size:clamp(2.8rem,5.5vw,4.5rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;margin-bottom:1.1rem}
+.hero-h1 em{font-style:italic;color:var(--green)}
+.hero-lead{font-size:17px;color:var(--ink);line-height:1.7;max-width:520px;margin:0 auto 2rem;font-weight:300}
+.billing-toggle{display:inline-flex;align-items:center;gap:0;background:var(--white);border:1px solid var(--bd);border-radius:100px;padding:4px;margin-bottom:.5rem}
+.bt-opt{padding:6px 18px;border-radius:100px;font-size:12px;font-weight:500;cursor:pointer;transition:all var(--tr);color:var(--muted);border:none;background:transparent;font-family:var(--sans)}
+.bt-opt.active{background:var(--black);color:var(--white)}
+.billing-note{font-size:12px;color:var(--green);font-weight:500;margin-top:.4rem;min-height:1.4rem;transition:opacity .3s}
+
+/* TIER CARDS */
+.tiers-section{padding:3rem 0 5rem;background:var(--off)}
+.container{max-width:1140px;margin:0 auto;padding:0 2rem}
+@media(max-width:768px){.container{padding:0 1.25rem}}
+
+.tiers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;align-items:start}
+@media(max-width:1040px){.tiers-grid{grid-template-columns:1fr 1fr;gap:1.25rem}}
+@media(max-width:580px){.tiers-grid{grid-template-columns:1fr}}
+
+.tier-card{background:var(--white);border:1px solid var(--bd);border-radius:18px;padding:1.75rem;position:relative;transition:all .25s ease;box-shadow:var(--sh)}
+.tier-card:hover{transform:translateY(-2px);box-shadow:var(--sm)}
+.tier-card.recommended{border-color:var(--green);box-shadow:0 8px 40px rgba(74,103,65,.15);transform:scale(1.03);z-index:2}
+.tier-card.recommended:hover{transform:scale(1.03) translateY(-2px)}
+.tier-popular{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--green);color:var(--white);font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 14px;border-radius:100px;white-space:nowrap}
+
+.tier-badge{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:20px;margin-bottom:1rem;display:inline-block}
+.bloom-b{background:var(--gp);color:var(--green)}
+.craft-b{background:var(--bluep);color:var(--blue)}
+.studio-b{background:var(--dustp);color:var(--dust)}
+.atelier-b{background:var(--black);color:var(--goldl)}
+
+.tier-price{font-family:var(--serif);font-size:2.6rem;font-weight:400;line-height:1;color:var(--black);margin-bottom:.2rem;transition:all .3s ease}
+.tier-price sup{font-size:1rem;vertical-align:super;font-family:var(--sans);font-weight:400}
+.tier-price .per{font-size:.9rem;color:var(--muted);font-family:var(--sans);font-weight:300}
+.tier-tagline{font-size:13px;color:var(--muted);margin-bottom:1.1rem;line-height:1.4;font-style:italic}
+.tier-divider{height:1px;background:var(--bd);margin:1.1rem 0}
+
+.tier-features{list-style:none;display:flex;flex-direction:column;gap:.55rem;margin-bottom:1.5rem}
+.tf{font-size:13px;color:var(--ink);display:flex;align-items:flex-start;gap:.6rem;line-height:1.45}
+.tf::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;font-size:11px;margin-top:2px}
+.tf.locked{color:var(--faint)}
+.tf.locked::before{content:'○';color:var(--faint);font-weight:400}
+.tf .upgrade-hint{font-size:10px;color:var(--faint);font-weight:500;display:block;margin-top:1px}
+
+.tier-btn{width:100%;padding:11px;border-radius:100px;font-family:var(--sans);font-size:12px;font-weight:500;letter-spacing:.05em;cursor:pointer;transition:all var(--tr);border:1.5px solid var(--bdd);background:transparent;color:var(--ink);margin-top:auto}
+.tier-btn:hover{border-color:var(--ink);color:var(--black)}
+.tier-btn.primary{background:var(--green);border-color:var(--green);color:var(--white)}
+.tier-btn.primary:hover{background:#3a5030;border-color:#3a5030}
+.tier-btn.dark{background:var(--black);border-color:var(--black);color:var(--white)}
+.tier-btn.dark:hover{background:var(--charcoal)}
+
+/* atelier card overrides */
+.tier-card.atelier{background:var(--black);border-color:#2a2620}
+.tier-card.atelier .tier-price{color:var(--goldl)}
+.tier-card.atelier .tier-price .per{color:rgba(255,255,255,.4)}
+.tier-card.atelier .tier-tagline{color:rgba(255,255,255,.5)}
+.tier-card.atelier .tier-divider{background:rgba(255,255,255,.08)}
+.tier-card.atelier .tf{color:rgba(255,255,255,.75)}
+.tier-card.atelier .tf::before{color:var(--gl)}
+
+/* SAVINGS NOTE */
+.savings-strip{background:var(--gp);border:1px solid rgba(74,103,65,.2);border-radius:10px;padding:.7rem 1.25rem;margin-bottom:2.5rem;font-size:13px;color:var(--green);font-weight:500;display:flex;align-items:center;gap:.6rem;justify-content:center}
+.ss-dot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0}
+
+/* COMPARISON TABLE */
+.compare-section{background:var(--white);padding:5rem 0}
+.compare-intro{text-align:center;max-width:580px;margin:0 auto 3rem}
+.ci-overline{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem;display:flex;align-items:center;justify-content:center;gap:.6rem}
+.ci-overline::before,.ci-overline::after{content:'';height:1px;width:20px;background:var(--green);opacity:.5}
+.ci-h2{font-family:var(--serif);font-size:clamp(2rem,3.5vw,2.8rem);font-weight:400;line-height:1.15;margin-bottom:.75rem}
+.ci-h2 em{font-style:italic;color:var(--green)}
+.ci-lead{font-size:15px;color:var(--muted);font-weight:300}
+
+.compare-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.compare-table{width:100%;border-collapse:collapse;min-width:600px}
+.compare-table th{padding:.9rem 1.1rem;font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);text-align:center;border-bottom:2px solid var(--bd);position:sticky;top:0;background:var(--white)}
+.compare-table th:first-child{text-align:left;width:36%}
+.compare-table th .th-badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;letter-spacing:.08em;margin-bottom:.3rem}
+.compare-table th .th-price{font-family:var(--serif);font-size:1.4rem;font-weight:400;color:var(--black);display:block;letter-spacing:0}
+.compare-table th.th-recommended{background:var(--gp)}
+.compare-table th.th-recommended .th-price{color:var(--green)}
+
+.compare-table td{padding:.8rem 1.1rem;font-size:13px;color:var(--ink);border-bottom:1px solid var(--off);text-align:center;vertical-align:middle}
+.compare-table td:first-child{text-align:left;color:var(--charcoal);font-weight:500}
+.compare-table td.th-recommended{background:rgba(74,103,65,.04)}
+.compare-table tr:hover td{background:var(--off)}
+.compare-table tr:hover td.th-recommended{background:rgba(74,103,65,.07)}
+.compare-table tbody tr:last-child td{border-bottom:none}
+
+.cat-row td{background:var(--paper)!important;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);padding:.5rem 1.1rem}
+.cat-row:hover td{background:var(--paper)!important}
+
+.check{color:var(--green);font-size:14px;font-weight:700}
+.cross{color:var(--faint);font-size:16px;font-weight:300}
+.partial{font-size:11px;color:var(--muted);font-weight:500}
+
+/* FAQ */
+.faq-section{background:var(--paper);padding:5rem 0}
+.faq-inner{max-width:720px;margin:0 auto}
+.faq-h{font-family:var(--serif);font-size:clamp(1.8rem,3.5vw,2.5rem);font-weight:400;text-align:center;margin-bottom:2.5rem}
+.faq-h em{font-style:italic;color:var(--green)}
+.faq-item{border-bottom:1px solid var(--bd)}
+.faq-q{width:100%;background:none;border:none;text-align:left;padding:1.1rem 0;font-family:var(--sans);font-size:15px;font-weight:500;color:var(--black);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem;transition:color var(--tr)}
+.faq-q:hover{color:var(--green)}
+.faq-icon{font-size:20px;color:var(--faint);flex-shrink:0;transition:transform .3s ease;font-weight:300;line-height:1}
+.faq-item.open .faq-icon{transform:rotate(45deg);color:var(--green)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s ease;font-size:14px;color:var(--ink);line-height:1.7;padding:0;font-weight:300}
+.faq-item.open .faq-a{max-height:300px;padding-bottom:1.1rem}
+
+/* GUARANTEE BAND */
+.guarantee-band{background:var(--off);border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);padding:3rem 0}
+.gb-inner{max-width:900px;margin:0 auto;padding:0 2rem;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;text-align:center}
+@media(max-width:640px){.gb-inner{grid-template-columns:1fr;gap:1.5rem}}
+.gb-item{}
+.gb-icon{font-size:1.5rem;margin-bottom:.6rem;color:var(--green)}
+.gb-title{font-size:14px;font-weight:600;color:var(--charcoal);margin-bottom:.3rem}
+.gb-body{font-size:13px;color:var(--muted);line-height:1.55}
+
+/* CTA BAND */
+.cta-band{background:var(--green);padding:5rem 0;text-align:center}
+.cta-band h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--white);margin-bottom:.75rem;line-height:1.2}
+.cta-band p{font-size:16px;color:rgba(255,255,255,.7);max-width:480px;margin:0 auto 2rem;font-weight:300}
+.cta-form{display:flex;gap:.6rem;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center}
+.cta-input{flex:1;min-width:200px;padding:13px 20px;border-radius:100px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:var(--white);font-family:var(--sans);font-size:14px;outline:none;-webkit-appearance:none}
+.cta-input::placeholder{color:rgba(255,255,255,.5)}
+.cta-input:focus{border-color:rgba(255,255,255,.6)}
+.cta-btn{padding:13px 26px;border-radius:100px;background:var(--white);color:var(--green);font-family:var(--sans);font-size:13px;font-weight:600;letter-spacing:.05em;border:none;cursor:pointer;transition:all var(--tr);white-space:nowrap}
+.cta-btn:hover{background:var(--off);transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.12)}
+
+/* FOOTER */
+footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
+.foot-inner{max-width:1140px;margin:0 auto;padding:0 2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;font-size:12px}
+.foot-logo{font-family:var(--serif);font-size:1.2rem;color:var(--white);font-weight:400}
+.foot-logo span{color:var(--goldl)}
+.foot-links{display:flex;gap:1.5rem}
+.foot-links a{color:rgba(255,255,255,.45);text-decoration:none;transition:color var(--tr)}
+.foot-links a:hover{color:rgba(255,255,255,.8)}
+
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+.reveal.vis{opacity:1;transform:none}
+.rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="evercrafted-marketing-site.html" class="nav-logo">Ever<span>crafted</span></a>
+  <div class="nav-links">
+    <a href="evercrafted-marketing-site.html" class="hide-sm">Home</a>
+    <a href="evercrafted-how-it-works.html" class="hide-sm">How it works</a>
+    <a href="evercrafted-about.html" class="hide-sm">About</a>
+    <a href="#" class="active">Pricing</a>
+    <a href="#waitlist" class="nav-cta">Join waitlist</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"><div class="hb-ring hb-1"></div><div class="hb-ring hb-2"></div></div>
+  <div class="hero-inner">
+    <div class="hero-overline">Simple, honest pricing</div>
+    <h1 class="hero-h1">Start free.<br><em>Build from there.</em></h1>
+    <p class="hero-lead">Every tier lets you design from memory and feeling. The higher you go, the more of the system opens up — and the faster and richer your work becomes.</p>
+    <div>
+      <div class="billing-toggle">
+        <button class="bt-opt active" id="btn-monthly" onclick="setBilling('monthly')">Monthly</button>
+        <button class="bt-opt" id="btn-annual" onclick="setBilling('annual')">Annual</button>
+      </div>
+      <div class="billing-note" id="billing-note">&nbsp;</div>
+    </div>
+  </div>
+</div>
+
+<!-- TIERS -->
+<section class="tiers-section">
+  <div class="container">
+
+    <div class="savings-strip" id="savings-strip" style="opacity:0;transition:opacity .4s">
+      <span class="ss-dot"></span>
+      Annual billing saves you up to <strong style="margin:0 .25rem">$238</strong> compared to paying monthly — two months free.
+    </div>
+
+    <div class="tiers-grid">
+
+      <!-- BLOOM -->
+      <div class="tier-card reveal">
+        <div class="tier-badge bloom-b">Bloom</div>
+        <div class="tier-price" id="price-bloom"><sup>$</sup>0<span class="per">/mo</span></div>
+        <div class="tier-tagline">Try it. See if it fits.</div>
+        <div class="tier-divider"></div>
+        <ul class="tier-features">
+          <li class="tf">3 designs per month</li>
+          <li class="tf">Seasonal lookbook</li>
+          <li class="tf">Tutorial guides</li>
+          <li class="tf">Basic render prompt</li>
+          <li class="tf locked">Inventory tagger<span class="upgrade-hint">Craft and above</span></li>
+          <li class="tf locked">Design export<span class="upgrade-hint">Craft and above</span></li>
+          <li class="tf locked">Full design system<span class="upgrade-hint">Studio and above</span></li>
+        </ul>
+        <button class="tier-btn" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get started free</button>
+      </div>
+
+      <!-- CRAFT -->
+      <div class="tier-card reveal rd1">
+        <div class="tier-badge craft-b">Craft</div>
+        <div class="tier-price" id="price-craft"><sup>$</sup>19<span class="per">/mo</span></div>
+        <div class="tier-tagline">For makers who work with clients.</div>
+        <div class="tier-divider"></div>
+        <ul class="tier-features">
+          <li class="tf">Unlimited designs</li>
+          <li class="tf">Inventory tagger + dashboard</li>
+          <li class="tf">Stock tracking</li>
+          <li class="tf">Pricing calculator</li>
+          <li class="tf">Design export — JSON + CSV</li>
+          <li class="tf">Render prompt for every design</li>
+          <li class="tf locked">Full design system<span class="upgrade-hint">Studio and above</span></li>
+          <li class="tf locked">Collection builder<span class="upgrade-hint">Studio and above</span></li>
+        </ul>
+        <button class="tier-btn" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join waitlist</button>
+      </div>
+
+      <!-- STUDIO — RECOMMENDED -->
+      <div class="tier-card recommended reveal rd2">
+        <div class="tier-popular">Most popular</div>
+        <div class="tier-badge studio-b">Studio</div>
+        <div class="tier-price" id="price-studio"><sup>$</sup>49<span class="per">/mo</span></div>
+        <div class="tier-tagline">For working wreath artists.</div>
+        <div class="tier-divider"></div>
+        <ul class="tier-features">
+          <li class="tf">Everything in Craft</li>
+          <li class="tf">Full design system</li>
+          <li class="tf">Smart composition selection</li>
+          <li class="tf">Collection builder</li>
+          <li class="tf">Seasonal design adaptation</li>
+          <li class="tf">Build guide for every design</li>
+          <li class="tf">Priority support</li>
+          <li class="tf locked">AI renders + Flux images<span class="upgrade-hint">Atelier only</span></li>
+          <li class="tf locked">Sellable design templates<span class="upgrade-hint">Atelier only</span></li>
+        </ul>
+        <button class="tier-btn primary" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join waitlist</button>
+      </div>
+
+      <!-- ATELIER -->
+      <div class="tier-card atelier reveal rd3">
+        <div class="tier-badge atelier-b">Atelier</div>
+        <div class="tier-price" id="price-atelier"><sup style="color:var(--goldl)">$</sup>99<span class="per">/mo</span></div>
+        <div class="tier-tagline" style="color:rgba(255,255,255,.45)">For studios, teachers, full-time makers.</div>
+        <div class="tier-divider"></div>
+        <ul class="tier-features">
+          <li class="tf">Everything in Studio</li>
+          <li class="tf">AI visualizer + Flux renders</li>
+          <li class="tf">Sellable design templates</li>
+          <li class="tf">White-label design exports</li>
+          <li class="tf">API access</li>
+          <li class="tf">Early access to every new tool</li>
+          <li class="tf">Dedicated support line</li>
+        </ul>
+        <button class="tier-btn dark" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join waitlist</button>
+      </div>
+
+    </div>
+
+    <div style="text-align:center;margin-top:2rem;font-size:13px;color:var(--muted)">
+      All prices in USD. Cancel anytime. Founding member pricing locks in at signup and never increases.
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE -->
+<section class="compare-section" id="compare">
+  <div class="container">
+    <div class="compare-intro reveal">
+      <div class="ci-overline">Full comparison</div>
+      <h2 class="ci-h2">Everything, <em>side by side</em></h2>
+      <p class="ci-lead">Every feature across every tier — so you can see exactly what you are getting before you decide.</p>
+    </div>
+    <div class="compare-table-wrap reveal rd1">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="text-align:left"></th>
+            <th><span class="th-badge bloom-b">Bloom</span><span class="th-price">Free</span></th>
+            <th><span class="th-badge craft-b">Craft</span><span class="th-price">$19</span></th>
+            <th class="th-recommended"><span class="th-badge studio-b">Studio</span><span class="th-price" style="color:var(--dust)">$49</span></th>
+            <th><span class="th-badge atelier-b">Atelier</span><span class="th-price" style="color:var(--gold)">$99</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Designing -->
+          <tr class="cat-row"><td colspan="5">Designing</td></tr>
+          <tr><td>Designs per month</td><td><span class="partial">3</span></td><td><span class="check">Unlimited</span></td><td class="th-recommended"><span class="check">Unlimited</span></td><td><span class="check">Unlimited</span></td></tr>
+          <tr><td>Design from memory or feeling</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Smart composition selection</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Full design system</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Collection builder</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Seasonal design adaptation</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <!-- Inventory -->
+          <tr class="cat-row"><td colspan="5">Inventory</td></tr>
+          <tr><td>Inventory tagger</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Inventory dashboard</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Stock tracking</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Design validates against your stock</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <!-- Exporting -->
+          <tr class="cat-row"><td colspan="5">Exporting &amp; building</td></tr>
+          <tr><td>Render prompt</td><td><span class="partial">Basic</span></td><td><span class="check">Full</span></td><td class="th-recommended"><span class="check">Full</span></td><td><span class="check">Full</span></td></tr>
+          <tr><td>AI renders + Flux images</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Step-by-step build guide</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Export — JSON + CSV</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>White-label exports</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Sellable design templates</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+          <!-- Business -->
+          <tr class="cat-row"><td colspan="5">Business tools</td></tr>
+          <tr><td>Pricing calculator</td><td><span class="cross">—</span></td><td><span class="check">✓</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Seasonal lookbook</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Tutorial guides</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>API access</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Early access to new tools</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+          <!-- Support -->
+          <tr class="cat-row"><td colspan="5">Support</td></tr>
+          <tr><td>Email support</td><td><span class="check">✓</span></td><td><span class="check">✓</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Priority support</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="check">✓</span></td><td><span class="check">✓</span></td></tr>
+          <tr><td>Dedicated support line</td><td><span class="cross">—</span></td><td><span class="cross">—</span></td><td class="th-recommended"><span class="cross">—</span></td><td><span class="check">✓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- GUARANTEE -->
+<div class="guarantee-band">
+  <div class="gb-inner">
+    <div class="gb-item reveal">
+      <div class="gb-icon">◎</div>
+      <div class="gb-title">Cancel anytime</div>
+      <div class="gb-body">No contracts. No commitments. Cancel from your account settings whenever you like — no questions asked.</div>
+    </div>
+    <div class="gb-item reveal rd1">
+      <div class="gb-icon">◈</div>
+      <div class="gb-title">Founding pricing stays yours</div>
+      <div class="gb-body">Join the waitlist now and your price is locked in forever. As Evercrafted grows and pricing changes, yours never does.</div>
+    </div>
+    <div class="gb-item reveal rd2">
+      <div class="gb-icon">◇</div>
+      <div class="gb-title">Your designs are always yours</div>
+      <div class="gb-body">Every blueprint you create belongs to you. Export them anytime, in any format. They do not live here — they live with you.</div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <div class="faq-inner">
+      <h2 class="faq-h reveal">Questions about <em>pricing</em></h2>
+      <div id="faq-list" class="reveal rd1"></div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST CTA -->
+<section class="cta-band" id="waitlist">
+  <div class="container">
+    <h2>Lock in your founding price.</h2>
+    <p>The waitlist is open. Join now to secure early access and pricing that never increases as Evercrafted grows.</p>
+    <form class="cta-form" onsubmit="handleWaitlist(event)">
+      <input class="cta-input" type="email" placeholder="Your email address" required id="wl-email">
+      <button class="cta-btn" type="submit">Join waitlist →</button>
+    </form>
+    <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:.9rem" id="wl-msg">No spam. Unsubscribe anytime.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-logo">Ever<span>crafted</span></div>
+    <div class="foot-links">
+      <a href="evercrafted-marketing-site.html">Home</a>
+      <a href="evercrafted-how-it-works.html">How it works</a>
+      <a href="evercrafted-about.html">About</a>
+      <a href="#">Privacy</a>
+    </div>
+    <div style="font-size:11px">© 2025 Evercrafted Studio</div>
+  </div>
+</footer>
+
+<script>
+// Reveal
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+// Billing toggle
+const MONTHLY = { bloom:'Free', craft:'$19', studio:'$49', atelier:'$99' };
+const ANNUAL  = { bloom:'Free', craft:'$15', studio:'$39', atelier:'$79' };
+
+function setBilling(type) {
+  const isAnnual = type === 'annual';
+  document.getElementById('btn-monthly').classList.toggle('active', !isAnnual);
+  document.getElementById('btn-annual').classList.toggle('active',  isAnnual);
+  const prices = isAnnual ? ANNUAL : MONTHLY;
+  const note = document.getElementById('billing-note');
+  const strip = document.getElementById('savings-strip');
+  note.textContent = isAnnual ? 'Billed annually — save up to 20%' : '\u00a0';
+  strip.style.opacity = isAnnual ? '1' : '0';
+  // Update prices
+  setPrice('price-bloom',   prices.bloom, 'bloom');
+  setPrice('price-craft',   prices.craft, 'craft');
+  setPrice('price-studio',  prices.studio, 'studio');
+  setPrice('price-atelier', prices.atelier, 'atelier');
+}
+
+function setPrice(elId, price, tier) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  const isAtelier = tier === 'atelier';
+  const sup = isAtelier ? `<sup style="color:var(--goldl)">$</sup>` : '<sup>$</sup>';
+  const per = isAtelier
+    ? `<span class="per" style="color:rgba(255,255,255,.4)">/mo</span>`
+    : `<span class="per">/mo</span>`;
+  if (price === 'Free') {
+    el.innerHTML = `<sup>$</sup>0${per}`;
+  } else {
+    el.innerHTML = `${sup}${price.replace('$','')}${per}`;
+  }
+  // Animate
+  el.style.transform = 'scale(1.06)';
+  el.style.transition = 'transform .2s ease';
+  setTimeout(() => el.style.transform = 'scale(1)', 200);
+}
+
+// FAQ
+const FAQS = [
+  {
+    q: "Can I change tiers later?",
+    a: "Yes — upgrade or downgrade anytime from your account settings. If you upgrade, you get access to the new features immediately. If you downgrade, you keep your current tier until the end of the billing period."
+  },
+  {
+    q: "What does founding pricing mean?",
+    a: "Anyone who joins the waitlist and signs up during the early access period gets their tier price locked in permanently. If we raise prices as the platform grows, your price never changes. It is our way of recognising the people who showed up first."
+  },
+  {
+    q: "Is there a free trial on paid tiers?",
+    a: "The Bloom tier is free forever and gives you a genuine feel for how Evercrafted works. We are also planning a 14-day trial for Craft and Studio for anyone who joins via the waitlist."
+  },
+  {
+    q: "What happens to my designs if I cancel?",
+    a: "Your designs belong to you. Before cancelling you can export everything — every blueprint, every render prompt, every build guide — in standard formats that you can use anywhere. We do not hold your work hostage."
+  },
+  {
+    q: "Do you offer discounts for educators or studios?",
+    a: "The Atelier tier is built for studios and educators and includes white-label exports and API access. If you have a specific situation — a school, a large studio, a teaching programme — reach out and we will work something out."
+  },
+  {
+    q: "When does billing start?",
+    a: "Not until launch. Joining the waitlist costs nothing. Billing only begins when you activate your account after launch, and your founding price is locked in from that moment."
+  },
+  {
+    q: "Can I pay annually to save more?",
+    a: "Yes — annual billing saves up to 20% compared to paying monthly. You can switch between monthly and annual billing at any time from your account settings."
+  },
+];
+
+const faqList = document.getElementById('faq-list');
+FAQS.forEach(f => {
+  const item = document.createElement('div');
+  item.className = 'faq-item';
+  item.innerHTML = `<button class="faq-q" onclick="toggleFaq(this)">${f.q}<span class="faq-icon">+</span></button><div class="faq-a">${f.a}</div>`;
+  faqList.appendChild(item);
+});
+
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!wasOpen) item.classList.add('open');
+}
+
+function handleWaitlist(e) {
+  e.preventDefault();
+  const email = document.getElementById('wl-email').value;
+  document.getElementById('wl-msg').textContent = `${email} is on the list. Founding pricing locked in.`;
+  document.getElementById('wl-msg').style.color = 'rgba(255,255,255,.85)';
+  document.getElementById('wl-email').value = '';
+}
+</script>
+</body>
+</html>

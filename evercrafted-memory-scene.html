@@ -556,7 +556,7 @@ const ROLE_RADII = {structural:[0.55,0.75],focal:[0.60,0.72],secondary:[0.44,0.5
 function runSlotFill(emotions, formula, intensity, poemEmotions) {
   // poem_emotions drives placement by tier:
   // structural tier  → poemEmotions.structural (heaviest, deepest in arc)
-  // secondary tier   → poemEmotions.secondary  (heart of the composition, character layer)
+  // secondary tier   → poemEmotions.secondary  (mid-ring, character layer)
   // texture/accent   → poemEmotions.undertone  (outermost, discovered detail)
   const pe = poemEmotions || {};
   const tierEmotionMap = {
@@ -849,7 +849,7 @@ function showOutput(r) {
     </div>
   </div>
 
-  <!-- ROW 3: blueprint — polar canvas + design selection -->
+  <!-- ROW 3: blueprint — polar canvas + slot fill -->
   <div class="out-card out-card-full" id="blueprint-card">
     <div class="oc-header">
       <span class="oc-title">Wreath blueprint</span>
@@ -859,16 +859,16 @@ function showOutput(r) {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;align-items:start">
         <div>
           <div style="margin-bottom:1rem">
-        <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.5rem">Why these florals</div>
+        <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.5rem">Emotional layers — read from the poem</div>
         <div id="poem-emotions-wrap"></div>
       </div>
-      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.6rem">The composition</div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.6rem">Arc placement</div>
           <div id="polar-canvas-wrap"></div>
           <div id="polar-legend" style="display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.6rem;justify-content:center"></div>
         </div>
         <div>
           <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.6rem">Selected florals</div>
-          <div id="design-list"></div>
+          <div id="slot-fill-list"></div>
           <div style="margin-top:.75rem;padding:.6rem .75rem;background:var(--s2);border-radius:var(--rsm);border:1px solid var(--bd);font-size:11px;color:var(--mu)">
             <span style="font-weight:600;color:var(--tx)">Total stems:</span> <span id="total-stems" style="color:var(--green);font-weight:600">—</span> &nbsp;·&nbsp; 22" grapevine base
           </div>
@@ -892,19 +892,6 @@ function showOutput(r) {
       <div style="margin-top:.6rem;font-size:11px;color:var(--fa);line-height:1.6">
         This prompt places your wreath in the actual world of this memory — not a generic studio shot. The surface, the setting, the light, and the atmosphere all trace back to what was shared. Every render is unrepeatable.
       </div>
-    </div>
-  </div>
-
-
-  <!-- GAP MATCHER — shop suggestions -->
-  <div class="out-card out-card-full" id="gap-card" style="display:none">
-    <div class="oc-header">
-      <span class="oc-title">Complete your design</span>
-      <span class="oc-badge" style="background:var(--goldp);color:var(--gold)">From the Evercrafted shop</span>
-    </div>
-    <div class="oc-body">
-      <div style="font-size:13px;color:var(--mu);font-style:italic;margin-bottom:1rem;line-height:1.6" id="gap-intro"></div>
-      <div id="gap-list"></div>
     </div>
   </div>
 
@@ -947,9 +934,9 @@ function renderBlueprint(r) {
     const peWrap = document.getElementById('poem-emotions-wrap');
     if (peWrap) {
       const layers = [
-        { key: 'structural', label: 'What holds it together', sub: 'the heaviest thing the poem carries', color: 'var(--green)', bg: 'var(--gp)' },
-        { key: 'secondary',  label: 'What gives it its voice', sub: 'the feeling that shapes its character', color: 'var(--dust)', bg: 'var(--dustp)' },
-        { key: 'undertone',  label: 'What you notice last', sub: 'the quiet thing, found on close inspection', color: 'var(--gold)', bg: 'var(--goldp)' },
+        { key: 'structural', label: 'Foundation layer', sub: 'anchors the design — deepest in the arc', color: 'var(--green)', bg: 'var(--gp)' },
+        { key: 'secondary',  label: 'Character layer',  sub: 'fills around it — gives the design its voice', color: 'var(--dust)', bg: 'var(--dustp)' },
+        { key: 'undertone',  label: 'Undertone layer',  sub: 'the quiet one — discovered at the edge', color: 'var(--gold)', bg: 'var(--goldp)' },
       ];
       peWrap.innerHTML = layers.map(l => poemEmotions[l.key] ? `
         <div style="display:flex;align-items:flex-start;gap:.6rem;padding:.5rem .65rem;border-radius:var(--rsm);background:${l.bg};border:1px solid ${l.color}22;margin-bottom:.4rem">
@@ -962,7 +949,7 @@ function renderBlueprint(r) {
     }
   }
 
-  // Run design selection using poem emotions for tier-specific weighting
+  // Run slot fill using poem emotions for tier-specific weighting
   const filledSlots = runSlotFill(emotions, formula, intensity, poemEmotions);
 
   // Build polar SVG
@@ -982,7 +969,7 @@ function renderBlueprint(r) {
   }
 
   // Slot fill list
-  const listEl = document.getElementById('design-list');
+  const listEl = document.getElementById('slot-fill-list');
   if (listEl) {
     const tiers = [...new Set(filledSlots.map(s => s.tier))];
     let html = '';
@@ -1010,39 +997,6 @@ function renderBlueprint(r) {
   const total = filledSlots.filter(s => s.item).reduce((a, b) => a + b.stemCount, 0);
   const totEl = document.getElementById('total-stems');
   if (totEl) totEl.textContent = total;
-
-  // ── Call gap matcher ──────────────────────────────────────────
-  callGapMatcher(filledSlots, formula, emotions, poemEmotions);
-
-  // Inject actual florals into render prompt
-  const promptEl = document.getElementById('prompt-text');
-  if (promptEl && filledSlots.filter(s => s.item).length) {
-    const structurals = filledSlots.filter(s => s.role === 'structural' && s.item).map(s => s.item.name);
-    const focals      = filledSlots.filter(s => s.role === 'focal'      && s.item).map(s => s.item.name);
-    const secondaries = filledSlots.filter(s => s.role === 'secondary'  && s.item).map(s => s.item.name);
-    const textures    = filledSlots.filter(s => (s.role === 'texture' || s.role === 'accent') && s.item).map(s => s.item.name);
-    const greens      = filledSlots.filter(s => s.role === 'greenery'   && s.item).map(s => s.item.name);
-
-    const floralBlock = [
-      structurals.length ? 'Structural foundation: ' + structurals.join(', ') + '.' : '',
-      focals.length      ? 'Focal blooms: ' + focals.join(', ') + '.' : '',
-      secondaries.length ? 'Secondary fill: ' + secondaries.join(', ') + '.' : '',
-      greens.length      ? 'Structural greenery: ' + greens.join(', ') + '.' : '',
-      textures.length    ? 'Texture and accent: ' + textures.join(', ') + '.' : '',
-    ].filter(Boolean).join(' ');
-
-    const stemNote = total + ' stems · 22″ grapevine';
-
-    const existing = promptEl.textContent || '';
-
-    // Camera and composition directives for a correct wreath product shot
-    const cameraDirectives = 'Camera: straight-on, lens perpendicular to the wreath face, wreath centred and fully in frame, no angle or tilt. The wreath should read as a complete circle or composition — not cropped, not angled. Product photography perspective, not lifestyle angle.';
-
-    const arIdx = existing.indexOf('--ar');
-    promptEl.textContent = arIdx !== -1
-      ? existing.slice(0, arIdx).trimEnd() + ' ' + floralBlock + ' ' + stemNote + ' ' + cameraDirectives + ' ' + existing.slice(arIdx)
-      : existing.trimEnd() + ' ' + floralBlock + ' ' + stemNote + ' ' + cameraDirectives;
-  }
 }
 
 function copyPrompt() {
@@ -1067,83 +1021,6 @@ function resetAll() {
 
 // Start
 renderStep();
-
-// ── GAP MATCHER ────────────────────────────────────────────────────
-async function callGapMatcher(filledSlots, formula, emotions, poemEmotions) {
-  const gapCard = document.getElementById('gap-card');
-  const gapList = document.getElementById('gap-list');
-  const gapIntro = document.getElementById('gap-intro');
-  if (!gapCard || !gapList) return;
-
-  try {
-    const res = await fetch(`${CONFIG.apiBase}/api/gaps`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        filledSlots: filledSlots.map(s => ({
-          role: s.role,
-          tier: s.tier,
-          item: s.item ? { id: s.item.id, movement: s.item.movement, finish: s.item.finish, ep: s.item.ep, es: s.item.es } : null,
-          stemCount: s.stemCount,
-        })),
-        formula,
-        emotions,
-        poemEmotions,
-        clientInventory: [],  // future: pass client's own inventory
-      }),
-    });
-
-    if (!res.ok) return;
-    const json = await res.json();
-    if (!json.success || !json.data) return;
-
-    const { gaps, gapCount, fullyFilled } = json.data;
-
-    if (fullyFilled || gapCount === 0) {
-      gapCard.style.display = 'block';
-      gapIntro.textContent = 'Your design is complete with what you have. Browse the shop for future designs.';
-      gapList.innerHTML = '';
-      return;
-    }
-
-    gapCard.style.display = 'block';
-    gapIntro.textContent = `${gapCount} piece${gapCount !== 1 ? 's' : ''} in this design could be filled from the Evercrafted shop — chosen for how they work within this specific composition, not just by emotion.`;
-
-    let html = '';
-    for (const gap of gaps) {
-      if (!gap.suggestions?.length) continue;
-      html += `<div style="margin-bottom:1.25rem">
-        <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.6rem">${gap.slot.role} · ${gap.slot.tier || ''}</div>
-        <div style="display:flex;flex-direction:column;gap:.5rem">`;
-      for (const item of gap.suggestions) {
-        html += `<div style="display:flex;align-items:flex-start;gap:.85rem;padding:.75rem .9rem;background:var(--s2);border-radius:var(--rsm);border:1px solid var(--bd)">
-          <div style="width:40px;height:40px;border-radius:4px;overflow:hidden;flex-shrink:0;background:var(--sf)">
-            ${item.imageUrl ? `<img src="${item.imageUrl}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">` : ''}
-          </div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:12px;font-weight:600;color:var(--tx);margin-bottom:2px">${item.name}</div>
-            <div style="font-size:11px;color:var(--mu);margin-bottom:4px;font-style:italic;line-height:1.5">${item.reason || ''}</div>
-            <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
-              <span style="font-size:11px;color:var(--mu)">${item.colorName || ''}</span>
-              ${item.colorHex ? `<span style="width:10px;height:10px;border-radius:50%;background:${item.colorHex};border:1px solid var(--bd);display:inline-block"></span>` : ''}
-            </div>
-          </div>
-          <div style="text-align:right;flex-shrink:0">
-            <div style="font-family:var(--sans);font-size:13px;font-weight:600;color:var(--green)">$${Number(item.price).toFixed(2)}</div>
-            <a href="/shop/${item.sku || ''}" style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--green);text-decoration:none;border-bottom:1px solid var(--green);margin-top:4px;display:inline-block">Add to cart</a>
-          </div>
-        </div>`;
-      }
-      html += `</div></div>`;
-    }
-    gapList.innerHTML = html || '<div style="font-size:13px;color:var(--mu)">No shop matches found for the current gaps.</div>';
-
-  } catch (err) {
-    console.warn('Gap matcher error:', err.message);
-    // Silently fail — gap suggestions are additive, not critical
-  }
-}
-
 </script>
 </body>
 </html>
