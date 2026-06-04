@@ -819,7 +819,7 @@ async function generateImage(prompt, aspect) {
 
   if (provider === 'fal') {
     const image_size = aspect === 'square' ? 'square_hd' : 'portrait_4_3';
-    const r = await fetch('https://fal.run/fal-ai/flux/dev', {
+    const r = await fetch('https://fal.run/' + (process.env.FAL_MODEL || 'fal-ai/flux-pro/v1.1'), {
       method: 'POST',
       headers: { 'Authorization': `Key ${process.env.FAL_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt: clean, image_size, num_images: 1 }),
@@ -916,7 +916,7 @@ app.post('/api/asset', async (req, res) => {
       return res.json({ success: true, image: `data:image/png;base64,${b64}`, transparent: true });
     }
     if (provider === 'fal') {
-      const r = await fetch('https://fal.run/fal-ai/flux/dev', {
+      const r = await fetch('https://fal.run/' + (process.env.FAL_ASSET_MODEL || 'fal-ai/flux/dev'), {
         method: 'POST',
         headers: { 'Authorization': `Key ${process.env.FAL_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, image_size: 'square_hd', num_images: 1 }),
