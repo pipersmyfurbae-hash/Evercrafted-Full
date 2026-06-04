@@ -883,7 +883,7 @@ function renderBlueprint(r) {
   // Build polar SVG
   const { svg, legendItems } = buildPolarSVG(filledSlots, formula);
   const canvasWrap = document.getElementById('polar-canvas-wrap');
-  if (canvasWrap) canvasWrap.appendChild(svg);
+  if (canvasWrap) { canvasWrap.innerHTML = ''; canvasWrap.appendChild(svg); }  // clear before re-render
 
   // Polar legend
   const legEl = document.getElementById('polar-legend');

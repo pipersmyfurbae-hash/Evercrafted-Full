@@ -335,6 +335,10 @@
   const ROLE_Z      = { structural:2, greenery:4, bridge:5, secondary:6, texture:7, focal:8, accent:9, filler:6 };                          // paint / stacking order
   const ROLE_SPREAD = { greenery:15, structural:13, focal:22, secondary:18, bridge:16, accent:17, texture:17, filler:19 };                  // cluster tightness (deg) — focal/secondary spread per skill (~18–28°)
   const BEH_SIZE    = { heavy:1.25, mid:1, light:0.82, wispy:0.64 };
+  // fallback counts when a slot carries no floralUnits (e.g. a saved design, or any
+  // caller that didn't run the count law) — so the visualizer never renders an
+  // almost-empty ring. A real floralUnits value always wins.
+  const FALLBACK_UNITS = { greenery:10, structural:4, focal:3, secondary:5, bridge:3, accent:5, texture:6, filler:6 };
 
   function placeSlots(filledSlots, formula, opts) {
     opts = opts || {};
@@ -406,7 +410,7 @@
 
       const band = ROLE_BAND[role] || 0.6;
       const spreadDeg = ROLE_SPREAD[role] || 12;
-      const unitCount = Math.max(1, Math.min(16, Math.round(sl.floralUnits || 1)));
+      const unitCount = Math.max(1, Math.min(16, Math.round(sl.floralUnits || FALLBACK_UNITS[role] || 3)));
       const spec = unitSpec(sl);
       const bloom = (+sl.bloomSize > 0) ? +sl.bloomSize : spec.bloomSize;
       let sizeFrac = (bloom / wreathDiam) * (BEH_SIZE[sl.behavior] || 1) * 1.25;
