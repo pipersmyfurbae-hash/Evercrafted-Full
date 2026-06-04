@@ -1001,8 +1001,53 @@ function renderBlueprint(r) {
   const totEl = document.getElementById('total-stems');
   if (totEl) totEl.textContent = total;
 
+  // Offer to save this design
+  buildSaveBar({
+    title: r.scene_title || 'Untitled scene',
+    source: 'memory',
+    formula,
+    totalStems: total,
+    data: {
+      poem: r.poem || '', brief: r.brief || '',
+      emotions, poemEmotions,
+      renderPrompt: document.getElementById('prompt-text')?.textContent || r.render_prompt || '',
+      renderSurface: r.render_surface || '',
+      location: r.map_query || (typeof answers !== 'undefined' ? (answers.location || '') : ''),
+      slots: filledSlots.filter(s => s.item).map(s => ({ role: s.role, tier: s.tier, name: s.item.name, stemCount: s.stemCount, ep: s.item.ep })),
+    },
+  });
+
   // Suggest shop pieces for any roles the maker's inventory can't fill
   renderGapSuggestions(filledSlots, formula, emotions, poemEmotions);
+}
+
+// ── Save design ───────────────────────────────────────────────────────────────
+function buildSaveBar(design) {
+  let bar = document.getElementById('save-design-bar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'save-design-bar';
+    bar.style.cssText = 'max-width:1100px;margin:1.25rem auto 0;padding:0 1.25rem;display:flex;align-items:center;gap:.75rem';
+    const out = document.getElementById('output-view');
+    if (out) out.insertBefore(bar, out.firstChild);
+  }
+  bar.innerHTML = `<button id="save-design-btn" style="padding:10px 22px;border-radius:100px;border:none;background:var(--green,#4A6741);color:#fff;font-family:var(--sans,system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer">Save this design</button><span id="save-design-msg" style="font-size:12px;color:var(--mu,#888)"></span>`;
+  document.getElementById('save-design-btn').onclick = () => saveDesign(design);
+}
+async function saveDesign(design) {
+  const btn = document.getElementById('save-design-btn');
+  const msg = document.getElementById('save-design-msg');
+  if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  try {
+    const res = await fetch(`${CONFIG.apiBase}/api/designs`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(design) });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'save failed');
+    if (msg) msg.textContent = '✓ Saved to your designs.';
+    if (btn) btn.textContent = 'Saved ✓';
+  } catch (e) {
+    if (msg) msg.textContent = 'Could not save: ' + e.message;
+    if (btn) { btn.disabled = false; btn.textContent = 'Save this design'; }
+  }
 }
 
 // Load the maker's saved inventory; if they have any, the blueprint designs from it

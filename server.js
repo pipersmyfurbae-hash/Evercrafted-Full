@@ -869,6 +869,86 @@ app.get('/api/inventory', async (req, res) => {
   }
 });
 
+// ── Designs (saved blueprints from the engines) ───────────────────────────────
+const DESIGNS_PATH = './designs.json';
+
+function designRow(b) {
+  return {
+    owner:       (sanitizeInput(b.owner) || 'default').slice(0, 120),
+    title:       (sanitizeInput(b.title) || 'Untitled design').slice(0, 160),
+    source:      (sanitizeInput(b.source) || 'manual').slice(0, 40),
+    formula:     sanitizeInput(b.formula).slice(0, 60),
+    total_stems: Number.isFinite(+b.totalStems) ? Math.max(0, parseInt(b.totalStems)) : 0,
+    data:        (b.data && typeof b.data === 'object') ? b.data : {}, // freeform payload (poem, prompt, slots…)
+  };
+}
+function designToClient(r) {
+  return { id: r.id, owner: r.owner, title: r.title, source: r.source, formula: r.formula, totalStems: r.total_stems, data: r.data, createdAt: r.created_at };
+}
+
+// POST /api/designs — save a generated design
+app.post('/api/designs', async (req, res) => {
+  try {
+    const row = designRow(req.body);
+    if (supabase) {
+      const { data, error } = await supabase.from('designs').insert(row).select().single();
+      if (error) throw new Error(error.message);
+      console.log(`[/api/designs] (supabase) saved "${row.title}"`);
+      return res.json({ success: true, data: designToClient(data) });
+    }
+    const clientRow = designToClient({ ...row, id: 'dsn_' + Date.now() + '_' + Math.floor(Math.random() * 1000), created_at: new Date().toISOString() });
+    let list = [];
+    try { list = JSON.parse(fs.readFileSync(DESIGNS_PATH, 'utf8')); } catch {}
+    list.push(clientRow);
+    fs.writeFileSync(DESIGNS_PATH, JSON.stringify(list, null, 2));
+    console.log(`[/api/designs] (file) saved "${row.title}"`);
+    return res.json({ success: true, data: clientRow });
+  } catch (err) {
+    console.error('[/api/designs POST]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// GET /api/designs — list saved designs (optionally ?owner=)
+app.get('/api/designs', async (req, res) => {
+  try {
+    const owner = sanitizeInput(req.query.owner) || '';
+    if (supabase) {
+      let q = supabase.from('designs').select('*').order('created_at', { ascending: false }).limit(500);
+      if (owner) q = q.eq('owner', owner);
+      const { data, error } = await q;
+      if (error) throw new Error(error.message);
+      return res.json({ success: true, data: (data || []).map(designToClient) });
+    }
+    let list = [];
+    try { list = JSON.parse(fs.readFileSync(DESIGNS_PATH, 'utf8')); } catch {}
+    if (owner) list = list.filter(x => x.owner === owner);
+    return res.json({ success: true, data: list.slice().reverse() });
+  } catch (err) {
+    console.error('[/api/designs GET]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// DELETE /api/designs/:id
+app.delete('/api/designs/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (supabase) {
+      const { error } = await supabase.from('designs').delete().eq('id', id);
+      if (error) throw new Error(error.message);
+      return res.json({ success: true });
+    }
+    let list = [];
+    try { list = JSON.parse(fs.readFileSync(DESIGNS_PATH, 'utf8')); } catch {}
+    fs.writeFileSync(DESIGNS_PATH, JSON.stringify(list.filter(x => x.id !== id), null, 2));
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('[/api/designs DELETE]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ── Start ─────────────────────────────────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`Evercrafted API running on http://localhost:${PORT}`);

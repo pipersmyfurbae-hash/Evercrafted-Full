@@ -291,6 +291,10 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
         <div class="cl" style="margin-bottom:.4rem">Midjourney / Flux render prompt</div>
         <div class="pbox"><button class="cbtn" onclick="copyPrompt()">Copy</button><span id="ptext"></span></div>
         <div class="pmeta" id="pmeta"></div>
+        <div style="margin-top:.85rem;display:flex;align-items:center;gap:.6rem">
+          <button onclick="saveDesign()" style="padding:8px 18px;border-radius:100px;border:none;background:var(--sage,#687859);color:#fff;font-family:var(--sans,system-ui,sans-serif);font-size:11px;font-weight:600;letter-spacing:.05em;cursor:pointer">Save this design</button>
+          <span id="save-msg" style="font-size:11px;color:var(--fa)"></span>
+        </div>
       </div>
     </div>
 
@@ -870,6 +874,27 @@ function switchTab(id,el){
 function copyPrompt(){
   const t=document.getElementById('ptext').textContent;
   navigator.clipboard.writeText(t).then(()=>{const b=document.querySelector('.cbtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1500);});
+}
+
+async function saveDesign(){
+  const r=S.result;
+  const msg=document.getElementById('save-msg');
+  if(!r){ if(msg) msg.textContent='Run the engine first.'; return; }
+  const tot=r.all.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0);
+  const slots=r.all.filter(s=>s.item).map(s=>({role:s.role,name:s.item.name,stemCount:s.stemCount,ep:s.item.ep,movement:s.item.movement}));
+  const design={
+    title:'Manual design — '+(r.formula||'wreath'),
+    source:'manual', formula:r.formula||'', totalStems:tot,
+    data:{ diam:r.diam, emotions:r.emotions, intensityLevel:r.intensityLevel,
+           renderPrompt:document.getElementById('ptext')?.textContent||'', slots },
+  };
+  if(msg) msg.textContent='Saving…';
+  try{
+    const res=await fetch(`${V2_API}/api/designs`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(design)});
+    const json=await res.json();
+    if(!json.success) throw new Error(json.error||'save failed');
+    if(msg) msg.textContent='✓ Saved to your designs.';
+  }catch(e){ if(msg) msg.textContent='Could not save: '+e.message; }
 }
 
 initEmotions();

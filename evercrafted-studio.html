@@ -206,6 +206,12 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
       <span class="sb-tooltip">Home</span>
     </a>
 
+    <a class="sb-item" id="nav-designs" onclick="showPanel('designs',this)" href="#">
+      <i class="ti ti-bookmark"></i>
+      <span class="sb-item-label">Saved Designs</span>
+      <span class="sb-tooltip">Saved Designs</span>
+    </a>
+
     <div class="sb-divider"></div>
     <div class="sb-section-label">Design</div>
 
@@ -432,6 +438,11 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
       <iframe src="evercrafted-memory-scene.html" class="tool-frame" title="Memory Scene Builder"></iframe>
     </div>
 
+    <!-- SAVED DESIGNS -->
+    <div class="page-panel" id="panel-designs">
+      <iframe src="evercrafted-designs.html" class="tool-frame" title="Saved Designs"></iframe>
+    </div>
+
     <!-- COMMERCIAL CREATOR -->
     <div class="page-panel" id="panel-commercial">
       <iframe src="evercrafted-commercial-creator.html" class="tool-frame" title="Commercial Creator"></iframe>
@@ -488,6 +499,7 @@ function toggleMobileSidebar() {
 
 const PANEL_LABELS = {
   home: 'Home',
+  designs: 'Saved Designs',
   'memory': 'Memory Scene Builder',
   commercial: 'Commercial Creator',
   try: 'Client taste experience',

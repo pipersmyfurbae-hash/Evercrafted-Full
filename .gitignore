@@ -9,6 +9,7 @@ node_modules/
 # Local fallbacks (use Supabase in production)
 waitlist.json
 inventory.json
+designs.json
 
 # Vercel
 .vercel/
