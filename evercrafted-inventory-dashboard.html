@@ -507,10 +507,11 @@ function openDrawer(id) {
       <label style="display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);font-weight:600;margin:.7rem 0 .3rem">Asset prompt — edit to fine-tune what "Generate sprig" makes</label>
       <textarea id="asset-prompt" placeholder="A single isolated high-end luxury silk … bloom head, no stem, … overhead flat-lay, studio lighting, pure white background" style="width:100%;min-height:70px;padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--s2);font-family:var(--sans);font-size:11px;line-height:1.5;color:var(--tx);outline:none;resize:vertical">${(item.assetPrompt||'').replace(/</g,'&lt;')}</textarea>
       <div style="display:flex;gap:.4rem;margin-top:.5rem;flex-wrap:wrap">
+        <button class="da-btn" style="background:var(--sage,#6b7c5c);color:#fff;border-color:var(--sage,#6b7c5c)" onclick="makeCutout('photo')">From photo (free)</button>
+        <button class="da-btn" onclick="makeCutout('generate')">Generate (1 credit)</button>
         <button class="da-btn" onclick="savePrompt()">Save prompt</button>
-        <button class="da-btn" onclick="makeCutout('photo')">From photo</button>
-        <button class="da-btn" onclick="makeCutout('generate')">Generate sprig</button>
       </div>
+      <div style="font-size:10px;color:var(--fa);margin-top:.4rem;line-height:1.4">“From photo” cuts out your real product — most accurate &amp; free. “Generate” is best when the photo is a busy multi-stem spray and you want one clean piece.</div>
       <div id="cutout-msg" style="font-size:10px;color:var(--fa);margin-top:.35rem;min-height:1em"></div>
     </div>
     <div class="drawer-section">

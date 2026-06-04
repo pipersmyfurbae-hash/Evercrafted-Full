@@ -236,9 +236,10 @@ PHYSICAL SIZE & YIELD (critical — one stem is often several placeable pieces):
   yield      — how many usable florals/sprigs you can cut/use from ONE stem. A focal peony stem ~1. A berry spray ~6. A eucalyptus stem ~4. A filler ~6-8.
   unit       — what one placeable piece is: "bloom" | "sprig" | "cluster" | "segment"
 ASSET PROMPT (for generating a clean cutout of ONE unit later):
-  assetPrompt — a Midjourney-style image prompt for a SINGLE isolated unit of this item. Follow this exact shape:
-    "A single isolated high-end luxury silk [colour] [specific flower or foliage name] [for flowers: bloom head, NO stem | for greenery/texture: single sprig or frond], premium artificial faux botanical, delicate [fabric petals | feathery foliage], facing forward, overhead flat-lay view, studio lighting, pure solid white background"
-    Use the real flower/foliage name and its true colour. For focal/secondary/bridge use "bloom head, no stem"; for greenery/texture/accent use "single sprig/frond". Keep it one line.`;
+  assetPrompt — a Midjourney-style prompt for ONE small isolated unit. Be STRICT that it is a single small piece, never a full spray:
+    flowers (focal/secondary/bridge): "A single isolated high-end luxury silk [colour] [flower name] — a SINGLE bloom head only, no stem and no leaves, premium faux botanical, delicate fabric petals, facing forward, overhead flat-lay view, studio lighting, pure solid white background"
+    greenery/texture/accent: "A single isolated high-end luxury silk [colour] [foliage name] — ONE short sprig, just a small cut tip with a few leaves, NOT a full branch or spray, premium faux foliage, overhead flat-lay view, studio lighting, pure solid white background"
+    Use the real name + true colour. One line.`;
 
 // ── POST /api/tag — suggest tags for a single item (text and/or photo) ─────────
 app.post('/api/tag', async (req, res) => {
@@ -1008,8 +1009,11 @@ app.post('/api/asset', async (req, res) => {
       const colorWord = sanitizeInput(req.body.colorName) || sanitizeInput(req.body.color);
       const unit = sanitizeInput(req.body.unit) || 'sprig';
       const cleanName = name.replace(/\b\d+(?:\.\d+)?\b\s*(?:''|"|in|inch|inches)?/gi, ' ').replace(/\s{2,}/g, ' ').trim() || name;
-      const piece = (unit === 'bloom') ? 'bloom head, no stem' : `single ${unit}`;
-      prompt = `A single isolated high-end luxury silk ${colorWord ? colorWord + ' ' : ''}${cleanName} ${piece}, premium artificial faux botanical, delicate fabric petals, facing forward, overhead flat-lay view, studio lighting, pure solid white background`;
+      let piece, extra;
+      if (unit === 'bloom') { piece = 'a SINGLE bloom head only — no stem and no leaves, just one flower head'; extra = 'delicate fabric petals'; }
+      else if (unit === 'cluster') { piece = 'ONE small single cluster, not a full spray'; extra = 'fine realistic detail'; }
+      else { piece = 'ONE short single sprig — just a small cut tip with only a few leaves, NOT a full branch or spray'; extra = 'soft realistic foliage'; }
+      prompt = `A single isolated high-end luxury silk ${colorWord ? colorWord + ' ' : ''}${cleanName} — ${piece}, premium artificial faux botanical, ${extra}, centered, facing forward, overhead flat-lay view, studio lighting, pure solid white background`;
     }
     const provider = (process.env.IMAGE_PROVIDER || '').toLowerCase()
       || (hasFal ? 'fal' : (process.env.OPENAI_API_KEY ? 'openai' : 'none'));
@@ -1027,7 +1031,7 @@ app.post('/api/asset', async (req, res) => {
       return res.json({ success: true, image: `data:image/png;base64,${b64}`, transparent: true });
     }
     if (provider === 'fal') {
-      const r = await fetch('https://fal.run/' + (process.env.FAL_ASSET_MODEL || 'fal-ai/flux/dev'), {
+      const r = await fetch('https://fal.run/' + (process.env.FAL_ASSET_MODEL || 'fal-ai/flux-pro/v1.1'), {
         method: 'POST',
         headers: { 'Authorization': `Key ${process.env.FAL_KEY}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, image_size: 'square_hd', num_images: 1 }),
