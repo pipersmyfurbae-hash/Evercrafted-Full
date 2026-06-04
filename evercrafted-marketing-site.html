@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — The Memory Design System</title>
+<meta name="description" content="Describe what a piece should hold. Evercrafted writes the story and designs the wreath.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --plaster:   #EAE4DA;
+  --linen:     #F2EDE4;
+  --parchment: #E0D9CE;
+  --stone:     #C8BFB2;
+  --warm:      #D4CCB8;
+  --ink:       #221E1A;
+  --charcoal:  #3D3830;
+  --umber:     #6B5E4E;
+  --dust:      #9A9088;
+  --iron:      #2A2520;
+  --sage:      #7A8C6A;
+  --sage-l:    #9EAD8C;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans:  'Jost', system-ui, sans-serif;
+  --tr: 300ms ease;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--serif);
+  background: var(--linen);
+  color: var(--ink);
+  overflow-x: hidden;
+  /* Subtle grain texture */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: 0 48px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(242,237,228,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--warm);
+}
+.nav-logo {
+  font-family: var(--serif);
+  font-size: 1.2rem; font-weight: 400;
+  letter-spacing: .06em; color: var(--ink);
+}
+.nav-logo em { font-style: italic; color: var(--sage); }
+.nav-links {
+  display: flex; align-items: center; gap: 36px;
+}
+.nav-link {
+  font-family: var(--sans);
+  font-size: 10px; font-weight: 400;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--umber);
+  transition: color var(--tr);
+}
+.nav-link:hover { color: var(--ink); }
+.nav-cta {
+  font-family: var(--sans);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 1px;
+  transition: all var(--tr);
+}
+.nav-cta:hover { color: var(--sage); border-color: var(--sage); }
+@media (max-width: 768px) {
+  .nav { padding: 0 24px; }
+  .nav-links .hide-sm { display: none; }
+}
+
+/* ── HERO — FULL VIEWPORT ── */
+.hero {
+  height: 100vh;
+  min-height: 700px;
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: flex-end;
+}
+.hero-img {
+  position: absolute; inset: 0;
+  background: var(--parchment);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.hero-img-left {
+  background: var(--plaster);
+  position: relative; overflow: hidden;
+}
+.hero-img-left img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center center;
+  filter: saturate(0.85) brightness(0.96);
+}
+.hero-img-right {
+  background: var(--parchment);
+}
+/* Vertical iron line dividing hero halves */
+.hero-divide {
+  position: absolute; top: 0; bottom: 0;
+  left: 50%; width: 1px;
+  background: var(--iron);
+  z-index: 2;
+}
+.hero-content {
+  position: relative; z-index: 10;
+  width: 100%; padding: 0 48px 72px;
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 48px;
+}
+@media (max-width: 768px) {
+  .hero-content { padding: 0 24px 48px; flex-direction: column; align-items: flex-start; gap: 24px; }
+  .hero-img { grid-template-columns: 1fr; }
+  .hero-img-right { display: none; }
+  .hero-divide { display: none; }
+}
+.hero-h {
+  font-family: var(--serif);
+  font-size: clamp(4rem, 9vw, 9rem);
+  font-weight: 300; line-height: .92;
+  letter-spacing: -.04em;
+  color: var(--ink);
+  mix-blend-mode: multiply;
+}
+.hero-h em { font-style: italic; color: var(--sage); }
+.hero-right-text { max-width: 320px; flex-shrink: 0; }
+.hero-sub {
+  font-family: var(--serif);
+  font-size: 1rem; font-weight: 300;
+  line-height: 1.8; color: var(--charcoal);
+  margin-bottom: 28px;
+}
+.hero-cta {
+  font-family: var(--sans);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--ink);
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 2px;
+  transition: all var(--tr); display: inline-block;
+}
+.hero-cta:hover { color: var(--sage); border-color: var(--sage); }
+.hero-scroll {
+  position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+  font-family: var(--sans); font-size: 9px;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--dust); z-index: 10;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.hero-scroll::after {
+  content: ''; width: 1px; height: 40px; background: var(--stone);
+}
+
+/* ── IRON GRID MOTIF — reusable section divider ── */
+.iron-grid {
+  width: 100%; height: 1px;
+  background: var(--warm);
+  position: relative;
+}
+.iron-grid::before, .iron-grid::after {
+  content: '◆';
+  position: absolute; top: 50%; transform: translateY(-50%);
+  font-size: 6px; color: var(--stone);
+}
+.iron-grid::before { left: 48px; }
+.iron-grid::after { right: 48px; }
+
+/* ── SHARED SECTION ── */
+.container { max-width: 1140px; margin: 0 auto; padding: 0 48px; }
+@media (max-width: 768px) { .container { padding: 0 24px; } }
+
+.label {
+  font-family: var(--sans);
+  font-size: 9px; font-weight: 500;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: var(--dust);
+}
+.h2 {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 300; line-height: 1;
+  letter-spacing: -.03em; color: var(--ink);
+}
+.h2 em { font-style: italic; color: var(--sage); }
+.h3 {
+  font-family: var(--serif);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-weight: 300; line-height: 1.1;
+  letter-spacing: -.02em; color: var(--ink);
+}
+.h3 em { font-style: italic; }
+.body-text {
+  font-family: var(--serif);
+  font-size: 1rem; font-weight: 300;
+  line-height: 1.85; color: var(--umber);
+}
+.text-link {
+  font-family: var(--sans);
+  font-size: 10px; font-weight: 500;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink); border-bottom: 1px solid var(--warm);
+  padding-bottom: 1px; transition: all var(--tr);
+  display: inline-block; margin-top: 28px;
+}
+.text-link:hover { border-color: var(--ink); }
+
+/* reveal */
+.reveal { opacity: 0; transform: translateY(16px); transition: opacity .8s ease, transform .8s ease; }
+.reveal.vis { opacity: 1; transform: none; }
+.rd1 { transition-delay: .12s; } .rd2 { transition-delay: .24s; } .rd3 { transition-delay: .36s; }
+
+/* ── INTRO PULL-QUOTE ── */
+.pullquote-section {
+  padding: 96px 0;
+  background: var(--plaster);
+  text-align: center;
+}
+.pullquote {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 4vw, 3.5rem);
+  font-weight: 300; font-style: italic;
+  line-height: 1.25; letter-spacing: -.02em;
+  color: var(--charcoal);
+  max-width: 900px; margin: 0 auto;
+  padding: 0 48px;
+}
+.pullquote-attr {
+  font-family: var(--sans); font-size: 10px;
+  letter-spacing: .16em; text-transform: uppercase;
+  color: var(--stone); margin-top: 32px;
+}
+
+/* ── IMAGE + TEXT — editorial split ── */
+.editorial {
+  display: grid;
+  background: var(--linen);
+}
+.editorial-split {
+  grid-template-columns: 1fr 1fr;
+  min-height: 680px;
+}
+.editorial-split-r {
+  grid-template-columns: 1fr 1fr;
+  min-height: 680px;
+  direction: rtl;
+}
+.editorial-split-r > * { direction: ltr; }
+@media (max-width: 840px) {
+  .editorial-split, .editorial-split-r { grid-template-columns: 1fr; min-height: auto; direction: ltr; }
+}
+.ed-image {
+  position: relative; overflow: hidden;
+  background: var(--parchment);
+}
+.ed-image img {
+  width: 100%; height: 100%; min-height: 500px;
+  object-fit: cover;
+  filter: saturate(0.88);
+  transition: transform 8s ease;
+}
+.editorial:hover .ed-image img { transform: scale(1.02); }
+.ed-text {
+  display: flex; flex-direction: column;
+  justify-content: center;
+  padding: 80px 72px;
+  background: var(--linen);
+}
+@media (max-width: 768px) { .ed-text { padding: 48px 24px; } }
+.ed-text-alt { background: var(--plaster); }
+.ed-num {
+  font-family: var(--serif);
+  font-size: 5rem; font-weight: 300;
+  color: var(--warm); line-height: 1;
+  margin-bottom: 16px; letter-spacing: -.04em;
+}
+.ed-body { margin-top: 20px; }
+
+/* ── WREATH GALLERY — three column ── */
+.gallery-section {
+  background: var(--parchment);
+  padding: 96px 0;
+}
+.gallery-intro { margin-bottom: 64px; }
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--warm);
+}
+@media (max-width: 768px) { .gallery-grid { grid-template-columns: 1fr; } }
+.gallery-item {
+  position: relative; overflow: hidden;
+  background: var(--plaster);
+  aspect-ratio: 3/4;
+}
+.gallery-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: saturate(0.85);
+  transition: transform 6s ease, filter .6s ease;
+}
+.gallery-item:hover img {
+  transform: scale(1.04);
+  filter: saturate(1);
+}
+.gallery-item-caption {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 48px 28px 28px;
+  background: linear-gradient(transparent, rgba(34,30,26,0.6));
+  opacity: 0; transition: opacity .4s ease;
+}
+.gallery-item:hover .gallery-item-caption { opacity: 1; }
+.gallery-caption-text {
+  font-family: var(--serif);
+  font-size: .85rem; font-style: italic;
+  color: rgba(255,255,255,0.85); line-height: 1.6;
+}
+
+/* ── SCENE SECTION — dark ink background ── */
+.scene-section {
+  background: var(--iron);
+  padding: 120px 0;
+}
+.scene-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 96px; align-items: center;
+}
+@media (max-width: 840px) { .scene-grid { grid-template-columns: 1fr; gap: 48px; } }
+.scene-label {
+  font-family: var(--sans); font-size: 9px;
+  font-weight: 500; letter-spacing: .2em;
+  text-transform: uppercase; color: rgba(255,255,255,.25);
+  margin-bottom: 28px;
+}
+.scene-h {
+  font-family: var(--serif);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 300; line-height: 1; letter-spacing: -.03em;
+  color: rgba(255,255,255,.88); margin-bottom: 32px;
+}
+.scene-h em { font-style: italic; color: var(--sage-l); }
+.scene-body {
+  font-family: var(--serif);
+  font-size: 1rem; font-weight: 300;
+  line-height: 1.85; color: rgba(255,255,255,.4);
+}
+.scene-steps { margin-top: 48px; }
+.scene-step {
+  display: grid; grid-template-columns: 48px 1fr;
+  border-top: 1px solid rgba(255,255,255,.07);
+  padding: 24px 0; gap: 0;
+}
+.scene-step:last-child { border-bottom: 1px solid rgba(255,255,255,.07); }
+.ss-n {
+  font-family: var(--serif);
+  font-size: 1.1rem; font-weight: 300;
+  color: rgba(255,255,255,.18); padding-top: 2px;
+}
+.ss-t {
+  font-family: var(--serif);
+  font-size: 1rem; font-weight: 400;
+  color: rgba(255,255,255,.65); line-height: 1.3;
+  margin-bottom: 4px;
+}
+.ss-b {
+  font-family: var(--serif);
+  font-size: .88rem; font-weight: 300;
+  color: rgba(255,255,255,.3); line-height: 1.65;
+}
+.scene-card {
+  border: 1px solid rgba(255,255,255,.08);
+  padding: 48px;
+  background: rgba(255,255,255,.03);
+}
+.sc-top {
+  font-family: var(--sans); font-size: 9px;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(255,255,255,.2); margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+.sc-poem {
+  font-family: var(--serif);
+  font-size: 1rem; font-style: italic;
+  font-weight: 300; line-height: 1.9;
+  color: rgba(255,255,255,.6);
+  border-left: 1px solid rgba(255,255,255,.1);
+  padding-left: 24px; margin-bottom: 40px;
+}
+.sc-meta { display: flex; flex-direction: column; gap: 0; }
+.sc-row {
+  display: flex; justify-content: space-between;
+  align-items: baseline; padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.sc-row:last-child { border: none; }
+.sc-k {
+  font-family: var(--sans); font-size: 9px;
+  letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(255,255,255,.2);
+}
+.sc-v {
+  font-family: var(--serif);
+  font-size: .9rem; font-style: italic;
+  color: rgba(255,255,255,.45);
+}
+
+/* ── PRICING — linen grid ── */
+.pricing-section { background: var(--linen); padding: 120px 0; }
+.pricing-intro { margin-bottom: 72px; }
+.pricing-table {
+  display: grid; grid-template-columns: repeat(4,1fr);
+  border-top: 1px solid var(--warm);
+  border-left: 1px solid var(--warm);
+}
+@media (max-width: 900px) { .pricing-table { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .pricing-table { grid-template-columns: 1fr; } }
+.tier {
+  border-right: 1px solid var(--warm);
+  border-bottom: 1px solid var(--warm);
+  padding: 40px 36px;
+  transition: background var(--tr);
+}
+.tier.best { background: var(--plaster); }
+.tier-mark {
+  font-family: var(--sans); font-size: 9px;
+  font-weight: 500; letter-spacing: .18em;
+  text-transform: uppercase; color: var(--dust);
+  margin-bottom: 24px; display: block;
+}
+.tier.best .tier-mark { color: var(--sage); }
+.tier-price {
+  font-family: var(--serif);
+  font-size: 3rem; font-weight: 300; line-height: 1;
+  color: var(--ink); margin-bottom: 4px; letter-spacing: -.04em;
+}
+.tier-period {
+  font-family: var(--sans); font-size: 10px;
+  color: var(--dust); letter-spacing: .1em; display: block;
+  margin-bottom: 28px; padding-bottom: 28px;
+  border-bottom: 1px solid var(--warm);
+}
+.tier-tagline {
+  font-family: var(--serif); font-size: .9rem;
+  font-style: italic; font-weight: 300;
+  color: var(--umber); margin-bottom: 24px;
+}
+.tier-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+.tf {
+  font-family: var(--serif); font-size: .85rem;
+  font-weight: 300; color: var(--charcoal);
+  display: flex; align-items: flex-start; gap: 10px; line-height: 1.4;
+}
+.tf::before { content: '—'; color: var(--stone); flex-shrink: 0; }
+.tf.off { color: var(--stone); }
+.tf.off::before { content: '·'; }
+.tier-btn {
+  font-family: var(--sans); font-size: 9px;
+  font-weight: 500; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--umber);
+  border-bottom: 1px solid var(--warm);
+  padding-bottom: 2px; background: none;
+  border-top: none; border-left: none; border-right: none;
+  cursor: pointer; transition: all var(--tr);
+}
+.tier-btn:hover { color: var(--ink); border-color: var(--ink); }
+.tier.best .tier-btn { color: var(--sage); border-color: var(--sage); }
+.tier.best .tier-btn:hover { color: var(--ink); border-color: var(--ink); }
+.tier.dark {
+  background: var(--iron); border-color: rgba(255,255,255,.06);
+}
+.tier.dark .tier-mark { color: rgba(255,255,255,.25); }
+.tier.dark .tier-price { color: var(--sage-l); letter-spacing: -.04em; }
+.tier.dark .tier-period { color: rgba(255,255,255,.25); border-color: rgba(255,255,255,.06); }
+.tier.dark .tier-tagline { color: rgba(255,255,255,.35); }
+.tier.dark .tf { color: rgba(255,255,255,.5); }
+.tier.dark .tf::before { color: rgba(255,255,255,.15); }
+.tier.dark .tier-btn { color: rgba(255,255,255,.35); border-color: rgba(255,255,255,.12); }
+.tier.dark .tier-btn:hover { color: rgba(255,255,255,.7); border-color: rgba(255,255,255,.4); }
+
+/* ── TESTIMONIAL ── */
+.testi-section { background: var(--plaster); padding: 120px 0; }
+.testi-grid {
+  display: grid; grid-template-columns: repeat(3,1fr);
+  border-left: 1px solid var(--warm);
+}
+@media (max-width: 768px) { .testi-grid { grid-template-columns: 1fr; border-left: none; } }
+.testi {
+  padding: 48px 40px;
+  border-right: 1px solid var(--warm);
+}
+@media (max-width: 768px) { .testi { border-right: none; border-bottom: 1px solid var(--warm); } }
+.testi-mark {
+  font-family: var(--serif);
+  font-size: 3rem; font-weight: 300;
+  color: var(--warm); line-height: 1; margin-bottom: 16px;
+}
+.testi-q {
+  font-family: var(--serif);
+  font-size: 1rem; font-style: italic;
+  font-weight: 300; line-height: 1.8;
+  color: var(--charcoal); margin-bottom: 28px;
+}
+.testi-a {
+  font-family: var(--sans); font-size: 9px;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--dust);
+}
+
+/* ── WAITLIST — sage field ── */
+.wl-section {
+  background: var(--sage);
+  padding: 120px 0; text-align: center;
+}
+.wl-label {
+  font-family: var(--sans); font-size: 9px;
+  letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(255,255,255,.4); margin-bottom: 28px;
+}
+.wl-h {
+  font-family: var(--serif);
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 300; line-height: .95;
+  letter-spacing: -.04em; color: rgba(255,255,255,.92);
+  margin-bottom: 20px;
+}
+.wl-h em { font-style: italic; }
+.wl-sub {
+  font-family: var(--serif);
+  font-size: 1rem; font-weight: 300;
+  color: rgba(255,255,255,.5); line-height: 1.75;
+  max-width: 440px; margin: 0 auto 48px;
+}
+.wl-form {
+  display: flex; max-width: 400px;
+  margin: 0 auto;
+  border: 1px solid rgba(255,255,255,.3);
+}
+.wl-input {
+  flex: 1; padding: 16px 20px;
+  background: rgba(255,255,255,.1);
+  border: none; color: #fff;
+  font-family: var(--sans); font-size: 12px;
+  outline: none;
+}
+.wl-input::placeholder { color: rgba(255,255,255,.35); }
+.wl-submit {
+  padding: 16px 24px;
+  background: rgba(255,255,255,.12);
+  border: none; border-left: 1px solid rgba(255,255,255,.3);
+  color: rgba(255,255,255,.7);
+  font-family: var(--sans); font-size: 9px;
+  font-weight: 500; letter-spacing: .18em;
+  text-transform: uppercase; cursor: pointer;
+  transition: all var(--tr);
+}
+.wl-submit:hover { background: rgba(255,255,255,.22); color: #fff; }
+.wl-note {
+  font-family: var(--sans); font-size: 10px;
+  letter-spacing: .08em; color: rgba(255,255,255,.3);
+  margin-top: 20px;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--iron);
+  border-top: 1px solid rgba(255,255,255,.06);
+}
+.footer-inner {
+  display: grid; grid-template-columns: 2fr 1fr 1fr;
+  gap: 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+}
+@media (max-width: 768px) { .footer-inner { grid-template-columns: 1fr; } }
+.footer-col {
+  padding: 56px 48px;
+  border-right: 1px solid rgba(255,255,255,.06);
+}
+.footer-col:last-child { border-right: none; }
+.footer-logo {
+  font-family: var(--serif); font-size: 1.2rem;
+  font-weight: 400; color: rgba(255,255,255,.7);
+  margin-bottom: 16px;
+}
+.footer-logo em { font-style: italic; color: var(--sage-l); }
+.footer-tagline {
+  font-family: var(--serif); font-size: .88rem;
+  font-weight: 300; color: rgba(255,255,255,.25);
+  line-height: 1.75; max-width: 260px;
+}
+.footer-col-title {
+  font-family: var(--sans); font-size: 9px;
+  letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(255,255,255,.18); margin-bottom: 24px;
+}
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+.footer-link {
+  font-family: var(--serif); font-size: .88rem;
+  font-weight: 300; color: rgba(255,255,255,.3);
+  transition: color var(--tr);
+}
+.footer-link:hover { color: rgba(255,255,255,.65); }
+.footer-bottom {
+  padding: 24px 48px;
+  display: flex; justify-content: space-between;
+  font-family: var(--sans); font-size: 9px;
+  letter-spacing: .1em; color: rgba(255,255,255,.18);
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo">Ever<em>crafted</em></div>
+  <div class="nav-links">
+    <a href="evercrafted-how-it-works.html" class="nav-link hide-sm">How it works</a>
+    <a href="evercrafted-about.html" class="nav-link hide-sm">About</a>
+    <a href="evercrafted-try.html" class="nav-link hide-sm">Try it</a>
+    <a href="#waitlist" class="nav-cta">Join the waitlist ↗</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-img">
+    <div class="hero-img-left">
+      <img src="wreath-blue-plaster.jpg" alt="Faux botanical wreath with dusty blue hydrangeas and ivory roses on aged plaster">
+    </div>
+    <div class="hero-img-right"></div>
+  </div>
+  <div class="hero-divide"></div>
+  <div class="hero-content">
+    <h1 class="hero-h reveal">
+      Describe<br>
+      the<br>
+      <em>memory.</em><br>
+      We write<br>
+      the wreath.
+    </h1>
+    <div class="hero-right-text reveal rd2">
+      <p class="hero-sub">Tell Evercrafted what a piece should hold — a person, a place, a season, a feeling. It writes the story of that memory and turns it into a design you can actually build.</p>
+      <a href="evercrafted-try.html" class="hero-cta">Try a memory ↗</a>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<div class="iron-grid"></div>
+
+<!-- PULLQUOTE -->
+<section class="pullquote-section">
+  <div class="pullquote reveal">
+    "The building was never the hard part. It was all the time spent before the first stem went in — trying to figure out what a piece was supposed to say."
+  </div>
+  <div class="pullquote-attr reveal rd1">Bret · Founder, Evercrafted · 25 years in faux botanicals · Columbus, Ohio</div>
+</section>
+
+<div class="iron-grid"></div>
+
+<!-- EDITORIAL 1 — image left, text right -->
+<div class="editorial editorial-split">
+  <div class="ed-image reveal">
+    <img src="wreath-blush-stone.jpg" alt="Blush peony and sage eucalyptus wreath on textured stone">
+  </div>
+  <div class="ed-text reveal rd1">
+    <div class="label">Memory Scene Builder</div>
+    <div class="ed-num">01</div>
+    <h2 class="h3">Seven questions.<br>A poem.<br><em>A design.</em></h2>
+    <p class="body-text ed-body">Before a single floral is chosen, Evercrafted writes the scene. A lyrical piece — 150 words — that inhabits the memory rather than describing it. The kind of writing you could print on a card and send with the finished piece.<br><br>The florals are chosen from what the poem carries. What holds the design together. What gives it its voice. What you notice last when you look closely.</p>
+    <a href="evercrafted-try.html" class="text-link">Try a memory →</a>
+  </div>
+</div>
+
+<div class="iron-grid"></div>
+
+<!-- EDITORIAL 2 — text left, image right -->
+<div class="editorial editorial-split-r">
+  <div class="ed-image reveal">
+    <img src="wreath-white-clean.jpg" alt="Pure ivory and white wreath with eucalyptus on soft grey">
+  </div>
+  <div class="ed-text ed-text-alt reveal rd1">
+    <div class="label">Commercial Creator</div>
+    <div class="ed-num">02</div>
+    <h2 class="h3">Designing for<br>the shop.<br><em>Not a client.</em></h2>
+    <p class="body-text ed-body">Designing for Etsy rather than a commission? Tell Evercrafted who is buying this, what season it lives in, and what your shop is known for. Get a complete concept brief, blueprint, Etsy listing copy, price suggestion, and a render prompt built for a product listing image.</p>
+    <a href="evercrafted-try.html" class="text-link">Try the commercial creator →</a>
+  </div>
+</div>
+
+<div class="iron-grid"></div>
+
+<!-- GALLERY -->
+<section class="gallery-section">
+  <div class="container">
+    <div class="gallery-intro">
+      <div class="label reveal">From the studio</div>
+      <h2 class="h2 reveal rd1" style="margin-top:20px">Every piece tells<br><em>something true.</em></h2>
+    </div>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item reveal">
+      <img src="wreath-blue-plaster.jpg" alt="Blue hydrangea wreath on plaster">
+      <div class="gallery-item-caption">
+        <div class="gallery-caption-text">A memory of Lisbon in early spring. Nostalgia at the heart. Melancholy at the edge.</div>
+      </div>
+    </div>
+    <div class="gallery-item reveal rd1">
+      <img src="wreath-blush-stone.jpg" alt="Blush and stone wreath">
+      <div class="gallery-item-caption">
+        <div class="gallery-caption-text">Grandmother's September garden. The warmth before the cold arrived.</div>
+      </div>
+    </div>
+    <div class="gallery-item reveal rd2">
+      <img src="wreath-white-clean.jpg" alt="White wreath with eucalyptus">
+      <div class="gallery-item-caption">
+        <div class="gallery-caption-text">Peace. The kind that has grief somewhere underneath it.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="iron-grid"></div>
+
+<!-- SCENE SECTION -->
+<section class="scene-section">
+  <div class="container">
+    <div class="scene-grid">
+      <div class="reveal">
+        <div class="scene-label">How it works</div>
+        <h2 class="scene-h">From feeling<br>to <em>finished</em><br>wreath.</h2>
+        <p class="scene-body">The AI reads the feeling. Evercrafted handles the design. Two separate intelligences, doing two entirely different jobs.</p>
+        <div class="scene-steps">
+          <div class="scene-step">
+            <div class="ss-n">01</div>
+            <div>
+              <div class="ss-t">Share the memory</div>
+              <div class="ss-b">Seven questions. The season, the place, the person, the feeling underneath.</div>
+            </div>
+          </div>
+          <div class="scene-step">
+            <div class="ss-n">02</div>
+            <div>
+              <div class="ss-t">The scene is written</div>
+              <div class="ss-b">A lyrical piece that inhabits the memory. The kind you could print on a card.</div>
+            </div>
+          </div>
+          <div class="scene-step">
+            <div class="ss-n">03</div>
+            <div>
+              <div class="ss-t">Every piece earns its place</div>
+              <div class="ss-b">The florals trace back to what the poem carries — not just what was named.</div>
+            </div>
+          </div>
+          <div class="scene-step">
+            <div class="ss-n">04</div>
+            <div>
+              <div class="ss-t">Five outputs. All at once.</div>
+              <div class="ss-b">The scene. The map. The blueprint. The render. The build guide.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reveal rd2">
+        <div class="scene-card">
+          <div class="sc-top">Memory · Alfama, Lisbon · Spring · Morning</div>
+          <div class="sc-poem">"The wreath hangs on the azulejo-tiled staircase wall as the first light spreads across the Tagus. Orange blossoms drift from unseen trees, mixing with the salt tang of the river. Even now, watching the light inch across the terracotta rooftops, there is the strange ache of missing this moment while still living inside it."</div>
+          <div class="sc-meta">
+            <div class="sc-row"><span class="sc-k">What holds it together</span><span class="sc-v">nostalgia</span></div>
+            <div class="sc-row"><span class="sc-k">What gives it its voice</span><span class="sc-v">tenderness</span></div>
+            <div class="sc-row"><span class="sc-k">What you notice last</span><span class="sc-v">melancholy</span></div>
+            <div class="sc-row"><span class="sc-k">Composition</span><span class="sc-v">Crescent · 22" grapevine</span></div>
+            <div class="sc-row"><span class="sc-k">Render setting</span><span class="sc-v">azulejo wall, Alfama</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="iron-grid"></div>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <div class="pricing-intro">
+      <div class="label reveal">Pricing</div>
+      <h2 class="h2 reveal rd1" style="margin-top:20px">Start free.<br><em>Build from there.</em></h2>
+    </div>
+  </div>
+  <div class="container" style="padding:0">
+    <div class="pricing-table reveal">
+      <div class="tier">
+        <span class="tier-mark">Bloom</span>
+        <div class="tier-price">$0</div>
+        <span class="tier-period">per month</span>
+        <div class="tier-tagline">Try it. See if it fits.</div>
+        <ul class="tier-features">
+          <li class="tf">3 designs per month</li>
+          <li class="tf">Seasonal lookbook</li>
+          <li class="tf">Tutorial guides</li>
+          <li class="tf off">Inventory tagger</li>
+          <li class="tf off">Memory Scene Builder</li>
+        </ul>
+        <button class="tier-btn" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Get started</button>
+      </div>
+      <div class="tier">
+        <span class="tier-mark">Craft</span>
+        <div class="tier-price">$19</div>
+        <span class="tier-period">per month</span>
+        <div class="tier-tagline">For makers who work with clients.</div>
+        <ul class="tier-features">
+          <li class="tf">Unlimited designs</li>
+          <li class="tf">Inventory tagger</li>
+          <li class="tf">Commercial Creator</li>
+          <li class="tf">Pricing calculator</li>
+          <li class="tf off">Memory Scene Builder</li>
+        </ul>
+        <button class="tier-btn" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join waitlist</button>
+      </div>
+      <div class="tier best">
+        <span class="tier-mark">Studio</span>
+        <div class="tier-price">$49</div>
+        <span class="tier-period">per month</span>
+        <div class="tier-tagline">For working wreath artists.</div>
+        <ul class="tier-features">
+          <li class="tf">Everything in Craft</li>
+          <li class="tf">Memory Scene Builder</li>
+          <li class="tf">Shop &amp; gap matching</li>
+          <li class="tf">Collection builder</li>
+          <li class="tf">Build guide for every design</li>
+        </ul>
+        <button class="tier-btn" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join waitlist</button>
+      </div>
+      <div class="tier dark">
+        <span class="tier-mark">Atelier</span>
+        <div class="tier-price">$99</div>
+        <span class="tier-period">per month</span>
+        <div class="tier-tagline">Studios, teachers, full-time makers.</div>
+        <ul class="tier-features">
+          <li class="tf">Everything in Studio</li>
+          <li class="tf">AI renders + Flux images</li>
+          <li class="tf">Sellable design templates</li>
+          <li class="tf">White-label exports</li>
+          <li class="tf">API access</li>
+        </ul>
+        <button class="tier-btn" onclick="document.getElementById('waitlist').scrollIntoView({behavior:'smooth'})">Join waitlist</button>
+      </div>
+    </div>
+    <div style="padding:20px 48px;font-family:var(--sans);font-size:9px;letter-spacing:.1em;color:var(--dust)">
+      All prices USD · Cancel anytime · Founding member pricing locks in at signup
+    </div>
+  </div>
+</section>
+
+<div class="iron-grid"></div>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section">
+  <div class="container">
+    <div class="label reveal" style="margin-bottom:48px">From makers</div>
+  </div>
+  <div class="container" style="padding:0">
+    <div class="testi-grid">
+      <div class="testi reveal">
+        <div class="testi-mark">"</div>
+        <p class="testi-q">I described a week in Lisbon and it wrote something that made me cry before I even looked at the design. That is not a tool. That is something else entirely.</p>
+        <div class="testi-a">M.T. — Floral designer, studio owner</div>
+      </div>
+      <div class="testi reveal rd1">
+        <div class="testi-mark">"</div>
+        <p class="testi-q">I was making the same wreath over and over without realising it. Now each one is genuinely different — I can see it, and my customers can feel it.</p>
+        <div class="testi-a">Sarah L. — Etsy top seller</div>
+      </div>
+      <div class="testi reveal rd2">
+        <div class="testi-mark">"</div>
+        <p class="testi-q">My inventory is fully organised for the first time. I can see exactly what feelings I am well-stocked on and what I am missing — completely changed how I shop.</p>
+        <div class="testi-a">Jamie P. — Seasonal decor creator</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="iron-grid"></div>
+
+<!-- WAITLIST -->
+<section class="wl-section" id="waitlist">
+  <div class="container">
+    <div class="wl-label">Early access</div>
+    <h2 class="wl-h">Be first<br>when we <em>launch.</em></h2>
+    <p class="wl-sub">Founding member pricing locked in at signup. Direct input on what gets built next.</p>
+    <form class="wl-form" onsubmit="handleWL(event)">
+      <input class="wl-input" type="email" placeholder="Your email address" id="wl-email" required>
+      <button class="wl-submit" type="submit">Join ↗</button>
+    </form>
+    <div class="wl-note" id="wl-msg">No spam. Unsubscribe anytime.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container" style="padding:0">
+    <div class="footer-inner">
+      <div class="footer-col">
+        <div class="footer-logo">Ever<em>crafted</em></div>
+        <p class="footer-tagline">The design system for faux botanical wreath artists. Turn a feeling into something you can build.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Navigate</div>
+        <ul class="footer-links">
+          <li><a href="evercrafted-how-it-works.html" class="footer-link">How it works</a></li>
+          <li><a href="evercrafted-about.html" class="footer-link">About</a></li>
+          <li><a href="evercrafted-pricing.html" class="footer-link">Pricing</a></li>
+          <li><a href="evercrafted-try.html" class="footer-link">Try it free</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">Tools</div>
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">Memory Scene Builder</a></li>
+          <li><a href="#" class="footer-link">Commercial Creator</a></li>
+          <li><a href="#" class="footer-link">Inventory Tagger</a></li>
+          <li><a href="#" class="footer-link">The Shop</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Evercrafted Studio · Columbus, Ohio</span>
+      <span>Privacy · Instagram</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const ro = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('vis'); });
+}, { threshold: 0.06 });
+document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+function handleWL(e) {
+  e.preventDefault();
+  const email = document.getElementById('wl-email').value;
+  document.getElementById('wl-msg').textContent = email + ' is on the list. Founding pricing locked in.';
+  document.getElementById('wl-msg').style.color = 'rgba(255,255,255,.7)';
+  document.getElementById('wl-email').value = '';
+}
+</script>
+</body>
+</html>

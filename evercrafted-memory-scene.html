@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Memory Scene Builder — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3ef; --sf:#fff; --s2:#f0ede8; --s3:#e8e4de;
+  --bd:#ddd8d0; --bd2:#c8c2b8;
+  --tx:#2a2420; --mu:#6a6058; --fa:#9a9088;
+  --green:#4a6741; --gp:#eef2ed; --gd:rgba(74,103,65,.10);
+  --gold:#9a7a40; --goldp:#f5efe4; --goldd:rgba(154,122,64,.10);
+  --dust:#6a5a80; --dustp:#f5eef4; --dustd:rgba(106,90,128,.10);
+  --r:12px; --rsm:7px; --rlg:16px;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',system-ui,sans-serif;
+  --tr:200ms ease;
+  --sh:0 1px 4px rgba(0,0,0,.06);
+  --sm:0 4px 20px rgba(0,0,0,.09);
+  --sl:0 12px 48px rgba(0,0,0,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:13px;line-height:1.6}
+
+/* NAV */
+.nav{background:var(--sf);border-bottom:1px solid var(--bd);padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh)}
+.nav-logo{font-family:var(--serif);font-size:1.3rem;font-weight:400;color:var(--tx);text-decoration:none}
+.nav-logo span{color:var(--green)}
+.nav-sub{font-size:11px;color:var(--fa);font-weight:400;letter-spacing:.05em}
+
+/* LAYOUT */
+.app{max-width:1040px;margin:0 auto;padding:2rem 1.5rem 4rem}
+@media(max-width:640px){.app{padding:1.25rem 1rem 3rem}}
+
+/* PROGRESS BAR */
+.progress-wrap{margin-bottom:2rem}
+.progress-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.5rem;display:flex;justify-content:space-between}
+.progress-track{height:3px;background:var(--bd);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width .5s ease}
+
+/* INTAKE FLOW */
+.intake{max-width:640px;margin:0 auto}
+.step-indicator{display:flex;align-items:center;justify-content:center;gap:.4rem;margin-bottom:2rem;flex-wrap:wrap}
+.si-dot{width:8px;height:8px;border-radius:50%;background:var(--bd2);transition:all .3s ease}
+.si-dot.done{background:var(--green)}
+.si-dot.active{background:var(--green);transform:scale(1.4)}
+
+.question-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);padding:2rem;box-shadow:var(--sh);animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.q-eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin-bottom:.6rem}
+.q-text{font-family:var(--serif);font-size:1.6rem;font-weight:400;color:var(--tx);line-height:1.2;margin-bottom:.4rem}
+.q-sub{font-size:13px;color:var(--mu);margin-bottom:1.5rem;font-weight:300;line-height:1.5}
+
+textarea.q-input{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--serif);font-size:1rem;font-style:italic;padding:.85rem 1rem;resize:none;min-height:100px;outline:none;transition:border-color .2s,box-shadow .2s;line-height:1.7}
+textarea.q-input:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gd)}
+textarea.q-input::placeholder{color:var(--fa);font-style:italic}
+
+input.q-input-text{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--sans);font-size:14px;padding:.75rem 1rem;outline:none;transition:border-color .2s,box-shadow .2s}
+input.q-input-text:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gd)}
+input.q-input-text::placeholder{color:var(--fa)}
+
+.option-grid{display:grid;gap:.6rem}
+.option-grid.cols-2{grid-template-columns:1fr 1fr}
+.option-grid.cols-3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:480px){.option-grid.cols-3,.option-grid.cols-2{grid-template-columns:1fr 1fr}}
+
+.opt-btn{padding:.8rem 1rem;border-radius:var(--r);border:1.5px solid var(--bd);background:var(--s2);color:var(--mu);font-family:var(--sans);font-size:13px;font-weight:400;cursor:pointer;transition:all var(--tr);text-align:left;display:flex;align-items:center;gap:.65rem;line-height:1.3}
+.opt-btn:hover{border-color:var(--green);background:var(--gp);color:var(--green)}
+.opt-btn.selected{border-color:var(--green);background:var(--gp);color:var(--green);font-weight:500}
+.opt-icon{font-size:18px;flex-shrink:0}
+.opt-label{flex:1}
+.opt-sub{font-size:11px;color:var(--fa);font-weight:300;display:block;margin-top:1px}
+
+.q-actions{display:flex;gap:.6rem;margin-top:1.25rem;justify-content:flex-end}
+.btn-next{padding:10px 24px;border-radius:100px;background:var(--green);color:#fff;font-family:var(--sans);font-size:13px;font-weight:500;border:none;cursor:pointer;transition:all var(--tr);letter-spacing:.04em;display:inline-flex;align-items:center;gap:.5rem}
+.btn-next:hover{background:#3a5030;transform:translateY(-1px)}
+.btn-next:disabled{opacity:.4;cursor:default;transform:none}
+.btn-back{padding:10px 18px;border-radius:100px;background:transparent;color:var(--mu);font-family:var(--sans);font-size:13px;font-weight:500;border:1px solid var(--bd);cursor:pointer;transition:all var(--tr)}
+.btn-back:hover{border-color:var(--bd2);color:var(--tx)}
+
+/* GENERATING */
+.generating{text-align:center;padding:4rem 2rem;max-width:520px;margin:0 auto}
+.gen-icon{font-size:2.5rem;margin-bottom:1rem;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:.5;transform:scale(.95)}50%{opacity:1;transform:scale(1.05)}}
+.gen-title{font-family:var(--serif);font-size:1.8rem;font-weight:400;color:var(--tx);margin-bottom:.5rem}
+.gen-steps{display:flex;flex-direction:column;gap:.4rem;margin-top:1.5rem;text-align:left;max-width:320px;margin-left:auto;margin-right:auto}
+.gen-step{font-size:12px;color:var(--fa);display:flex;align-items:center;gap:.6rem;transition:color .3s}
+.gen-step.active{color:var(--green);font-weight:500}
+.gen-step.done{color:var(--green)}
+.gs-dot{width:6px;height:6px;border-radius:50%;background:var(--bd2);flex-shrink:0;transition:background .3s}
+.gen-step.active .gs-dot,.gen-step.done .gs-dot{background:var(--green)}
+
+/* SCENE OUTPUT */
+.scene-output{animation:fadeUp .6s ease}
+.scene-header{text-align:center;margin-bottom:2rem;padding:2.5rem 2rem;background:var(--sf);border-radius:var(--rlg);border:1px solid var(--bd);box-shadow:var(--sh)}
+.scene-season-badge{display:inline-flex;align-items:center;gap:.5rem;padding:.35rem 1rem;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;margin-bottom:1rem}
+.scene-title{font-family:var(--serif);font-size:2.2rem;font-weight:400;color:var(--tx);line-height:1.15;margin-bottom:.35rem}
+.scene-location{font-size:13px;color:var(--mu);display:flex;align-items:center;justify-content:center;gap:.4rem}
+.scene-location::before{content:'◎';color:var(--green);font-size:12px}
+
+.output-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+@media(max-width:700px){.output-grid{grid-template-columns:1fr}}
+.output-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.25rem}
+@media(max-width:700px){.output-grid-3{grid-template-columns:1fr}}
+
+.out-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);overflow:hidden;box-shadow:var(--sh)}
+.out-card-full{grid-column:1/-1}
+.oc-header{padding:.8rem 1.1rem;border-bottom:1px solid var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:space-between}
+.oc-title{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fa)}
+.oc-badge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px}
+.oc-body{padding:1.1rem}
+
+/* Poem */
+.poem-text{font-family:var(--serif);font-size:1.05rem;font-style:italic;line-height:1.85;color:var(--charcoal,#2e2e2e)}
+
+/* Map */
+.map-container{width:100%;height:220px;border-radius:var(--rsm);overflow:hidden;background:var(--s2);position:relative}
+.map-iframe{width:100%;height:100%;border:none}
+.map-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem;color:var(--mu)}
+.map-pin{font-size:2rem}
+.map-label{font-size:12px;font-weight:500}
+.map-city-name{font-family:var(--serif);font-size:1.1rem;font-weight:400;color:var(--tx);margin-top:.25rem}
+
+/* Season visual */
+.season-visual{width:100%;height:160px;border-radius:var(--rsm);display:flex;align-items:center;justify-content:center;font-size:3rem;position:relative;overflow:hidden}
+.season-particles{position:absolute;inset:0;pointer-events:none}
+
+/* Emotion profile */
+.emotion-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.emchip{padding:.35rem .85rem;border-radius:20px;font-size:11px;font-weight:600}
+.formula-row{background:var(--gp);border-radius:var(--rsm);padding:.6rem .85rem;font-size:12px;color:var(--green);font-weight:500;display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
+.intensity-row{display:flex;gap:4px;align-items:center}
+.int-pip{width:14px;height:14px;border-radius:3px;background:var(--bd);border:1px solid var(--bd2)}
+.int-pip.lit{background:var(--gold);border-color:var(--gold)}
+
+/* Render prompt */
+.prompt-box{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);padding:1rem;font-size:12px;line-height:1.8;color:var(--mu);font-style:italic;position:relative}
+.copy-btn{position:absolute;top:8px;right:8px;padding:3px 10px;border-radius:var(--rsm);border:1px solid var(--bd2);background:var(--sf);color:var(--fa);font-size:10px;cursor:pointer;font-family:var(--sans);transition:all var(--tr)}
+.copy-btn:hover{color:var(--tx);border-color:var(--green)}
+
+/* Design brief */
+.brief-text{font-family:var(--serif);font-size:1rem;line-height:1.8;color:var(--tx);font-style:italic}
+
+/* Reset btn */
+.reset-wrap{text-align:center;margin-top:1.5rem}
+.reset-btn{padding:10px 24px;border-radius:100px;border:1px solid var(--bd);background:transparent;color:var(--mu);font-family:var(--sans);font-size:13px;cursor:pointer;transition:all var(--tr)}
+.reset-btn:hover{border-color:var(--bd2);color:var(--tx)}
+
+/* season colours */
+.spring{background:linear-gradient(135deg,#f0f7ec,#daf0e8)}
+.summer{background:linear-gradient(135deg,#fef9e7,#fdebd0)}
+.autumn{background:linear-gradient(135deg,#fdf2e9,#f9e4c8)}
+.winter{background:linear-gradient(135deg,#eaf2fb,#d6eaf8)}
+.spring-badge{background:#daf0e8;color:#2d7a4a}
+.summer-badge{background:#fdebd0;color:#9a6010}
+.autumn-badge{background:#f9e4c8;color:#9a5020}
+.winter-badge{background:#d6eaf8;color:#2050a0}
+
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(74,103,65,.25);border-top-color:var(--green);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="evercrafted-marketing-site.html" class="nav-logo">Ever<span>crafted</span></a>
+  <span class="nav-sub">Memory Scene Builder</span>
+</nav>
+
+<div class="app">
+  <div class="progress-wrap">
+    <div class="progress-label"><span id="progress-text">Step 1 of 7</span><span id="progress-pct">14%</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:14%"></div></div>
+  </div>
+
+  <!-- INTAKE -->
+  <div id="intake-view" class="intake">
+    <div class="step-indicator" id="step-dots"></div>
+    <div id="question-wrap"></div>
+  </div>
+
+  <!-- GENERATING -->
+  <div id="generating-view" style="display:none">
+    <div class="generating">
+      <div class="gen-icon">✦</div>
+      <div class="gen-title">Building the scene</div>
+      <p style="font-size:13px;color:var(--mu);font-weight:300;margin-top:.4rem">Writing the story of this memory.</p>
+      <div class="gen-steps" id="gen-steps">
+        <div class="gen-step" id="gs-0"><span class="gs-dot"></span>Reading the memory</div>
+        <div class="gen-step" id="gs-1"><span class="gs-dot"></span>Researching the location</div>
+        <div class="gen-step" id="gs-2"><span class="gs-dot"></span>Finding the right setting</div>
+        <div class="gen-step" id="gs-3"><span class="gs-dot"></span>Writing the poetic scene</div>
+        <div class="gen-step" id="gs-4"><span class="gs-dot"></span>Mapping the emotion profile</div>
+        <div class="gen-step" id="gs-5"><span class="gs-dot"></span>Composing the design brief</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div id="output-view" style="display:none"></div>
+</div>
+
+<script>
+const STEPS = [
+  {
+    id: 'memory', type: 'textarea',
+    eyebrow: 'The memory',
+    question: 'What should this wreath hold?',
+    sub: 'A person, a place, a season, a feeling. Write in any way that feels natural — no wrong answers here.',
+    placeholder: 'My grandmother\'s garden in late September — tall cosmos swaying, the smell of dried lavender, that warmth before the cold arrived…',
+    key: 'memory'
+  },
+  {
+    id: 'season', type: 'options', cols: 2,
+    eyebrow: 'Setting the scene',
+    question: 'What season does this memory live in?',
+    sub: 'Not necessarily the time of year — the feeling of a season.',
+    key: 'season',
+    options: [
+      { icon: '🌸', label: 'Spring', sub: 'New, hopeful, tender' },
+      { icon: '☀️', label: 'Summer', sub: 'Full, warm, abundant' },
+      { icon: '🍂', label: 'Autumn', sub: 'Golden, bittersweet, rich' },
+      { icon: '❄️', label: 'Winter', sub: 'Still, quiet, interior' },
+    ]
+  },
+  {
+    id: 'location', type: 'text',
+    eyebrow: 'A sense of place',
+    question: 'Where does this memory take you?',
+    sub: 'A city, a country, a specific place — or just a feeling of somewhere. Even "a farmhouse somewhere quiet" is enough.',
+    placeholder: 'Benidorm, Spain',
+    key: 'location'
+  },
+  {
+    id: 'timeofday', type: 'options', cols: 3,
+    eyebrow: 'The light',
+    question: 'What time of day is it in this memory?',
+    sub: 'Light changes everything.',
+    key: 'timeofday',
+    options: [
+      { icon: '🌅', label: 'Morning', sub: 'Soft, hopeful' },
+      { icon: '☀️', label: 'Midday', sub: 'Bright, full' },
+      { icon: '🌇', label: 'Late afternoon', sub: 'Golden, long shadows' },
+      { icon: '🌆', label: 'Evening', sub: 'Warm, winding down' },
+      { icon: '🌙', label: 'Night', sub: 'Still, interior' },
+      { icon: '☁️', label: 'Overcast', sub: 'Soft, melancholy' },
+    ]
+  },
+  {
+    id: 'who', type: 'options', cols: 2,
+    eyebrow: 'Who was there',
+    question: 'Who is in this memory?',
+    sub: 'Or is it more of a feeling than a person?',
+    key: 'who',
+    options: [
+      { icon: '🧍', label: 'Just me', sub: 'Solitary, reflective' },
+      { icon: '👩', label: 'Someone specific', sub: 'A person I am honouring' },
+      { icon: '👨‍👩‍👧', label: 'A group', sub: 'Family, gathering, celebration' },
+      { icon: '💭', label: 'A feeling, not a person', sub: 'A time, a place, a state of mind' },
+    ]
+  },
+  {
+    id: 'sensory', type: 'text',
+    eyebrow: 'The detail that stays',
+    question: 'One sensory detail — something you can almost smell, hear, or feel.',
+    sub: 'The specific thing that makes this memory yours. "The smell of dried lavender." "The sound of a screen door." "The weight of a wool blanket."',
+    placeholder: 'The smell of dried lavender on the warm stone path',
+    key: 'sensory'
+  },
+  {
+    id: 'feeling', type: 'options', cols: 3,
+    eyebrow: 'What it left behind',
+    question: 'What did this leave you with?',
+    sub: 'The feeling underneath the memory.',
+    key: 'feeling',
+    options: [
+      { icon: '☮️', label: 'Peace', sub: 'Quiet, settled' },
+      { icon: '💛', label: 'Warmth', sub: 'Safe, held' },
+      { icon: '🌊', label: 'Longing', sub: 'Missing, reaching back' },
+      { icon: '🖤', label: 'Grief', sub: 'Loss, tenderness' },
+      { icon: '✨', label: 'Joy', sub: 'Bright, alive' },
+      { icon: '🌀', label: 'Something complicated', sub: 'More than one thing at once' },
+    ]
+  },
+];
+
+let currentStep = 0;
+let answers = {};
+let selectedOption = null;
+
+function renderDots() {
+  const el = document.getElementById('step-dots');
+  el.innerHTML = STEPS.map((_, i) => {
+    const cls = i < currentStep ? 'done' : i === currentStep ? 'active' : '';
+    return `<div class="si-dot ${cls}"></div>`;
+  }).join('');
+}
+
+function updateProgress() {
+  const pct = Math.round(((currentStep + 1) / STEPS.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `Step ${currentStep + 1} of ${STEPS.length}`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+function renderStep() {
+  const step = STEPS[currentStep];
+  selectedOption = answers[step.key] || null;
+  renderDots();
+  updateProgress();
+
+  const backBtn = currentStep > 0
+    ? `<button class="btn-back" onclick="goBack()">← Back</button>` : '';
+
+  let inputHtml = '';
+  if (step.type === 'textarea') {
+    const val = answers[step.key] || '';
+    inputHtml = `<textarea class="q-input" id="q-input" placeholder="${step.placeholder}" rows="4" oninput="checkTextInput()">${val}</textarea>`;
+  } else if (step.type === 'text') {
+    const val = answers[step.key] || '';
+    inputHtml = `<input class="q-input-text" id="q-input" type="text" placeholder="${step.placeholder}" value="${val}" oninput="checkTextInput()">`;
+  } else if (step.type === 'options') {
+    const cols = step.cols || 2;
+    inputHtml = `<div class="option-grid cols-${cols}">${step.options.map(opt => {
+      const sel = answers[step.key] === opt.label ? 'selected' : '';
+      return `<button class="opt-btn ${sel}" onclick="selectOption('${opt.label}', this)">
+        <span class="opt-icon">${opt.icon}</span>
+        <span class="opt-label">${opt.label}<span class="opt-sub">${opt.sub}</span></span>
+      </button>`;
+    }).join('')}</div>`;
+  }
+
+  const isLast = currentStep === STEPS.length - 1;
+  const nextLabel = isLast ? 'Create the scene →' : 'Continue →';
+  const nextDisabled = step.type === 'options' && !answers[step.key] ? 'disabled' : '';
+
+  document.getElementById('question-wrap').innerHTML = `
+    <div class="question-card">
+      <div class="q-eyebrow">${step.eyebrow}</div>
+      <div class="q-text">${step.question}</div>
+      <div class="q-sub">${step.sub}</div>
+      ${inputHtml}
+      <div class="q-actions">
+        ${backBtn}
+        <button class="btn-next" id="next-btn" onclick="goNext()" ${nextDisabled}>${nextLabel}</button>
+      </div>
+    </div>`;
+
+  // Auto-focus
+  const inp = document.getElementById('q-input');
+  if (inp) setTimeout(() => inp.focus(), 100);
+}
+
+function checkTextInput() {
+  const inp = document.getElementById('q-input');
+  const btn = document.getElementById('next-btn');
+  if (btn) btn.disabled = !inp?.value?.trim();
+}
+
+function selectOption(label, btn) {
+  document.querySelectorAll('.opt-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  answers[STEPS[currentStep].key] = label;
+  document.getElementById('next-btn').disabled = false;
+  // Auto-advance for options
+  setTimeout(() => goNext(), 320);
+}
+
+function goNext() {
+  const step = STEPS[currentStep];
+  if (step.type !== 'options') {
+    const inp = document.getElementById('q-input');
+    const val = inp?.value?.trim();
+    if (!val && step.id !== 'location') return;
+    answers[step.key] = val || '';
+  }
+  if (currentStep < STEPS.length - 1) {
+    currentStep++;
+    renderStep();
+  } else {
+    startGeneration();
+  }
+}
+
+function goBack() {
+  if (currentStep > 0) { currentStep--; renderStep(); }
+}
+
+// ── GENERATION ──
+async function startGeneration() {
+  document.getElementById('intake-view').style.display = 'none';
+  document.getElementById('generating-view').style.display = 'block';
+
+  const steps = ['gs-0','gs-1','gs-2','gs-3','gs-4','gs-5'];
+  let si = 0;
+  const interval = setInterval(() => {
+    if (si > 0) { const prev = document.getElementById(steps[si-1]); if(prev) prev.classList.add('done'); }
+    if (si < steps.length) { const cur = document.getElementById(steps[si]); if(cur) cur.classList.add('active'); }
+    si++;
+    if (si > steps.length) clearInterval(interval);
+  }, 1100);
+
+  try {
+    const locationData = await researchLocation(answers.location);
+    const result = await callClaudeScene(answers, locationData);
+    clearInterval(interval);
+    steps.forEach(s => { const el = document.getElementById(s); if(el){ el.classList.add('done'); el.classList.remove('active'); }});
+    result._locationData = locationData;
+    setTimeout(() => showOutput(result), 600);
+  } catch(e) {
+    clearInterval(interval);
+    console.error(e);
+    document.getElementById('generating-view').innerHTML = `
+      <div class="generating">
+        <div style="font-size:2rem;margin-bottom:1rem">\u2726</div>
+        <div style="font-size:14px;color:var(--mu)">Something went wrong \u2014 please try again.</div>
+        <button onclick="location.reload()" style="margin-top:1rem;padding:8px 20px;border-radius:100px;border:1px solid var(--bd);background:transparent;color:var(--mu);cursor:pointer;font-family:var(--sans)">Start over</button>
+      </div>`;
+  }
+}
+
+// ── CONFIG ──────────────────────────────────────────────
+const CONFIG = {
+  apiBase: 'http://localhost:3001',
+  // Change to your Vercel URL when deployed:
+  // apiBase: 'https://your-project.vercel.app',
+};
+
+// ── CALL 1: Location researcher → server ─────────────────
+async function researchLocation(location) {
+  if (!location || !location.trim()) {
+    return {
+      city: 'Columbus', country: 'Ohio, USA',
+      known_for: ['Midwest warmth', 'seasonal colour', 'tree-lined neighbourhoods'],
+      architecture: 'brick homes, front porches, neighbourhood gardens',
+      landscape: 'rolling Ohio countryside, deciduous trees',
+      lifestyle: 'unhurried, domestic, community-centred',
+      light_quality: 'soft Midwest light, golden in autumn',
+      iconic_surfaces: ['front porch railing', 'brick garden wall', 'painted screen door', 'sunlit kitchen window'],
+      nearby_notable: 'Scioto River, Schiller Park',
+      palette_suggestion: 'warm ambers, sage greens, dusty terracotta',
+      lifestyle_setting_ideas: ['front porch with rocking chairs', 'brick garden wall', 'sunlit kitchen window with herbs'],
+    };
+  }
+  try {
+    const res = await fetch(`${CONFIG.apiBase}/api/location`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ location }),
+    });
+    if (!res.ok) throw new Error(`Location server ${res.status}`);
+    const json = await res.json();
+    if (!json.success) {
+      console.warn('Location route returned success:false —', json.error);
+      return json.fallback || buildLocationFallback(location);
+    }
+    console.log('Location research ok:', json.data?.city, json.data?.known_for);
+    return json.data;
+  } catch(err) {
+    console.warn('Location fetch error:', err.message);
+    return buildLocationFallback(location);
+  }
+}
+
+function buildLocationFallback(location) {
+  return {
+    city: location, country: '',
+    known_for: [location + ' landscape', location + ' architecture', 'local culture'],
+    architecture: 'local architectural character',
+    landscape: 'natural landscape of ' + location,
+    lifestyle: 'local pace and culture',
+    light_quality: 'natural light',
+    iconic_surfaces: ['local wall', 'architectural feature', 'natural setting', 'regional facade'],
+    nearby_notable: location,
+    palette_suggestion: 'natural regional tones',
+    lifestyle_setting_ideas: [
+      'against a characteristic local wall',
+      'at a local waterfront or garden setting',
+      'in a lifestyle interior typical of the region',
+    ],
+  };
+}
+
+// ── CALL 2: Scene generator → server ─────────────────────
+async function callClaudeScene(a, loc) {
+  try {
+    const res = await fetch(`${CONFIG.apiBase}/api/scene`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...a, locationData: loc }),
+    });
+    if (!res.ok) throw new Error(`Scene server ${res.status}`);
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'Scene generation failed');
+    console.log('Scene ok — formula:', json.data?.formula, '| poem_emotions:', json.data?.poem_emotions);
+    return json.data;
+  } catch(err) {
+    console.error('Scene fetch error:', err.message);
+    throw err;
+  }
+}
+
+
+// ══════════════════════════════════════════════════════
+// BLUEPRINT ENGINE — embedded from v2 engine
+// ══════════════════════════════════════════════════════
+
+const INVENTORY = [
+  {id:'INV-001',name:'Ivory Garden Rose',color:'#e8e0d0',role:'focal',pass:1,ep:'joy',es:'trust',blend:'romance',behavior:'mid',movement:'still',finish:'satin',palette:'neutral-light',contrast:'unified',intensity:[1,2]},
+  {id:'INV-002',name:'Dusty Mauve Peony',color:'#c4a0a0',role:'focal',pass:1,ep:'sadness',es:'trust',blend:'nostalgia',behavior:'heavy',movement:'still',finish:'matte',palette:'neutral-mid',contrast:'unified',intensity:[1,2]},
+  {id:'INV-003',name:'Slate Hydrangea',color:'#8090a8',role:'secondary',pass:2,ep:'sadness',es:'surprise',blend:'melancholy',behavior:'mid',movement:'still',finish:'matte',palette:'neutral-mid',contrast:'unified',intensity:[1,2]},
+  {id:'INV-004',name:'Dusty Lavender Bundle',color:'#9a8ab0',role:'texture',pass:2,ep:'sadness',es:'trust',blend:'nostalgia',behavior:'light',movement:'still',finish:'raw',palette:'neutral-mid',contrast:'unified',intensity:[1,2]},
+  {id:'INV-005',name:'Copper Beech Stem',color:'#8c4a2a',role:'bridge',pass:1,ep:'anticipation',es:'fear',blend:'awe',behavior:'mid',movement:'reaching',finish:'matte',palette:'neutral-dark',contrast:'unified',intensity:[2,3]},
+  {id:'INV-006',name:'Sage Eucalyptus',color:'#7a9070',role:'greenery',pass:2,ep:'trust',es:'joy',blend:'romance',behavior:'light',movement:'sweeping',finish:'matte',palette:'botanical-green',contrast:'unified',intensity:[1,1]},
+  {id:'INV-007',name:'Silver Brunia Berry',color:'#b8c0c8',role:'accent',pass:2,ep:'surprise',es:'sadness',blend:'melancholy',behavior:'wispy',movement:'still',finish:'metallic',palette:'silver',contrast:'unified',intensity:[1,2]},
+  {id:'INV-008',name:'Dried Thistle Head',color:'#7a7890',role:'texture',pass:2,ep:'sadness',es:'disgust',blend:'remorse',behavior:'light',movement:'still',finish:'raw',palette:'neutral-dark',contrast:'unified',intensity:[1,2]},
+  {id:'INV-009',name:'Black Fritillaria',color:'#3a3048',role:'accent',pass:1,ep:'fear',es:'sadness',blend:'awe',behavior:'wispy',movement:'reaching',finish:'matte',palette:'neutral-dark',contrast:'stark',intensity:[2,3]},
+  {id:'INV-010',name:'Golden Solidago',color:'#c4a040',role:'filler',pass:2,ep:'joy',es:'anticipation',blend:'optimism',behavior:'wispy',movement:'reaching',finish:'metallic',palette:'champagne',contrast:'unified',intensity:[1,2]},
+  {id:'INV-011',name:'Preserved Olive Branch',color:'#808860',role:'greenery',pass:2,ep:'trust',es:'joy',blend:'romance',behavior:'light',movement:'sweeping',finish:'matte',palette:'botanical-green',contrast:'unified',intensity:[1,1]},
+  {id:'INV-012',name:'Burgundy Velvet Rose',color:'#6a2838',role:'focal',pass:1,ep:'anger',es:'trust',blend:'reverence',behavior:'heavy',movement:'still',finish:'satin',palette:'neutral-dark',contrast:'unified',intensity:[2,3]},
+  {id:'INV-013',name:'Pale Ranunculus',color:'#e8d8c8',role:'secondary',pass:2,ep:'joy',es:'surprise',blend:'optimism',behavior:'mid',movement:'still',finish:'satin',palette:'neutral-light',contrast:'unified',intensity:[1,2]},
+  {id:'INV-014',name:'Dried Pampas Grass',color:'#c8b890',role:'texture',pass:2,ep:'anticipation',es:'sadness',blend:'melancholy',behavior:'wispy',movement:'weeping',finish:'raw',palette:'champagne',contrast:'unified',intensity:[1,2]},
+  {id:'INV-015',name:'Matte Charcoal Branch',color:'#3a3832',role:'structural',pass:1,ep:'sadness',es:'grief',blend:'',behavior:'heavy',movement:'architectural',finish:'matte',palette:'neutral-dark',contrast:'stark',intensity:[2,3]},
+  {id:'INV-016',name:'Weeping Silver Eucalyptus',color:'#8a9a8a',role:'structural',pass:1,ep:'peace',es:'reflective',blend:'',behavior:'mid',movement:'weeping',finish:'matte',palette:'neutral-light',contrast:'unified',intensity:[1,2]},
+  {id:'INV-017',name:'Champagne Fern',color:'#c8b87a',role:'structural',pass:1,ep:'joy',es:'hope',blend:'',behavior:'mid',movement:'reaching',finish:'metallic',palette:'champagne',contrast:'unified',intensity:[1,2]},
+  {id:'INV-018',name:'Bare Black Branch',color:'#1e1c18',role:'structural',pass:1,ep:'grief',es:'sadness',blend:'',behavior:'heavy',movement:'architectural',finish:'gloss',palette:'neutral-dark',contrast:'stark',intensity:[3,3]},
+  {id:'INV-019',name:'White Magnolia Spray',color:'#e8e4dc',role:'structural',pass:1,ep:'peace',es:'trust',blend:'',behavior:'mid',movement:'sweeping',finish:'matte',palette:'neutral-light',contrast:'unified',intensity:[1,1]},
+  {id:'INV-020',name:'Champagne Berry Cluster',color:'#d4c090',role:'accent',pass:2,ep:'hope',es:'joy',blend:'',behavior:'wispy',movement:'still',finish:'metallic',palette:'champagne',contrast:'unified',intensity:[1,2]},
+];
+
+const SLOT_TEMPLATES = {
+  'Crescent':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'},{role:'texture',tier:'Texture'}],
+  'Side Sweep':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
+  'Bottom Heavy':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'}],
+  'Diagonal Flow':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'accent',tier:'Accent'},{role:'greenery',tier:'Greenery'}],
+  'Focal Burst':[{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
+  'Garden Scatter':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'texture',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
+  'Wild Asymmetry':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'},{role:'greenery',tier:'Greenery'}],
+  'Half Ring':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'}],
+  'Spiral Flow':[{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
+};
+
+const FORMULA_ARCS = {
+  'Crescent':{s:210,e:330},'Side Sweep':{s:240,e:360},'Bottom Heavy':{s:150,e:330},
+  'Diagonal Flow':{s:225,e:405},'Focal Burst':{s:270,e:420},'Garden Scatter':{s:0,e:360},
+  'Wild Asymmetry':{s:180,e:315},'Half Ring':{s:180,e:360},'Spiral Flow':{s:240,e:420},
+};
+
+const BU = {heavy:3.5,mid:2.5,light:1.5,wispy:0.8};
+const ZS = {structural:0.25,focal:0.25,secondary:0.20,bridge:0.10,greenery:0.12,accent:0.08,texture:0.10};
+const ZONE_COLORS = {structural:'#4a6741',focal:'#6a5a80',secondary:'#b89a5c',bridge:'#8b7065',greenery:'#3a6040',accent:'#708090',texture:'#8a6040'};
+const ROLE_RADII = {structural:[0.55,0.75],focal:[0.60,0.72],secondary:[0.44,0.58],bridge:[0.32,0.52],greenery:[0.66,0.90],accent:[0.58,0.82],texture:[0.40,0.64]};
+
+function runSlotFill(emotions, formula, intensity, poemEmotions) {
+  // poem_emotions drives placement by tier:
+  // structural tier  → poemEmotions.structural (heaviest, deepest in arc)
+  // secondary tier   → poemEmotions.secondary  (heart of the composition, character layer)
+  // texture/accent   → poemEmotions.undertone  (outermost, discovered detail)
+  const pe = poemEmotions || {};
+  const tierEmotionMap = {
+    'Foundation': pe.structural ? [pe.structural.toLowerCase(), ...emotions] : emotions,
+    'Secondary':  pe.secondary  ? [pe.secondary.toLowerCase(),  ...emotions] : emotions,
+    'Bridge':     pe.secondary  ? [pe.secondary.toLowerCase(),  ...emotions] : emotions,
+    'Greenery':   emotions,
+    'Accent':     pe.undertone  ? [pe.undertone.toLowerCase(),  ...emotions] : emotions,
+    'Texture':    pe.undertone  ? [pe.undertone.toLowerCase(),  ...emotions] : emotions,
+  };
+  const slots = SLOT_TEMPLATES[formula] || SLOT_TEMPLATES['Crescent'];
+  const emotionTags = emotions.map(e => e.toLowerCase().trim());
+  const usedPerTier = {};
+  const filled = [];
+
+  for (const slot of slots) {
+    const tier = slot.tier;
+    if (!usedPerTier[tier]) usedPerTier[tier] = { archetypes: new Set(), emotions: new Set(), finishes: new Set() };
+    const u = usedPerTier[tier];
+    const pass = (slot.role === 'structural' || slot.role === 'focal') ? 1 : 2;
+    const candidates = INVENTORY.filter(i => {
+      if (i.role !== slot.role) return false;
+      if (i.intensity[0] > intensity + 1 || i.intensity[1] < Math.max(1, intensity - 1)) return false;
+      return true;
+    });
+
+    const tierTags = tierEmotionMap[slot.tier] || emotionTags;
+    const scored = candidates.map(c => {
+      const ce = [c.ep, c.es, c.blend].filter(Boolean).map(x => x.toLowerCase());
+      const emotMatch = ce.filter(e => tierTags.includes(e)).length;
+      // Bonus for matching the poem emotion specifically for this tier
+      const poemBonus = (pe.structural && slot.tier === 'Foundation' && ce.includes(pe.structural.toLowerCase())) ? 3 :
+                        (pe.secondary  && (slot.tier === 'Secondary' || slot.tier === 'Bridge') && ce.includes(pe.secondary.toLowerCase())) ? 2 :
+                        (pe.undertone  && (slot.tier === 'Texture' || slot.tier === 'Accent') && ce.includes(pe.undertone.toLowerCase())) ? 2 : 0;
+      const archOk = !u.archetypes.has(c.movement) ? 1 : 0;
+      const emotOk = !ce.some(e => u.emotions.has(e)) ? 2 : 0;
+      const finOk = !u.finishes.has(c.finish) ? 1 : 0;
+      return { item: c, score: emotMatch * 3 + poemBonus + archOk * 2 + emotOk + finOk };
+    }).sort((a, b) => b.score - a.score);
+
+    let chosen = null;
+    for (const { item } of scored) {
+      const ce = [item.ep, item.es, item.blend].filter(Boolean).map(x => x.toLowerCase());
+      if (!u.archetypes.has(item.movement) && !ce.some(e => u.emotions.has(e))) {
+        chosen = item;
+        u.archetypes.add(item.movement);
+        ce.forEach(e => u.emotions.add(e));
+        u.finishes.add(item.finish);
+        break;
+      }
+    }
+    if (!chosen && candidates.length) {
+      chosen = candidates[0];
+    }
+
+    const slotCount = Math.max(1, slots.filter(s => s.role === slot.role).length);
+    const budget = 90;
+    const zb = Math.round(budget * (ZS[slot.role] || 0.10) / slotCount);
+    const sc = Math.max(1, Math.round(zb / (BU[chosen ? chosen.behavior : 'mid'] || 2.5)));
+    filled.push({ ...slot, item: chosen, stemCount: sc });
+  }
+  return filled;
+}
+
+function buildPolarSVG(filledSlots, formula) {
+  const cx = 160, cy = 160, mR = 120;
+  const ad = FORMULA_ARCS[formula] || { s: 210, e: 330 };
+  const arcSpan = ((ad.e - ad.s) + 360) % 360 || 360;
+
+  const ns = 'http://www.w3.org/2000/svg';
+  const mk = (tag, attrs) => {
+    const el = document.createElementNS(ns, tag);
+    for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+    return el;
+  };
+  const toRad = d => (d - 90) * Math.PI / 180;
+  const arcPath = (sd, ed, r) => {
+    const span = ((ed - sd) + 360) % 360;
+    if (span >= 359) return `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx-.01} ${cy-r}`;
+    const lg = span > 180 ? 1 : 0;
+    const sx = cx + r * Math.cos(toRad(sd)); const sy = cy + r * Math.sin(toRad(sd));
+    const ex = cx + r * Math.cos(toRad(ed)); const ey = cy + r * Math.sin(toRad(ed));
+    return `M ${cx} ${cy} L ${sx.toFixed(1)} ${sy.toFixed(1)} A ${r} ${r} 0 ${lg} 1 ${ex.toFixed(1)} ${ey.toFixed(1)} Z`;
+  };
+
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', `0 0 320 320`);
+  svg.setAttribute('style', 'width:100%;max-width:300px;display:block;margin:0 auto');
+
+  // Rings
+  for (let i = 1; i <= 4; i++) svg.appendChild(mk('circle', {cx, cy, r: mR*i/4, fill:'none', stroke:'#ddd8d0', 'stroke-width':'0.5'}));
+
+  // Silence zone
+  svg.appendChild(mk('path', {d: arcPath(ad.e%360, ad.s, mR), fill:'rgba(240,237,232,0.7)', stroke:'none'}));
+
+  // Active arc
+  svg.appendChild(mk('path', {d: arcPath(ad.s, ad.e, mR), fill:'rgba(74,103,65,0.05)', stroke:'#4a6741', 'stroke-width':'0.5', 'stroke-dasharray':'3 3'}));
+
+  // Place each floral
+  const rng = s => { let v = s * 9301 + 49297; return (v % 233280) / 233280; };
+  let seed = 17;
+  const legendItems = [];
+
+  filledSlots.filter(s => s.item).forEach(slot => {
+    seed++;
+    const rr = ROLE_RADII[slot.role] || [0.45, 0.70];
+    const rn = rr[0] + rng(seed) * (rr[1] - rr[0]);
+    const rad = rn * mR;
+    seed++;
+    const ang = ad.s + rng(seed) * arcSpan;
+    const ar = (ang - 90) * Math.PI / 180;
+    const px = cx + rad * Math.cos(ar);
+    const py = cy + rad * Math.sin(ar);
+    const dr = slot.role === 'structural' ? 10 : slot.role === 'focal' ? 9 : slot.role === 'secondary' ? 7 : 5;
+    const zc = ZONE_COLORS[slot.role] || '#888';
+
+    const g = mk('g', {});
+    g.appendChild(mk('circle', {cx: px.toFixed(1), cy: py.toFixed(1), r: dr+2, fill: zc, opacity:'0.22'}));
+    g.appendChild(mk('circle', {cx: px.toFixed(1), cy: py.toFixed(1), r: dr, fill: slot.item.color, stroke: zc, 'stroke-width':'1.2'}));
+    svg.appendChild(g);
+
+    legendItems.push({ name: slot.item.name, color: slot.item.color, border: zc, role: slot.role, stems: slot.stemCount });
+  });
+
+  // Center
+  svg.appendChild(mk('circle', {cx, cy, r: 9, fill:'#f5f3ef', stroke:'#ddd8d0', 'stroke-width':'0.5'}));
+
+  // Arc label
+  const txt = mk('text', {x: cx, y: mR * 2 + 12, 'text-anchor':'middle', 'font-family':'Jost,sans-serif', 'font-size':'9', fill:'#9a9088', 'letter-spacing':'.06em'});
+  txt.textContent = `${formula.toUpperCase()} · active arc ${ad.s}°–${ad.e > 360 ? ad.e - 360 : ad.e}°`;
+  svg.appendChild(txt);
+
+  return { svg, legendItems };
+}
+
+// ── DISPLAY DATA ─────────────────────────────────────────────────
+const SEASON_DATA = {
+  Spring: { emoji:'🌸', cls:'spring', badge:'spring-badge', particles:'🌸🌿🌸🌼🌱' },
+  Summer: { emoji:'☀️', cls:'summer', badge:'summer-badge', particles:'☀️🌻🌿🌺🌞' },
+  Autumn: { emoji:'🍂', cls:'autumn', badge:'autumn-badge', particles:'🍂🍁🍄🌾🍂' },
+  Winter: { emoji:'❄️', cls:'winter', badge:'winter-badge', particles:'❄️✨❄️🌨️❄️' },
+};
+
+const EMOTION_COLORS = {
+  nostalgia:'#9a8ab0,#f5eef4', sadness:'#607080,#eef2f7', grief:'#485060,#eaebf0',
+  peace:'#4a6741,#eef2ed', joy:'#9a7a40,#f5efe4', longing:'#7080a0,#eef0f7',
+  warmth:'#a06040,#fdf0e8', trust:'#4a6060,#eef2f2', awe:'#4a5a7a,#eef0f7',
+  melancholy:'#7080a0,#eef0f7', reverence:'#6a5a78,#f2eef5', anticipation:'#8a6040,#f5ede8',
+  fear:'#3a5242,#eef2ef', anger:'#8a3030,#f7eeed', tenderness:'#a07080,#fdf0ef',
+  hope:'#6a8a5a,#eef4ec', longing:'#7080a0,#eef0f7', wistfulness:'#7878a0,#f0f0f7',
+  saudade:'#7070a0,#f0f0f8', something:'#6a6a7a,#f0f0f2',
+};
+
+function emotionStyle(e) {
+  if (!e) return '';
+  const key = e.toLowerCase().replace(/\s+/g,'').replace('complicated','something');
+  const found = EMOTION_COLORS[key] || '6a6a7a,#f0f0f2';
+  const parts = found.split(',');
+  const color = parts[0];
+  const bg = parts[1] || '#f0f0f2';
+  return `background:${bg};color:${color.startsWith('#') ? color : '#' + color};border:1px solid ${bg}`;
+}
+
+function showOutput(r) {
+  // Log what we received so we can debug field shapes
+  console.log('showOutput received:', JSON.stringify({
+    has_poem: !!r.poem,
+    has_title: !!r.scene_title,
+    has_brief: !!r.brief,
+    emotions: r.emotions,
+    formula: r.formula,
+    poem_emotions: r.poem_emotions,
+    intensity: r.intensity,
+    render_surface: r.render_surface,
+    map_query: r.map_query,
+    keys: Object.keys(r),
+  }, null, 2));
+
+  // Null-guard every field before rendering
+  r.scene_title   = r.scene_title   || 'Untitled scene';
+  r.poem          = r.poem          || '';
+  r.brief         = r.brief         || '';
+  r.emotions      = r.emotions      || [];
+  r.formula       = r.formula       || 'Crescent';
+  r.formula_reason= r.formula_reason|| '';
+  r.intensity     = r.intensity     || 1;
+  r.palette_words = r.palette_words || [];
+  r.render_surface= r.render_surface|| '';
+  r.render_setting= r.render_setting|| '';
+  r.render_prompt = r.render_prompt || '';
+  r.map_query     = r.map_query     || answers.location || 'Columbus Ohio';
+  r.poem_emotions = r.poem_emotions || {};
+  r._locationData = r._locationData || {};
+
+  try {
+  document.getElementById('generating-view').style.display = 'none';
+  document.getElementById('output-view').style.display = 'block';
+
+  const sd = SEASON_DATA[answers.season] || SEASON_DATA.Autumn;
+  const mapSrc = `https://maps.google.com/maps?q=${encodeURIComponent(r.map_query)}&output=embed&z=12&hl=en`;
+
+  const intensityPips = [1,2,3].map(n =>
+    `<div class="int-pip ${n <= r.intensity ? 'lit' : ''}"></div>`).join('');
+
+  const emotionChips = (r.emotions || []).map(e =>
+    `<span class="emchip" style="${emotionStyle(e)}">${e}</span>`).join('');
+
+  const particles = (sd.particles || '').split('').map(p =>
+    `<span style="position:absolute;font-size:1.4rem;top:${10+Math.random()*70}%;left:${5+Math.random()*85}%;opacity:${.4+Math.random()*.4};transform:rotate(${Math.random()*30-15}deg)">${p}</span>`
+  ).join('');
+
+  document.getElementById('output-view').innerHTML = `
+<div class="scene-output">
+
+  <!-- HEADER -->
+  <div class="scene-header">
+    <div class="scene-season-badge ${sd.badge}">${sd.emoji} ${answers.season} · ${answers.timeofday}</div>
+    <h1 class="scene-title">${r.scene_title}</h1>
+    ${answers.location ? `<div class="scene-location">${answers.location}</div>` : ''}
+  </div>
+
+  <!-- ROW 1: poem + map -->
+  <div class="output-grid">
+    <div class="out-card">
+      <div class="oc-header">
+        <span class="oc-title">The scene</span>
+        <span class="oc-badge" style="background:var(--dustp);color:var(--dust)">Written by Evercrafted</span>
+      </div>
+      <div class="oc-body">
+        <div class="poem-text">${r.poem.replace(/\n/g,'<br>')}</div>
+      </div>
+    </div>
+    <div class="out-card" style="display:flex;flex-direction:column">
+      <div class="oc-header">
+        <span class="oc-title">The place</span>
+        <span class="oc-badge" style="background:var(--gp);color:var(--green)">${answers.location || 'Columbus, Ohio'}</span>
+      </div>
+      <div class="oc-body" style="flex:1;padding:.75rem">
+        <div class="map-container">
+          <iframe class="map-iframe" src="${mapSrc}" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Memory location map"></iframe>
+        </div>
+        <div style="margin-top:.6rem;font-size:11px;color:var(--fa);text-align:center;font-style:italic">${r.render_surface || r.render_setting?.split('.')[0] || answers.location}</div>
+        ${r._locationData?.known_for?.length ? `
+        <div style="margin-top:.75rem;padding:.65rem .75rem;background:var(--s2);border-radius:var(--rsm);border:1px solid var(--bd)">
+          <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.35rem">Known for</div>
+          <div style="display:flex;flex-wrap:wrap;gap:.35rem">${(r._locationData.known_for||[]).map(f=>`<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--sf);border:1px solid var(--bd);color:var(--mu)">${f}</span>`).join('')}</div>
+        </div>` : ''}
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 2: season + emotion + brief -->
+  <div class="output-grid-3">
+    <div class="out-card">
+      <div class="oc-header"><span class="oc-title">Season &amp; feeling</span></div>
+      <div class="oc-body" style="padding:.75rem">
+        <div class="season-visual ${sd.cls}" style="margin-bottom:.75rem">
+          ${sd.emoji}
+          <div class="season-particles">${particles}</div>
+        </div>
+        <div style="font-size:12px;color:var(--mu);line-height:1.6">
+          <div style="font-weight:600;color:var(--tx);margin-bottom:.2rem">${answers.season} · ${answers.timeofday}</div>
+          <div>${answers.sensory || ''}</div>
+          <div style="margin-top:.4rem;font-size:11px;color:var(--fa)">${answers.who}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="out-card">
+      <div class="oc-header"><span class="oc-title">Emotion profile</span></div>
+      <div class="oc-body">
+        <div class="emotion-chips">${emotionChips}</div>
+        <div class="formula-row">
+          ◎ ${r.formula}
+        </div>
+        <div style="font-size:11px;color:var(--mu);margin-bottom:.75rem;line-height:1.5">${r.formula_reason}</div>
+        <div style="font-size:10px;color:var(--fa);margin-bottom:.3rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase">Intensity</div>
+        <div class="intensity-row">${intensityPips}<span style="font-size:11px;color:var(--mu);margin-left:.4rem">${r.intensity}/3</span></div>
+      </div>
+    </div>
+
+    <div class="out-card">
+      <div class="oc-header"><span class="oc-title">Design brief</span></div>
+      <div class="oc-body">
+        <div class="brief-text">${r.brief}</div>
+        <div style="margin-top:.9rem;display:flex;flex-wrap:wrap;gap:.4rem">
+          ${(r.palette_words||[]).map(w=>`<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-weight:500">${w}</span>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 3: blueprint — polar canvas + design selection -->
+  <div class="out-card out-card-full" id="blueprint-card">
+    <div class="oc-header">
+      <span class="oc-title">Wreath blueprint</span>
+      <span class="oc-badge" style="background:var(--gp);color:var(--green)">${r.formula} · 22" grapevine</span>
+    </div>
+    <div class="oc-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;align-items:start">
+        <div>
+          <div style="margin-bottom:1rem">
+        <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.5rem">Why these florals</div>
+        <div id="poem-emotions-wrap"></div>
+      </div>
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.6rem">The composition</div>
+          <div id="polar-canvas-wrap"></div>
+          <div id="polar-legend" style="display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.6rem;justify-content:center"></div>
+        </div>
+        <div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.6rem">Selected florals</div>
+          <div id="design-list"></div>
+          <div style="margin-top:.75rem;padding:.6rem .75rem;background:var(--s2);border-radius:var(--rsm);border:1px solid var(--bd);font-size:11px;color:var(--mu)">
+            <span style="font-weight:600;color:var(--tx)">Total stems:</span> <span id="total-stems" style="color:var(--green);font-weight:600">—</span> &nbsp;·&nbsp; 22" grapevine base
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROW 4: render prompt -->
+  <div class="out-card out-card-full">
+    <div class="oc-header">
+      <span class="oc-title">Location-aware render prompt</span>
+      <span class="oc-badge" style="background:var(--goldp);color:var(--gold)">Midjourney · Flux</span>
+    </div>
+    <div class="oc-body">
+      ${r.render_surface ? `<div style="font-size:12px;color:var(--green);font-weight:500;margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem"><span style="font-size:11px">◎</span>${r.render_surface}</div>` : ''}
+      <div class="prompt-box">
+        <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+        <span id="prompt-text">${r.render_prompt}</span>
+      </div>
+      <div style="margin-top:.6rem;font-size:11px;color:var(--fa);line-height:1.6">
+        This prompt places your wreath in the actual world of this memory — not a generic studio shot. The surface, the setting, the light, and the atmosphere all trace back to what was shared. Every render is unrepeatable.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- GAP MATCHER — shop suggestions -->
+  <div class="out-card out-card-full" id="gap-card" style="display:none">
+    <div class="oc-header">
+      <span class="oc-title">Complete your design</span>
+      <span class="oc-badge" style="background:var(--goldp);color:var(--gold)">From the Evercrafted shop</span>
+    </div>
+    <div class="oc-body">
+      <div style="font-size:13px;color:var(--mu);font-style:italic;margin-bottom:1rem;line-height:1.6" id="gap-intro"></div>
+      <div id="gap-list"></div>
+    </div>
+  </div>
+
+  <div class="reset-wrap">
+    <button class="reset-btn" onclick="resetAll()">← Start a new memory</button>
+  </div>
+
+</div>`;
+
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('progress-text').textContent = 'Scene complete';
+  document.getElementById('progress-pct').textContent = '100%';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  // ── Run blueprint engine ──
+  setTimeout(() => renderBlueprint(r), 80);
+
+  } catch(renderErr) {
+    console.error('showOutput render error:', renderErr);
+    document.getElementById('output-view').innerHTML = `
+      <div style="padding:2rem;color:var(--er);font-size:13px;line-height:1.7;background:var(--sf);border-radius:var(--rlg);border:1px solid var(--bd)">
+        <strong>Render error:</strong> ${renderErr.message}<br>
+        <small style="color:var(--fa)">Check the browser console for details. The scene data was received — this is a display issue only.</small>
+        <br><br>
+        <details><summary style="cursor:pointer;color:var(--mu)">Raw scene data</summary>
+        <pre style="font-size:9px;margin-top:.5rem;overflow:auto;max-height:300px;color:var(--fa)">${JSON.stringify(r, null, 2)}</pre>
+        </details>
+      </div>`;
+  }
+}
+
+function renderBlueprint(r) {
+  const formula = r.formula || 'Crescent';
+  const emotions = (r.emotions || []).map(e => e.toLowerCase());
+  const intensity = r.intensity || 1;
+  const poemEmotions = r.poem_emotions || {};
+
+  // Show poem emotion hierarchy if present
+  if (poemEmotions.structural || poemEmotions.secondary || poemEmotions.undertone) {
+    const peWrap = document.getElementById('poem-emotions-wrap');
+    if (peWrap) {
+      const layers = [
+        { key: 'structural', label: 'What holds it together', sub: 'the heaviest thing the poem carries', color: 'var(--green)', bg: 'var(--gp)' },
+        { key: 'secondary',  label: 'What gives it its voice', sub: 'the feeling that shapes its character', color: 'var(--dust)', bg: 'var(--dustp)' },
+        { key: 'undertone',  label: 'What you notice last', sub: 'the quiet thing, found on close inspection', color: 'var(--gold)', bg: 'var(--goldp)' },
+      ];
+      peWrap.innerHTML = layers.map(l => poemEmotions[l.key] ? `
+        <div style="display:flex;align-items:flex-start;gap:.6rem;padding:.5rem .65rem;border-radius:var(--rsm);background:${l.bg};border:1px solid ${l.color}22;margin-bottom:.4rem">
+          <span style="font-size:8px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:${l.color};margin-top:2px;width:68px;flex-shrink:0">${l.label}</span>
+          <div>
+            <span style="font-size:12px;font-weight:600;color:var(--tx)">${poemEmotions[l.key]}</span>
+            <span style="font-size:10px;color:var(--mu);margin-left:.4rem">${l.sub}</span>
+          </div>
+        </div>`:'').join('');
+    }
+  }
+
+  // Run design selection using poem emotions for tier-specific weighting
+  const filledSlots = runSlotFill(emotions, formula, intensity, poemEmotions);
+
+  // Build polar SVG
+  const { svg, legendItems } = buildPolarSVG(filledSlots, formula);
+  const canvasWrap = document.getElementById('polar-canvas-wrap');
+  if (canvasWrap) canvasWrap.appendChild(svg);
+
+  // Polar legend
+  const legEl = document.getElementById('polar-legend');
+  if (legEl) {
+    legEl.innerHTML = legendItems.map(l =>
+      `<span style="display:inline-flex;align-items:center;gap:3px;font-size:9px;color:var(--fa)">
+        <span style="width:7px;height:7px;border-radius:50%;background:${l.color};border:1.5px solid ${l.border};display:inline-block;flex-shrink:0"></span>
+        ${l.name}
+      </span>`
+    ).join('');
+  }
+
+  // Slot fill list
+  const listEl = document.getElementById('design-list');
+  if (listEl) {
+    const tiers = [...new Set(filledSlots.map(s => s.tier))];
+    let html = '';
+    for (const tier of tiers) {
+      const ts = filledSlots.filter(s => s.tier === tier && s.item);
+      if (!ts.length) continue;
+      html += `<div style="margin-bottom:.65rem">
+        <div style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--fa);margin-bottom:.3rem">${tier}</div>`;
+      ts.forEach(slot => {
+        const zc = ZONE_COLORS[slot.role] || '#888';
+        html += `<div style="display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem;border-radius:var(--rsm);background:var(--s2);border:1px solid var(--bd);margin-bottom:.3rem">
+          <span style="width:8px;height:8px;border-radius:50%;background:${slot.item.color};border:1.5px solid ${zc};flex-shrink:0"></span>
+          <span style="flex:1;font-size:11px;font-weight:500;color:var(--tx)">${slot.item.name}</span>
+          <span style="font-size:9px;padding:1px 6px;border-radius:20px;background:${zc}18;color:${zc};border:1px solid ${zc}30;font-weight:600">${slot.role}</span>
+          <span style="font-size:9px;color:var(--fa)">${slot.item.blend || slot.item.ep}</span>
+          <span style="font-size:11px;font-weight:600;color:var(--green);min-width:22px;text-align:right">${slot.stemCount}</span>
+        </div>`;
+      });
+      html += '</div>';
+    }
+    listEl.innerHTML = html;
+  }
+
+  // Total stems
+  const total = filledSlots.filter(s => s.item).reduce((a, b) => a + b.stemCount, 0);
+  const totEl = document.getElementById('total-stems');
+  if (totEl) totEl.textContent = total;
+
+  // ── Call gap matcher ──────────────────────────────────────────
+  callGapMatcher(filledSlots, formula, emotions, poemEmotions);
+
+  // Inject actual florals into render prompt
+  const promptEl = document.getElementById('prompt-text');
+  if (promptEl && filledSlots.filter(s => s.item).length) {
+    const structurals = filledSlots.filter(s => s.role === 'structural' && s.item).map(s => s.item.name);
+    const focals      = filledSlots.filter(s => s.role === 'focal'      && s.item).map(s => s.item.name);
+    const secondaries = filledSlots.filter(s => s.role === 'secondary'  && s.item).map(s => s.item.name);
+    const textures    = filledSlots.filter(s => (s.role === 'texture' || s.role === 'accent') && s.item).map(s => s.item.name);
+    const greens      = filledSlots.filter(s => s.role === 'greenery'   && s.item).map(s => s.item.name);
+
+    const floralBlock = [
+      structurals.length ? 'Structural foundation: ' + structurals.join(', ') + '.' : '',
+      focals.length      ? 'Focal blooms: ' + focals.join(', ') + '.' : '',
+      secondaries.length ? 'Secondary fill: ' + secondaries.join(', ') + '.' : '',
+      greens.length      ? 'Structural greenery: ' + greens.join(', ') + '.' : '',
+      textures.length    ? 'Texture and accent: ' + textures.join(', ') + '.' : '',
+    ].filter(Boolean).join(' ');
+
+    const stemNote = total + ' stems · 22″ grapevine';
+
+    const existing = promptEl.textContent || '';
+
+    // Camera and composition directives for a correct wreath product shot
+    const cameraDirectives = 'Camera: straight-on, lens perpendicular to the wreath face, wreath centred and fully in frame, no angle or tilt. The wreath should read as a complete circle or composition — not cropped, not angled. Product photography perspective, not lifestyle angle.';
+
+    const arIdx = existing.indexOf('--ar');
+    promptEl.textContent = arIdx !== -1
+      ? existing.slice(0, arIdx).trimEnd() + ' ' + floralBlock + ' ' + stemNote + ' ' + cameraDirectives + ' ' + existing.slice(arIdx)
+      : existing.trimEnd() + ' ' + floralBlock + ' ' + stemNote + ' ' + cameraDirectives;
+  }
+}
+
+function copyPrompt() {
+  const t = document.getElementById('prompt-text')?.textContent;
+  if (!t) return;
+  navigator.clipboard.writeText(t).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    if (btn) { btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1800); }
+  });
+}
+
+function resetAll() {
+  currentStep = 0;
+  answers = {};
+  selectedOption = null;
+  document.getElementById('output-view').style.display = 'none';
+  document.getElementById('generating-view').style.display = 'none';
+  document.getElementById('intake-view').style.display = 'block';
+  renderStep();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Start
+renderStep();
+
+// ── GAP MATCHER ────────────────────────────────────────────────────
+async function callGapMatcher(filledSlots, formula, emotions, poemEmotions) {
+  const gapCard = document.getElementById('gap-card');
+  const gapList = document.getElementById('gap-list');
+  const gapIntro = document.getElementById('gap-intro');
+  if (!gapCard || !gapList) return;
+
+  try {
+    const res = await fetch(`${CONFIG.apiBase}/api/gaps`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        filledSlots: filledSlots.map(s => ({
+          role: s.role,
+          tier: s.tier,
+          item: s.item ? { id: s.item.id, movement: s.item.movement, finish: s.item.finish, ep: s.item.ep, es: s.item.es } : null,
+          stemCount: s.stemCount,
+        })),
+        formula,
+        emotions,
+        poemEmotions,
+        clientInventory: [],  // future: pass client's own inventory
+      }),
+    });
+
+    if (!res.ok) return;
+    const json = await res.json();
+    if (!json.success || !json.data) return;
+
+    const { gaps, gapCount, fullyFilled } = json.data;
+
+    if (fullyFilled || gapCount === 0) {
+      gapCard.style.display = 'block';
+      gapIntro.textContent = 'Your design is complete with what you have. Browse the shop for future designs.';
+      gapList.innerHTML = '';
+      return;
+    }
+
+    gapCard.style.display = 'block';
+    gapIntro.textContent = `${gapCount} piece${gapCount !== 1 ? 's' : ''} in this design could be filled from the Evercrafted shop — chosen for how they work within this specific composition, not just by emotion.`;
+
+    let html = '';
+    for (const gap of gaps) {
+      if (!gap.suggestions?.length) continue;
+      html += `<div style="margin-bottom:1.25rem">
+        <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.6rem">${gap.slot.role} · ${gap.slot.tier || ''}</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem">`;
+      for (const item of gap.suggestions) {
+        html += `<div style="display:flex;align-items:flex-start;gap:.85rem;padding:.75rem .9rem;background:var(--s2);border-radius:var(--rsm);border:1px solid var(--bd)">
+          <div style="width:40px;height:40px;border-radius:4px;overflow:hidden;flex-shrink:0;background:var(--sf)">
+            ${item.imageUrl ? `<img src="${item.imageUrl}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">` : ''}
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:600;color:var(--tx);margin-bottom:2px">${item.name}</div>
+            <div style="font-size:11px;color:var(--mu);margin-bottom:4px;font-style:italic;line-height:1.5">${item.reason || ''}</div>
+            <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+              <span style="font-size:11px;color:var(--mu)">${item.colorName || ''}</span>
+              ${item.colorHex ? `<span style="width:10px;height:10px;border-radius:50%;background:${item.colorHex};border:1px solid var(--bd);display:inline-block"></span>` : ''}
+            </div>
+          </div>
+          <div style="text-align:right;flex-shrink:0">
+            <div style="font-family:var(--sans);font-size:13px;font-weight:600;color:var(--green)">$${Number(item.price).toFixed(2)}</div>
+            <a href="/shop/${item.sku || ''}" style="font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--green);text-decoration:none;border-bottom:1px solid var(--green);margin-top:4px;display:inline-block">Add to cart</a>
+          </div>
+        </div>`;
+      }
+      html += `</div></div>`;
+    }
+    gapList.innerHTML = html || '<div style="font-size:13px;color:var(--mu)">No shop matches found for the current gaps.</div>';
+
+  } catch (err) {
+    console.warn('Gap matcher error:', err.message);
+    // Silently fail — gap suggestions are additive, not critical
+  }
+}
+
+</script>
+</body>
+</html>

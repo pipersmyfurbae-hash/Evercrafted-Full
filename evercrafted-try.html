@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Try Evercrafted — Describe a Memory</title>
+<meta name="description" content="Share a real memory. See what Evercrafted does with it. Two minutes. No signup required.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f3ef;--sf:#fff;--s2:#f0ede8;--s3:#e8e4de;
+  --bd:#ddd8d0;--bd2:#c8c2b8;
+  --tx:#2a2420;--mu:#6a6058;--fa:#9a9088;
+  --green:#4a6741;--gp:#eef2ed;--gd:rgba(74,103,65,.10);
+  --gold:#9a7a40;--goldp:#f5efe4;--goldd:rgba(154,122,64,.10);
+  --dust:#6a5a80;--dustp:#f5eef4;
+  --r:12px;--rsm:7px;--rlg:16px;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',system-ui,sans-serif;
+  --tr:200ms ease;--sh:0 1px 4px rgba(0,0,0,.06);--sm:0 4px 20px rgba(0,0,0,.09);--sl:0 12px 48px rgba(0,0,0,.12);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:13px;line-height:1.6}
+
+.nav{background:var(--sf);border-bottom:1px solid var(--bd);padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:var(--sh)}
+.nav-logo{font-family:var(--serif);font-size:1.3rem;font-weight:400;color:var(--tx);text-decoration:none}
+.nav-logo span{color:var(--green)}
+.nav-right{display:flex;align-items:center;gap:.75rem}
+.nav-link{font-size:12px;color:var(--mu);text-decoration:none;transition:color var(--tr)}
+.nav-link:hover{color:var(--green)}
+.nav-cta{padding:6px 16px;border-radius:100px;background:var(--green);color:#fff;font-size:12px;font-weight:500;text-decoration:none;transition:all var(--tr)}
+.nav-cta:hover{background:#3a5030}
+
+/* HERO */
+.try-hero{padding:3rem 2rem 2rem;text-align:center;max-width:640px;margin:0 auto}
+.hero-overline{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem}
+.hero-h1{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.5rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;margin-bottom:.9rem}
+.hero-h1 em{font-style:italic;color:var(--green)}
+.hero-lead{font-size:16px;color:var(--mu);line-height:1.65;font-weight:300;margin-bottom:.5rem}
+.hero-note{font-size:12px;color:var(--fa)}
+
+/* PROGRESS */
+.progress-wrap{max-width:640px;margin:0 auto 1.5rem;padding:0 1.5rem}
+.progress-label{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.4rem;display:flex;justify-content:space-between}
+.progress-track{height:2px;background:var(--bd);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width .5s ease}
+
+/* INTAKE */
+.intake{max-width:580px;margin:0 auto;padding:0 1.5rem 4rem}
+.step-dots{display:flex;gap:.4rem;justify-content:center;margin-bottom:1.5rem}
+.sd{width:7px;height:7px;border-radius:50%;background:var(--bd2);transition:all .3s}
+.sd.done{background:var(--green)}
+.sd.active{background:var(--green);transform:scale(1.4)}
+
+.qcard{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);padding:1.75rem;box-shadow:var(--sh);animation:fu .4s ease}
+@keyframes fu{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.q-eye{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green);margin-bottom:.5rem}
+.q-txt{font-family:var(--serif);font-size:1.5rem;font-weight:400;color:var(--tx);line-height:1.2;margin-bottom:.35rem}
+.q-sub{font-size:13px;color:var(--mu);margin-bottom:1.25rem;font-weight:300;line-height:1.5}
+textarea.qi{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--serif);font-size:.95rem;font-style:italic;padding:.8rem 1rem;resize:none;min-height:90px;outline:none;transition:border-color .2s,box-shadow .2s;line-height:1.7}
+textarea.qi:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gd)}
+textarea.qi::placeholder{color:var(--fa)}
+input.qi-text{width:100%;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--sans);font-size:14px;padding:.7rem 1rem;outline:none;transition:border-color .2s,box-shadow .2s}
+input.qi-text:focus{border-color:var(--green);box-shadow:0 0 0 3px var(--gd)}
+input.qi-text::placeholder{color:var(--fa)}
+.og{display:grid;gap:.5rem}
+.og-2{grid-template-columns:1fr 1fr}
+.og-3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:480px){.og-2,.og-3{grid-template-columns:1fr 1fr}}
+.ob{padding:.75rem .9rem;border-radius:var(--r);border:1.5px solid var(--bd);background:var(--s2);color:var(--mu);font-family:var(--sans);font-size:13px;cursor:pointer;transition:all var(--tr);text-align:left;display:flex;align-items:center;gap:.6rem}
+.ob:hover{border-color:var(--green);background:var(--gp);color:var(--green)}
+.ob.sel{border-color:var(--green);background:var(--gp);color:var(--green);font-weight:500}
+.ob-icon{font-size:18px;flex-shrink:0}
+.ob-label{flex:1;font-size:13px}
+.ob-sub{font-size:10px;color:var(--fa);display:block;margin-top:1px}
+.q-actions{display:flex;gap:.5rem;margin-top:1.1rem;justify-content:flex-end}
+.btn-n{padding:9px 22px;border-radius:100px;background:var(--green);color:#fff;font-family:var(--sans);font-size:12px;font-weight:500;border:none;cursor:pointer;transition:all var(--tr);letter-spacing:.04em}
+.btn-n:hover{background:#3a5030;transform:translateY(-1px)}
+.btn-n:disabled{opacity:.4;cursor:default;transform:none}
+.btn-b{padding:9px 16px;border-radius:100px;background:transparent;color:var(--mu);font-family:var(--sans);font-size:12px;border:1px solid var(--bd);cursor:pointer;transition:all var(--tr)}
+.btn-b:hover{border-color:var(--bd2);color:var(--tx)}
+
+/* GENERATING */
+.gen-view{text-align:center;padding:3.5rem 1.5rem;max-width:480px;margin:0 auto}
+.gen-icon{font-size:2.2rem;margin-bottom:.75rem;animation:pulse 2s ease infinite}
+@keyframes pulse{0%,100%{opacity:.5;transform:scale(.95)}50%{opacity:1;transform:scale(1.05)}}
+.gen-title{font-family:var(--serif);font-size:1.6rem;font-weight:400;color:var(--tx);margin-bottom:.4rem}
+.gen-sub{font-size:13px;color:var(--mu);font-weight:300}
+.gen-steps{display:flex;flex-direction:column;gap:.4rem;margin-top:1.25rem;text-align:left;max-width:280px;margin-left:auto;margin-right:auto}
+.gs{font-size:12px;color:var(--fa);display:flex;align-items:center;gap:.5rem;transition:color .3s}
+.gs.active{color:var(--green);font-weight:500}
+.gs.done{color:var(--green)}
+.gsd{width:5px;height:5px;border-radius:50%;background:var(--bd2);flex-shrink:0;transition:background .3s}
+.gs.active .gsd,.gs.done .gsd{background:var(--green)}
+
+/* OUTPUT */
+.out-view{max-width:760px;margin:0 auto;padding:0 1.5rem 4rem;animation:fu .6s ease}
+.scene-hdr{text-align:center;padding:2rem 1.5rem;background:var(--sf);border-radius:var(--rlg);border:1px solid var(--bd);box-shadow:var(--sh);margin-bottom:1.25rem}
+.s-season{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .9rem;border-radius:100px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;margin-bottom:.75rem}
+.autumn{background:#f9e4c8;color:#9a5020}
+.spring{background:#daf0e8;color:#2d7a4a}
+.summer{background:#fdebd0;color:#9a6010}
+.winter{background:#d6eaf8;color:#2050a0}
+.s-title{font-family:var(--serif);font-size:1.9rem;font-weight:400;color:var(--tx);line-height:1.2;margin-bottom:.3rem}
+.s-loc{font-size:13px;color:var(--mu);display:flex;align-items:center;justify-content:center;gap:.35rem}
+.s-loc::before{content:'◎';color:var(--green);font-size:11px}
+
+.out-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem;margin-bottom:1.1rem}
+@media(max-width:640px){.out-grid{grid-template-columns:1fr}}
+.out-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);overflow:hidden;box-shadow:var(--sh)}
+.oc-hdr{padding:.7rem 1rem;border-bottom:1px solid var(--bd);background:var(--s2);display:flex;align-items:center;justify-content:space-between}
+.oc-ttl{font-size:10px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--fa)}
+.oc-badge{font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px}
+.oc-bod{padding:1rem}
+.poem-text{font-family:var(--serif);font-size:.98rem;font-style:italic;line-height:1.85;color:var(--tx)}
+.map-frame{width:100%;height:200px;border:none;border-radius:var(--rsm)}
+.season-vis{width:100%;height:120px;border-radius:var(--rsm);display:flex;align-items:center;justify-content:center;font-size:2.5rem;position:relative;overflow:hidden;margin-bottom:.75rem}
+.emchips{display:flex;flex-wrap:wrap;gap:.4rem;margin-bottom:.75rem}
+.emc{padding:.3rem .8rem;border-radius:20px;font-size:11px;font-weight:600}
+.brief-text{font-family:var(--serif);font-size:.95rem;line-height:1.8;color:var(--tx);font-style:italic}
+.pwords{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.75rem}
+.pw{font-size:10px;padding:2px 8px;border-radius:20px;background:var(--s2);border:1px solid var(--bd);color:var(--mu);font-weight:500}
+
+/* GATE */
+.gate-wrap{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);overflow:hidden;box-shadow:var(--sl);margin-bottom:1.25rem;position:relative}
+.gate-preview{padding:1.25rem;filter:blur(4px);user-select:none;pointer-events:none;opacity:.6}
+.gate-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;background:rgba(249,247,244,.85);backdrop-filter:blur(2px)}
+.gate-lock{font-size:1.5rem;margin-bottom:.75rem}
+.gate-h{font-family:var(--serif);font-size:1.5rem;font-weight:400;color:var(--tx);margin-bottom:.5rem;line-height:1.2}
+.gate-p{font-size:13px;color:var(--mu);line-height:1.65;max-width:400px;margin-bottom:1.25rem;font-weight:300}
+.gate-reveal{font-size:12px;color:var(--ink,#4a4a4a);line-height:1.6;background:var(--gp);border-radius:var(--rsm);padding:.7rem 1rem;border:1px solid rgba(74,103,65,.2);max-width:400px;margin-bottom:1.25rem;text-align:left}
+.gate-form{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;max-width:380px}
+.gate-input{flex:1;min-width:190px;padding:10px 16px;border-radius:100px;border:1.5px solid var(--bd);background:var(--sf);color:var(--tx);font-family:var(--sans);font-size:13px;outline:none}
+.gate-input:focus{border-color:var(--green)}
+.gate-btn{padding:10px 22px;border-radius:100px;background:var(--green);color:#fff;font-family:var(--sans);font-size:12px;font-weight:600;border:none;cursor:pointer;transition:all var(--tr);white-space:nowrap}
+.gate-btn:hover{background:#3a5030;transform:translateY(-1px)}
+.gate-note{font-size:11px;color:var(--fa);margin-top:.5rem}
+
+.reset-wrap{text-align:center;margin-top:1.25rem}
+.reset-btn{padding:9px 22px;border-radius:100px;border:1px solid var(--bd);background:transparent;color:var(--mu);font-family:var(--sans);font-size:12px;cursor:pointer;transition:all var(--tr)}
+.reset-btn:hover{border-color:var(--bd2);color:var(--tx)}
+
+/* season vis backgrounds */
+.spring-bg{background:linear-gradient(135deg,#f0f7ec,#daf0e8)}
+.summer-bg{background:linear-gradient(135deg,#fef9e7,#fdebd0)}
+.autumn-bg{background:linear-gradient(135deg,#fdf2e9,#f9e4c8)}
+.winter-bg{background:linear-gradient(135deg,#eaf2fb,#d6eaf8)}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a href="evercrafted-marketing-site.html" class="nav-logo">Ever<span>crafted</span></a>
+  <div class="nav-right">
+    <a href="evercrafted-how-it-works.html" class="nav-link">How it works</a>
+    <a href="evercrafted-marketing-site.html#waitlist" class="nav-cta">Join waitlist</a>
+  </div>
+</nav>
+
+<div id="intake-view">
+  <div class="try-hero">
+    <div class="hero-overline">Try Evercrafted</div>
+    <h1 class="hero-h1">Share a real memory.<br><em>See what we do with it.</em></h1>
+    <p class="hero-lead">Two minutes. No signup. Your words become something you will want to build.</p>
+    <p class="hero-note">The poem and the scene are yours to keep — no matter what.</p>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-label"><span id="prog-txt">Step 1 of 7</span><span id="prog-pct">14%</span></div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill" style="width:14%"></div></div>
+  </div>
+  <div class="intake">
+    <div class="step-dots" id="step-dots"></div>
+    <div id="q-wrap"></div>
+  </div>
+</div>
+
+<div id="gen-view" style="display:none">
+  <div class="gen-view">
+    <div class="gen-icon">✦</div>
+    <div class="gen-title">Writing the scene</div>
+    <p class="gen-sub">Reading what this memory carries.</p>
+    <div class="gen-steps">
+      <div class="gs" id="gs-0"><span class="gsd"></span>Reading the memory</div>
+      <div class="gs" id="gs-1"><span class="gsd"></span>Researching the location</div>
+      <div class="gs" id="gs-2"><span class="gsd"></span>Writing the scene</div>
+      <div class="gs" id="gs-3"><span class="gsd"></span>Choosing the right words</div>
+    </div>
+  </div>
+</div>
+
+<div id="out-view" style="display:none">
+  <div class="out-view">
+
+    <!-- Header -->
+    <div class="scene-hdr" id="scene-hdr"></div>
+
+    <!-- Row 1: poem + map -->
+    <div class="out-grid">
+      <div class="out-card">
+        <div class="oc-hdr"><span class="oc-ttl">The scene</span><span class="oc-badge" style="background:var(--dustp);color:var(--dust)">Written by Evercrafted</span></div>
+        <div class="oc-bod"><div class="poem-text" id="poem-text"></div></div>
+      </div>
+      <div class="out-card">
+        <div class="oc-hdr"><span class="oc-ttl">The place</span><span class="oc-badge" style="background:var(--gp);color:var(--green)" id="loc-badge"></span></div>
+        <div class="oc-bod" style="padding:.75rem">
+          <iframe class="map-frame" id="map-frame" loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>
+          <div style="margin-top:.5rem;font-size:11px;color:var(--fa);font-style:italic;text-align:center" id="loc-caption"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2: season + brief -->
+    <div class="out-grid">
+      <div class="out-card">
+        <div class="oc-hdr"><span class="oc-ttl">Season &amp; feeling</span></div>
+        <div class="oc-bod" style="padding:.75rem">
+          <div class="season-vis" id="season-vis"></div>
+          <div class="emchips" id="emchips"></div>
+          <div style="font-size:12px;color:var(--mu)" id="sensory-line"></div>
+        </div>
+      </div>
+      <div class="out-card">
+        <div class="oc-hdr"><span class="oc-ttl">What this wreath is for</span></div>
+        <div class="oc-bod">
+          <div class="brief-text" id="brief-text"></div>
+          <div class="pwords" id="pwords"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GATE: blueprint section -->
+    <div class="gate-wrap">
+      <div class="gate-preview">
+        <div style="padding:1.25rem">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <div>
+              <div style="height:180px;background:var(--s2);border-radius:var(--rsm);margin-bottom:.75rem"></div>
+              <div style="height:12px;background:var(--bd);border-radius:6px;margin-bottom:.4rem"></div>
+              <div style="height:10px;background:var(--bd);border-radius:6px;width:70%"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:.5rem">
+              <div style="height:40px;background:var(--s2);border-radius:var(--rsm)"></div>
+              <div style="height:40px;background:var(--s2);border-radius:var(--rsm)"></div>
+              <div style="height:40px;background:var(--s2);border-radius:var(--rsm)"></div>
+              <div style="height:40px;background:var(--s2);border-radius:var(--rsm)"></div>
+              <div style="height:40px;background:var(--s2);border-radius:var(--rsm)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="gate-overlay">
+        <div class="gate-lock">✦</div>
+        <h2 class="gate-h" id="gate-h">Your design is ready.</h2>
+        <div class="gate-reveal" id="gate-reveal"></div>
+        <p class="gate-p">Join the waitlist to see the full blueprint — the florals chosen, where each one sits, the exact quantities, and the render that places your wreath in the world of this memory.</p>
+        <form class="gate-form" onsubmit="handleGate(event)">
+          <input class="gate-input" type="email" placeholder="Your email address" id="gate-email" required>
+          <button class="gate-btn" type="submit">See the full design →</button>
+        </form>
+        <div class="gate-note" id="gate-note">Founding member pricing locked at signup. No spam.</div>
+      </div>
+    </div>
+
+    <div class="reset-wrap">
+      <button class="reset-btn" onclick="resetAll()">← Try a different memory</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const CONFIG = { apiBase: 'http://localhost:3001' };
+
+const STEPS = [
+  { id:'memory', type:'textarea', eye:'The memory', q:'What should this wreath hold?', sub:'A person, a place, a season, a feeling. Plain language only.', placeholder:'My grandmother\'s garden in late September — cosmos swaying, dried lavender, that warmth before the cold arrived…', key:'memory' },
+  { id:'season', type:'options', cols:2, eye:'Setting the scene', q:'What season does this memory live in?', sub:'Not necessarily the calendar season — the feeling of one.', key:'season', opts:[{icon:'🌸',label:'Spring',sub:'New, hopeful, tender'},{icon:'☀️',label:'Summer',sub:'Full, warm, abundant'},{icon:'🍂',label:'Autumn',sub:'Golden, bittersweet, rich'},{icon:'❄️',label:'Winter',sub:'Still, quiet, interior'}] },
+  { id:'location', type:'text', eye:'A sense of place', q:'Where does this memory take you?', sub:'A city, a region, a feeling of somewhere — anything helps.', placeholder:'Clintonville, Columbus, Ohio', key:'location' },
+  { id:'timeofday', type:'options', cols:3, eye:'The light', q:'What time of day is this memory?', sub:'Light changes everything.', key:'timeofday', opts:[{icon:'🌅',label:'Morning',sub:'Soft, hopeful'},{icon:'☀️',label:'Midday',sub:'Bright, full'},{icon:'🌇',label:'Late afternoon',sub:'Golden, long shadows'},{icon:'🌆',label:'Evening',sub:'Warm, winding down'},{icon:'🌙',label:'Night',sub:'Still, interior'},{icon:'☁️',label:'Overcast',sub:'Soft, melancholy'}] },
+  { id:'who', type:'options', cols:2, eye:'Who was there', q:'Who is in this memory?', sub:'Or is it more of a feeling than a person?', key:'who', opts:[{icon:'🧍',label:'Just me',sub:'Solitary, reflective'},{icon:'👤',label:'Someone specific',sub:'A person I am honouring'},{icon:'👨‍👩‍👧',label:'A group',sub:'Family, gathering'},{icon:'💭',label:'A feeling, not a person',sub:'A time, a place, a state of mind'}] },
+  { id:'sensory', type:'text', eye:'The detail that stays', q:'One thing you can almost smell, hear, or feel.', sub:'"The smell of dried lavender." "The sound of a screen door." "The weight of a wool blanket."', placeholder:'The smell of cedar and cold air and fallen leaves', key:'sensory' },
+  { id:'feeling', type:'options', cols:3, eye:'What it left behind', q:'What did this leave you with?', sub:'The feeling underneath the memory.', key:'feeling', opts:[{icon:'☮️',label:'Peace',sub:'Quiet, settled'},{icon:'💛',label:'Warmth',sub:'Safe, held'},{icon:'🌊',label:'Longing',sub:'Missing, reaching back'},{icon:'🖤',label:'Grief',sub:'Loss, tenderness'},{icon:'✨',label:'Joy',sub:'Bright, alive'},{icon:'🌀',label:'Something complicated',sub:'More than one thing'}] },
+];
+
+let step = 0, answers = {}, sceneData = null;
+
+const SEASON_VIS = {
+  Spring:{ bg:'spring-bg', emoji:'🌸', badge:'spring' },
+  Summer:{ bg:'summer-bg', emoji:'☀️', badge:'summer' },
+  Autumn:{ bg:'autumn-bg', emoji:'🍂', badge:'autumn' },
+  Winter:{ bg:'winter-bg', emoji:'❄️', badge:'winter' },
+};
+
+function renderDots(){
+  document.getElementById('step-dots').innerHTML = STEPS.map((_,i)=>`<div class="sd ${i<step?'done':i===step?'active':''}"></div>`).join('');
+}
+
+function updateProgress(){
+  const pct = Math.round(((step+1)/STEPS.length)*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-txt').textContent=`Step ${step+1} of ${STEPS.length}`;
+  document.getElementById('prog-pct').textContent=pct+'%';
+}
+
+function renderStep(){
+  const s = STEPS[step];
+  renderDots(); updateProgress();
+  const backBtn = step>0?`<button class="btn-b" onclick="goBack()">← Back</button>`:'';
+  let inp = '';
+  if(s.type==='textarea'){
+    inp=`<textarea class="qi" id="q-inp" placeholder="${s.placeholder}" rows="4" oninput="chk()">${answers[s.key]||''}</textarea>`;
+  } else if(s.type==='text'){
+    inp=`<input class="qi-text" id="q-inp" type="text" placeholder="${s.placeholder}" value="${answers[s.key]||''}" oninput="chk()">`;
+  } else {
+    const cols = s.cols||2;
+    inp=`<div class="og og-${cols}">${(s.opts||[]).map(o=>`<button class="ob ${answers[s.key]===o.label?'sel':''}" onclick="selOpt('${o.label}',this)"><span class="ob-icon">${o.icon}</span><span class="ob-label">${o.label}<span class="ob-sub">${o.sub}</span></span></button>`).join('')}</div>`;
+  }
+  const isLast = step===STEPS.length-1;
+  const nd = s.type==='options'&&!answers[s.key]?'disabled':'';
+  document.getElementById('q-wrap').innerHTML=`<div class="qcard"><div class="q-eye">${s.eye}</div><div class="q-txt">${s.q}</div><div class="q-sub">${s.sub}</div>${inp}<div class="q-actions">${backBtn}<button class="btn-n" id="n-btn" onclick="goNext()" ${nd}>${isLast?'Create the scene →':'Continue →'}</button></div></div>`;
+  const inp2=document.getElementById('q-inp');
+  if(inp2) setTimeout(()=>inp2.focus(),80);
+}
+
+function chk(){
+  const inp=document.getElementById('q-inp');
+  const btn=document.getElementById('n-btn');
+  if(btn) btn.disabled=!inp?.value?.trim();
+}
+
+function selOpt(label,btn){
+  document.querySelectorAll('.ob').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  answers[STEPS[step].key]=label;
+  document.getElementById('n-btn').disabled=false;
+  setTimeout(()=>goNext(),300);
+}
+
+function goNext(){
+  const s=STEPS[step];
+  if(s.type!=='options'){
+    const inp=document.getElementById('q-inp');
+    const val=inp?.value?.trim();
+    if(!val&&s.id!=='location') return;
+    answers[s.key]=val||'';
+  }
+  if(step<STEPS.length-1){ step++; renderStep(); }
+  else startGen();
+}
+
+function goBack(){ if(step>0){step--;renderStep();} }
+
+async function startGen(){
+  document.getElementById('intake-view').style.display='none';
+  document.getElementById('gen-view').style.display='block';
+  const gsteps=['gs-0','gs-1','gs-2','gs-3'];
+  let si=0;
+  const iv=setInterval(()=>{
+    if(si>0){const p=document.getElementById(gsteps[si-1]);if(p){p.classList.add('done');p.classList.remove('active');}}
+    if(si<gsteps.length){const c=document.getElementById(gsteps[si]);if(c)c.classList.add('active');}
+    si++;
+    if(si>gsteps.length)clearInterval(iv);
+  },1000);
+
+  try{
+    // Location research
+    let locData=null;
+    if(answers.location?.trim()){
+      try{
+        const lr=await fetch(`${CONFIG.apiBase}/api/location`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:answers.location})});
+        const lj=await lr.json();
+        if(lj.success) locData=lj.data;
+      }catch(e){}
+    }
+    // Scene generation
+    const sr=await fetch(`${CONFIG.apiBase}/api/scene`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...answers,locationData:locData})});
+    const sj=await sr.json();
+    if(!sj.success) throw new Error(sj.error||'Scene failed');
+    clearInterval(iv);
+    sceneData=sj.data;
+    sceneData._locationData=locData;
+    setTimeout(()=>showOutput(),500);
+  }catch(e){
+    clearInterval(iv);
+    document.getElementById('gen-view').innerHTML=`<div class="gen-view"><div style="font-size:14px;color:var(--mu);padding:2rem">Something went wrong — <button onclick="location.reload()" style="color:var(--green);background:none;border:none;cursor:pointer;font-size:14px">try again</button></div></div>`;
+  }
+}
+
+function emotionStyle(e){
+  const m={'nostalgia':'#9a8ab0,#f5eef4','sadness':'#607080,#eef2f7','grief':'#485060,#eaebf0','peace':'#4a6741,#eef2ed','joy':'#9a7a40,#f5efe4','longing':'#7080a0,#eef0f7','warmth':'#a06040,#fdf0e8','trust':'#4a6060,#eef2f2','tenderness':'#a07080,#fdf0ef','melancholy':'#7080a0,#eef0f7','reverence':'#6a5a78,#f2eef5','awe':'#4a5a7a,#eef0f7'};
+  const key=e.toLowerCase().replace(/\s+/g,'').replace('complicated','melancholy');
+  const found=m[key]||'6a6a7a,#f0f0f2';
+  const [color,bg]=found.split(',');
+  return `background:${bg};color:${color.startsWith('#')?color:'#'+color}`;
+}
+
+function showOutput(){
+  document.getElementById('gen-view').style.display='none';
+  document.getElementById('out-view').style.display='block';
+  const r=sceneData||{};
+  r.scene_title=r.scene_title||'Your scene';
+  r.poem=r.poem||'';
+  r.brief=r.brief||'';
+  r.emotions=r.emotions||[];
+  r.formula=r.formula||'Crescent';
+  r.intensity=r.intensity||1;
+  r.palette_words=r.palette_words||[];
+  r.map_query=r.map_query||answers.location||'Columbus Ohio';
+  r.render_surface=r.render_surface||'';
+
+  const sv=SEASON_VIS[answers.season]||SEASON_VIS.Autumn;
+
+  // Header
+  document.getElementById('scene-hdr').innerHTML=`
+    <div class="s-season ${sv.badge}">${sv.emoji} ${answers.season} · ${answers.timeofday||''}</div>
+    <h1 class="s-title">${r.scene_title}</h1>
+    ${answers.location?`<div class="s-loc">${answers.location}</div>`:''}`;
+
+  // Poem
+  document.getElementById('poem-text').innerHTML=r.poem.replace(/\n/g,'<br>');
+
+  // Map
+  document.getElementById('map-frame').src=`https://maps.google.com/maps?q=${encodeURIComponent(r.map_query)}&output=embed&z=12&hl=en`;
+  document.getElementById('loc-badge').textContent=answers.location||'Columbus, Ohio';
+  document.getElementById('loc-caption').textContent=r.render_surface||r.render_setting?.split('.')[0]||answers.location||'';
+
+  // Season vis
+  document.getElementById('season-vis').className=`season-vis ${sv.bg}`;
+  document.getElementById('season-vis').textContent=sv.emoji;
+
+  // Emotion chips
+  document.getElementById('emchips').innerHTML=(r.emotions||[]).map(e=>`<span class="emc" style="${emotionStyle(e)}">${e}</span>`).join('');
+
+  // Sensory
+  document.getElementById('sensory-line').textContent=answers.sensory||'';
+
+  // Brief
+  document.getElementById('brief-text').innerHTML=r.brief;
+  document.getElementById('pwords').innerHTML=(r.palette_words||[]).map(w=>`<span class="pw">${w}</span>`).join('');
+
+  // Gate — personalised with specific data from the scene
+  const pe=r.poem_emotions||{};
+  const gateReveal = `Your wreath holds <strong>${pe.structural||r.dominant_emotion||'the feeling'}</strong> at its heart, <strong>${pe.secondary||r.emotions[1]||'warmth'}</strong> in the layers around it, and <strong>${pe.undertone||r.emotions[2]||'something quieter'}</strong> at the edge. The render places it ${r.render_surface?`on <em>${r.render_surface}</em>`:'in the world of this memory'}.`;
+
+  document.getElementById('gate-h').textContent=`Your design is ready.`;
+  document.getElementById('gate-reveal').innerHTML=gateReveal;
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function handleGate(e){
+  e.preventDefault();
+  const email=document.getElementById('gate-email').value;
+  document.getElementById('gate-note').textContent=`✓ ${email} is on the list. Founding pricing locked in.`;
+  document.getElementById('gate-note').style.color='var(--green)';
+  document.getElementById('gate-note').style.fontWeight='500';
+  document.getElementById('gate-email').value='';
+  // In production: POST to /api/waitlist with { email, scene_title: sceneData?.scene_title, memory: answers.memory }
+}
+
+function resetAll(){
+  step=0; answers={}; sceneData=null;
+  document.getElementById('out-view').style.display='none';
+  document.getElementById('gen-view').style.display='none';
+  document.getElementById('intake-view').style.display='block';
+  renderStep();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+renderStep();
+</script>
+</body>
+</html>
