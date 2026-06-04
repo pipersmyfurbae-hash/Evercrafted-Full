@@ -267,39 +267,38 @@ Examples:
     <div class="fgroup">
       <div class="flabel">Primary emotion <span class="conf" id="conf-ep" style="display:none"></span></div>
       <div class="seg" id="seg-ep">
+        <button class="sopt" onclick="setField('ep','nostalgia',this,'emot-on')">nostalgia</button>
+        <button class="sopt" onclick="setField('ep','grief',this,'emot-on')">grief</button>
+        <button class="sopt" onclick="setField('ep','sadness',this,'emot-on')">sadness</button>
         <button class="sopt" onclick="setField('ep','peace',this,'emot-on')">peace</button>
         <button class="sopt" onclick="setField('ep','joy',this,'emot-on')">joy</button>
-        <button class="sopt" onclick="setField('ep','sadness',this,'emot-on')">sadness</button>
-        <button class="sopt" onclick="setField('ep','grief',this,'emot-on')">grief</button>
-        <button class="sopt" onclick="setField('ep','fear',this,'emot-on')">fear</button>
-        <button class="sopt" onclick="setField('ep','anger',this,'emot-on')">anger</button>
-        <button class="sopt" onclick="setField('ep','trust',this,'emot-on')">trust</button>
-        <button class="sopt" onclick="setField('ep','anticipation',this,'emot-on')">anticipation</button>
-        <button class="sopt" onclick="setField('ep','nostalgia',this,'emot-on')">nostalgia</button>
         <button class="sopt" onclick="setField('ep','longing',this,'emot-on')">longing</button>
-        <button class="sopt" onclick="setField('ep','hope',this,'emot-on')">hope</button>
-        <button class="sopt" onclick="setField('ep','reverence',this,'emot-on')">reverence</button>
+        <button class="sopt" onclick="setField('ep','warmth',this,'emot-on')">warmth</button>
+        <button class="sopt" onclick="setField('ep','trust',this,'emot-on')">trust</button>
         <button class="sopt" onclick="setField('ep','awe',this,'emot-on')">awe</button>
+        <button class="sopt" onclick="setField('ep','tenderness',this,'emot-on')">tenderness</button>
         <button class="sopt" onclick="setField('ep','melancholy',this,'emot-on')">melancholy</button>
+        <button class="sopt" onclick="setField('ep','reverence',this,'emot-on')">reverence</button>
+        <button class="sopt" onclick="setField('ep','anticipation',this,'emot-on')">anticipation</button>
       </div>
     </div>
 
     <div class="fgroup">
       <div class="flabel">Secondary emotion <span class="conf" id="conf-es" style="display:none"></span></div>
       <div class="seg" id="seg-es">
+        <button class="sopt" onclick="setField('es','nostalgia',this,'emot-on')">nostalgia</button>
+        <button class="sopt" onclick="setField('es','grief',this,'emot-on')">grief</button>
+        <button class="sopt" onclick="setField('es','sadness',this,'emot-on')">sadness</button>
         <button class="sopt" onclick="setField('es','peace',this,'emot-on')">peace</button>
         <button class="sopt" onclick="setField('es','joy',this,'emot-on')">joy</button>
-        <button class="sopt" onclick="setField('es','sadness',this,'emot-on')">sadness</button>
-        <button class="sopt" onclick="setField('es','grief',this,'emot-on')">grief</button>
-        <button class="sopt" onclick="setField('es','fear',this,'emot-on')">fear</button>
-        <button class="sopt" onclick="setField('es','trust',this,'emot-on')">trust</button>
-        <button class="sopt" onclick="setField('es','anticipation',this,'emot-on')">anticipation</button>
-        <button class="sopt" onclick="setField('es','nostalgia',this,'emot-on')">nostalgia</button>
         <button class="sopt" onclick="setField('es','longing',this,'emot-on')">longing</button>
-        <button class="sopt" onclick="setField('es','reflective',this,'emot-on')">reflective</button>
-        <button class="sopt" onclick="setField('es','hope',this,'emot-on')">hope</button>
-        <button class="sopt" onclick="setField('es','reverence',this,'emot-on')">reverence</button>
+        <button class="sopt" onclick="setField('es','warmth',this,'emot-on')">warmth</button>
+        <button class="sopt" onclick="setField('es','trust',this,'emot-on')">trust</button>
         <button class="sopt" onclick="setField('es','awe',this,'emot-on')">awe</button>
+        <button class="sopt" onclick="setField('es','tenderness',this,'emot-on')">tenderness</button>
+        <button class="sopt" onclick="setField('es','melancholy',this,'emot-on')">melancholy</button>
+        <button class="sopt" onclick="setField('es','reverence',this,'emot-on')">reverence</button>
+        <button class="sopt" onclick="setField('es','anticipation',this,'emot-on')">anticipation</button>
         <button class="sopt" onclick="setField('es','none',this,'emot-on')">none</button>
       </div>
     </div>
@@ -564,7 +563,9 @@ function applyAnalysisResult(text, sourceLabel) {
       const seg = document.getElementById(segId);
       if (!seg) continue;
       seg.querySelectorAll('.sopt').forEach(b => {
-        if (b.textContent.trim() === val || b.textContent.trim().startsWith(val + ' ')) {
+        const bt = b.textContent.trim().toLowerCase();
+        const v = String(val).toLowerCase();
+        if (bt === v || bt.startsWith(v + ' ')) {
           b.classList.add(classMap[field]);
         }
       });

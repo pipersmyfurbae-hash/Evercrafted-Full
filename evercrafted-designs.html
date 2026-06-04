@@ -63,6 +63,7 @@ h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4vw,2.8rem);lin
 </div>
 <script>
 const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
+const DESIGN_PROMPTS = {};
 function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 
 async function load(){
@@ -73,11 +74,15 @@ async function load(){
   if(!items.length){ grid.innerHTML='<p class="muted">No saved designs yet. Generate one in the <a href="evercrafted-memory-scene.html">Memory Scene</a> or <a href="evercrafted-v2-engine.html">Manual Design</a> tool and hit “Save this design”.</p>'; return; }
   grid.innerHTML = items.map(d=>{
     const data=d.data||{};
+    DESIGN_PROMPTS[d.id]=data.renderPrompt||'';
     const date=d.createdAt?new Date(d.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
     const slots=(data.slots||[]).map(s=>`<span class="chip">${esc(s.name)}${s.stemCount?(' ·'+s.stemCount):''}</span>`).join('');
     const poem=data.poem?`<div class="poem">“${esc(data.poem)}”</div>`:'';
     const prompt=data.renderPrompt?`<div class="prompt">${esc(data.renderPrompt)}</div>`:'';
+    const image=data.imageUrl?`<img src="${esc(data.imageUrl)}" alt="" style="width:100%;border-radius:6px;border:1px solid var(--line);margin-bottom:.2rem">`:'';
+    const renderBtn=(!data.imageUrl&&data.renderPrompt)?`<button class="toggle" id="rb-${d.id}" onclick="genRender('${d.id}')">Generate render</button>`:'';
     return `<div class="card" id="c-${d.id}">
+      ${image}
       <div class="card-top">
         <div class="card-title">${esc(d.title)}</div>
         <span class="badge b-${d.source||'manual'}">${d.source||'manual'}</span>
@@ -87,11 +92,28 @@ async function load(){
       ${slots?`<div class="slots">${slots}</div>`:''}
       ${prompt}
       <div class="actions">
-        <button class="toggle" onclick="document.getElementById('c-${d.id}').classList.toggle('open')">View details</button>
+        <div style="display:flex;gap:1rem;align-items:center">
+          <button class="toggle" onclick="document.getElementById('c-${d.id}').classList.toggle('open')">View details</button>
+          ${renderBtn}
+        </div>
         <button class="del" onclick="del('${d.id}')">Delete</button>
       </div>
     </div>`;
   }).join('');
+}
+async function genRender(id){
+  const prompt=DESIGN_PROMPTS[id];
+  const btn=document.getElementById('rb-'+id);
+  if(!prompt){ if(btn)btn.textContent='No prompt'; return; }
+  if(btn){ btn.disabled=true; btn.textContent='Rendering… (~15s)'; }
+  try{
+    const res=await fetch(`${CONFIG.apiBase}/api/render`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,designId:id,aspect:'portrait'})});
+    const json=await res.json();
+    if(!json.success) throw new Error(json.error||'render failed');
+    const card=document.getElementById('c-'+id);
+    if(card){ const img=document.createElement('img'); img.src=json.url; img.alt=''; img.style.cssText='width:100%;border-radius:6px;border:1px solid var(--line);margin-bottom:.2rem'; card.insertBefore(img, card.firstChild); }
+    if(btn) btn.remove();
+  }catch(e){ if(btn){ btn.disabled=false; btn.textContent='Render failed — retry'; } }
 }
 async function del(id){
   if(!confirm('Delete this saved design?')) return;

@@ -869,6 +869,97 @@ app.get('/api/inventory', async (req, res) => {
   }
 });
 
+// ── Image rendering (Flux via fal.ai, or OpenAI) ──────────────────────────────
+// Upload generated image bytes (or a source URL) to the public 'renders' bucket
+async function persistRender(srcUrl, buf, contentType) {
+  if (supabase) {
+    try {
+      let bytes = buf, ct = contentType || 'image/png';
+      if (!bytes && srcUrl) {
+        const ir = await fetch(srcUrl);
+        ct = ir.headers.get('content-type') || 'image/png';
+        bytes = Buffer.from(await ir.arrayBuffer());
+      }
+      if (bytes) {
+        const ext = (ct.split('/')[1] || 'png').replace('jpeg', 'jpg');
+        const path = `${Date.now()}-${Math.floor(Math.random() * 1e6)}.${ext}`;
+        const { error } = await supabase.storage.from('renders').upload(path, bytes, { contentType: ct, upsert: false });
+        if (!error) return supabase.storage.from('renders').getPublicUrl(path).data.publicUrl;
+      }
+    } catch (e) { /* fall back to source url */ }
+  }
+  return srcUrl;
+}
+
+async function generateImage(prompt, aspect) {
+  const provider = (process.env.IMAGE_PROVIDER || '').toLowerCase()
+    || (process.env.FAL_KEY ? 'fal' : (process.env.OPENAI_API_KEY ? 'openai' : 'none'));
+  // Strip Midjourney flags (--ar/--style/--q/--v …) that confuse Flux/DALL·E
+  const clean = prompt.replace(/--\w+\s+\S+/g, ' ').replace(/\s+/g, ' ').trim();
+
+  if (provider === 'fal') {
+    const image_size = aspect === 'square' ? 'square_hd' : 'portrait_4_3';
+    const r = await fetch('https://fal.run/fal-ai/flux/dev', {
+      method: 'POST',
+      headers: { 'Authorization': `Key ${process.env.FAL_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: clean, image_size, num_images: 1 }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.detail || j.error || `fal error ${r.status}`);
+    const url = j.images?.[0]?.url;
+    if (!url) throw new Error('fal: no image returned');
+    return await persistRender(url, null);
+  }
+
+  if (provider === 'openai') {
+    const size = aspect === 'square' ? '1024x1024' : '1024x1536';
+    const r = await fetch('https://api.openai.com/v1/images/generations', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'gpt-image-1', prompt: clean, size, n: 1 }),
+    });
+    const j = await r.json();
+    if (!r.ok) throw new Error(j.error?.message || `openai error ${r.status}`);
+    const b64 = j.data?.[0]?.b64_json, url = j.data?.[0]?.url;
+    if (b64) return await persistRender(null, Buffer.from(b64, 'base64'), 'image/png');
+    if (url) return await persistRender(url, null);
+    throw new Error('openai: no image returned');
+  }
+
+  throw new Error('No image provider configured. Set IMAGE_PROVIDER=fal (or openai) and the matching API key.');
+}
+
+// POST /api/render — generate a wreath image from a render prompt
+app.post('/api/render', async (req, res) => {
+  try {
+    const prompt = String(req.body.prompt || '').slice(0, 2000).trim();
+    if (!prompt) return res.status(400).json({ success: false, error: 'prompt is required' });
+    const aspect = req.body.aspect === 'square' ? 'square' : 'portrait';
+    const url = await generateImage(prompt, aspect);
+    if (!url) throw new Error('No image returned');
+
+    // Optionally attach the render to a saved design
+    const designId = sanitizeInput(req.body.designId);
+    if (designId && supabase) {
+      try {
+        const { data: d } = await supabase.from('designs').select('data').eq('id', designId).single();
+        if (d) await supabase.from('designs').update({ data: { ...(d.data || {}), imageUrl: url } }).eq('id', designId);
+      } catch (e) { /* non-fatal */ }
+    } else if (designId) {
+      try {
+        let list = JSON.parse(fs.readFileSync(DESIGNS_PATH, 'utf8'));
+        const i = list.findIndex(x => x.id === designId);
+        if (i >= 0) { list[i].data = { ...(list[i].data || {}), imageUrl: url }; fs.writeFileSync(DESIGNS_PATH, JSON.stringify(list, null, 2)); }
+      } catch (e) { /* non-fatal */ }
+    }
+
+    return res.json({ success: true, url });
+  } catch (err) {
+    console.error('[/api/render]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ── Designs (saved blueprints from the engines) ───────────────────────────────
 const DESIGNS_PATH = './designs.json';
 

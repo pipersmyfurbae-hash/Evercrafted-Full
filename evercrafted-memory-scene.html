@@ -1031,8 +1031,40 @@ function buildSaveBar(design) {
     const out = document.getElementById('output-view');
     if (out) out.insertBefore(bar, out.firstChild);
   }
-  bar.innerHTML = `<button id="save-design-btn" style="padding:10px 22px;border-radius:100px;border:none;background:var(--green,#4A6741);color:#fff;font-family:var(--sans,system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer">Save this design</button><span id="save-design-msg" style="font-size:12px;color:var(--mu,#888)"></span>`;
+  bar.innerHTML = `<button id="save-design-btn" style="padding:10px 22px;border-radius:100px;border:none;background:var(--green,#4A6741);color:#fff;font-family:var(--sans,system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer">Save this design</button>
+    <button id="gen-render-btn" style="padding:10px 22px;border-radius:100px;border:1px solid var(--green,#4A6741);background:transparent;color:var(--green,#4A6741);font-family:var(--sans,system-ui,sans-serif);font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer">Generate render</button>
+    <span id="save-design-msg" style="font-size:12px;color:var(--mu,#888)"></span>`;
   document.getElementById('save-design-btn').onclick = () => saveDesign(design);
+  document.getElementById('gen-render-btn').onclick = () => generateRender(design);
+}
+async function generateRender(design) {
+  const msg = document.getElementById('save-design-msg');
+  const btn = document.getElementById('gen-render-btn');
+  const prompt = design && design.data && design.data.renderPrompt;
+  if (!prompt) { if (msg) msg.textContent = 'No render prompt to generate from.'; return; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Rendering…'; }
+  if (msg) msg.textContent = 'Generating the image — this can take ~10–20s…';
+  try {
+    const res = await fetch(`${CONFIG.apiBase}/api/render`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, aspect: 'portrait' }) });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'render failed');
+    design.data.imageUrl = json.url; // included if the design is saved afterwards
+    let wrap = document.getElementById('render-image-wrap');
+    if (!wrap) {
+      wrap = document.createElement('div');
+      wrap.id = 'render-image-wrap';
+      wrap.style.cssText = 'max-width:1100px;margin:1rem auto 0;padding:0 1.25rem';
+      const bar = document.getElementById('save-design-bar');
+      if (bar && bar.parentNode) bar.parentNode.insertBefore(wrap, bar.nextSibling);
+      else document.getElementById('output-view')?.appendChild(wrap);
+    }
+    wrap.innerHTML = `<img src="${json.url}" alt="Rendered wreath" style="max-width:440px;width:100%;border-radius:12px;border:1px solid var(--bd,#e4ddd3)">`;
+    if (msg) msg.textContent = '✓ Render ready — save the design to keep it.';
+    if (btn) { btn.disabled = false; btn.textContent = 'Regenerate'; }
+  } catch (e) {
+    if (msg) msg.textContent = 'Render failed: ' + e.message;
+    if (btn) { btn.disabled = false; btn.textContent = 'Generate render'; }
+  }
 }
 async function saveDesign(design) {
   const btn = document.getElementById('save-design-btn');
