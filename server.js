@@ -1,5 +1,6 @@
 require('dotenv').config();
 const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const Anthropic = require('@anthropic-ai/sdk');
@@ -78,6 +79,16 @@ app.use((req, res, next) => {
 
 // ── Health ────────────────────────────────────────────────────────────────────
 app.get('/api/health', (_, res) => res.json({ ok: true, service: 'evercrafted-api' }));
+
+// ── Static site (local dev / preview) ─────────────────────────────────────────
+// Serves the self-contained .html pages so `node server.js` runs the whole site
+// at one origin. On Vercel the static pages are served by the platform instead
+// (see vercel.json); these routes only handle requests reaching the function.
+app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'evercrafted-marketing-site.html')));
+app.get('/:page.html', (req, res, next) => {
+  const file = path.join(__dirname, `${req.params.page}.html`);
+  fs.existsSync(file) ? res.sendFile(file) : next();
+});
 
 // ── INVENTORY (exact from handoff) ────────────────────────────────────────────
 const INVENTORY = [
