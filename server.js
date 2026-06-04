@@ -163,7 +163,12 @@ MOVEMENT — weeping=droops/cascades down · reaching=grows up/out · sweeping=h
 FINISH — matte=flat no shine · satin=soft sheen · metallic=gold/silver/champagne reflective · raw=natural dried · gloss=high lacquered shine
 PALETTE — neutral-light=white/cream/blush · neutral-mid=mauve/dusty rose/sage/tan · neutral-dark=burgundy/navy/charcoal/rust · botanical-green=any true green · champagne=warm gold/amber/wheat · silver=grey/pewter/platinum
 EP/ES — primary then secondary emotion from: nostalgia, grief, sadness, peace, joy, longing, warmth, trust, awe, tenderness, melancholy, reverence, anticipation
-INTENSITY — [min,max] on 1-3: 1=soft (peace, tenderness) · 2=medium (nostalgia, warmth) · 3=heavy (grief, awe)`;
+INTENSITY — [min,max] on 1-3: 1=soft (peace, tenderness) · 2=medium (nostalgia, warmth) · 3=heavy (grief, awe)
+PHYSICAL SIZE & YIELD (critical — one stem is often several placeable pieces):
+  stemLength — full length of the whole stem/spray in inches (e.g. a 28" branch)
+  bloomSize  — diameter in inches of ONE placeable unit: a single bloom head, floret, or sprig (e.g. a 4.5" peony head, a 1.5" filler floret, a 2" eucalyptus sprig). NOT the whole spray.
+  yield      — how many usable florals/sprigs you can cut/use from ONE stem. A focal peony stem ~1. A berry spray ~6. A eucalyptus stem ~4. A filler ~6-8.
+  unit       — what one placeable piece is: "bloom" | "sprig" | "cluster" | "segment"`;
 
 // ── POST /api/tag — suggest tags for a single item (text and/or photo) ─────────
 app.post('/api/tag', async (req, res) => {
@@ -202,7 +207,7 @@ ${description ? `Description: ${description.slice(0, 600)}` : ''}
 ${image ? 'A product photo is attached — study it for form, finish, colour, and movement.' : ''}
 
 Return ONLY one JSON object, no markdown, no backticks (include a short descriptive "name" — generate one from the photo if no name was given):
-{"name":"","role":"","pass":1,"behavior":"","movement":"","finish":"","palette":"","ep":"","es":"","intensity":[1,2],"colorName":"","colorHex":"#RRGGBB","confidence":{"name":"high|medium|low","role":"high|medium|low","movement":"high|medium|low","ep":"high|medium|low","finish":"high|medium|low"}}`;
+{"name":"","role":"","pass":1,"behavior":"","movement":"","finish":"","palette":"","ep":"","es":"","intensity":[1,2],"stemLength":22,"bloomSize":2.5,"yield":3,"unit":"sprig","colorName":"","colorHex":"#RRGGBB","confidence":{"name":"high|medium|low","role":"high|medium|low","movement":"high|medium|low","ep":"high|medium|low","yield":"high|medium|low"}}`;
 
     const content = [{ type: 'text', text: prompt }];
     if (image) {
@@ -644,6 +649,8 @@ function inventoryRow(b) {
     role: t.role, pass: (t.role === 'focal' || t.role === 'structural') ? 1 : 2, behavior: t.behavior, movement: t.movement,
     finish: t.finish, palette: t.palette, ep: t.ep, es: t.es, blend: '',
     intensity: t.intensity, color_name: t.colorName, color_hex: t.colorHex,
+    bloom_size: t.bloomSize, stem_length: t.stemLength, yield: t.yield, unit: t.unit,
+    asset_url: (typeof b.assetUrl === 'string' ? b.assetUrl : '').slice(0, 2000),
     contrast: 'unified',
     in_stock:        b.inStock === false ? false : true,
     stock:           Number.isFinite(+b.stock) ? Math.max(0, parseInt(b.stock)) : 0,
@@ -658,6 +665,7 @@ function rowToClient(r) {
     role: r.role, pass: r.pass, behavior: r.behavior, movement: r.movement,
     finish: r.finish, palette: r.palette, ep: r.ep, es: r.es,
     intensity: r.intensity, colorName: r.color_name, colorHex: r.color_hex,
+    bloomSize: r.bloom_size, stemLength: r.stem_length, yield: r.yield, unit: r.unit, assetUrl: r.asset_url,
     inStock: r.in_stock, stock: r.stock, recommendedQty: r.recommended_qty,
     createdAt: r.created_at,
   };

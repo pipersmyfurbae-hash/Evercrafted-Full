@@ -26,16 +26,47 @@
     emotions:   ['nostalgia', 'grief', 'sadness', 'peace', 'joy', 'longing', 'warmth', 'trust', 'awe', 'tenderness', 'melancholy', 'reverence', 'anticipation'],
   };
 
+  // ── Physical realism: yield, unit size, stem length ────────────────────────
+  // A stem/spray usually yields MORE THAN ONE placeable floral or sprig. These
+  // drive (A) stem-count math and (B) how many units the visualizer places,
+  // true-to-scale. Explicit tagged values win; otherwise we derive a default.
+  const DEFAULT_BLOOM = { heavy: 4.5, mid: 2.5, light: 1.5, wispy: 0.9 }; // inches — diameter of one placed unit
+  const DEFAULT_STEM  = { heavy: 28,  mid: 22,  light: 18,  wispy: 24 };  // inches — full stem/spray length
+  function defaultYield(role, beh) {
+    const base = { focal: 1, secondary: 3, greenery: 4, accent: 6, structural: 1, texture: 5, bridge: 2, filler: 6 }[role] || 3;
+    const mod  = beh === 'wispy' ? 2 : beh === 'light' ? 1.4 : beh === 'heavy' ? 0.7 : 1;
+    return Math.max(1, Math.round(base * mod));
+  }
+  function defaultUnit(role) {
+    return role === 'greenery' ? 'sprig'
+      : (role === 'focal' || role === 'secondary' || role === 'bridge') ? 'bloom'
+      : (role === 'texture' || role === 'accent') ? 'cluster' : 'sprig';
+  }
+  // Resolve {yield, bloomSize (in), stemLength (in), unit} for any item — explicit or derived.
+  function unitSpec(item) {
+    const it = item || {};
+    const role = it.role || 'secondary', beh = it.behavior || 'mid';
+    return {
+      yield:      (+it.yield > 0)      ? Math.round(+it.yield) : defaultYield(role, beh),
+      bloomSize:  (+it.bloomSize > 0)  ? +it.bloomSize         : (DEFAULT_BLOOM[beh] || 2.5),
+      stemLength: (+it.stemLength > 0) ? +it.stemLength        : (DEFAULT_STEM[beh] || 22),
+      unit:       ['bloom', 'sprig', 'cluster', 'segment'].includes(it.unit) ? it.unit : defaultUnit(role),
+    };
+  }
+
   // ── Tag normaliser — coerces any AI output into the controlled vocabulary ────
   function normalizeTag(t) {
     t = t || {};
     const hex = (t.colorHex || '').toString().trim();
     const validHex = /^#?[0-9a-fA-F]{6}$/.test(hex);
+    const role     = VOCAB.roles.includes(t.role)         ? t.role     : 'secondary';
+    const behavior = VOCAB.behaviors.includes(t.behavior) ? t.behavior : 'mid';
+    const spec = unitSpec({ role, behavior, yield: t.yield, bloomSize: t.bloomSize, stemLength: t.stemLength, unit: t.unit });
     return {
       name:      typeof t.name === 'string' ? t.name.slice(0, 120) : '',
-      role:      VOCAB.roles.includes(t.role)         ? t.role     : 'secondary',
+      role,
       pass:      t.pass === 1 ? 1 : 2,
-      behavior:  VOCAB.behaviors.includes(t.behavior) ? t.behavior : 'mid',
+      behavior,
       movement:  VOCAB.movements.includes(t.movement) ? t.movement : 'still',
       finish:    VOCAB.finishes.includes(t.finish)    ? t.finish   : 'matte',
       palette:   VOCAB.palettes.includes(t.palette)   ? t.palette  : 'neutral-mid',
@@ -44,6 +75,10 @@
       intensity: Array.isArray(t.intensity) && t.intensity.length === 2
                    ? [Math.min(3, Math.max(1, parseInt(t.intensity[0]) || 1)), Math.min(3, Math.max(1, parseInt(t.intensity[1]) || 2))]
                    : [1, 2],
+      stemLength: spec.stemLength,
+      bloomSize:  spec.bloomSize,
+      yield:      spec.yield,
+      unit:       spec.unit,
       colorName: typeof t.colorName === 'string' ? t.colorName.slice(0, 40) : '',
       colorHex:  validHex ? (hex.startsWith('#') ? hex : '#' + hex) : '',
       confidence: (t.confidence && typeof t.confidence === 'object') ? t.confidence : undefined,
@@ -133,11 +168,15 @@
 
       const slotCount = Math.max(1, slots.filter(s => s.role === slot.role).length);
       const zb = Math.round(BUDGET * (ZS[slot.role] || 0.10) / slotCount);
-      const sc = Math.max(1, Math.round(zb / (BU[chosen ? chosen.behavior : 'mid'] || 2.5)));
-      filled.push({ ...slot, item: chosen, stemCount: sc });
+      const spec = unitSpec(chosen);
+      // floralUnits = how many placed sprigs/blooms fill this zone (drives the visualizer)
+      const floralUnits = Math.max(1, Math.round(zb / (BU[chosen ? chosen.behavior : 'mid'] || 2.5)));
+      // stems = whole stems to buy/cut, since each stem yields `yield` units
+      const stemCount = Math.max(1, Math.ceil(floralUnits / spec.yield));
+      filled.push({ ...slot, item: chosen, floralUnits, stemCount, bloomSize: spec.bloomSize, yield: spec.yield, unit: spec.unit });
     }
     return filled;
   }
 
-  return { VOCAB, normalizeTag, BUDGET, ZS, BU, SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill };
+  return { VOCAB, normalizeTag, unitSpec, BUDGET, ZS, BU, SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill };
 });

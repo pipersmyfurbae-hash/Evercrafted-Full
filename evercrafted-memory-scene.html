@@ -937,7 +937,7 @@ function renderBlueprint(r) {
       renderPrompt: document.getElementById('prompt-text')?.textContent || r.render_prompt || '',
       renderSurface: r.render_surface || '',
       location: r.map_query || (typeof answers !== 'undefined' ? (answers.location || '') : ''),
-      slots: filledSlots.filter(s => s.item).map(s => ({ role: s.role, tier: s.tier, name: s.item.name, stemCount: s.stemCount, ep: s.item.ep, colorHex: s.item.color, behavior: s.item.behavior, movement: s.item.movement, palette: s.item.palette, assetUrl: s.item.assetUrl || '' })),
+      slots: filledSlots.filter(s => s.item).map(s => ({ role: s.role, tier: s.tier, name: s.item.name, stemCount: s.stemCount, floralUnits: s.floralUnits, bloomSize: s.bloomSize, ep: s.item.ep, colorHex: s.item.color, behavior: s.item.behavior, movement: s.item.movement, palette: s.item.palette, assetUrl: s.item.assetUrl || '' })),
     },
   });
 
