@@ -292,6 +292,79 @@ const FINISH_LABELS = { matte:'Matte', satin:'Satin', metallic:'Metallic ✦', g
 // apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
 const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
 const PALETTE_SWATCH = {'neutral-light':'#EFE9DE','neutral-mid':'#C9B7A8','neutral-dark':'#4A3F38','botanical-green':'#7A8C6B','champagne':'#D7C49A','silver':'#C2C6C9'};
+const VOCAB = {
+  roles:['focal','secondary','greenery','accent','structural','texture','bridge'],
+  behaviors:['heavy','mid','light','wispy'],
+  movements:['weeping','reaching','sweeping','architectural','cascading','still'],
+  finishes:['matte','satin','metallic','raw','gloss'],
+  emotions:['nostalgia','grief','sadness','peace','joy','longing','warmth','trust','awe','tenderness','melancholy','reverence','anticipation'],
+};
+const SEL_STYLE = 'padding:4px 6px;border:1px solid var(--bd);border-radius:5px;background:var(--sf);font-family:var(--sans);font-size:11px;color:var(--tx);outline:none';
+function sel(id, opts, cur, blank) {
+  return `<select id="${id}" style="${SEL_STYLE}">${(blank?['']:[]).concat(opts).map(o=>`<option value="${o}" ${o===cur?'selected':''}>${o||'— none'}</option>`).join('')}</select>`;
+}
+function val(id) { const e = document.getElementById(id); return e ? e.value : ''; }
+async function saveTags() {
+  if (!activeItem) return;
+  const body = { role: val('e-role'), behavior: val('e-behavior'), movement: val('e-movement'), finish: val('e-finish'), ep: val('e-ep'), es: val('e-es') };
+  try {
+    const r = await fetch(`${CONFIG.apiBase}/api/inventory/${activeItem.id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const j = await r.json();
+    if (!j.success) throw new Error(j.error || 'save failed');
+    closeDrawer();
+    await loadInventory(); // refresh cards + Pass 1/2 stats
+  } catch (e) { alert('Save failed: ' + e.message); }
+}
+// Drag a box around part of a cutout and crop to it
+function cropTool(src) {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px';
+  ov.innerHTML = `
+    <div style="color:#fff;font-size:13px;font-family:var(--sans)">Drag a box around just the part you want (e.g. one bloom), then Crop.</div>
+    <div id="crop-stage" style="position:relative;touch-action:none">
+      <img id="crop-img" src="${src}" draggable="false" style="max-width:80vw;max-height:70vh;display:block;background:repeating-conic-gradient(#ccc 0 25%,#fff 0 50%) 50%/20px 20px;border-radius:8px;user-select:none">
+      <div id="crop-rect" style="position:absolute;border:2px dashed #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.5);display:none;pointer-events:none"></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button id="crop-do" class="da-btn" style="background:var(--sage,#6b7c5c);color:#fff">Crop &amp; use</button>
+      <button id="crop-cancel" class="da-btn">Cancel</button>
+    </div>`;
+  document.body.appendChild(ov);
+  const img = ov.querySelector('#crop-img'), rect = ov.querySelector('#crop-rect');
+  let sx, sy, drawing = false, box = null;
+  const at = e => { const r = img.getBoundingClientRect(); const t = e.touches ? e.touches[0] : e; return { x: Math.max(0, Math.min(r.width, t.clientX - r.left)), y: Math.max(0, Math.min(r.height, t.clientY - r.top)) }; };
+  const down = e => { e.preventDefault(); const p = at(e); sx = p.x; sy = p.y; drawing = true; rect.style.display = 'block'; };
+  const move = e => {
+    if (!drawing) return;
+    const p = at(e), x = Math.min(sx, p.x), y = Math.min(sy, p.y), w = Math.abs(p.x - sx), h = Math.abs(p.y - sy);
+    rect.style.left = x + 'px'; rect.style.top = y + 'px'; rect.style.width = w + 'px'; rect.style.height = h + 'px';
+    box = { x, y, w, h, dispW: img.clientWidth, dispH: img.clientHeight };
+  };
+  const up = () => { drawing = false; };
+  img.addEventListener('mousedown', down); window.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
+  img.addEventListener('touchstart', down); window.addEventListener('touchmove', move); window.addEventListener('touchend', up);
+  ov.querySelector('#crop-cancel').onclick = () => ov.remove();
+  ov.querySelector('#crop-do').onclick = () => {
+    if (!box || box.w < 8 || box.h < 8) { ov.remove(); return; }
+    const full = new Image();
+    full.onload = () => {
+      const sX = full.naturalWidth / box.dispW, sY = full.naturalHeight / box.dispH;
+      const c = document.createElement('canvas'); c.width = Math.round(box.w * sX); c.height = Math.round(box.h * sY);
+      c.getContext('2d').drawImage(full, box.x * sX, box.y * sY, box.w * sX, box.h * sY, 0, 0, c.width, c.height);
+      const cropped = c.toDataURL('image/png');
+      ov.remove();
+      pendingCutout = cropped;
+      document.getElementById('cutout-box').innerHTML =
+        `<div style="display:flex;align-items:flex-end;gap:.7rem;flex-wrap:wrap">
+          <img src="${cropped}" onclick="showZoom(this.src)" style="width:150px;height:150px;${CUTOUT_IMG}">
+          <button class="da-btn" onclick="cropTool(pendingCutout)">Crop again</button>
+          <button class="da-btn" style="background:var(--sage,#6b7c5c);color:#fff" onclick="saveCutout()">✓ Use this</button>
+        </div>`;
+      document.getElementById('cutout-msg').textContent = 'Cropped — “Use this” to keep it.';
+    };
+    full.src = src;
+  };
+}
 function mapServerItem(i){
   return {
     id:i.id, name:i.name, pass:i.pass, role:i.role, movement:i.movement,
@@ -500,6 +573,16 @@ function openDrawer(id) {
       <div class="field-row"><span class="field-key">Intensity</span><span class="field-val"><div class="int-vis">${intPips}</div></span></div>
     </div>
     <div class="drawer-section">
+      <div class="drawer-section-label">Edit tags — change &amp; save to re-classify (updates Pass)</div>
+      <div class="field-row"><span class="field-key">Role</span><span class="field-val">${sel('e-role', VOCAB.roles, item.role)}</span></div>
+      <div class="field-row"><span class="field-key">Weight</span><span class="field-val">${sel('e-behavior', VOCAB.behaviors, item.weight)}</span></div>
+      <div class="field-row"><span class="field-key">Movement</span><span class="field-val">${sel('e-movement', VOCAB.movements, item.movement)}</span></div>
+      <div class="field-row"><span class="field-key">Finish</span><span class="field-val">${sel('e-finish', VOCAB.finishes, item.finish)}</span></div>
+      <div class="field-row"><span class="field-key">Primary emotion</span><span class="field-val">${sel('e-ep', VOCAB.emotions, item.ep)}</span></div>
+      <div class="field-row"><span class="field-key">Secondary emotion</span><span class="field-val">${sel('e-es', VOCAB.emotions, item.es, true)}</span></div>
+      <button class="da-btn" style="margin-top:.6rem" onclick="saveTags()">Save tags</button>
+    </div>
+    <div class="drawer-section">
       <div class="drawer-section-label">Cutout asset</div>
       <div id="cutout-box" style="display:flex;align-items:center;gap:.6rem">
         ${item.assetUrl?`<img src="${item.assetUrl}" alt="" onclick="showZoom(this.src)" style="width:130px;height:130px;${CUTOUT_IMG}">`:'<span style="font-size:11px;color:var(--fa)">No cutout yet — shown as a styled shape in Build View.</span>'}
@@ -656,9 +739,10 @@ async function makeCutout(mode) {
     document.getElementById('cutout-box').innerHTML =
       `<div style="display:flex;align-items:flex-end;gap:.7rem;flex-wrap:wrap">
         <img src="${png}" alt="" onclick="showZoom(this.src)" style="width:150px;height:150px;${CUTOUT_IMG}">
-        <button class="da-btn" onclick="saveCutout()">✓ Use this</button>
+        <button class="da-btn" onclick="cropTool(pendingCutout)">✂ Crop to bloom</button>
+        <button class="da-btn" style="background:var(--sage,#6b7c5c);color:#fff" onclick="saveCutout()">✓ Use this</button>
       </div>`;
-    msg.textContent = 'Preview (click to enlarge) — “Use this” to keep it' + (item.assetUrl ? ' (replaces current).' : '.');
+    msg.textContent = 'Preview — “Crop to bloom” to isolate one flower, then “Use this”' + (item.assetUrl ? ' (replaces current).' : '.');
   } catch (e) {
     msg.textContent = 'Failed: ' + e.message;
   }
