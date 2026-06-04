@@ -4,13 +4,15 @@
     {
       "src": "server.js",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["evercrafted-shop-data.json"] }
+      "config": { "includeFiles": ["evercrafted-shop-data.json", "evercrafted-schema.js"] }
     },
-    { "src": "*.html", "use": "@vercel/static" }
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "evercrafted-schema.js", "use": "@vercel/static" }
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "server.js" },
     { "src": "/", "dest": "/evercrafted-marketing-site.html" },
+    { "src": "/evercrafted-schema.js", "dest": "/evercrafted-schema.js" },
     { "src": "/(.*\\.html)", "dest": "/$1" }
   ]
 }

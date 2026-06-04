@@ -4,6 +4,7 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const Anthropic = require('@anthropic-ai/sdk');
+const EC = require('./evercrafted-schema.js'); // single source of truth: vocab + normaliser + engine
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -85,6 +86,7 @@ app.get('/api/health', (_, res) => res.json({ ok: true, service: 'evercrafted-ap
 // at one origin. On Vercel the static pages are served by the platform instead
 // (see vercel.json); these routes only handle requests reaching the function.
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'evercrafted-marketing-site.html')));
+app.get('/evercrafted-schema.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-schema.js')));
 app.get('/:page.html', (req, res, next) => {
   const file = path.join(__dirname, `${req.params.page}.html`);
   fs.existsSync(file) ? res.sendFile(file) : next();
@@ -115,109 +117,14 @@ const INVENTORY = [
 ];
 
 // ── SLOT TEMPLATES (exact from handoff) ───────────────────────────────────────
-const SLOT_TEMPLATES = {
-  'Crescent':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'},{role:'texture',tier:'Texture'}],
-  'Side Sweep':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
-  'Bottom Heavy':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'}],
-  'Diagonal Flow':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'accent',tier:'Accent'},{role:'greenery',tier:'Greenery'}],
-  'Focal Burst':[{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
-  'Garden Scatter':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'texture',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
-  'Wild Asymmetry':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'},{role:'greenery',tier:'Greenery'}],
-  'Half Ring':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'}],
-  'Spiral Flow':[{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
-};
+const SLOT_TEMPLATES = EC.SLOT_TEMPLATES;
 
 // ── FORMULA ARCS (exact from handoff) ─────────────────────────────────────────
-const FORMULA_ARCS = {
-  'Crescent':{s:210,e:330},'Side Sweep':{s:240,e:360},'Bottom Heavy':{s:150,e:330},
-  'Diagonal Flow':{s:225,e:405},'Focal Burst':{s:270,e:420},'Garden Scatter':{s:0,e:360},
-  'Wild Asymmetry':{s:180,e:315},'Half Ring':{s:180,e:360},'Spiral Flow':{s:240,e:420},
-};
+const FORMULA_ARCS = EC.FORMULA_ARCS;
 
-// ── Zone size ratios by role (percentage of 90-stem budget) ───────────────────
-const ZS = {
-  structural: 0.20,
-  focal:      0.25,
-  secondary:  0.20,
-  bridge:     0.10,
-  greenery:   0.10,
-  accent:     0.05,
-  texture:    0.05,
-  filler:     0.05,
-};
-
-// ── Stems per placement unit by behavior ─────────────────────────────────────
-const BU = {
-  heavy:        5,
-  mid:          3,
-  light:        2,
-  wispy:        1.5,
-  architectural:7,
-  sweeping:     2,
-  weeping:      2,
-  reaching:     1.5,
-  still:        3,
-};
-
-// ── SLOT FILL (exact logic from handoff) ─────────────────────────────────────
+// ── Slot fill: delegates to the single source of truth (evercrafted-schema.js) ─
 function runSlotFill(emotions, formula, intensity, poemEmotions) {
-  const pe = poemEmotions || {};
-  const tierEmotionMap = {
-    'Foundation': pe.structural ? [pe.structural.toLowerCase(), ...emotions] : emotions,
-    'Secondary':  pe.secondary  ? [pe.secondary.toLowerCase(),  ...emotions] : emotions,
-    'Bridge':     pe.secondary  ? [pe.secondary.toLowerCase(),  ...emotions] : emotions,
-    'Greenery':   emotions,
-    'Accent':     pe.undertone  ? [pe.undertone.toLowerCase(),  ...emotions] : emotions,
-    'Texture':    pe.undertone  ? [pe.undertone.toLowerCase(),  ...emotions] : emotions,
-  };
-  const slots = SLOT_TEMPLATES[formula] || SLOT_TEMPLATES['Crescent'];
-  const emotionTags = emotions.map(e => e.toLowerCase().trim());
-  const usedPerTier = {};
-  const filled = [];
-
-  for (const slot of slots) {
-    const tier = slot.tier;
-    if (!usedPerTier[tier]) usedPerTier[tier] = { archetypes: new Set(), emotions: new Set(), finishes: new Set() };
-    const u = usedPerTier[tier];
-    const candidates = INVENTORY.filter(i => {
-      if (i.role !== slot.role) return false;
-      if (i.intensity[0] > intensity + 1 || i.intensity[1] < Math.max(1, intensity - 1)) return false;
-      return true;
-    });
-
-    const tierTags = tierEmotionMap[slot.tier] || emotionTags;
-    const scored = candidates.map(c => {
-      const ce = [c.ep, c.es, c.blend].filter(Boolean).map(x => x.toLowerCase());
-      const emotMatch = ce.filter(e => tierTags.includes(e)).length;
-      const poemBonus = (pe.structural && slot.tier === 'Foundation' && ce.includes(pe.structural.toLowerCase())) ? 3 :
-                        (pe.secondary  && (slot.tier === 'Secondary' || slot.tier === 'Bridge') && ce.includes(pe.secondary.toLowerCase())) ? 2 :
-                        (pe.undertone  && (slot.tier === 'Texture' || slot.tier === 'Accent') && ce.includes(pe.undertone.toLowerCase())) ? 2 : 0;
-      const archOk = !u.archetypes.has(c.movement) ? 1 : 0;
-      const emotOk = !ce.some(e => u.emotions.has(e)) ? 2 : 0;
-      const finOk = !u.finishes.has(c.finish) ? 1 : 0;
-      return { item: c, score: emotMatch * 3 + poemBonus + archOk * 2 + emotOk + finOk };
-    }).sort((a, b) => b.score - a.score);
-
-    let chosen = null;
-    for (const { item } of scored) {
-      const ce = [item.ep, item.es, item.blend].filter(Boolean).map(x => x.toLowerCase());
-      if (!u.archetypes.has(item.movement) && !ce.some(e => u.emotions.has(e))) {
-        chosen = item;
-        u.archetypes.add(item.movement);
-        ce.forEach(e => u.emotions.add(e));
-        u.finishes.add(item.finish);
-        break;
-      }
-    }
-    if (!chosen && candidates.length) chosen = candidates[0];
-
-    const slotCount = Math.max(1, slots.filter(s => s.role === slot.role).length);
-    const budget = 90;
-    const zb = Math.round(budget * (ZS[slot.role] || 0.10) / slotCount);
-    const sc = Math.max(1, Math.round(zb / (BU[chosen ? chosen.behavior : 'mid'] || 2.5)));
-    filled.push({ ...slot, item: chosen, stemCount: sc });
-  }
-  return filled;
+  return EC.runSlotFill(INVENTORY, emotions, formula, intensity, poemEmotions);
 }
 
 // ── Claude helper ─────────────────────────────────────────────────────────────
@@ -237,36 +144,8 @@ function parseJSON(text) {
   return JSON.parse(cleaned);
 }
 
-// ── Tagging vocabulary + normalisation (shared by /api/tag and /api/inventory) ──
-const TAG_ROLES     = ['focal','secondary','greenery','accent','structural','texture','bridge'];
-const TAG_BEHAVIORS = ['heavy','mid','light','wispy'];
-const TAG_MOVEMENTS = ['weeping','reaching','sweeping','architectural','cascading','still'];
-const TAG_FINISHES  = ['matte','satin','metallic','raw','gloss'];
-const TAG_PALETTES  = ['neutral-light','neutral-mid','neutral-dark','botanical-green','champagne','silver'];
-const TAG_EMOTIONS  = ['nostalgia','grief','sadness','peace','joy','longing','warmth','trust','awe','tenderness','melancholy','reverence','anticipation'];
-
-function normalizeTag(t) {
-  t = t || {};
-  const hex = (t.colorHex || '').toString().trim();
-  const validHex = /^#?[0-9a-fA-F]{6}$/.test(hex);
-  return {
-    name:      typeof t.name === 'string' ? t.name.slice(0, 120) : '',
-    role:      TAG_ROLES.includes(t.role)         ? t.role     : 'secondary',
-    pass:      t.pass === 1 ? 1 : 2,
-    behavior:  TAG_BEHAVIORS.includes(t.behavior) ? t.behavior : 'mid',
-    movement:  TAG_MOVEMENTS.includes(t.movement) ? t.movement : 'still',
-    finish:    TAG_FINISHES.includes(t.finish)    ? t.finish   : 'matte',
-    palette:   TAG_PALETTES.includes(t.palette)   ? t.palette  : 'neutral-mid',
-    ep:        TAG_EMOTIONS.includes(t.ep)        ? t.ep       : 'trust',
-    es:        TAG_EMOTIONS.includes(t.es)        ? t.es       : '',
-    intensity: Array.isArray(t.intensity) && t.intensity.length === 2
-                 ? [Math.min(3, Math.max(1, parseInt(t.intensity[0]) || 1)), Math.min(3, Math.max(1, parseInt(t.intensity[1]) || 2))]
-                 : [1, 2],
-    colorName: typeof t.colorName === 'string' ? t.colorName.slice(0, 40) : '',
-    colorHex:  validHex ? (hex.startsWith('#') ? hex : '#' + hex) : '',
-    confidence: (t.confidence && typeof t.confidence === 'object') ? t.confidence : undefined,
-  };
-}
+// ── Tagging normalisation — single source of truth (evercrafted-schema.js) ─────
+const normalizeTag = EC.normalizeTag;
 
 function parseDataUrl(img) {
   const m = /^data:(image\/[a-zA-Z0-9.+-]+);base64,([\s\S]*)$/.exec(img || '');

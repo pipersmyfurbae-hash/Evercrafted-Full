@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "nodemon server.js",
+    "drift": "node evercrafted-drift-check.js",
+    "tag": "node evercrafted-shop-tagger.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
