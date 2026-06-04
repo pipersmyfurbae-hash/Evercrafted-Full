@@ -299,7 +299,7 @@ function mapServerItem(i){
     color: i.colorHex || PALETTE_SWATCH[i.palette] || '#ccc',
     ep:i.ep, es:i.es, blend:'', intensity:i.intensity, weight:i.behavior,
     stock:i.stock, taggedAt:'', imageDataUrl: i.imageUrl||'',
-    assetUrl: i.assetUrl||'', unit: i.unit||'sprig', bloomSize: i.bloomSize, yield: i.yield, stemLength: i.stemLength
+    assetUrl: i.assetUrl||'', unit: i.unit||'sprig', bloomSize: i.bloomSize, yield: i.yield, stemLength: i.stemLength, colorName: i.colorName||''
   };
 }
 
@@ -492,8 +492,11 @@ function openDrawer(id) {
       ${item.blend?`<div class="field-row"><span class="field-key">Blend</span><span class="field-val"><span class="ctag ct-emot" style="background:rgba(154,122,64,.1);color:var(--gold);border-color:rgba(154,122,64,.2)">${item.blend}</span></span></div>`:''}
     </div>
     <div class="drawer-section">
-      <div class="drawer-section-label">Weight + intensity</div>
-      <div class="field-row"><span class="field-key">Bloom size</span><span class="field-val">${item.weight||'—'}</span></div>
+      <div class="drawer-section-label">Size + yield</div>
+      <div class="field-row"><span class="field-key">Weight</span><span class="field-val">${item.weight||'—'}</span></div>
+      <div class="field-row"><span class="field-key">Bloom size</span><span class="field-val">${item.bloomSize?item.bloomSize+'″':'—'}</span></div>
+      <div class="field-row"><span class="field-key">Yield</span><span class="field-val">${item.yield?item.yield+' '+(item.unit||'sprig')+(item.yield>1?'s':'')+' / stem':'—'}</span></div>
+      <div class="field-row"><span class="field-key">Stem length</span><span class="field-val">${item.stemLength?item.stemLength+'″':'—'}</span></div>
       <div class="field-row"><span class="field-key">Intensity</span><span class="field-val"><div class="int-vis">${intPips}</div></span></div>
     </div>
     <div class="drawer-section">
@@ -581,30 +584,49 @@ function removeWhiteBackground(dataUrl) {
   });
 }
 
+let pendingCutout = null;
 async function makeCutout(mode) {
   if (!activeItem) return;
   const item = activeItem;
   const msg = document.getElementById('cutout-msg');
+  pendingCutout = null;
   msg.textContent = mode === 'generate' ? 'Generating a single sprig… (~15s)' : 'Cutting out from the photo…';
   try {
     const body = mode === 'generate'
-      ? { name: item.name, color: item.color, unit: item.unit }
+      ? { name: item.name, colorName: item.colorName, color: item.color, unit: item.unit }
       : { sourceImageUrl: item.imageDataUrl };
     const aRes = await fetch(`${CONFIG.apiBase}/api/asset`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
     const aJson = await aRes.json();
     if (!aJson.success) throw new Error(aJson.error || 'asset failed');
     let png = aJson.image;
     if (!aJson.transparent) png = await removeWhiteBackground(png);
-    const cRes = await fetch(`${CONFIG.apiBase}/api/cutout`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ image: png, inventoryId: item.id }) });
+    pendingCutout = png;
+    // Preview only — nothing is saved (and the current cutout is untouched) until "Use this"
+    document.getElementById('cutout-box').innerHTML =
+      `<div style="display:flex;align-items:flex-end;gap:.6rem">
+        <img src="${png}" alt="" style="width:88px;height:88px;object-fit:contain;border:1px solid var(--bd);border-radius:8px;background:#faf8f4">
+        <button class="da-btn" onclick="saveCutout()">✓ Use this</button>
+      </div>`;
+    msg.textContent = 'Preview — click "Use this" to keep it' + (item.assetUrl ? ' (replaces the current cutout).' : '.');
+  } catch (e) {
+    msg.textContent = 'Failed: ' + e.message;
+  }
+}
+async function saveCutout() {
+  if (!pendingCutout || !activeItem) return;
+  const item = activeItem;
+  const msg = document.getElementById('cutout-msg');
+  msg.textContent = 'Saving…';
+  try {
+    const cRes = await fetch(`${CONFIG.apiBase}/api/cutout`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ image: pendingCutout, inventoryId: item.id }) });
     const cJson = await cRes.json();
     if (!cJson.success) throw new Error(cJson.error || 'store failed');
     item.assetUrl = cJson.url;
     const inv = inventory.find(x => x.id === item.id); if (inv) inv.assetUrl = cJson.url;
     document.getElementById('cutout-box').innerHTML = `<img src="${cJson.url}" alt="" style="width:88px;height:88px;object-fit:contain;border:1px solid var(--bd);border-radius:8px;background:#faf8f4">`;
     msg.textContent = '✓ Cutout saved — it will composite in the Build View.';
-  } catch (e) {
-    msg.textContent = 'Failed: ' + e.message;
-  }
+    pendingCutout = null;
+  } catch (e) { msg.textContent = 'Save failed: ' + e.message; }
 }
 
 function exportJSON() {

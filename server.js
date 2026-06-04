@@ -968,10 +968,14 @@ app.post('/api/asset', async (req, res) => {
     // Generate a single-unit (segment) illustration — this is the metered path
     const m = await meter(sanitizeInput(req.body.owner), sanitizeInput(req.body.tier), 'cutouts');
     if (!m.ok) return res.status(402).json({ success: false, error: 'limit_reached', kind: 'cutouts', limit: m.limit, used: m.used, message: `You've used all ${m.limit} generated cutouts this month. Upgrade, or use "From photo" (free).` });
-    const name  = sanitizeInput(req.body.name) || 'a botanical element';
-    const color = sanitizeInput(req.body.color);
-    const unit  = sanitizeInput(req.body.unit) || 'sprig';
-    const prompt = `A single ${unit} of ${name}${color ? ', colour ' + color : ''} — ONE isolated cut piece, not a full spray or bunch. Faux silk botanical, elegant botanical illustration. Centered, upright, fills the frame. Pure solid white #FFFFFF background, no shadow, no gradient, crisp clean edges for masking.`;
+    const name      = sanitizeInput(req.body.name) || 'a botanical element';
+    const colorName = sanitizeInput(req.body.colorName);
+    const color     = sanitizeInput(req.body.color);
+    const unit      = sanitizeInput(req.body.unit) || 'sprig';
+    // strip size codes like "21", "37''", "26.5\"" so the model isn't confused
+    const cleanName = name.replace(/\b\d+(?:\.\d+)?\b\s*(?:''|"|in|inch|inches)?/gi, ' ').replace(/\s{2,}/g, ' ').trim() || name;
+    const colorWord = colorName || color; // a colour NAME ("dusty mauve") reads far better than a hex
+    const prompt = `A single realistic ${unit} of ${cleanName}${colorWord ? ', ' + colorWord + ' in colour' : ''} — exactly ONE isolated cut piece, not a full spray or bunch. A premium faux silk botanical, true to the real flower's natural form and colour. Centered, upright, fills the frame. Pure solid white #FFFFFF background, no shadow, no gradient, crisp clean edges for masking.`;
     const provider = (process.env.IMAGE_PROVIDER || '').toLowerCase()
       || (process.env.FAL_KEY ? 'fal' : (process.env.OPENAI_API_KEY ? 'openai' : 'none'));
 
