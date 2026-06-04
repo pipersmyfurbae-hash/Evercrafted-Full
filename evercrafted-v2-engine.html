@@ -320,8 +320,8 @@ const EMOTIONS = [
   {id:'longing',label:'Longing',col:'#7878a0',weight:1,dir:'traveling',wheel:230,ring:'outer'},
 ];
 
-/* ─── INVENTORY v2 ─── */
-const INVENTORY = [
+/* ─── INVENTORY v2 (demo pool — replaced by the maker's saved inventory at load) ─── */
+let INVENTORY = [
   {id:'INV-001',name:'Matte Charcoal Manzanita Branch',color:'#3a3832',
    role:'structural',pass:1,ep:'sadness',es:'grief',blend:'',
    intensity:[2,3],movement:'architectural',finish:'matte',palette:'neutral-dark',contrast:'stark',
@@ -875,6 +875,30 @@ function copyPrompt(){
 initEmotions();
 initInventory();
 refreshFormula();
+
+// Design from the maker's real saved inventory when available (falls back to demo)
+const V2_API = (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '';
+const V2_SWATCH = {'neutral-light':'#EFE9DE','neutral-mid':'#C9B7A8','neutral-dark':'#4A3F38','botanical-green':'#7A8C6B','champagne':'#D7C49A','silver':'#C2C6C9'};
+async function loadUserInventory(){
+  try{
+    const res = await fetch(`${V2_API}/api/inventory`);
+    const json = await res.json();
+    const items = (json && json.success) ? (json.data || []) : [];
+    if(items.length){
+      INVENTORY = items.map(i=>({
+        id:i.id, name:i.name, color:i.colorHex || V2_SWATCH[i.palette] || '#888',
+        role:i.role, pass:i.pass, ep:i.ep, es:i.es||'', blend:'',
+        intensity:Array.isArray(i.intensity)?i.intensity:[1,2],
+        movement:i.movement, finish:i.finish, palette:i.palette, contrast:'unified',
+        weight:i.behavior, arcs:[], stock:i.stock,
+      }));
+      S.activeInv = new Set(INVENTORY.map(i=>i.id));
+      initInventory();
+      refreshFormula();
+    }
+  }catch(e){ /* keep demo inventory */ }
+}
+loadUserInventory();
 </script>
 </body>
 </html>
