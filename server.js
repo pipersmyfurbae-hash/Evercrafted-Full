@@ -46,6 +46,48 @@ if (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY) {
   });
 }
 
+// ── Plan limits & usage metering (admin is always exempt) ─────────────────────
+// Monthly caps on the paid AI actions, per subscriber tier. Edit freely.
+const I = Infinity;
+const TIER_LIMITS = {
+  bloom:   { designs: 3, renders: 0,  cutouts: 0  },
+  craft:   { designs: I, renders: 20, cutouts: 40 },
+  studio:  { designs: I, renders: 120, cutouts: 200 },
+  atelier: { designs: I, renders: I,  cutouts: I  },
+  admin:   { designs: I, renders: I,  cutouts: I  },
+};
+// Owners listed here (and anyone whose tier is 'admin') are NEVER limited.
+// Your tools run as owner 'default', so YOU are unlimited out of the box.
+const ADMIN_OWNERS = (process.env.ADMIN_OWNERS || 'default').split(',').map(s => s.trim()).filter(Boolean);
+const USAGE_PATH = './usage.json';
+function usagePeriod() { const d = new Date(); return d.getUTCFullYear() + '-' + String(d.getUTCMonth() + 1).padStart(2, '0'); }
+function isAdmin(owner, tier) { return tier === 'admin' || ADMIN_OWNERS.includes(owner || 'default'); }
+
+// Returns { ok, used, limit, unlimited }. Increments the counter when allowed.
+async function meter(owner, tier, kind) {
+  owner = (owner || 'default'); tier = (tier || 'bloom');
+  if (isAdmin(owner, tier)) return { ok: true, unlimited: true };
+  const limit = ((TIER_LIMITS[tier] || TIER_LIMITS.bloom)[kind]);
+  const period = usagePeriod();
+  try {
+    if (supabase) {
+      const { data } = await supabase.from('usage').select(kind).eq('owner', owner).eq('period', period).maybeSingle();
+      const used = data ? (data[kind] || 0) : 0;
+      if (limit !== I && used >= limit) return { ok: false, used, limit };
+      await supabase.from('usage').upsert({ owner, period, [kind]: used + 1, updated_at: new Date().toISOString() }, { onConflict: 'owner,period' });
+      return { ok: true, used: used + 1, limit };
+    }
+    let all = {}; try { all = JSON.parse(fs.readFileSync(USAGE_PATH, 'utf8')); } catch {}
+    const key = owner + '|' + period; const row = all[key] || {};
+    const used = row[kind] || 0;
+    if (limit !== I && used >= limit) return { ok: false, used, limit };
+    row[kind] = used + 1; all[key] = row; fs.writeFileSync(USAGE_PATH, JSON.stringify(all, null, 2));
+    return { ok: true, used: row[kind], limit };
+  } catch (e) {
+    return { ok: true, error: e.message }; // never block on a metering failure
+  }
+}
+
 // ── CORS ──────────────────────────────────────────────────────────────────────
 const EXTRA_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
   .split(',')
@@ -80,6 +122,30 @@ app.use((req, res, next) => {
 
 // ── Health ────────────────────────────────────────────────────────────────────
 app.get('/api/health', (_, res) => res.json({ ok: true, service: 'evercrafted-api' }));
+
+// GET /api/usage — this month's usage + plan limits (null limit = unlimited)
+app.get('/api/usage', async (req, res) => {
+  try {
+    const owner = sanitizeInput(req.query.owner) || 'default';
+    const tier  = sanitizeInput(req.query.tier) || (isAdmin(owner) ? 'admin' : 'bloom');
+    const period = usagePeriod();
+    const limits = TIER_LIMITS[tier] || TIER_LIMITS.bloom;
+    let usage = { designs: 0, renders: 0, cutouts: 0 };
+    if (supabase) {
+      const { data } = await supabase.from('usage').select('designs,renders,cutouts').eq('owner', owner).eq('period', period).maybeSingle();
+      if (data) usage = { designs: data.designs || 0, renders: data.renders || 0, cutouts: data.cutouts || 0 };
+    } else {
+      let all = {}; try { all = JSON.parse(fs.readFileSync(USAGE_PATH, 'utf8')); } catch {}
+      const row = all[owner + '|' + period] || {};
+      usage = { designs: row.designs || 0, renders: row.renders || 0, cutouts: row.cutouts || 0 };
+    }
+    const norm = v => v === I ? null : v;
+    res.json({ success: true, admin: isAdmin(owner, tier), period, tier, usage,
+      limits: { designs: norm(limits.designs), renders: norm(limits.renders), cutouts: norm(limits.cutouts) } });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // ── Static site (local dev / preview) ─────────────────────────────────────────
 // Serves the self-contained .html pages so `node server.js` runs the whole site
@@ -297,6 +363,8 @@ Return ONLY valid JSON, no markdown, no backticks:
 // ── POST /api/scene ───────────────────────────────────────────────────────────
 app.post('/api/scene', async (req, res) => {
   const a = req.body;
+  const m = await meter(sanitizeInput(a.owner), sanitizeInput(a.tier), 'designs');
+  if (!m.ok) return res.status(402).json({ success: false, error: 'limit_reached', kind: 'designs', limit: m.limit, used: m.used, message: `You've used all ${m.limit} designs in your plan this month. Upgrade to keep designing.` });
   a.memory    = sanitizeInput(a.memory);
   a.season    = sanitizeInput(a.season);
   a.location  = sanitizeInput(a.location);
@@ -854,6 +922,8 @@ app.post('/api/render', async (req, res) => {
   try {
     const prompt = String(req.body.prompt || '').slice(0, 2000).trim();
     if (!prompt) return res.status(400).json({ success: false, error: 'prompt is required' });
+    const m = await meter(sanitizeInput(req.body.owner), sanitizeInput(req.body.tier), 'renders');
+    if (!m.ok) return res.status(402).json({ success: false, error: 'limit_reached', kind: 'renders', limit: m.limit, used: m.used, message: `You've used all ${m.limit} renders in your plan this month. Upgrade for more.` });
     const aspect = req.body.aspect === 'square' ? 'square' : 'portrait';
     const url = await generateImage(prompt, aspect);
     if (!url) throw new Error('No image returned');
@@ -895,7 +965,9 @@ app.post('/api/asset', async (req, res) => {
       return res.json({ success: true, image: `data:${ct};base64,${buf.toString('base64')}`, transparent: false });
     }
 
-    // Generate a single-unit (segment) illustration
+    // Generate a single-unit (segment) illustration — this is the metered path
+    const m = await meter(sanitizeInput(req.body.owner), sanitizeInput(req.body.tier), 'cutouts');
+    if (!m.ok) return res.status(402).json({ success: false, error: 'limit_reached', kind: 'cutouts', limit: m.limit, used: m.used, message: `You've used all ${m.limit} generated cutouts this month. Upgrade, or use "From photo" (free).` });
     const name  = sanitizeInput(req.body.name) || 'a botanical element';
     const color = sanitizeInput(req.body.color);
     const unit  = sanitizeInput(req.body.unit) || 'sprig';

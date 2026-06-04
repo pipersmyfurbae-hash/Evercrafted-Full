@@ -10,6 +10,7 @@ node_modules/
 waitlist.json
 inventory.json
 designs.json
+usage.json
 
 # Vercel
 .vercel/
