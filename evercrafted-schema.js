@@ -79,6 +79,7 @@
       bloomSize:  spec.bloomSize,
       yield:      spec.yield,
       unit:       spec.unit,
+      assetPrompt: typeof t.assetPrompt === 'string' ? t.assetPrompt.slice(0, 500) : '',
       colorName: typeof t.colorName === 'string' ? t.colorName.slice(0, 40) : '',
       colorHex:  validHex ? (hex.startsWith('#') ? hex : '#' + hex) : '',
       confidence: (t.confidence && typeof t.confidence === 'object') ? t.confidence : undefined,

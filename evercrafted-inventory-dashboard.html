@@ -299,7 +299,7 @@ function mapServerItem(i){
     color: i.colorHex || PALETTE_SWATCH[i.palette] || '#ccc',
     ep:i.ep, es:i.es, blend:'', intensity:i.intensity, weight:i.behavior,
     stock:i.stock, taggedAt:'', imageDataUrl: i.imageUrl||'',
-    assetUrl: i.assetUrl||'', unit: i.unit||'sprig', bloomSize: i.bloomSize, yield: i.yield, stemLength: i.stemLength, colorName: i.colorName||''
+    assetUrl: i.assetUrl||'', unit: i.unit||'sprig', bloomSize: i.bloomSize, yield: i.yield, stemLength: i.stemLength, colorName: i.colorName||'', assetPrompt: i.assetPrompt||''
   };
 }
 
@@ -623,7 +623,7 @@ async function makeCutout(mode) {
   msg.textContent = mode === 'generate' ? 'Generating a single sprig… (~15s)' : 'Cutting out from the photo…';
   try {
     const body = mode === 'generate'
-      ? { name: item.name, colorName: item.colorName, color: item.color, unit: item.unit }
+      ? { assetPrompt: item.assetPrompt, name: item.name, colorName: item.colorName, color: item.color, unit: item.unit }
       : { sourceImageUrl: item.imageDataUrl };
     const aRes = await fetch(`${CONFIG.apiBase}/api/asset`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
     const aJson = await aRes.json();

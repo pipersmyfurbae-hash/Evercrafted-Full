@@ -234,7 +234,11 @@ PHYSICAL SIZE & YIELD (critical — one stem is often several placeable pieces):
   stemLength — full length of the whole stem/spray in inches (e.g. a 28" branch)
   bloomSize  — diameter in inches of ONE placeable unit: a single bloom head, floret, or sprig (e.g. a 4.5" peony head, a 1.5" filler floret, a 2" eucalyptus sprig). NOT the whole spray.
   yield      — how many usable florals/sprigs you can cut/use from ONE stem. A focal peony stem ~1. A berry spray ~6. A eucalyptus stem ~4. A filler ~6-8.
-  unit       — what one placeable piece is: "bloom" | "sprig" | "cluster" | "segment"`;
+  unit       — what one placeable piece is: "bloom" | "sprig" | "cluster" | "segment"
+ASSET PROMPT (for generating a clean cutout of ONE unit later):
+  assetPrompt — a Midjourney-style image prompt for a SINGLE isolated unit of this item. Follow this exact shape:
+    "A single isolated high-end luxury silk [colour] [specific flower or foliage name] [for flowers: bloom head, NO stem | for greenery/texture: single sprig or frond], premium artificial faux botanical, delicate [fabric petals | feathery foliage], facing forward, overhead flat-lay view, studio lighting, pure solid white background"
+    Use the real flower/foliage name and its true colour. For focal/secondary/bridge use "bloom head, no stem"; for greenery/texture/accent use "single sprig/frond". Keep it one line.`;
 
 // ── POST /api/tag — suggest tags for a single item (text and/or photo) ─────────
 app.post('/api/tag', async (req, res) => {
@@ -273,7 +277,7 @@ ${description ? `Description: ${description.slice(0, 600)}` : ''}
 ${image ? 'A product photo is attached — study it for form, finish, colour, and movement.' : ''}
 
 Return ONLY one JSON object, no markdown, no backticks (include a short descriptive "name" — generate one from the photo if no name was given):
-{"name":"","role":"","pass":1,"behavior":"","movement":"","finish":"","palette":"","ep":"","es":"","intensity":[1,2],"stemLength":22,"bloomSize":2.5,"yield":3,"unit":"sprig","colorName":"","colorHex":"#RRGGBB","confidence":{"name":"high|medium|low","role":"high|medium|low","movement":"high|medium|low","ep":"high|medium|low","yield":"high|medium|low"}}`;
+{"name":"","role":"","pass":1,"behavior":"","movement":"","finish":"","palette":"","ep":"","es":"","intensity":[1,2],"stemLength":22,"bloomSize":2.5,"yield":3,"unit":"sprig","assetPrompt":"","colorName":"","colorHex":"#RRGGBB","confidence":{"name":"high|medium|low","role":"high|medium|low","movement":"high|medium|low","ep":"high|medium|low","yield":"high|medium|low"}}`;
 
     const content = [{ type: 'text', text: prompt }];
     if (image) {
@@ -718,6 +722,7 @@ function inventoryRow(b) {
     finish: t.finish, palette: t.palette, ep: t.ep, es: t.es, blend: '',
     intensity: t.intensity, color_name: t.colorName, color_hex: t.colorHex,
     bloom_size: t.bloomSize, stem_length: t.stemLength, yield: t.yield, unit: t.unit,
+    asset_prompt: t.assetPrompt || (typeof b.assetPrompt === 'string' ? b.assetPrompt.slice(0, 500) : ''),
     asset_url: (typeof b.assetUrl === 'string' ? b.assetUrl : '').slice(0, 2000),
     contrast: 'unified',
     in_stock:        b.inStock === false ? false : true,
@@ -733,7 +738,7 @@ function rowToClient(r) {
     role: r.role, pass: r.pass, behavior: r.behavior, movement: r.movement,
     finish: r.finish, palette: r.palette, ep: r.ep, es: r.es,
     intensity: r.intensity, colorName: r.color_name, colorHex: r.color_hex,
-    bloomSize: r.bloom_size, stemLength: r.stem_length, yield: r.yield, unit: r.unit, assetUrl: r.asset_url,
+    bloomSize: r.bloom_size, stemLength: r.stem_length, yield: r.yield, unit: r.unit, assetUrl: r.asset_url, assetPrompt: r.asset_prompt,
     inStock: r.in_stock, stock: r.stock, recommendedQty: r.recommended_qty,
     createdAt: r.created_at,
   };
@@ -954,10 +959,34 @@ app.post('/api/render', async (req, res) => {
 // POST /api/asset — return an image to cut out: either the source product photo
 // (fetched server-side to avoid browser CORS taint) or a generated single-unit
 // (segment) illustration. Returns a data URL + whether it's already transparent.
+// ML background removal via fal BiRefNet → transparent PNG data URL (handles
+// white blooms and clean edges, unlike colour-threshold removal).
+async function falRemoveBg(imageUrlOrData) {
+  const model = process.env.FAL_BG_MODEL || 'fal-ai/birefnet';
+  const r = await fetch('https://fal.run/' + model, {
+    method: 'POST',
+    headers: { 'Authorization': `Key ${process.env.FAL_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ image_url: imageUrlOrData }),
+  });
+  const j = await r.json();
+  if (!r.ok) throw new Error(j.detail || j.error || `birefnet error ${r.status}`);
+  const url = j.image?.url || j.images?.[0]?.url;
+  if (!url) throw new Error('birefnet: no image');
+  const ir = await fetch(url);
+  return `data:image/png;base64,${Buffer.from(await ir.arrayBuffer()).toString('base64')}`;
+}
+
 app.post('/api/asset', async (req, res) => {
   try {
+    const hasFal = !!process.env.FAL_KEY;
     const sourceImageUrl = typeof req.body.sourceImageUrl === 'string' ? req.body.sourceImageUrl : '';
+
+    // ── From an existing photo: proper ML background removal when fal is available ──
     if (sourceImageUrl) {
+      if (hasFal) {
+        try { return res.json({ success: true, image: await falRemoveBg(sourceImageUrl), transparent: true }); }
+        catch (e) { /* fall back to raw image for client-side removal */ }
+      }
       const ir = await fetch(sourceImageUrl);
       if (!ir.ok) throw new Error('could not fetch source image');
       const ct = ir.headers.get('content-type') || 'image/png';
@@ -965,19 +994,23 @@ app.post('/api/asset', async (req, res) => {
       return res.json({ success: true, image: `data:${ct};base64,${buf.toString('base64')}`, transparent: false });
     }
 
-    // Generate a single-unit (segment) illustration — this is the metered path
+    // ── Generate a single-unit cutout (metered) ──
     const m = await meter(sanitizeInput(req.body.owner), sanitizeInput(req.body.tier), 'cutouts');
     if (!m.ok) return res.status(402).json({ success: false, error: 'limit_reached', kind: 'cutouts', limit: m.limit, used: m.used, message: `You've used all ${m.limit} generated cutouts this month. Upgrade, or use "From photo" (free).` });
-    const name      = sanitizeInput(req.body.name) || 'a botanical element';
-    const colorName = sanitizeInput(req.body.colorName);
-    const color     = sanitizeInput(req.body.color);
-    const unit      = sanitizeInput(req.body.unit) || 'sprig';
-    // strip size codes like "21", "37''", "26.5\"" so the model isn't confused
-    const cleanName = name.replace(/\b\d+(?:\.\d+)?\b\s*(?:''|"|in|inch|inches)?/gi, ' ').replace(/\s{2,}/g, ' ').trim() || name;
-    const colorWord = colorName || color; // a colour NAME ("dusty mauve") reads far better than a hex
-    const prompt = `A single realistic ${unit} of ${cleanName}${colorWord ? ', ' + colorWord + ' in colour' : ''} — exactly ONE isolated cut piece, not a full spray or bunch. A premium faux silk botanical, true to the real flower's natural form and colour. Centered, upright, fills the frame. Pure solid white #FFFFFF background, no shadow, no gradient, crisp clean edges for masking.`;
+
+    // Prefer the Midjourney-style asset prompt written at tag time; else build one.
+    let prompt = (typeof req.body.assetPrompt === 'string' && req.body.assetPrompt.trim())
+      ? req.body.assetPrompt.trim().slice(0, 600) : '';
+    if (!prompt) {
+      const name = sanitizeInput(req.body.name) || 'a botanical element';
+      const colorWord = sanitizeInput(req.body.colorName) || sanitizeInput(req.body.color);
+      const unit = sanitizeInput(req.body.unit) || 'sprig';
+      const cleanName = name.replace(/\b\d+(?:\.\d+)?\b\s*(?:''|"|in|inch|inches)?/gi, ' ').replace(/\s{2,}/g, ' ').trim() || name;
+      const piece = (unit === 'bloom') ? 'bloom head, no stem' : `single ${unit}`;
+      prompt = `A single isolated high-end luxury silk ${colorWord ? colorWord + ' ' : ''}${cleanName} ${piece}, premium artificial faux botanical, delicate fabric petals, facing forward, overhead flat-lay view, studio lighting, pure solid white background`;
+    }
     const provider = (process.env.IMAGE_PROVIDER || '').toLowerCase()
-      || (process.env.FAL_KEY ? 'fal' : (process.env.OPENAI_API_KEY ? 'openai' : 'none'));
+      || (hasFal ? 'fal' : (process.env.OPENAI_API_KEY ? 'openai' : 'none'));
 
     if (provider === 'openai') {
       const r = await fetch('https://api.openai.com/v1/images/generations', {
@@ -1001,9 +1034,8 @@ app.post('/api/asset', async (req, res) => {
       if (!r.ok) throw new Error(j.detail || j.error || `fal error ${r.status}`);
       const url = j.images?.[0]?.url;
       if (!url) throw new Error('fal: no image');
-      const ir = await fetch(url);
-      const buf = Buffer.from(await ir.arrayBuffer());
-      return res.json({ success: true, image: `data:image/png;base64,${buf.toString('base64')}`, transparent: false });
+      // proper ML background removal so white blooms survive and edges are clean
+      return res.json({ success: true, image: await falRemoveBg(url), transparent: true });
     }
     throw new Error('No image provider configured. Set IMAGE_PROVIDER=fal (or openai) and the matching key.');
   } catch (err) {
