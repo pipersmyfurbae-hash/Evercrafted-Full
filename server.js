@@ -168,9 +168,28 @@ INTENSITY — [min,max] on 1-3: 1=soft (peace, tenderness) · 2=medium (nostalgi
 // ── POST /api/tag — suggest tags for a single item (text and/or photo) ─────────
 app.post('/api/tag', async (req, res) => {
   try {
-    const name        = sanitizeInput(req.body.name);
-    const description = sanitizeInput(req.body.description);
-    const image       = typeof req.body.image === 'string' ? req.body.image : '';
+    let name        = sanitizeInput(req.body.name);
+    let description = sanitizeInput(req.body.description);
+    let image       = typeof req.body.image === 'string' ? req.body.image : '';
+
+    // Re-tag straight from a catalogue item: resolve its name/description and
+    // fetch its photo for Vision (so re-tagging uses the full, real data).
+    const catalogueId = sanitizeInput(req.body.catalogueId);
+    if (catalogueId) {
+      const item = SHOP_DATA.find(x => x.id === catalogueId || x.sku === catalogueId);
+      if (item) {
+        name = sanitizeInput(item.name);
+        description = sanitizeInput(item.description);
+        if (item.imageUrl && !image) {
+          try {
+            const ir = await fetch(item.imageUrl);
+            const ct = ir.headers.get('content-type') || 'image/jpeg';
+            image = `data:${ct};base64,${Buffer.from(await ir.arrayBuffer()).toString('base64')}`;
+          } catch (e) { /* tag from text only if the image can't be fetched */ }
+        }
+      }
+    }
+
     if (!name && !description && !image) {
       return res.status(400).json({ success: false, error: 'Provide a product name, description, or photo' });
     }
@@ -403,6 +422,20 @@ app.post('/api/blueprint', (req, res) => {
 
 // ── SHOP DATA (loaded once at startup) ───────────────────────────────────────
 const SHOP_DATA = JSON.parse(fs.readFileSync('./evercrafted-shop-data.json', 'utf8'));
+
+// GET /api/catalogue — lightweight list for the catalogue → inventory tool
+app.get('/api/catalogue', (_req, res) => {
+  try {
+    const data = SHOP_DATA.map(i => ({
+      id: i.id, sku: i.sku, name: i.name, price: i.price, imageUrl: i.imageUrl,
+      desc: (i.description || '').slice(0, 160),
+      currentRole: i.role, currentEp: i.ep,
+    }));
+    res.json({ success: true, data });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 
 // ── Gap scoring helpers ───────────────────────────────────────────────────────
 

@@ -255,6 +255,12 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
       <span class="sb-tooltip">Inventory Dashboard</span>
     </a>
 
+    <a class="sb-item" id="nav-catalogue" onclick="showPanel('catalogue',this)" href="#">
+      <i class="ti ti-books"></i>
+      <span class="sb-item-label">Catalogue</span>
+      <span class="sb-tooltip">Catalogue → Inventory</span>
+    </a>
+
     <div class="sb-divider"></div>
     <div class="sb-section-label">Coming soon</div>
 
@@ -469,6 +475,11 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
       <iframe src="evercrafted-inventory-dashboard.html" class="tool-frame" title="Inventory Dashboard"></iframe>
     </div>
 
+    <!-- CATALOGUE -->
+    <div class="page-panel" id="panel-catalogue">
+      <iframe src="evercrafted-catalogue.html" class="tool-frame" title="Catalogue → Inventory"></iframe>
+    </div>
+
   </div>
 </div>
 </div>
@@ -506,6 +517,7 @@ const PANEL_LABELS = {
   'blueprint-v2': 'Manual Design',
   tagger: 'Floral Tagger',
   dashboard: 'Inventory Dashboard',
+  catalogue: 'Catalogue → Inventory',
 };
 const STUDIO_API = (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '';
 
