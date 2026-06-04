@@ -189,8 +189,8 @@ const SLOT_TEMPLATES = EC.SLOT_TEMPLATES;
 const FORMULA_ARCS = EC.FORMULA_ARCS;
 
 // ── Slot fill: delegates to the single source of truth (evercrafted-schema.js) ─
-function runSlotFill(emotions, formula, intensity, poemEmotions) {
-  return EC.runSlotFill(INVENTORY, emotions, formula, intensity, poemEmotions);
+function runSlotFill(emotions, formula, intensity, poemEmotions, wreathDiam, coverage) {
+  return EC.runSlotFill(INVENTORY, emotions, formula, intensity, poemEmotions, wreathDiam, coverage);
 }
 
 // ── Claude helper ─────────────────────────────────────────────────────────────
@@ -479,6 +479,19 @@ Return ONLY valid JSON, no markdown, no backticks:
       data = parseJSON(raw);
       if (!isValid(data)) throw new Error('Missing required fields after retry');
     }
+    // ── Emotion bridge ──────────────────────────────────────────────────────
+    // The AI interprets the memory into emotions + a formula; the bridge keeps
+    // that choice honest and grounds the rest in geometry. If the AI's formula
+    // isn't canonical, fall back to the emotion-derived one (never silent default);
+    // attach the derived design params (coverage/density/style…) for downstream
+    // use (drama slider, DNA readout, evaluator).
+    const bridge = EC.deriveDesignParams(data.emotions);
+    if (!EC.FORMULA_ARCS[data.formula]) {
+      data.formula = bridge.formula;
+      data.formula_reason = data.formula_reason || `Chosen from the emotional profile (${bridge.quadrant}).`;
+    }
+    data.design_params = bridge;
+    data.suggested_formula = bridge.formula;
     return res.json({ success: true, data });
   } catch (err) {
     console.error('[/api/scene]', err.message);
@@ -489,23 +502,27 @@ Return ONLY valid JSON, no markdown, no backticks:
 // ── POST /api/blueprint — deterministic, no AI call ───────────────────────────
 app.post('/api/blueprint', (req, res) => {
   try {
-    const { emotions, formula, intensity, poem_emotions } = req.body;
+    const { emotions, formula, intensity, poem_emotions, coverage, diameter } = req.body;
 
     if (!emotions || !Array.isArray(emotions)) {
       return res.status(400).json({ success: false, error: 'emotions array is required' });
     }
-    if (!formula) {
-      return res.status(400).json({ success: false, error: 'formula is required' });
-    }
+    // Formula is now optional — the emotion bridge supplies one when absent or
+    // non-canonical, so generation never has to error or silently default.
+    const bridge = EC.deriveDesignParams(emotions);
+    const useFormula = (formula && EC.FORMULA_ARCS[formula]) ? formula : bridge.formula;
 
     const intensityNum = Math.min(3, Math.max(1, parseInt(intensity) || 1));
-    const slots = runSlotFill(emotions, formula, intensityNum, poem_emotions);
+    // An explicit coverage (e.g. from a drama slider) overrides the formula arc;
+    // otherwise counts flow from the chosen formula's own coverage.
+    const cov = (+coverage > 0 && +coverage <= 1) ? +coverage : undefined;
+    const slots = runSlotFill(emotions, useFormula, intensityNum, poem_emotions, +diameter || 22, cov);
     const totalStems = slots.reduce((sum, s) => sum + s.stemCount, 0);
-    const arcConfig = FORMULA_ARCS[formula] || FORMULA_ARCS['Crescent'];
+    const arcConfig = FORMULA_ARCS[useFormula] || FORMULA_ARCS['Crescent'];
 
     return res.json({
       success: true,
-      data: { slots, totalStems, arcConfig },
+      data: { slots, totalStems, arcConfig, formula: useFormula, design_params: bridge },
     });
   } catch (err) {
     console.error('[/api/blueprint]', err.message);

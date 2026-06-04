@@ -848,10 +848,14 @@ function showOutput(r) {
 }
 
 function renderBlueprint(r) {
-  const formula = r.formula || 'Crescent';
   const emotions = (r.emotions || []).map(e => e.toLowerCase());
   const intensity = r.intensity || 1;
   const poemEmotions = r.poem_emotions || {};
+  // Formula: prefer the AI's choice, but if it's missing or non-canonical, let the
+  // emotion bridge supply one rather than silently defaulting to Crescent.
+  const formula = (r.formula && EC_SCHEMA.FORMULA_ARCS[r.formula])
+    ? r.formula
+    : EC_SCHEMA.suggestFormula(emotions);
 
   // Show poem emotion hierarchy if present
   if (poemEmotions.structural || poemEmotions.secondary || poemEmotions.undertone) {
