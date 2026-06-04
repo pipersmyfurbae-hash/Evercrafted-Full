@@ -582,30 +582,27 @@ function buildPolarSVG(filledSlots, formula) {
   // Active arc
   svg.appendChild(mk('path', {d: arcPath(ad.s, ad.e, mR), fill:'rgba(74,103,65,0.05)', stroke:'#4a6741', 'stroke-width':'0.5', 'stroke-dasharray':'3 3'}));
 
-  // Place each floral
-  const rng = s => { let v = s * 9301 + 49297; return (v % 233280) / 233280; };
-  let seed = 17;
+  // Place each floral — coordinates from the SINGLE SOURCE OF TRUTH (placeSlots),
+  // the exact same geometry the layered build view uses. Blueprint and build can
+  // never disagree because there is only one placement brain now.
+  const placed = EC_SCHEMA.placeSlots(filledSlots, formula, { wreathDiam: 22 });
   const legendItems = [];
 
-  filledSlots.filter(s => s.item).forEach(slot => {
-    seed++;
-    const rr = ROLE_RADII[slot.role] || [0.45, 0.70];
-    const rn = rr[0] + rng(seed) * (rr[1] - rr[0]);
-    const rad = rn * mR;
-    seed++;
-    const ang = ad.s + rng(seed) * arcSpan;
-    const ar = (ang - 90) * Math.PI / 180;
-    const px = cx + rad * Math.cos(ar);
-    const py = cy + rad * Math.sin(ar);
-    const dr = slot.role === 'structural' ? 10 : slot.role === 'focal' ? 9 : slot.role === 'secondary' ? 7 : 5;
-    const zc = ZONE_COLORS[slot.role] || '#888';
-
+  placed.units.forEach(p => {
+    const px = cx + p.x * mR;
+    const py = cy + p.y * mR;
+    const dr = p.role === 'focal' ? 9 : p.role === 'structural' ? 8 : p.role === 'secondary' ? 6.5 : p.role === 'greenery' ? 5.5 : 5;
+    const zc = ZONE_COLORS[p.role] || '#888';
+    const fill = p.colorHex || '#c9b7a8';
     const g = mk('g', {});
-    g.appendChild(mk('circle', {cx: px.toFixed(1), cy: py.toFixed(1), r: dr+2, fill: zc, opacity:'0.22'}));
-    g.appendChild(mk('circle', {cx: px.toFixed(1), cy: py.toFixed(1), r: dr, fill: slot.item.color, stroke: zc, 'stroke-width':'1.2'}));
+    g.appendChild(mk('circle', {cx: px.toFixed(1), cy: py.toFixed(1), r: (dr + 2).toFixed(1), fill: zc, opacity:'0.20'}));
+    g.appendChild(mk('circle', {cx: px.toFixed(1), cy: py.toFixed(1), r: dr.toFixed(1), fill, stroke: zc, 'stroke-width':'1.2'}));
     svg.appendChild(g);
+  });
 
-    legendItems.push({ name: slot.item.name, color: slot.item.color, border: zc, role: slot.role, stems: slot.stemCount });
+  // one legend entry per chosen floral (not per placed unit)
+  filledSlots.filter(s => s.item).forEach(slot => {
+    legendItems.push({ name: slot.item.name, color: slot.item.color, border: ZONE_COLORS[slot.role] || '#888', role: slot.role, stems: slot.stemCount });
   });
 
   // Center

@@ -179,5 +179,107 @@
     return filled;
   }
 
-  return { VOCAB, normalizeTag, unitSpec, BUDGET, ZS, BU, SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill };
+  // ── THE PLACEMENT ENGINE (single source of truth) ───────────────────────────
+  // Where every floral physically goes on the ring. Computed ONCE here, then
+  // consumed by BOTH the blueprint dot-map (memory-scene) and the layered build
+  // view — so the coordinates can never drift between the two. No live
+  // Math.random(): positions are seeded by slot/unit index, so a design looks
+  // identical every time it is rendered.
+  //
+  // Real-wreath model encoded here:
+  //   • Coverage arc — partial (asymmetric, bare base shows) or full 360° round.
+  //   • Anchor — one dominant focal MASS off-centre at a rule-of-thirds point.
+  //   • Counterweight — a lighter diagonal focal cluster, ONLY when there is
+  //     enough focal inventory (≥2 focal slots). Anchor required, counter optional.
+  //   • Greenery/structural — laid as a continuous base spine along the whole arc,
+  //     the connective layer, not a counted point.
+  //   • Secondary/bridge — fan out from the anchor toward the counterweight.
+  //   • Accent/texture/filler — tucked into the gaps across the floral region.
+  //   • True-to-scale — unit size = bloom diameter ÷ wreath diameter.
+  const ROLE_BAND   = { greenery:0.82, structural:0.72, focal:0.56, secondary:0.60, bridge:0.50, accent:0.66, texture:0.62, filler:0.62 }; // radius (fraction of ring) the role sits at
+  const ROLE_Z      = { structural:2, greenery:4, bridge:5, secondary:6, texture:7, focal:8, accent:9, filler:6 };                          // paint / stacking order
+  const ROLE_SPREAD = { greenery:15, structural:13, focal:8,  secondary:12, bridge:12, accent:17, texture:17, filler:19 };                  // cluster tightness (deg)
+  const BEH_SIZE    = { heavy:1.25, mid:1, light:0.82, wispy:0.64 };
+
+  function placeSlots(filledSlots, formula, opts) {
+    opts = opts || {};
+    const wreathDiam = (+opts.wreathDiam > 0) ? +opts.wreathDiam : 22;
+    const arc = FORMULA_ARCS[formula] || FORMULA_ARCS['Crescent'];
+    const s = arc.s;
+    const span = (((arc.e - arc.s) + 360) % 360) || 360;
+    const full = span >= 359; // balanced round vs asymmetric partial
+
+    const slots = (filledSlots || []).filter(sl => sl && (sl.item || sl.role));
+    const focalSlots   = slots.filter(sl => sl.role === 'focal');
+    const counterweight = !full && focalSlots.length >= 2;          // counter optional
+    const anchorDeg = full ? s : s + span * 0.40;                   // rule-of-thirds, lower in the arc
+    const counterDeg = counterweight ? s + span * 0.80 : null;      // diagonal counter
+
+    const roleTotal = {}, roleSeen = {};
+    slots.forEach(sl => { roleTotal[sl.role] = (roleTotal[sl.role] || 0) + 1; });
+    const seeded = n => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+
+    const units = [];
+    let focalIdx = 0;
+    slots.forEach((sl, si) => {
+      const role = sl.role || 'secondary';
+      const idx = roleSeen[role] || 0; roleSeen[role] = idx + 1;
+      const n = roleTotal[role] || 1;
+
+      // assign this slot's centre angle by its compositional job
+      let centerDeg;
+      if (full) {
+        centerDeg = s + span * ((idx + 0.5) / n);                              // balanced ring
+      } else if (role === 'greenery' || role === 'structural') {
+        centerDeg = s + span * ((idx + 0.5) / n);                              // base spine, whole arc
+      } else if (role === 'focal') {
+        centerDeg = (counterDeg != null && focalIdx >= Math.ceil(focalSlots.length / 2)) ? counterDeg : anchorDeg;
+        focalIdx++;
+      } else if (role === 'secondary' || role === 'bridge') {
+        const t = n > 1 ? idx / (n - 1) : 0.5;
+        const lo = anchorDeg - span * 0.10;
+        const hi = (counterDeg != null) ? counterDeg : anchorDeg + span * 0.18;
+        centerDeg = lo + (hi - lo) * t;                                        // fan anchor→counter
+      } else {
+        const lo = anchorDeg - span * 0.16;
+        const hi = (counterDeg != null) ? counterDeg + span * 0.10 : anchorDeg + span * 0.28;
+        centerDeg = lo + (hi - lo) * ((idx + 0.5) / n);                        // fill the gaps
+      }
+
+      const band = ROLE_BAND[role] || 0.6;
+      const spreadDeg = ROLE_SPREAD[role] || 12;
+      const unitCount = Math.max(1, Math.min(16, Math.round(sl.floralUnits || 1)));
+      const spec = unitSpec(sl);
+      const bloom = (+sl.bloomSize > 0) ? +sl.bloomSize : spec.bloomSize;
+      let sizeFrac = (bloom / wreathDiam) * (BEH_SIZE[sl.behavior] || 1) * 1.25;
+      sizeFrac = Math.max(0.045, Math.min(0.32, sizeFrac));
+      const z = ROLE_Z[role] || 6;
+      const wfac = Math.min(2.2, 0.6 + unitCount * 0.18); // more units → wider cluster
+
+      for (let u = 0; u < unitCount; u++) {
+        const deg = centerDeg + (seeded(si * 97 + u * 13 + 1) - 0.5) * spreadDeg * wfac;
+        const r   = Math.max(0.18, Math.min(0.96, band + (seeded(si * 53 + u * 29 + 7) - 0.5) * 0.16));
+        const rad = (deg - 90) * Math.PI / 180;
+        units.push({
+          slotIndex: si, role, z, deg, r,
+          x: Math.cos(rad) * r, y: Math.sin(rad) * r,
+          sizeFrac, rot: (seeded(si * 31 + u * 7) - 0.5) * 28,
+          name:      (sl.item && sl.item.name) || sl.name || '',
+          colorHex:  sl.colorHex || (sl.item && (sl.item.color || sl.item.colorHex)) || '',
+          palette:   sl.palette  || (sl.item && sl.item.palette)  || 'neutral-mid',
+          behavior:  sl.behavior || (sl.item && sl.item.behavior) || 'mid',
+          movement:  sl.movement || (sl.item && sl.item.movement) || 'still',
+          ep:        sl.ep       || (sl.item && sl.item.ep)       || '',
+          assetUrl:  sl.assetUrl || (sl.item && sl.item.assetUrl) || '',
+          stemCount: sl.stemCount || 1,
+        });
+      }
+    });
+
+    units.sort((a, b) => a.z - b.z); // paint base layers first
+    return { units, arc: { s, e: arc.e, span, full }, anchorDeg, counterDeg };
+  }
+
+  return { VOCAB, normalizeTag, unitSpec, BUDGET, ZS, BU, SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill,
+           ROLE_BAND, ROLE_Z, placeSlots };
 });

@@ -118,46 +118,32 @@ function layout(design){
   ring.style.zIndex = 1;
   stage.appendChild(ring);
 
-  // arc geometry from the SINGLE SOURCE OF TRUTH
-  const f = ARCS[normalizeFormula(design.formula)] || { s:210, e:330 };
-  const span = (((f.e - f.s) + 360) % 360) || 360;
-  const maxR = 0.5; // fraction of stage (radius)
+  // PLACEMENT comes from the SINGLE SOURCE OF TRUTH — same coordinates the
+  // blueprint dot-map uses, so the two views can never disagree.
   const wreathDiam = design.diam || design.diameter || 22; // inches — sets true scale
-  const FALLBACK_UNITS = { focal:1, secondary:2, bridge:1, greenery:3, accent:4, texture:4, structural:1, filler:4 };
+  const maxR = 0.46; // fraction of stage radius the ring occupies
+  const placed = (window.EC_SCHEMA && EC_SCHEMA.placeSlots)
+    ? EC_SCHEMA.placeSlots(slots, normalizeFormula(design.formula), { wreathDiam })
+    : { units: [] };
   FLORALS = [];
 
-  slots.forEach((sl, i) => {
-    const role = sl.role || 'secondary';
-    const z = ROLE_Z[role] || 6;
-    const spec = (window.EC_SCHEMA && EC_SCHEMA.unitSpec) ? EC_SCHEMA.unitSpec(sl) : { bloomSize:2.5 };
-    const bloom = (+sl.bloomSize > 0) ? +sl.bloomSize : spec.bloomSize;
-    // how many individual sprigs/blooms to place (yield-aware), and their true-to-scale size
-    const units = Math.max(1, Math.min(14, Math.round(sl.floralUnits || FALLBACK_UNITS[role] || 2)));
-    let sizePct = (bloom / wreathDiam) * 100 * 1.3;
+  placed.units.forEach(p => {
+    const cx = 50 + p.x * (maxR * 100);
+    const cy = 50 + p.y * (maxR * 100);
+    let sizePct = p.sizeFrac * 100;
     sizePct = Math.max(4, Math.min(34, sizePct));
-    const cluster = sizePct * 0.7;
-    const frac = slots.length>1 ? (i + 0.5) / slots.length : 0.5;
-    const baseDeg = f.s + frac * span;
-    const rrBase = (ROLE_R[role] || 0.6);
-    for (let u = 0; u < units; u++) {
-      const deg = baseDeg + (Math.random()*span*0.2 - span*0.1);
-      const rad = (deg - 90) * Math.PI / 180;
-      const rr = rrBase * (0.9 + Math.random()*0.18);
-      const cx = 50 + Math.cos(rad)*rr*(maxR*100) + (Math.random()*cluster - cluster/2);
-      const cy = 50 + Math.sin(rad)*rr*(maxR*100) + (Math.random()*cluster - cluster/2);
-      const el = document.createElement('div');
-      el.className = 'floral';
-      el.style.left = cx + '%'; el.style.top = cy + '%';
-      el.style.width = sizePct + '%'; el.style.aspectRatio = '1';
-      el.style.zIndex = z; el.dataset.z = z;
-      el.style.transform = 'translate(-50%,-50%) scale(.55) rotate('+(Math.random()*30-15)+'deg)';
-      el.title = (sl.name||'') + ' · ' + role + (units>1 ? ` (×${units} from ${sl.stemCount||1} stem${(sl.stemCount||1)>1?'s':''})` : '');
-      el.innerHTML = sl.assetUrl
-        ? `<img src="${sl.assetUrl}" alt="" style="width:100%;height:100%;object-fit:contain">`
-        : floralSVG(sl);
-      stage.appendChild(el);
-      FLORALS.push(el);
-    }
+    const el = document.createElement('div');
+    el.className = 'floral';
+    el.style.left = cx + '%'; el.style.top = cy + '%';
+    el.style.width = sizePct + '%'; el.style.aspectRatio = '1';
+    el.style.zIndex = p.z; el.dataset.z = p.z; el.dataset.rot = p.rot;
+    el.style.transform = 'translate(-50%,-50%) scale(.55) rotate(' + p.rot + 'deg)';
+    el.title = (p.name || '') + ' · ' + p.role + (p.stemCount > 1 ? ` (from ${p.stemCount} stems)` : '');
+    el.innerHTML = p.assetUrl
+      ? `<img src="${p.assetUrl}" alt="" style="width:100%;height:100%;object-fit:contain">`
+      : floralSVG({ role: p.role, colorHex: p.colorHex, palette: p.palette });
+    stage.appendChild(el);
+    FLORALS.push(el);
   });
 
   buildLegend(slots);
@@ -176,9 +162,10 @@ function normalizeFormula(f){
 function play(){
   // reveal florals layer by layer (low z first)
   const ordered = [...FLORALS].sort((a,b)=>(+a.dataset.z)-(+b.dataset.z));
-  ordered.forEach(el=>{ el.classList.remove('in'); el.style.transform='translate(-50%,-50%) scale(.55) rotate('+(Math.random()*30-15)+'deg)'; });
+  ordered.forEach(el=>{ const rot=el.dataset.rot||0; el.classList.remove('in'); el.style.transform='translate(-50%,-50%) scale(.55) rotate('+rot+'deg)'; });
   ordered.forEach((el,i)=>{
-    setTimeout(()=>{ el.classList.add('in'); el.style.transform='translate(-50%,-50%) scale(1) rotate('+(Math.random()*16-8)+'deg)'; }, 100 + i*28);
+    const rot=el.dataset.rot||0;
+    setTimeout(()=>{ el.classList.add('in'); el.style.transform='translate(-50%,-50%) scale(1) rotate('+rot+'deg)'; }, 100 + i*28);
   });
 }
 
