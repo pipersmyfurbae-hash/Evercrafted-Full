@@ -880,6 +880,95 @@ app.post('/api/render', async (req, res) => {
   }
 });
 
+// ── Cutout/segment assets ─────────────────────────────────────────────────────
+// POST /api/asset — return an image to cut out: either the source product photo
+// (fetched server-side to avoid browser CORS taint) or a generated single-unit
+// (segment) illustration. Returns a data URL + whether it's already transparent.
+app.post('/api/asset', async (req, res) => {
+  try {
+    const sourceImageUrl = typeof req.body.sourceImageUrl === 'string' ? req.body.sourceImageUrl : '';
+    if (sourceImageUrl) {
+      const ir = await fetch(sourceImageUrl);
+      if (!ir.ok) throw new Error('could not fetch source image');
+      const ct = ir.headers.get('content-type') || 'image/png';
+      const buf = Buffer.from(await ir.arrayBuffer());
+      return res.json({ success: true, image: `data:${ct};base64,${buf.toString('base64')}`, transparent: false });
+    }
+
+    // Generate a single-unit (segment) illustration
+    const name  = sanitizeInput(req.body.name) || 'a botanical element';
+    const color = sanitizeInput(req.body.color);
+    const unit  = sanitizeInput(req.body.unit) || 'sprig';
+    const prompt = `A single ${unit} of ${name}${color ? ', colour ' + color : ''} — ONE isolated cut piece, not a full spray or bunch. Faux silk botanical, elegant botanical illustration. Centered, upright, fills the frame. Pure solid white #FFFFFF background, no shadow, no gradient, crisp clean edges for masking.`;
+    const provider = (process.env.IMAGE_PROVIDER || '').toLowerCase()
+      || (process.env.FAL_KEY ? 'fal' : (process.env.OPENAI_API_KEY ? 'openai' : 'none'));
+
+    if (provider === 'openai') {
+      const r = await fetch('https://api.openai.com/v1/images/generations', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'gpt-image-1', prompt, size: '1024x1024', background: 'transparent', n: 1 }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error?.message || `openai error ${r.status}`);
+      const b64 = j.data?.[0]?.b64_json;
+      if (!b64) throw new Error('openai: no image');
+      return res.json({ success: true, image: `data:image/png;base64,${b64}`, transparent: true });
+    }
+    if (provider === 'fal') {
+      const r = await fetch('https://fal.run/fal-ai/flux/dev', {
+        method: 'POST',
+        headers: { 'Authorization': `Key ${process.env.FAL_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, image_size: 'square_hd', num_images: 1 }),
+      });
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.detail || j.error || `fal error ${r.status}`);
+      const url = j.images?.[0]?.url;
+      if (!url) throw new Error('fal: no image');
+      const ir = await fetch(url);
+      const buf = Buffer.from(await ir.arrayBuffer());
+      return res.json({ success: true, image: `data:image/png;base64,${buf.toString('base64')}`, transparent: false });
+    }
+    throw new Error('No image provider configured. Set IMAGE_PROVIDER=fal (or openai) and the matching key.');
+  } catch (err) {
+    console.error('[/api/asset]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// POST /api/cutout — store a transparent PNG cutout and set the floral's asset_url
+app.post('/api/cutout', async (req, res) => {
+  try {
+    const image = typeof req.body.image === 'string' ? req.body.image : '';
+    const inventoryId = sanitizeInput(req.body.inventoryId);
+    if (!image) return res.status(400).json({ success: false, error: 'image is required' });
+
+    let url = '';
+    if (supabase) {
+      const { media_type, data } = parseDataUrl(image);
+      const ext = (media_type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+      const path = `${Date.now()}-${Math.floor(Math.random() * 1e6)}.${ext}`;
+      const { error } = await supabase.storage.from('cutouts').upload(path, Buffer.from(data, 'base64'), { contentType: media_type, upsert: false });
+      if (error) throw new Error(error.message);
+      url = supabase.storage.from('cutouts').getPublicUrl(path).data.publicUrl;
+      if (inventoryId) { try { await supabase.from('inventory').update({ asset_url: url }).eq('id', inventoryId); } catch (e) {} }
+    } else {
+      url = image; // dev fallback: keep the data URL as the asset
+      if (inventoryId) {
+        try {
+          let list = JSON.parse(fs.readFileSync(INVENTORY_PATH, 'utf8'));
+          const i = list.findIndex(x => x.id === inventoryId);
+          if (i >= 0) { list[i].assetUrl = url; fs.writeFileSync(INVENTORY_PATH, JSON.stringify(list, null, 2)); }
+        } catch (e) {}
+      }
+    }
+    return res.json({ success: true, url });
+  } catch (err) {
+    console.error('[/api/cutout]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ── Designs (saved blueprints from the engines) ───────────────────────────────
 const DESIGNS_PATH = './designs.json';
 

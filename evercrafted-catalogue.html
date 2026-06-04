@@ -153,7 +153,8 @@ async function tagSelected(){
       const saveRes = await fetch(`${CONFIG.apiBase}/api/inventory`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
         name:item.name, sku:item.sku, price:item.price, imageUrl:item.imageUrl,
         role:t.role, behavior:t.behavior, movement:t.movement, finish:t.finish, palette:t.palette,
-        ep:t.ep, es:t.es, intensity:t.intensity, colorHex:t.colorHex, colorName:t.colorName, stock:0,
+        ep:t.ep, es:t.es, intensity:t.intensity, colorHex:t.colorHex, colorName:t.colorName,
+        yield:t.yield, bloomSize:t.bloomSize, stemLength:t.stemLength, unit:t.unit, stock:0,
       })});
       const saveJson = await saveRes.json();
       if(!saveJson.success) throw new Error(saveJson.error||'save failed');

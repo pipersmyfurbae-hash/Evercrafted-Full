@@ -1025,6 +1025,7 @@ async function loadUserInventory() {
         behavior: i.behavior, movement: i.movement, finish: i.finish,
         palette: i.palette, contrast: 'unified',
         intensity: Array.isArray(i.intensity) ? i.intensity : [1, 2],
+        yield: i.yield, bloomSize: i.bloomSize, stemLength: i.stemLength, unit: i.unit, assetUrl: i.assetUrl || '',
       }));
       console.log(`Designing from your inventory: ${ACTIVE_INVENTORY.length} pieces`);
     }

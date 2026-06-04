@@ -298,7 +298,8 @@ function mapServerItem(i){
     finish:i.finish, palette:i.palette, contrast:'unified',
     color: i.colorHex || PALETTE_SWATCH[i.palette] || '#ccc',
     ep:i.ep, es:i.es, blend:'', intensity:i.intensity, weight:i.behavior,
-    stock:i.stock, taggedAt:'', imageDataUrl: i.imageUrl||''
+    stock:i.stock, taggedAt:'', imageDataUrl: i.imageUrl||'',
+    assetUrl: i.assetUrl||'', unit: i.unit||'sprig', bloomSize: i.bloomSize, yield: i.yield, stemLength: i.stemLength
   };
 }
 
@@ -496,6 +497,17 @@ function openDrawer(id) {
       <div class="field-row"><span class="field-key">Intensity</span><span class="field-val"><div class="int-vis">${intPips}</div></span></div>
     </div>
     <div class="drawer-section">
+      <div class="drawer-section-label">Cutout asset</div>
+      <div id="cutout-box" style="display:flex;align-items:center;gap:.6rem">
+        ${item.assetUrl?`<img src="${item.assetUrl}" alt="" style="width:88px;height:88px;object-fit:contain;border:1px solid var(--bd);border-radius:8px;background:#faf8f4">`:'<span style="font-size:11px;color:var(--fa)">No cutout yet — shown as a styled shape in Build View.</span>'}
+      </div>
+      <div style="display:flex;gap:.4rem;margin-top:.55rem;flex-wrap:wrap">
+        <button class="da-btn" onclick="makeCutout('photo')">From photo</button>
+        <button class="da-btn" onclick="makeCutout('generate')">Generate sprig</button>
+      </div>
+      <div id="cutout-msg" style="font-size:10px;color:var(--fa);margin-top:.35rem;min-height:1em"></div>
+    </div>
+    <div class="drawer-section">
       <div class="drawer-section-label">Stock</div>
       <div class="stock-row">
         <span class="stock-label">Units on hand</span>
@@ -543,6 +555,56 @@ async function deleteItem(id) {
   try { await fetch(`${CONFIG.apiBase}/api/inventory/${id}`, {method:'DELETE'}); } catch(e) {}
   closeDrawer();
   await loadInventory();
+}
+
+// Turn a near-white background transparent (data URL in → transparent PNG data URL out)
+function removeWhiteBackground(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const c = document.createElement('canvas'); c.width = img.width; c.height = img.height;
+      const ctx = c.getContext('2d', { willReadFrequently: true }); ctx.drawImage(img, 0, 0);
+      try {
+        const id = ctx.getImageData(0, 0, c.width, c.height); const d = id.data; const tol = 230;
+        for (let i = 0; i < d.length; i += 4) {
+          const r = d[i], g = d[i+1], b = d[i+2];
+          if (r > tol && g > tol && b > tol) {
+            const lum = 0.299*r + 0.587*g + 0.114*b;
+            d[i+3] = lum > 250 ? 0 : Math.max(0, 255 - ((lum - tol) * (255 / (255 - tol))));
+          }
+        }
+        ctx.putImageData(id, 0, 0); resolve(c.toDataURL('image/png'));
+      } catch (err) { reject(err); }
+    };
+    img.onerror = () => reject(new Error('image load failed'));
+    img.src = dataUrl;
+  });
+}
+
+async function makeCutout(mode) {
+  if (!activeItem) return;
+  const item = activeItem;
+  const msg = document.getElementById('cutout-msg');
+  msg.textContent = mode === 'generate' ? 'Generating a single sprig… (~15s)' : 'Cutting out from the photo…';
+  try {
+    const body = mode === 'generate'
+      ? { name: item.name, color: item.color, unit: item.unit }
+      : { sourceImageUrl: item.imageDataUrl };
+    const aRes = await fetch(`${CONFIG.apiBase}/api/asset`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const aJson = await aRes.json();
+    if (!aJson.success) throw new Error(aJson.error || 'asset failed');
+    let png = aJson.image;
+    if (!aJson.transparent) png = await removeWhiteBackground(png);
+    const cRes = await fetch(`${CONFIG.apiBase}/api/cutout`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ image: png, inventoryId: item.id }) });
+    const cJson = await cRes.json();
+    if (!cJson.success) throw new Error(cJson.error || 'store failed');
+    item.assetUrl = cJson.url;
+    const inv = inventory.find(x => x.id === item.id); if (inv) inv.assetUrl = cJson.url;
+    document.getElementById('cutout-box').innerHTML = `<img src="${cJson.url}" alt="" style="width:88px;height:88px;object-fit:contain;border:1px solid var(--bd);border-radius:8px;background:#faf8f4">`;
+    msg.textContent = '✓ Cutout saved — it will composite in the Build View.';
+  } catch (e) {
+    msg.textContent = 'Failed: ' + e.message;
+  }
 }
 
 function exportJSON() {
