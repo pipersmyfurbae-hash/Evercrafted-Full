@@ -137,7 +137,7 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .tct-pass1{background:rgba(74,103,65,.15);color:#3a5a30}
 .tct-pass2{background:rgba(122,90,128,.15);color:#6a3a78}
 
-/* Step 4 — two-pass engine */
+/* Step 4 — intelligent layered engine */
 .engine-card{padding:1.5rem}
 .pass-band{border-radius:10px;padding:1rem;margin-bottom:.7rem}
 .pb1{background:rgba(74,103,65,.06);border:1px solid rgba(74,103,65,.15)}
@@ -290,11 +290,11 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
           <span class="s-num" style="background:var(--gp);color:var(--green)">1</span>
           Stage one
         </div>
-        <h2 class="step-h2">You share what<br><em>this piece is for</em></h2>
-        <p class="step-lead">There are no color pickers, no style quizzes, no dropdown menus. You describe what this wreath should hold — a person, a place, a season, a feeling. Plain language is the only input you need.</p>
+        <h2 class="step-h2">Seven questions.<br><em>Two minutes.</em></h2>
+        <p class="step-lead">No forms, no color pickers, no style quizzes. A short guided conversation — one question at a time — gathers everything needed to write the story of this wreath. It takes about two minutes and feels nothing like filling out a brief.</p>
         <div class="step-points">
-          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>Any level of detail works.</strong> A single word like "grief" or a paragraph about your grandmother's garden — both produce valid blueprints.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>The language doesn't need to be floral.</strong> "Cold morning light through old windows" produces a far more distinctive design than "dusty blue and silver."</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>What season does this memory live in?</strong> What time of day? Who was there? One sensory detail. What did it leave you with? Each question unlocks a layer that shapes the design.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>The language never needs to be floral.</strong> "The smell of cedar and cold air and her" is a more complete design brief than any color palette could be.</span></div>
           <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>Client commissions work exactly the same way.</strong> Take their words directly. What they tell you becomes what you build.</span></div>
         </div>
       </div>
@@ -302,17 +302,21 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
         <div class="vis-box">
           <div class="mem-card">
             <div class="mem-label">Memory input</div>
-            <textarea class="mem-textarea" readonly>My grandmother's garden in late September — tall cosmos swaying, the smell of dried lavender, that warmth before the cold arrived. She always wore grey linen and smelled like earth and flowers mixed together.</textarea>
-            <div class="mem-chip-row">
-              <span class="mem-chip mc-g">nostalgia</span>
-              <span class="mem-chip mc-g">sadness</span>
-              <span class="mem-chip mc-g">trust</span>
-              <span class="mem-chip mc-o">anticipation</span>
-              <span class="mem-chip mc-p">longing</span>
-            </div>
-            <div class="mem-formula">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
-              Formula selected: Crescent · Soft weight · Draping direction
+            <div style="display:flex;flex-direction:column;gap:.6rem">
+              <div style="background:var(--off);border-radius:8px;padding:.7rem .9rem;border:1px solid var(--bd)">
+                <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.3rem">The memory</div>
+                <div style="font-family:var(--serif);font-size:.95rem;font-style:italic;color:var(--charcoal,#2e2e2e);line-height:1.65">We stayed in Alfama in a small apartment with azulejo tiles on the staircase wall. There was a fado singer one night and I cried without knowing why. I was already missing it while it was still happening.</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+                <div style="background:var(--gp);border-radius:8px;padding:.6rem .75rem;border:1px solid rgba(74,103,65,.15)"><div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase">Season</div><div style="font-size:12px;color:var(--charcoal,#2e2e2e);margin-top:.15rem">Spring</div></div>
+                <div style="background:var(--gp);border-radius:8px;padding:.6rem .75rem;border:1px solid rgba(74,103,65,.15)"><div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase">Location</div><div style="font-size:12px;color:var(--charcoal,#2e2e2e);margin-top:.15rem">Alfama, Lisbon</div></div>
+                <div style="background:var(--gp);border-radius:8px;padding:.6rem .75rem;border:1px solid rgba(74,103,65,.15)"><div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase">Time of day</div><div style="font-size:12px;color:var(--charcoal,#2e2e2e);margin-top:.15rem">Morning</div></div>
+                <div style="background:var(--gp);border-radius:8px;padding:.6rem .75rem;border:1px solid rgba(74,103,65,.15)"><div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase">Feeling</div><div style="font-size:12px;color:var(--charcoal,#2e2e2e);margin-top:.15rem">Something complicated</div></div>
+              </div>
+              <div style="background:var(--off);border-radius:8px;padding:.6rem .75rem;border:1px solid var(--bd)">
+                <div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:.25rem">Sensory detail</div>
+                <div style="font-size:12px;font-style:italic;color:var(--ink)">Orange blossom and damp stone, and the sound of fado through an open window</div>
+              </div>
             </div>
           </div>
         </div>
@@ -330,13 +334,13 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
           <span class="s-num" style="background:var(--goldp);color:var(--gold)">2</span>
           Stage two
         </div>
-        <h2 class="step-h2">The feeling becomes<br><em>physical character</em></h2>
+        <h2 class="step-h2">Every piece<br><em>earns its place.</em></h2>
         <p class="step-lead">Grief reaches differently than joy. Peace holds still while longing moves. Evercrafted reads what you wrote and translates it into real choices — what shapes go in, how they sit, how they feel — before anything is placed.</p>
         <div class="step-points">
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The emotional core</strong> of your memory shapes the heaviest, most present pieces — the ones that hold the whole design together and define what the wreath looks like from across the room.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The quieter, more layered feelings</strong> — the subtle ones, the bittersweet ones — shape the details that fill in around the main blooms. The finishes, the accent pieces, the quieter moments between the blooms.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The depth of feeling shapes the weight of the design.</strong> A raw, close grief makes different choices than a soft, distant nostalgia. The design matches the feeling — not just the words.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>When a feeling contains its opposite</strong> — joy and loss together, peace threaded with longing — the composition holds both. It doesn't resolve the tension. It makes it visible.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The poem is not decorative.</strong> It is where the design begins. Once written, Evercrafted reads it the way a maker would — looking for what the writing carries, not just what was described.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>A memory of peace often carries longing inside it.</strong> A memory of joy is often threaded with grief for what has passed. The design is made from all of it — not just what was named. The finishes, the accent pieces, the quieter moments between the blooms.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>Every floral chosen traces back to something in the poem.</strong> What holds the design together. What gives it its voice. What you notice last when you look closely at the finished piece.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The location is understood, not guessed.</strong> Alfama. Amsterdam. Clintonville. Each place has a specific architecture, a specific light, a specific surface where a wreath genuinely belongs. Evercrafted finds it.</span></div>
         </div>
       </div>
       <div class="reveal rd2">
@@ -485,7 +489,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
             <div class="pass-band pb1">
               <div class="pass-label pl1">
                 <span style="width:16px;height:16px;border-radius:50%;background:var(--green);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700">1</span>
-                Foundation layer — the heart of the design
+                What holds it together — the heart of the design
               </div>
               <div class="pass-slots">
                 <span class="pslot ps1f">Weeping Eucalyptus ✓</span>
@@ -596,24 +600,31 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
           <span class="s-num" style="background:var(--goldp);color:var(--gold)">6</span>
           Stage six
         </div>
-        <h2 class="step-h2">Everything you need<br><em>to go make it.</em></h2>
-        <p class="step-lead">Knowing what to make is only half of it. Evercrafted gives you the visual to show a client, the quantities to shop or pull from stock, and the steps to actually build it — all from the same design, all at once.</p>
+        <h2 class="step-h2">Five outputs.<br><em>All at once.</em></h2>
+        <p class="step-lead">Every memory becomes five things simultaneously — the poetic scene, the location map, the blueprint, the location-aware render prompt, and the build guide. Everything you and your client need, generated in one pass.</p>
         <div class="step-points">
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The render image</strong> — a production-ready prompt built from the actual florals in your design, not a generic description. Show clients before you build a single stem.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>Exact quantities</strong> — every material, with the precise count needed. Pulls directly from what you have in stock. No estimation, no waste.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The build sequence</strong> — step-by-step construction matched to your specific design. What goes on first, where it sits, how it finishes.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>A saved blueprint</strong> — your design lives in your account. Revisit it, adapt it for another season, share it with a collaborator, or use it as the starting point for something new.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The poetic scene</strong> — 150 words that inhabit the memory. Written to be read, printed on a card, or shared with a client before the piece is built.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The location map</strong> — the place pinned. The architecture and lifestyle researched. The render setting chosen from what makes that specific place itself.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The render prompt</strong> — places the wreath in the actual world of the memory. Not a studio wall. Not a generic surface. The exact place where the design belongs, chosen from the location itself.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The blueprint and build guide</strong> — exact stem counts per zone, the polar placement map, and a sequenced construction guide. From screen to finished wreath without a gap.</span></div>
         </div>
       </div>
       <div class="reveal rd2">
         <div class="vis-box">
           <div class="export-tabs">
-            <div class="etab on" onclick="switchExport('prompt',this)">Render prompt</div>
+            <div class="etab on" onclick="switchExport('poem',this)">Poetic scene</div>
+            <div class="etab" onclick="switchExport('prompt',this)">Render prompt</div>
             <div class="etab" onclick="switchExport('stems',this)">Stem counts</div>
             <div class="etab" onclick="switchExport('build',this)">Build guide</div>
           </div>
           <div class="export-panels">
-            <div class="exp-panel on" id="ep-prompt">
+            <div class="exp-panel on" id="ep-poem">
+              <div style="font-family:var(--serif);font-size:1rem;font-style:italic;line-height:1.85;color:var(--ink)">
+                "The wreath hangs on the azulejo-tiled staircase wall as the first light spreads across the Tagus like spilled honey. Orange blossoms drift from unseen trees, mixing with the salt tang of the river. Even now, watching the light inch across the terracotta rooftops, there is the strange ache of missing this moment while still living inside it."
+              </div>
+              <div style="margin-top:.75rem;font-size:11px;color:var(--faint)">Alfama, Lisbon · Spring · Morning · nostalgia / tenderness / melancholy</div>
+            </div>
+            <div class="exp-panel" id="ep-prompt">
               <div class="prompt-box">
                 <strong>Luxury faux botanical wreath,</strong> crescent composition, 22-inch grapevine base, artisan-crafted. Emotional tone: nostalgia, sadness, trust. Structural foundation: Weeping Silver Eucalyptus, Charcoal Manzanita Branch — <strong>weeping and architectural forms</strong>, positioned in the foundational sweep. Focal blooms: Dusty Mauve Peony, Ivory Garden Rose. Secondary: Silver Leaf Spray, Lavender Bundle. Intentional negative space exposes raw grapevine. <strong>Premium silk florals</strong> — no fresh flowers, no plastic. Editorial product photography, shallow depth of field, matte aged plaster wall. --ar 4:5 --style raw --q 2
               </div>
@@ -751,6 +762,7 @@ document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
 
 // Export tabs
 function switchExport(id, btn) {
+  if (id === 'poem') { document.querySelectorAll('.etab').forEach(t=>t.classList.remove('on')); document.querySelectorAll('.exp-panel').forEach(p=>p.classList.remove('on')); btn.classList.add('on'); document.getElementById('ep-poem').classList.add('on'); return; }
   document.querySelectorAll('.etab').forEach(t => t.classList.remove('on'));
   document.querySelectorAll('.exp-panel').forEach(p => p.classList.remove('on'));
   btn.classList.add('on');
