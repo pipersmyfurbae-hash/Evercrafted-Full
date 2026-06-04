@@ -296,9 +296,12 @@
 
       const roleSlots = Math.max(1, slots.filter(s => s.role === slot.role).length);
       const spec = unitSpec(chosen);
-      // COUNTS from the calibrated density law: total stems for this role across the
-      // covered arc, split over its slots; placed units add the cut-into-sprigs factor.
-      const roleStems = Math.max(roleSlots, Math.round((STEM_DENSITY[slot.role] || 0.12) * coveredLen));
+      // COUNTS from the calibrated density law. Greenery/structural form a near-full
+      // base spine (≥80% of the ring), while blooms stay within the floral arc — the
+      // skill's "greenery runs the full arc, blooms concentrate" rule.
+      const isBase = (slot.role === 'greenery' || slot.role === 'structural');
+      const lenForRole = Math.PI * diam * (isBase ? (coverage >= 1 ? 1 : Math.max(coverage, 0.80)) : coverage);
+      const roleStems = Math.max(roleSlots, Math.round((STEM_DENSITY[slot.role] || 0.12) * lenForRole));
       const stemCount = Math.max(1, Math.round(roleStems / roleSlots));               // stems to BUY for this slot
       let floralUnits = Math.max(1, Math.min(14, stemCount * (PLACE_YIELD[slot.role] || 1))); // units to PLACE
       // rule of odds: bloom clusters read more natural at 3 / 5 / 7
@@ -330,7 +333,7 @@
   // outer edge, focal/secondary on the work radius, base/structural tucked inner.
   const ROLE_BAND   = { greenery:0.80, structural:0.66, focal:0.78, secondary:0.77, bridge:0.72, accent:0.90, texture:0.74, filler:0.73 };
   const ROLE_Z      = { structural:2, greenery:4, bridge:5, secondary:6, texture:7, focal:8, accent:9, filler:6 };                          // paint / stacking order
-  const ROLE_SPREAD = { greenery:15, structural:13, focal:8,  secondary:12, bridge:12, accent:17, texture:17, filler:19 };                  // cluster tightness (deg)
+  const ROLE_SPREAD = { greenery:15, structural:13, focal:22, secondary:18, bridge:16, accent:17, texture:17, filler:19 };                  // cluster tightness (deg) — focal/secondary spread per skill (~18–28°)
   const BEH_SIZE    = { heavy:1.25, mid:1, light:0.82, wispy:0.64 };
 
   function placeSlots(filledSlots, formula, opts) {
@@ -353,6 +356,15 @@
     const geom = wreathRadii(wreathDiam);                         // real-inch radii for this size
     // directional stem lean (rhythm): clockwise / counterclockwise / balanced
     const flowBias = opts.flow === 'clockwise' ? 8 : opts.flow === 'counterclockwise' ? -8 : 0;
+
+    // Greenery/structural form a near-full base spine (≥80% of the ring); blooms
+    // stay in the floral arc. The bare "breathing point" sits opposite the mass.
+    const greenerySpan = full ? 360 : Math.max(span, 360 * 0.80);
+    const gapSpan = 360 - greenerySpan;
+    const gapCenter = (((anchorDeg + 180) % 360) + 360) % 360;
+    const greeneryStart = gapCenter + gapSpan / 2;
+    const baseSlotCount = Math.max(1, slots.filter(sl => sl.role === 'greenery' || sl.role === 'structural').length);
+    let baseSeen = 0;
 
     const units = [];
     let focalIdx = 0;
@@ -401,9 +413,23 @@
       sizeFrac = Math.max(0.045, Math.min(0.32, sizeFrac));
       const z = ROLE_Z[role] || 6;
       const wfac = Math.min(2.2, 0.6 + unitCount * 0.18); // more units → wider cluster
+      const isBaseSpine = !full && (role === 'greenery' || role === 'structural');
+      const isCluster   = !full && (role === 'focal' || role === 'secondary' || role === 'bridge');
+      const baseOrder = isBaseSpine ? baseSeen++ : 0;
 
       for (let u = 0; u < unitCount; u++) {
-        const deg = centerDeg + (seeded(si * 97 + u * 13 + 1) - 0.5) * spreadDeg * wfac;
+        let deg;
+        if (isBaseSpine) {
+          // spread evenly across the wide greenery arc (phase-shifted per base slot)
+          deg = greeneryStart + greenerySpan * ((u + (baseOrder + 0.5) / baseSlotCount) / unitCount)
+                + (seeded(si * 97 + u * 13 + 1) - 0.5) * 6;
+        } else if (isCluster) {
+          // deterministic fan so a cluster of N always spreads (no stacking)
+          const fan = unitCount > 1 ? ((u / (unitCount - 1)) - 0.5) * spreadDeg * wfac : 0;
+          deg = centerDeg + fan + (seeded(si * 97 + u * 13 + 1) - 0.5) * spreadDeg * 0.35;
+        } else {
+          deg = centerDeg + (seeded(si * 97 + u * 13 + 1) - 0.5) * spreadDeg * wfac;
+        }
         const r   = Math.max(0.58, Math.min(0.98, band + (seeded(si * 53 + u * 29 + 7) - 0.5) * 0.12));
         const rad = (deg - 90) * Math.PI / 180;
         const rOuterFrac = geom.rOuter; // r is a fraction of outer; multiply for real inches
@@ -427,9 +453,99 @@
     });
 
     units.sort((a, b) => a.z - b.z); // paint base layers first
-    // the intentional bare ring (exposed vine), where florals deliberately stop
-    const exposed = full ? null : { start: ((arc.e % 360) + 360) % 360, end: ((s % 360) + 360) % 360, span: 360 - span };
+    // the intentional bare ring (exposed vine) — the breathing point opposite the mass
+    const exposed = full ? null : {
+      start: Math.round(((((gapCenter - gapSpan / 2) % 360) + 360) % 360)),
+      end:   Math.round(((((gapCenter + gapSpan / 2) % 360) + 360) % 360)),
+      span:  Math.round(gapSpan),
+    };
     return { units, arc: { s, e: arc.e, span, full }, exposed, anchorDeg, counterDeg, geometry: geom };
+  }
+
+  // ── THE BLUEPRINT COMPILER (deterministic) ──────────────────────────────────
+  // runSlotFill + placeSlots → a complete, reproducible build document: the JSON
+  // blueprint, per-layer placement table (real inches + clock + stem angle),
+  // cluster summary, stem proportions, build order, and the structured facts the
+  // Stylist agent turns into prose + a Midjourney prompt. No language here.
+  const ROLE_LAYER  = { structural: 'base', greenery: 'base', focal: 'focal', secondary: 'support', bridge: 'support', texture: 'filler', filler: 'filler', accent: 'accent' };
+  const LAYER_ORDER = ['base', 'support', 'focal', 'filler', 'accent'];
+  const LAYER_LABEL = { base: 'Base foliage', support: 'Supporting florals', focal: 'Focal florals', filler: 'Fillers', accent: 'Accents' };
+  function _meanAngle(degs) {
+    let x = 0, y = 0; degs.forEach(d => { const r = d * Math.PI / 180; x += Math.cos(r); y += Math.sin(r); });
+    return ((Math.atan2(y, x) * 180 / Math.PI) + 360) % 360;
+  }
+
+  function compileBlueprint(filledSlots, formula, opts) {
+    opts = opts || {};
+    const diam = (+opts.wreathDiam > 0) ? +opts.wreathDiam : 22;
+    const slots = (filledSlots || []).filter(s => s && s.item);
+    const seasonObj = opts.season ? seasonFor(opts.season) : null;
+    const flow = opts.flow || (seasonObj && seasonObj.flow) || 'balanced';
+    const placed = placeSlots(slots, formula, { wreathDiam: diam, flow });
+    const geom = placed.geometry;
+    const emotions = Array.isArray(opts.emotions) ? opts.emotions : (opts.emotions ? [opts.emotions] : []);
+    const dp = emotions.length ? deriveDesignParams(emotions) : null;
+
+    const bySlot = {};
+    placed.units.forEach(u => { (bySlot[u.slotIndex] = bySlot[u.slotIndex] || []).push(u); });
+
+    // cluster summary (focal first, then supporting)
+    const clusters = [];
+    slots.forEach((sl, i) => {
+      if (sl.role !== 'focal' && sl.role !== 'secondary') return;
+      const us = bySlot[i] || []; if (!us.length) return;
+      const degs = us.map(u => u.deg);
+      const center = _meanAngle(degs);
+      clusters.push({ role: sl.role, element: (sl.item && sl.item.name) || '', count: us.length,
+        r: Math.round((us.reduce((a, u) => a + u.rIn, 0) / us.length) * 100) / 100,
+        theta: Math.round(center), clock: degToClock(center),
+        spread_deg: Math.max(0, Math.round(Math.max(...degs) - Math.min(...degs))), bloom_in: sl.bloomSize });
+    });
+    clusters.sort((a, b) => (a.role === 'focal' ? 0 : 1) - (b.role === 'focal' ? 0 : 1));
+    clusters.forEach((c, i) => { c.id = (c.role === 'focal' ? 'F' : 'S') + (i + 1); });
+
+    // placement table, ordered by build layer then angle
+    const rows = placed.units.map(u => ({
+      element: (slots[u.slotIndex] && slots[u.slotIndex].item) ? slots[u.slotIndex].item.name : u.role,
+      role: u.role, layer: ROLE_LAYER[u.role] || 'filler',
+      r: u.rIn, theta: Math.round(u.deg), clock: u.clock, stem_angle: u.stemAngle }));
+    rows.sort((a, b) => (LAYER_ORDER.indexOf(a.layer) - LAYER_ORDER.indexOf(b.layer)) || (a.theta - b.theta));
+    rows.forEach((r, i) => { r.n = i + 1; });
+
+    const total = placed.units.length;
+    const byLayer = {}; placed.units.forEach(u => { const L = ROLE_LAYER[u.role] || 'filler'; byLayer[L] = (byLayer[L] || 0) + 1; });
+    const stemsTotal = slots.reduce((a, s) => a + (s.stemCount || 0), 0);
+    const proportions = LAYER_ORDER.map(L => ({ layer: LAYER_LABEL[L], units: byLayer[L] || 0, share: total ? Math.round((byLayer[L] || 0) / total * 100) : 0 }));
+    const coverage = placed.arc.full ? 1 : Math.round(placed.arc.span / 360 * 100) / 100;
+
+    const id = 'EC-' + String(formula || '').replace(/[^A-Za-z]/g, '').slice(0, 3).toUpperCase() + diam + '-' +
+               Math.random().toString(36).slice(2, 6).toUpperCase();
+
+    const blueprint = {
+      blueprint_id: id, schema: 'EC_CANON_v1', wreath_size_in: diam,
+      base: { type: (seasonObj && seasonObj.base) || 'grapevine', r_outer: geom.rOuter, r_inner: geom.rInner,
+        base_width: geom.baseWidth, exposed_vine_arc_deg: placed.exposed ? [placed.exposed.start, placed.exposed.end] : null },
+      composition: { formula, coverage, flow },
+      emotion_profile: dp ? { valence: dp.valence, arousal: dp.arousal, quadrant: dp.quadrant, emotions } : { emotions },
+      focal_clusters: clusters,
+      layers: LAYER_ORDER.map(L => LAYER_LABEL[L]),
+    };
+
+    return {
+      blueprint, geometry: geom, exposed: placed.exposed, clusters, placement: rows, proportions,
+      counts: { units: total, stems: stemsTotal, byLayer }, buildOrder: CONSTRUCTION.buildSequence.slice(),
+      season: seasonObj, designParams: dp, flow,
+      // structured facts for the Stylist agent (prose + Midjourney prompt)
+      renderFacts: {
+        size_in: diam, formula, coverage, quadrant: dp && dp.quadrant, emotions, season: opts.season || null,
+        palette: seasonObj ? seasonObj.palette : null, base: (seasonObj && seasonObj.base) || 'grapevine',
+        exposed_arc_deg: placed.exposed ? [placed.exposed.start, placed.exposed.end] : null,
+        focal_clusters: clusters.map(c => `${c.count}× ${c.element} at ${c.clock}`),
+        elements_by_clock: rows.filter(r => r.layer === 'focal' || r.layer === 'support' || r.layer === 'accent')
+          .map(r => `${r.element} (${r.layer}) at ${r.clock}`),
+        greenery: rows.filter(r => r.layer === 'base').map(r => r.element).filter((v, i, a) => a.indexOf(v) === i),
+      },
+    };
   }
 
   // ── THE EMOTION BRIDGE (single source of truth) ─────────────────────────────
@@ -518,5 +634,5 @@
   return { EC_CANON: 'v1', VOCAB, EMOTION_VA, normalizeTag, unitSpec, BUDGET, ZS, BU,
            SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill, STEM_DENSITY, PLACE_YIELD, coverageFor,
            ROLE_BAND, ROLE_Z, placeSlots, quadrantFor, emotionToVA, deriveDesignParams, suggestFormula,
-           WREATH_SIZES, wreathRadii, toOdd, degToClock, SEASONS, seasonFor, CONSTRUCTION };
+           WREATH_SIZES, wreathRadii, toOdd, degToClock, SEASONS, seasonFor, CONSTRUCTION, compileBlueprint };
 });

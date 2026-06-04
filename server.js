@@ -530,6 +530,62 @@ app.post('/api/blueprint', (req, res) => {
   }
 });
 
+// ── The Stylist agent — the Prompt-Compiler skill, verbatim, as a system prompt ─
+// Language ONLY. The geometry/counts are already fixed by the deterministic
+// compiler; the agent never invents coordinates — it dresses them in words.
+const STYLIST_SYSTEM = `You are the Evercrafted Stylist. You receive a FINISHED, deterministic wreath blueprint as structured facts (formula, season, palette, focal clusters by clock position, exposed vine arc, elements). You ONLY write language — you must NOT invent or change any coordinate, count, clock position, or element. Use exactly what you are given.
+
+Produce a HIGH-END FAUX BOTANICAL render (never fresh florals).
+MATERIALS: silk florals, latex-coated petals, wired stems, fabric leaves with visible vein structure, subtle artificial construction (stem joins, wrapped bases).
+SURFACES: matte petals (no moisture/dew), slightly uniform petal edges, semi-gloss foliage with controlled sheen, no fresh-flower translucency.
+CONSTRUCTION CUES: stems inserted into a grapevine base (visible integration), intentional editorial placement (not wild-grown).
+LIGHTING: soft directional daylight (12–2pm), studio-quality shadows, no outdoor garden light.
+ENVIRONMENT: neutral luxury interior (plaster wall, paneled entry, or door setting), no garden/outdoor.
+LENS: 85mm editorial photography, shallow but controlled depth of field.
+STYLE TAGS: luxury editorial, high-end catalog photography, restoration hardware aesthetic, composed and intentional, premium faux botanical.
+The midjourney_prompt MUST end with this suffix exactly: --style raw --s 150 --q 2 --v 7 --no fresh flowers, dew, water droplets, wild garden, outdoor setting, hyper-natural imperfections, floral field styling
+
+Return ONLY strict JSON, no markdown:
+{
+  "title": "evocative 2-4 word design name",
+  "emotional_tone": "1-2 sentences on the feeling this design carries",
+  "manufacturing_notes": "2-4 concise build notes referencing the given clusters/exposed arc (mass balance, depth, protect the bare arc, attachment)",
+  "midjourney_prompt": "full v7 prompt naming the given florals by their given clock positions, the greenery sweep, the exposed vine arc, ending with the required suffix"
+}`;
+
+// ── POST /api/blueprint-doc — engine → compiler → Stylist agent ────────────────
+// The full build document: deterministic geometry from the engine, language from
+// the Stylist. Accepts the maker's live inventory; falls back to demo inventory.
+app.post('/api/blueprint-doc', async (req, res) => {
+  try {
+    const b = req.body || {};
+    const emotions = Array.isArray(b.emotions) ? b.emotions : [];
+    if (!emotions.length) return res.status(400).json({ success: false, error: 'emotions array is required' });
+
+    const bridge = EC.deriveDesignParams(emotions);
+    const formula = (b.formula && EC.FORMULA_ARCS[b.formula]) ? b.formula : bridge.formula;
+    const diam = +b.diameter > 0 ? +b.diameter : 24;
+    const intensity = Math.min(3, Math.max(1, parseInt(b.intensity) || 2));
+    const inv = (Array.isArray(b.inventory) && b.inventory.length) ? b.inventory : INVENTORY;
+    const cov = (+b.coverage > 0 && +b.coverage <= 1) ? +b.coverage : undefined;
+
+    const slots = EC.runSlotFill(inv, emotions, formula, intensity, b.poem_emotions || {}, diam, cov);
+    const doc = EC.compileBlueprint(slots, formula, { wreathDiam: diam, season: b.season, emotions });
+
+    // Stylist agent — language only; resilient if the model call fails.
+    try {
+      const raw = await callClaude({ system: STYLIST_SYSTEM, prompt: JSON.stringify(doc.renderFacts), maxTokens: 900 });
+      doc.stylist = parseJSON(raw);
+    } catch (e) {
+      doc.stylist = { error: 'stylist unavailable', detail: e.message };
+    }
+    return res.json({ success: true, data: doc });
+  } catch (err) {
+    console.error('[/api/blueprint-doc]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ── SHOP DATA (loaded once at startup) ───────────────────────────────────────
 const SHOP_DATA = JSON.parse(fs.readFileSync('./evercrafted-shop-data.json', 'utf8'));
 
