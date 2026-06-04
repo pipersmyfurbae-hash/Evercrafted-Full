@@ -801,6 +801,7 @@ app.patch('/api/inventory/:id', async (req, res) => {
     const patch = {};
     if (req.body.stock !== undefined)   patch.stock = Math.max(0, parseInt(req.body.stock) || 0);
     if (req.body.inStock !== undefined) patch.in_stock = !!req.body.inStock;
+    if (typeof req.body.assetPrompt === 'string') patch.asset_prompt = req.body.assetPrompt.slice(0, 500);
     if (!Object.keys(patch).length) return res.status(400).json({ success: false, error: 'nothing to update' });
 
     if (supabase) {
@@ -812,8 +813,9 @@ app.patch('/api/inventory/:id', async (req, res) => {
     try { list = JSON.parse(fs.readFileSync(INVENTORY_PATH, 'utf8')); } catch {}
     const idx = list.findIndex(x => x.id === id);
     if (idx < 0) return res.status(404).json({ success: false, error: 'not found' });
-    if ('stock' in patch)    list[idx].stock = patch.stock;
-    if ('in_stock' in patch) list[idx].inStock = patch.in_stock;
+    if ('stock' in patch)        list[idx].stock = patch.stock;
+    if ('in_stock' in patch)     list[idx].inStock = patch.in_stock;
+    if ('asset_prompt' in patch) list[idx].assetPrompt = patch.asset_prompt;
     fs.writeFileSync(INVENTORY_PATH, JSON.stringify(list, null, 2));
     return res.json({ success: true, data: list[idx] });
   } catch (err) {

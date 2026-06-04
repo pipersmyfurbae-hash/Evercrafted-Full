@@ -504,7 +504,10 @@ function openDrawer(id) {
       <div id="cutout-box" style="display:flex;align-items:center;gap:.6rem">
         ${item.assetUrl?`<img src="${item.assetUrl}" alt="" onclick="showZoom(this.src)" style="width:130px;height:130px;${CUTOUT_IMG}">`:'<span style="font-size:11px;color:var(--fa)">No cutout yet — shown as a styled shape in Build View.</span>'}
       </div>
-      <div style="display:flex;gap:.4rem;margin-top:.55rem;flex-wrap:wrap">
+      <label style="display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);font-weight:600;margin:.7rem 0 .3rem">Asset prompt — edit to fine-tune what "Generate sprig" makes</label>
+      <textarea id="asset-prompt" placeholder="A single isolated high-end luxury silk … bloom head, no stem, … overhead flat-lay, studio lighting, pure white background" style="width:100%;min-height:70px;padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--s2);font-family:var(--sans);font-size:11px;line-height:1.5;color:var(--tx);outline:none;resize:vertical">${(item.assetPrompt||'').replace(/</g,'&lt;')}</textarea>
+      <div style="display:flex;gap:.4rem;margin-top:.5rem;flex-wrap:wrap">
+        <button class="da-btn" onclick="savePrompt()">Save prompt</button>
         <button class="da-btn" onclick="makeCutout('photo')">From photo</button>
         <button class="da-btn" onclick="makeCutout('generate')">Generate sprig</button>
       </div>
@@ -614,6 +617,21 @@ function showZoom(src) {
 }
 const CUTOUT_IMG = 'object-fit:contain;border:1px solid var(--bd);border-radius:8px;cursor:zoom-in;background:repeating-conic-gradient(#ececec 0% 25%, #fff 0% 50%) 50% / 14px 14px';
 
+async function savePrompt() {
+  if (!activeItem) return;
+  const val = (document.getElementById('asset-prompt').value || '').trim();
+  const msg = document.getElementById('cutout-msg');
+  msg.textContent = 'Saving prompt…';
+  try {
+    const r = await fetch(`${CONFIG.apiBase}/api/inventory/${activeItem.id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ assetPrompt: val }) });
+    const j = await r.json();
+    if (!j.success) throw new Error(j.error || 'save failed');
+    activeItem.assetPrompt = val;
+    const inv = inventory.find(x => x.id === activeItem.id); if (inv) inv.assetPrompt = val;
+    msg.textContent = '✓ Prompt saved.';
+  } catch (e) { msg.textContent = 'Save failed: ' + e.message; }
+}
+
 let pendingCutout = null;
 async function makeCutout(mode) {
   if (!activeItem) return;
@@ -622,8 +640,10 @@ async function makeCutout(mode) {
   pendingCutout = null;
   msg.textContent = mode === 'generate' ? 'Generating a single sprig… (~15s)' : 'Cutting out from the photo…';
   try {
+    const promptEl = document.getElementById('asset-prompt');
+    const livePrompt = promptEl ? promptEl.value.trim() : (item.assetPrompt || '');
     const body = mode === 'generate'
-      ? { assetPrompt: item.assetPrompt, name: item.name, colorName: item.colorName, color: item.color, unit: item.unit }
+      ? { assetPrompt: livePrompt, name: item.name, colorName: item.colorName, color: item.color, unit: item.unit }
       : { sourceImageUrl: item.imageDataUrl };
     const aRes = await fetch(`${CONFIG.apiBase}/api/asset`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
     const aJson = await aRes.json();
