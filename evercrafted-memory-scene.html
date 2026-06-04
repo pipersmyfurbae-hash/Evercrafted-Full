@@ -530,6 +530,9 @@ const INVENTORY = [
   {id:'INV-020',name:'Champagne Berry Cluster',color:'#d4c090',role:'accent',pass:2,ep:'hope',es:'joy',blend:'',behavior:'wispy',movement:'still',finish:'metallic',palette:'champagne',contrast:'unified',intensity:[1,2]},
 ];
 
+// The pool the blueprint designs from — replaced by the maker's saved inventory when available
+let ACTIVE_INVENTORY = INVENTORY;
+
 const SLOT_TEMPLATES = {
   'Crescent':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'},{role:'texture',tier:'Texture'}],
   'Side Sweep':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
@@ -577,7 +580,7 @@ function runSlotFill(emotions, formula, intensity, poemEmotions) {
     if (!usedPerTier[tier]) usedPerTier[tier] = { archetypes: new Set(), emotions: new Set(), finishes: new Set() };
     const u = usedPerTier[tier];
     const pass = (slot.role === 'structural' || slot.role === 'focal') ? 1 : 2;
-    const candidates = INVENTORY.filter(i => {
+    const candidates = ACTIVE_INVENTORY.filter(i => {
       if (i.role !== slot.role) return false;
       if (i.intensity[0] > intensity + 1 || i.intensity[1] < Math.max(1, intensity - 1)) return false;
       return true;
@@ -997,6 +1000,79 @@ function renderBlueprint(r) {
   const total = filledSlots.filter(s => s.item).reduce((a, b) => a + b.stemCount, 0);
   const totEl = document.getElementById('total-stems');
   if (totEl) totEl.textContent = total;
+
+  // Suggest shop pieces for any roles the maker's inventory can't fill
+  renderGapSuggestions(filledSlots, formula, emotions, poemEmotions);
+}
+
+// Load the maker's saved inventory; if they have any, the blueprint designs from it
+async function loadUserInventory() {
+  try {
+    const res = await fetch(`${CONFIG.apiBase}/api/inventory`);
+    const json = await res.json();
+    const items = (json && json.success) ? (json.data || []) : [];
+    if (items.length) {
+      ACTIVE_INVENTORY = items.map(i => ({
+        id: i.id, name: i.name, color: i.colorHex || '#cccccc',
+        role: i.role, pass: i.pass, ep: i.ep, es: i.es || '', blend: '',
+        behavior: i.behavior, movement: i.movement, finish: i.finish,
+        palette: i.palette, contrast: 'unified',
+        intensity: Array.isArray(i.intensity) ? i.intensity : [1, 2],
+      }));
+      console.log(`Designing from your inventory: ${ACTIVE_INVENTORY.length} pieces`);
+    }
+  } catch (e) { /* keep demo inventory */ }
+}
+
+// For any slot the inventory can't fill, suggest shop pieces that fit the composition
+async function renderGapSuggestions(filledSlots, formula, emotions, poemEmotions) {
+  let wrap = document.getElementById('gap-suggestions');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'gap-suggestions';
+    wrap.style.cssText = 'max-width:1100px;margin:1.5rem auto 0;padding:0 1.25rem';
+    const out = document.getElementById('output-view');
+    if (out) out.appendChild(wrap);
+  }
+  wrap.innerHTML = '';
+  const gaps = filledSlots.filter(s => !s.item);
+  if (!gaps.length) return;
+  try {
+    const body = {
+      formula, emotions, poemEmotions,
+      filledSlots: filledSlots.map(s => ({
+        role: s.role, tier: s.tier,
+        item: s.item ? { id: s.item.id, movement: s.item.movement, finish: s.item.finish, ep: s.item.ep, es: s.item.es, palette: s.item.palette } : null,
+      })),
+    };
+    const res = await fetch(`${CONFIG.apiBase}/api/gaps`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+    const json = await res.json();
+    if (!json.success || !json.data || !(json.data.gaps || []).length) return;
+    let html = `<div style="border-top:1px solid var(--bd);padding-top:1.25rem">
+      <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.25rem">Complete your design</div>
+      <div style="font-family:var(--serif,'Cormorant Garamond',serif);font-size:1.35rem;margin-bottom:1rem;color:var(--tx)">Pieces this design calls for that aren't in your inventory yet</div>`;
+    json.data.gaps.forEach(g => {
+      html += `<div style="margin-bottom:1.1rem">
+        <div style="font-size:11px;color:var(--mu);margin-bottom:.5rem">For the <strong>${g.slot.role}</strong> in the ${g.slot.tier} layer</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:.75rem">`;
+      (g.suggestions || []).forEach(s => {
+        const img = s.imageUrl
+          ? `<div style="height:120px;background:#f3efe9"><img src="${s.imageUrl}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'"></div>`
+          : `<div style="height:120px;background:${s.colorHex || '#e4ddd3'}"></div>`;
+        html += `<div style="border:1px solid var(--bd);border-radius:var(--rsm);overflow:hidden;background:var(--s2)">
+          ${img}
+          <div style="padding:.6rem .7rem">
+            <div style="font-size:12px;font-weight:600;color:var(--tx);line-height:1.2;margin-bottom:.3rem">${s.name || ''}</div>
+            <div style="font-size:10px;color:var(--mu);line-height:1.45;margin-bottom:.4rem">${s.reason || ''}</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--fa)"><span>${s.price ? '$' + s.price : ''}</span><span>${s.colorName || ''}</span></div>
+          </div>
+        </div>`;
+      });
+      html += `</div></div>`;
+    });
+    html += `</div>`;
+    wrap.innerHTML = html;
+  } catch (e) { /* silent — suggestions are optional */ }
 }
 
 function copyPrompt() {
@@ -1021,6 +1097,7 @@ function resetAll() {
 
 // Start
 renderStep();
+loadUserInventory();
 </script>
 </body>
 </html>
