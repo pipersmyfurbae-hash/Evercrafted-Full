@@ -219,6 +219,21 @@ function parseDataUrl(img) {
   return { media_type: 'image/jpeg', data: (img || '').replace(/^data:[^,]*,/, '') };
 }
 
+// Many catalogue URLs are tiny CDN thumbnails (e.g. ?width=300&height=325).
+// Rewrite the size params to request a large render so cutouts aren't grainy.
+function hiResImageUrl(url, size = 1600) {
+  try {
+    if (!/^https?:\/\//i.test(url)) return url;
+    const u = new URL(url);
+    let changed = false;
+    for (const k of ['width', 'height', 'w', 'h', 'maxwidth', 'maxheight']) {
+      if (u.searchParams.has(k)) { u.searchParams.set(k, String(size)); changed = true; }
+    }
+    if (u.searchParams.has('canvas')) { u.searchParams.set('canvas', `${size},${size}`); changed = true; }
+    return changed ? u.toString() : url;
+  } catch (e) { return url; }
+}
+
 const TAG_SCHEMA_GUIDE = `You are tagging a single faux botanical product for the Evercrafted wreath design engine. Read the name, description, and photo (if given) and assign each field from the exact vocabulary below.
 
 ROLE — the job this piece does in a wreath:
@@ -258,7 +273,7 @@ app.post('/api/tag', async (req, res) => {
         description = sanitizeInput(item.description);
         if (item.imageUrl && !image) {
           try {
-            const ir = await fetch(item.imageUrl);
+            const ir = await fetch(hiResImageUrl(item.imageUrl));
             const ct = ir.headers.get('content-type') || 'image/jpeg';
             image = `data:${ct};base64,${Buffer.from(await ir.arrayBuffer()).toString('base64')}`;
           } catch (e) { /* tag from text only if the image can't be fetched */ }
@@ -997,11 +1012,12 @@ app.post('/api/asset', async (req, res) => {
 
     // ── From an existing photo: proper ML background removal when fal is available ──
     if (sourceImageUrl) {
+      const hi = hiResImageUrl(sourceImageUrl);
       if (hasFal) {
-        try { return res.json({ success: true, image: await falRemoveBg(sourceImageUrl), transparent: true }); }
+        try { return res.json({ success: true, image: await falRemoveBg(hi), transparent: true }); }
         catch (e) { /* fall back to raw image for client-side removal */ }
       }
-      const ir = await fetch(sourceImageUrl);
+      const ir = await fetch(hi);
       if (!ir.ok) throw new Error('could not fetch source image');
       const ct = ir.headers.get('content-type') || 'image/png';
       const buf = Buffer.from(await ir.arrayBuffer());
