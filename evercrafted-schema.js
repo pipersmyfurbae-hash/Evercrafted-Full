@@ -127,6 +127,95 @@
     return span >= 359 ? 1 : Math.max(0.25, Math.min(0.72, span / 360));
   }
 
+  // ── Real-world geometry, from the wreath-fundamentals skill ──────────────────
+  // Nominal size = outer diameter (inches). Radii reproduce the skill's tables so
+  // blueprints come out in real inches (a 24" gives r_work = 9.75", r_outer = 12").
+  const WREATH_SIZES = {
+    12: { rOuter: 6,  rInner: 3.5 },
+    18: { rOuter: 9,  rInner: 5.5 },
+    22: { rOuter: 11, rInner: 6.75 },
+    24: { rOuter: 12, rInner: 7.5 },
+  };
+  function wreathRadii(diam) {
+    diam = (+diam > 0) ? +diam : 22;
+    let rOuter, rInner;
+    if (WREATH_SIZES[diam]) { rOuter = WREATH_SIZES[diam].rOuter; rInner = WREATH_SIZES[diam].rInner; }
+    else { rOuter = diam / 2; rInner = Math.max(2, rOuter - diam * 0.1875); }
+    const baseWidth = rOuter - rInner;
+    return { diam, rOuter, rInner, baseWidth,
+             rWork: (rOuter + rInner) / 2,                 // default placement radius
+             rAccent: rOuter - baseWidth * 0.12,           // protruding / outer
+             rBase: rInner + baseWidth * 0.22 };           // tucked / inner
+  }
+
+  // Rule of odds — snap a cluster's bloom count to an odd number (3, 5, 7…).
+  function toOdd(n) { n = Math.max(1, Math.round(n)); return n % 2 ? n : (n - 1 >= 1 ? n - 1 : n + 1); }
+  // θ (clockwise from 12) → "h:mm" clock position.
+  function degToClock(deg) {
+    const t = (((+deg % 360) + 360) % 360) / 360 * 720;     // minutes on a 12h face
+    let h = Math.floor(t / 60) % 12; if (h === 0) h = 12;
+    const m = Math.round(t % 60);
+    return m === 60 ? `${(h % 12) + 1}:00` : `${h}:${String(m).padStart(2, '0')}`;
+  }
+
+  // ── Seasonal styles (from the seasonal-styles skill) — selection + Stylist ───
+  const SEASONS = {
+    spring:     { palette: ['blush', 'lavender', 'mint', 'butter yellow', 'white'], base: 'grapevine',
+                  elements: ['ranunculus', 'peony', 'tulip', 'daffodil', 'pussy willow', "lamb's ear", 'moss'],
+                  focalAngles: [60, 180, 300], flow: 'clockwise',
+                  note: 'Abundant but light. Keep outer elements loose and slightly protruding to suggest growth; avoid dense packing.' },
+    summer:     { palette: ['coral', 'fuchsia', 'sunshine yellow', 'bright white', 'tropical green'], base: 'grapevine',
+                  elements: ['sunflower', 'zinnia', 'dahlia', 'black-eyed susan', 'lavender', 'rosemary'],
+                  focalAngles: [60, 180, 300], flow: 'balanced',
+                  note: 'Bold high-contrast combinations. More is more; face focal blooms outward for impact.' },
+    fall:       { palette: ['burnt orange', 'rust', 'deep burgundy', 'mustard', 'chocolate brown'], base: 'grapevine',
+                  elements: ['wheat', 'mini pumpkin', 'maple leaf', 'acorn', 'pine cone', 'mum', 'marigold', 'cinnamon stick'],
+                  focalAngles: [45, 135, 225, 315], flow: 'balanced',
+                  note: 'Texture variety is key — combine smooth, rough, soft and linear. Or mass on the bottom half for a crescent.' },
+    winter:     { palette: ['deep green', 'red', 'gold', 'silver', 'frosted white', 'champagne'], base: 'pine',
+                  elements: ['holly berry', 'magnolia leaf', 'ornament', 'cinnamon stick', 'star anise', 'dried orange', 'pine cone'],
+                  focalAngles: [180], flow: 'counterclockwise',
+                  note: 'Carries the most visual weight. Use outer/protruding placements freely.' },
+    valentines: { palette: ['red', 'pink', 'blush', 'white', 'deep burgundy'], base: 'grapevine',
+                  elements: ['rose', 'peony', 'ranunculus', "baby's breath"],
+                  focalAngles: [180], flow: 'balanced',
+                  note: 'Keep it simple — 3 focal roses + filler. Overloading loses the romantic softness.' },
+    easter:     { palette: ['pastel pink', 'pastel blue', 'pastel yellow', 'pastel green'], base: 'grapevine',
+                  elements: ['speckled egg', 'tulip', 'forsythia'],
+                  focalAngles: [45, 135, 225, 315], flow: 'balanced',
+                  note: 'Optional color zoning — one pastel hue per quadrant for a modern rainbow effect.' },
+  };
+
+  // ── Construction (from the construction skill) — feeds the build guide ────────
+  const CONSTRUCTION = {
+    buildSequence: ['Base prep — clean, shape, add hanging loop',
+                    'Greenery layer — fill gaps, establish base texture',
+                    'Filler / secondary elements — medium, distributed evenly',
+                    'Focal flowers — largest, placed last for visibility',
+                    'Accents — berries, cones, small ornaments',
+                    'Finishing — check from a distance, fill thin spots, secure ends'],
+    insertionDepthIn: 1.5,
+    stemAngleNote: 'Insert toward wreath center (θ + 180°) at a slight inward angle.',
+    attachment: { // by element kind → method
+      bloom: 'Direct insertion into base; 1.5" minimum depth, wired stem reinforced at the vine join',
+      sprig: 'Direct insertion, counterclockwise lean to follow flow',
+      cluster: 'Floral pick wrapped with tape, inserted center-pointing',
+      heavy: 'Floral wire (22–24 gauge) looped through base and twisted behind',
+      dried: 'Dip stem end in white glue, dry 10 min, then insert (prevents crumbling)',
+    },
+    fixes: { flat: 'Vary r values — some at r_inner, some at r_outer',
+             bare: 'Add filler greenery to fill gaps LAST',
+             lopsided: 'Counterbalance a heavy cluster with another ~180° opposite',
+             falling: 'Re-insert deeper at an inward angle; add wire backup' },
+  };
+
+  function seasonFor(input) {
+    const s = String(input || '').toLowerCase();
+    return SEASONS[s] || (s.includes('spring') ? SEASONS.spring : s.includes('summer') ? SEASONS.summer
+      : s.includes('fall') || s.includes('autumn') ? SEASONS.fall : s.includes('winter') || s.includes('christmas') ? SEASONS.winter
+      : s.includes('valentine') ? SEASONS.valentines : s.includes('easter') ? SEASONS.easter : null);
+  }
+
   const SLOT_TEMPLATES = {
     'Crescent':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'},{role:'texture',tier:'Texture'}],
     'Side Sweep':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
@@ -211,7 +300,9 @@
       // covered arc, split over its slots; placed units add the cut-into-sprigs factor.
       const roleStems = Math.max(roleSlots, Math.round((STEM_DENSITY[slot.role] || 0.12) * coveredLen));
       const stemCount = Math.max(1, Math.round(roleStems / roleSlots));               // stems to BUY for this slot
-      const floralUnits = Math.max(1, Math.min(14, stemCount * (PLACE_YIELD[slot.role] || 1))); // units to PLACE
+      let floralUnits = Math.max(1, Math.min(14, stemCount * (PLACE_YIELD[slot.role] || 1))); // units to PLACE
+      // rule of odds: bloom clusters read more natural at 3 / 5 / 7
+      if (slot.role === 'focal' || slot.role === 'secondary') floralUnits = toOdd(floralUnits);
       filled.push({ ...slot, item: chosen, floralUnits, stemCount, bloomSize: spec.bloomSize, yield: spec.yield, unit: spec.unit });
     }
     return filled;
@@ -259,6 +350,9 @@
     const roleTotal = {}, roleSeen = {};
     slots.forEach(sl => { roleTotal[sl.role] = (roleTotal[sl.role] || 0) + 1; });
     const seeded = n => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+    const geom = wreathRadii(wreathDiam);                         // real-inch radii for this size
+    // directional stem lean (rhythm): clockwise / counterclockwise / balanced
+    const flowBias = opts.flow === 'clockwise' ? 8 : opts.flow === 'counterclockwise' ? -8 : 0;
 
     const units = [];
     let focalIdx = 0;
@@ -312,10 +406,14 @@
         const deg = centerDeg + (seeded(si * 97 + u * 13 + 1) - 0.5) * spreadDeg * wfac;
         const r   = Math.max(0.58, Math.min(0.98, band + (seeded(si * 53 + u * 29 + 7) - 0.5) * 0.12));
         const rad = (deg - 90) * Math.PI / 180;
+        const rOuterFrac = geom.rOuter; // r is a fraction of outer; multiply for real inches
         units.push({
           slotIndex: si, role, z, deg, r,
           x: Math.cos(rad) * r, y: Math.sin(rad) * r,
-          sizeFrac, rot: (seeded(si * 31 + u * 7) - 0.5) * 28,
+          rIn: Math.round(r * rOuterFrac * 100) / 100,           // real-inch radial distance
+          clock: degToClock(deg),                                // "h:mm" position
+          stemAngle: Math.round((deg + 180) % 360),              // insert toward centre (θ+180)
+          sizeFrac, rot: (seeded(si * 31 + u * 7) - 0.5) * 28 + flowBias,
           name:      (sl.item && sl.item.name) || sl.name || '',
           colorHex:  sl.colorHex || (sl.item && (sl.item.color || sl.item.colorHex)) || '',
           palette:   sl.palette  || (sl.item && sl.item.palette)  || 'neutral-mid',
@@ -329,7 +427,9 @@
     });
 
     units.sort((a, b) => a.z - b.z); // paint base layers first
-    return { units, arc: { s, e: arc.e, span, full }, anchorDeg, counterDeg };
+    // the intentional bare ring (exposed vine), where florals deliberately stop
+    const exposed = full ? null : { start: ((arc.e % 360) + 360) % 360, end: ((s % 360) + 360) % 360, span: 360 - span };
+    return { units, arc: { s, e: arc.e, span, full }, exposed, anchorDeg, counterDeg, geometry: geom };
   }
 
   // ── THE EMOTION BRIDGE (single source of truth) ─────────────────────────────
@@ -417,5 +517,6 @@
 
   return { EC_CANON: 'v1', VOCAB, EMOTION_VA, normalizeTag, unitSpec, BUDGET, ZS, BU,
            SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill, STEM_DENSITY, PLACE_YIELD, coverageFor,
-           ROLE_BAND, ROLE_Z, placeSlots, quadrantFor, emotionToVA, deriveDesignParams, suggestFormula };
+           ROLE_BAND, ROLE_Z, placeSlots, quadrantFor, emotionToVA, deriveDesignParams, suggestFormula,
+           WREATH_SIZES, wreathRadii, toOdd, degToClock, SEASONS, seasonFor, CONSTRUCTION };
 });
