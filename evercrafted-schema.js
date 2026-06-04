@@ -92,7 +92,25 @@
     structural: 0.25, focal: 0.25, secondary: 0.20, bridge: 0.10,
     greenery: 0.12, accent: 0.08, texture: 0.10, filler: 0.05,
   };
-  const BU = { heavy: 3.5, mid: 2.5, light: 1.5, wispy: 0.8 }; // stems consumed per unit, by behavior
+  const BU = { heavy: 3.5, mid: 2.5, light: 1.5, wispy: 0.8 }; // (legacy) stems per unit, kept for back-compat
+
+  // ── Real-wreath COUNT model (calibrated to maker field studies) ──────────────
+  // Counts are a DENSITY LAW, not a per-size table: stems-to-buy per inch of the
+  // COVERED arc. Covered length L = π · D · coverage, and coverage comes from the
+  // formula's own arc span (e.g. Crescent 120° = 33%, Bottom Heavy 180° = 50%,
+  // Garden Scatter 360° = full round). Validated to reproduce maker count tables
+  // across 16"–26" wreaths. THIS is where the studies live — change a count here
+  // and nowhere else.
+  const STEM_DENSITY = { focal: 0.11, secondary: 0.24, bridge: 0.12, greenery: 0.29, accent: 0.17, texture: 0.16, structural: 0.06, filler: 0.17 };
+  // how many visible placed units one bought stem becomes on the wreath
+  // (greenery/texture get cut into several sprigs; blooms are placed ~1:1)
+  const PLACE_YIELD = { focal: 1, secondary: 1, bridge: 1, greenery: 2, accent: 1, texture: 2, structural: 1, filler: 2 };
+  // coverage fraction of the ring from a formula's arc (asym 25–72%, full = 100%)
+  function coverageFor(formula) {
+    const a = FORMULA_ARCS[formula] || FORMULA_ARCS['Crescent'];
+    const span = (((a.e - a.s) + 360) % 360) || 360;
+    return span >= 359 ? 1 : Math.max(0.25, Math.min(0.72, span / 360));
+  }
 
   const SLOT_TEMPLATES = {
     'Crescent':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'},{role:'texture',tier:'Texture'}],
@@ -116,8 +134,11 @@
   // Slot-fill driven by role slots, poem-emotion tiers, and a variety gate that
   // prevents the same movement or emotion repeating within a tier. NOT a global
   // score ranking — that would converge on the same florals every time.
-  function runSlotFill(inventory, emotions, formula, intensity, poemEmotions) {
+  function runSlotFill(inventory, emotions, formula, intensity, poemEmotions, wreathDiam) {
     const pe = poemEmotions || {};
+    const diam = (+wreathDiam > 0) ? +wreathDiam : 22;
+    const coverage = coverageFor(formula);
+    const coveredLen = Math.PI * diam * coverage; // inches of ring actually dressed
     const tierEmotionMap = {
       'Foundation': pe.structural ? [pe.structural.toLowerCase(), ...emotions] : emotions,
       'Secondary':  pe.secondary  ? [pe.secondary.toLowerCase(),  ...emotions] : emotions,
@@ -167,13 +188,13 @@
       }
       if (!chosen && candidates.length) chosen = candidates[0];
 
-      const slotCount = Math.max(1, slots.filter(s => s.role === slot.role).length);
-      const zb = Math.round(BUDGET * (ZS[slot.role] || 0.10) / slotCount);
+      const roleSlots = Math.max(1, slots.filter(s => s.role === slot.role).length);
       const spec = unitSpec(chosen);
-      // floralUnits = how many placed sprigs/blooms fill this zone (drives the visualizer)
-      const floralUnits = Math.max(1, Math.round(zb / (BU[chosen ? chosen.behavior : 'mid'] || 2.5)));
-      // stems = whole stems to buy/cut, since each stem yields `yield` units
-      const stemCount = Math.max(1, Math.ceil(floralUnits / spec.yield));
+      // COUNTS from the calibrated density law: total stems for this role across the
+      // covered arc, split over its slots; placed units add the cut-into-sprigs factor.
+      const roleStems = Math.max(roleSlots, Math.round((STEM_DENSITY[slot.role] || 0.12) * coveredLen));
+      const stemCount = Math.max(1, Math.round(roleStems / roleSlots));               // stems to BUY for this slot
+      const floralUnits = Math.max(1, Math.min(14, stemCount * (PLACE_YIELD[slot.role] || 1))); // units to PLACE
       filled.push({ ...slot, item: chosen, floralUnits, stemCount, bloomSize: spec.bloomSize, yield: spec.yield, unit: spec.unit });
     }
     return filled;
@@ -212,8 +233,8 @@
     const slots = (filledSlots || []).filter(sl => sl && (sl.item || sl.role));
     const focalSlots   = slots.filter(sl => sl.role === 'focal');
     const counterweight = !full && focalSlots.length >= 2;          // counter optional
-    const anchorDeg = full ? s : s + span * 0.40;                   // rule-of-thirds, lower in the arc
-    const counterDeg = counterweight ? s + span * 0.80 : null;      // diagonal counter
+    const anchorDeg = full ? s : s + span * 0.38;                   // rule-of-thirds, blooms stay central
+    const counterDeg = counterweight ? s + span * 0.70 : null;      // diagonal counter, still inside central band
 
     const roleTotal = {}, roleSeen = {};
     slots.forEach(sl => { roleTotal[sl.role] = (roleTotal[sl.role] || 0) + 1; });
@@ -281,5 +302,5 @@
   }
 
   return { VOCAB, normalizeTag, unitSpec, BUDGET, ZS, BU, SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill,
-           ROLE_BAND, ROLE_Z, placeSlots };
+           STEM_DENSITY, PLACE_YIELD, coverageFor, ROLE_BAND, ROLE_Z, placeSlots };
 });
