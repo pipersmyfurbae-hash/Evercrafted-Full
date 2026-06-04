@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Unified Blueprint Engine</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap');
+:root {
+  --bg:#0e0d0b; --surface:#161410; --s2:#1e1b17; --s3:#252119;
+  --border:#2e2a22; --border2:#3d3830;
+  --text:#e8e2d8; --muted:#9a9080; --faint:#5a5248;
+  --gold:#b89a5c; --gold-d:rgba(184,154,92,.12);
+  --sage:#6b7c5c; --sage-d:rgba(107,124,92,.15);
+  --dust:#8b7fa0; --dust-d:rgba(139,127,160,.15);
+  --clay:#a05c40; --clay-d:rgba(160,92,64,.15);
+  --ok:#5a8a5a; --err:#8a4a4a;
+  --r:10px; --rsm:6px; --rlg:14px;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',system-ui,sans-serif;
+  --tr:200ms ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+.app{max-width:1060px;margin:0 auto;padding:2rem 1.5rem 4rem}
+.hdr{margin-bottom:2rem;border-bottom:1px solid var(--border);padding-bottom:1.25rem;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:.5rem}
+.hdr-left .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:.3rem}
+.hdr-left h1{font-family:var(--serif);font-size:2rem;font-weight:400;line-height:1.1}
+.hdr-left .sub{font-size:12px;color:var(--muted);margin-top:.3rem;font-weight:300}
+.pipeline-strip{display:flex;align-items:center;gap:0;background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;flex-wrap:wrap;gap:4px;margin-bottom:1.5rem}
+.ps{font-size:10px;letter-spacing:.06em;color:var(--faint);font-weight:500;padding:3px 0}
+.ps.active{color:var(--gold)}
+.ps-arrow{color:var(--border2);font-size:10px;margin:0 4px}
+.grid{display:grid;grid-template-columns:320px 1fr;gap:1.25rem;align-items:start}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rlg);padding:1.25rem;margin-bottom:1.25rem}
+.card:last-child{margin-bottom:0}
+.clabel{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);font-weight:500;margin-bottom:.7rem}
+.cgroup{margin-bottom:1.1rem}
+.clabel-inline{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:.45rem;display:flex;justify-content:space-between}
+.cv{color:var(--gold);font-family:var(--serif);font-size:.95rem}
+/* diam buttons */
+.diam-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.diam-btn{padding:8px 4px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--s2);color:var(--muted);font-family:var(--sans);font-size:11px;cursor:pointer;transition:all var(--tr);text-align:center;line-height:1.3}
+.diam-btn:hover{background:var(--s3);color:var(--text)}
+.diam-btn.active{background:var(--gold-d);border-color:var(--gold);color:var(--gold)}
+.diam-btn .dsub{font-size:9px;color:var(--faint);display:block;margin-top:1px}
+/* emotion tags */
+.etag-wrap{display:flex;flex-wrap:wrap;gap:5px}
+.etag{padding:5px 10px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--s2);color:var(--muted);font-size:11px;font-weight:400;cursor:pointer;transition:all var(--tr);line-height:1.2;text-align:center}
+.etag .esub{display:block;font-size:9px;color:var(--faint);margin-top:1px}
+.etag:hover{background:var(--s3)}
+.etag.on{border-color:currentColor;background:var(--s3)}
+/* formula reveal */
+.formula-reveal{border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .3s ease}
+.formula-header{padding:10px 14px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--s2)}
+.formula-header:hover{background:var(--s3)}
+.formula-name{font-size:13px;font-weight:500;color:var(--text)}
+.formula-badge{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+.badge-auto{background:var(--sage-d);color:var(--sage);border:1px solid rgba(107,124,92,.3)}
+.badge-manual{background:var(--clay-d);color:var(--clay);border:1px solid rgba(160,92,64,.3)}
+.badge-override{background:rgba(184,154,92,.15);color:var(--gold);border:1px solid rgba(184,154,92,.3)}
+.formula-body{padding:0 14px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease}
+.formula-body.open{max-height:300px;padding:12px 14px}
+.reads-mini{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:10px}
+.read-m{background:var(--s3);border-radius:var(--rsm);padding:7px 8px}
+.read-m-name{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+.read-m-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:3px}
+.read-m-fill{height:100%;border-radius:2px;transition:width .5s ease}
+.read-m-val{font-size:11px;font-weight:500;color:var(--text)}
+.formula-why{font-size:11px;color:var(--muted);line-height:1.6;border-left:2px solid var(--border2);padding-left:10px;margin-bottom:10px}
+.formula-alts-row{display:flex;flex-wrap:wrap;gap:4px}
+.falt{padding:3px 9px;border-radius:20px;border:1px solid var(--border2);background:transparent;font-family:var(--sans);font-size:10px;color:var(--faint);cursor:pointer;transition:all var(--tr)}
+.falt:hover{color:var(--text);border-color:var(--border)}
+.falt.picked{color:var(--clay);border-color:var(--clay);background:var(--clay-d)}
+/* inventory */
+.inv-scroll{max-height:280px;overflow-y:auto;padding-right:2px}
+.inv-scroll::-webkit-scrollbar{width:3px}
+.inv-scroll::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.inv-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--rsm);border:1px solid var(--border);background:var(--s2);margin-bottom:4px;cursor:pointer;transition:all var(--tr);user-select:none}
+.inv-item:hover{border-color:var(--border2);background:var(--s3)}
+.inv-item.sel{border-color:var(--gold);background:var(--gold-d)}
+.idot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.iname{flex:1;font-size:11px;color:var(--text)}
+.itags{display:flex;gap:3px}
+.itag{font-size:9px;padding:1px 5px;border-radius:20px;font-weight:500}
+.itag-r{background:var(--sage-d);color:var(--sage)}
+.itag-e{background:var(--dust-d);color:var(--dust)}
+.itag-b{background:var(--clay-d);color:var(--clay)}
+/* run button */
+.run-btn{width:100%;padding:11px;border-radius:var(--r);border:1px solid var(--gold);background:var(--gold-d);color:var(--gold);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--tr);letter-spacing:.04em;margin-top:.75rem}
+.run-btn:hover{background:rgba(184,154,92,.22)}
+.run-btn:active{transform:scale(.99)}
+/* output tabs */
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:1.1rem;overflow-x:auto}
+.tab{padding:7px 13px;font-size:11px;font-weight:500;color:var(--faint);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color var(--tr);letter-spacing:.04em}
+.tab:hover{color:var(--muted)}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.panel{display:none}
+.panel.active{display:block}
+.empty{text-align:center;padding:2rem;color:var(--faint);font-size:12px;font-style:italic}
+/* slots */
+.slot-row{display:flex;align-items:stretch;gap:7px;margin-bottom:7px}
+.stlabel{width:66px;flex-shrink:0;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:500;padding-top:10px;text-align:right}
+.scards{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.scard{background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:9px 11px;min-width:120px;flex:1;transition:all .3s ease;opacity:0;transform:translateY(5px)}
+.scard.vis{opacity:1;transform:translateY(0)}
+.scard.filled{border-color:var(--sage);background:var(--sage-d)}
+.scard.blocked{border-color:rgba(138,74,74,.4);background:rgba(138,74,74,.06)}
+.srole{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:3px}
+.sname{font-size:11px;font-weight:500;color:var(--text);margin-bottom:2px}
+.semot{font-size:10px;color:var(--dust)}
+.sblocked{font-size:10px;color:#8a4a4a;font-style:italic}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:1rem}
+.stat{background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:9px 10px;text-align:center}
+.stat-v{font-family:var(--serif);font-size:1.5rem;font-weight:400;color:var(--gold);line-height:1}
+.stat-l{font-size:9px;color:var(--faint);margin-top:3px;letter-spacing:.06em;text-transform:uppercase}
+/* budget bars */
+.brow{margin-bottom:9px}
+.bhead{display:flex;justify-content:space-between;margin-bottom:3px;font-size:11px}
+.bname{color:var(--muted);font-weight:500}
+.bnums{color:var(--faint)}
+.btrack{height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
+.bfill{height:100%;border-radius:3px;transition:width .6s ease}
+/* variety log */
+.vlog{background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:9px 11px;max-height:170px;overflow-y:auto}
+.vlog::-webkit-scrollbar{width:3px}
+.vlog::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.lentry{font-size:10px;padding:3px 0;border-bottom:1px solid var(--border);display:flex;gap:7px;align-items:baseline;opacity:0;transition:opacity .3s ease}
+.lentry.vis{opacity:1}
+.lentry:last-child{border:none}
+.lpass{color:var(--ok)}
+.lblock{color:var(--err)}
+.ltext{color:var(--muted);flex:1}
+.lemot{color:var(--dust);font-weight:500}
+/* variety note */
+.vnote{font-size:11px;color:var(--faint);background:var(--s3);border-radius:var(--rsm);padding:7px 11px;margin-bottom:.9rem;line-height:1.6;border-left:2px solid var(--gold)}
+/* prompt */
+.pbox{background:var(--s2);border:1px solid var(--border);border-radius:var(--rsm);padding:11px 13px;font-size:11px;line-height:1.8;color:var(--muted);font-style:italic;position:relative}
+.cbtn{position:absolute;top:7px;right:7px;padding:3px 9px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--s3);color:var(--faint);font-size:10px;cursor:pointer;font-family:var(--sans);transition:all var(--tr)}
+.cbtn:hover{color:var(--text);border-color:var(--gold)}
+.pmeta{font-size:10px;color:var(--faint);margin-top:.75rem;line-height:1.8}
+hr{border:none;border-top:1px solid var(--border);margin:1rem 0}
+/* tension pills */
+.trow{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:.9rem}
+.tpill{font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+.tp-grn{background:rgba(80,140,80,.1);color:#50a060;border:1px solid rgba(80,140,80,.25)}
+.tp-amb{background:rgba(200,130,60,.1);color:#c08040;border:1px solid rgba(200,130,60,.25)}
+.tp-red{background:rgba(200,80,60,.1);color:#c06050;border:1px solid rgba(200,80,60,.25)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="hdr">
+  <div class="hdr-left">
+    <div class="eyebrow">Evercrafted Studio · Design OS</div>
+    <h1>Unified Blueprint Engine</h1>
+    <div class="sub">Emotion → formula auto-select → slot fill → placement → stems → render prompt</div>
+  </div>
+</div>
+
+<div class="pipeline-strip">
+  <span class="ps active" id="ps1">Emotions</span><span class="ps-arrow">→</span>
+  <span class="ps" id="ps2">Formula</span><span class="ps-arrow">→</span>
+  <span class="ps" id="ps3">Slot fill</span><span class="ps-arrow">→</span>
+  <span class="ps" id="ps4">Placement</span><span class="ps-arrow">→</span>
+  <span class="ps" id="ps5">Stem counts</span><span class="ps-arrow">→</span>
+  <span class="ps" id="ps6">Render prompt</span>
+</div>
+
+<div class="grid">
+
+<!-- LEFT -->
+<div>
+
+  <div class="card">
+    <div class="clabel">Step 1 — Wreath size</div>
+    <div class="diam-grid" id="diam-btns">
+      <button class="diam-btn" data-v="14" onclick="setDiam(14)">14"<span class="dsub">45 stems</span></button>
+      <button class="diam-btn" data-v="18" onclick="setDiam(18)">18"<span class="dsub">65 stems</span></button>
+      <button class="diam-btn active" data-v="22" onclick="setDiam(22)">22"<span class="dsub">90 stems</span></button>
+      <button class="diam-btn" data-v="26" onclick="setDiam(26)">26"<span class="dsub">120 stems</span></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="clabel">Step 2 — Emotion tags</div>
+    <div class="etag-wrap" id="etag-wrap"></div>
+  </div>
+
+  <div class="card">
+    <div class="clabel">Step 3 — Auto-selected formula</div>
+    <div class="formula-reveal" id="formula-reveal">
+      <div class="formula-header" onclick="toggleFormulaBody()">
+        <div>
+          <div class="formula-name" id="formula-name">—</div>
+          <div style="font-size:10px;color:var(--faint);margin-top:2px" id="formula-arc"></div>
+        </div>
+        <span class="formula-badge badge-auto" id="formula-badge">auto</span>
+      </div>
+      <div class="formula-body" id="formula-body">
+        <div class="reads-mini" id="reads-mini"></div>
+        <div class="trow" id="trow"></div>
+        <div class="formula-why" id="formula-why"></div>
+        <div style="font-size:10px;color:var(--faint);margin-bottom:5px">Override formula →</div>
+        <div class="formula-alts-row" id="formula-alts-row"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="clabel">Inventory pool — click to toggle</div>
+    <div class="inv-scroll" id="inv-list"></div>
+  </div>
+
+  <button class="run-btn" onclick="runEngine()">Generate blueprint →</button>
+</div>
+
+<!-- RIGHT -->
+<div>
+  <div class="card">
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('slots',this)">Slot fill</div>
+      <div class="tab" onclick="switchTab('placement',this)">Placement</div>
+      <div class="tab" onclick="switchTab('stems',this)">Stem counts</div>
+      <div class="tab" onclick="switchTab('prompt',this)">Render prompt</div>
+    </div>
+
+    <div class="panel active" id="panel-slots">
+      <div class="empty" id="e-slots">Run the engine to see slot filling →</div>
+      <div id="c-slots" style="display:none">
+        <div class="vnote" id="vnote"></div>
+        <div id="slot-tiers"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-placement">
+      <div class="empty" id="e-placement">Run the engine to see placement →</div>
+      <div id="c-placement" style="display:none">
+        <svg id="polar-svg" viewBox="0 0 340 340" style="width:100%;max-width:320px;display:block;margin:0 auto"></svg>
+        <div style="margin-top:.9rem" id="placement-legend"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-stems">
+      <div class="empty" id="e-stems">Run the engine to see stem counts →</div>
+      <div id="c-stems" style="display:none">
+        <div class="stats" id="stats-row"></div>
+        <div id="budget-bars"></div>
+        <hr>
+        <div class="clabel">Variety constraint log</div>
+        <div class="vlog" id="vlog"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-prompt">
+      <div class="empty" id="e-prompt">Run the engine to generate prompt →</div>
+      <div id="c-prompt" style="display:none">
+        <div class="clabel" style="margin-bottom:.4rem">Midjourney / Flux render prompt</div>
+        <div class="pbox">
+          <button class="cbtn" onclick="copyPrompt()">Copy</button>
+          <span id="prompt-text"></span>
+        </div>
+        <div class="pmeta" id="pmeta"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+const EMOTION_DATA = [
+  {id:'joy',label:'Joy',sector:'warm-gold',col:'#b89a5c',weight:2,dir:'expansive',wheel:0},
+  {id:'anticipation',label:'Anticipation',sector:'copper',col:'#a06040',weight:2,dir:'traveling',wheel:45},
+  {id:'trust',label:'Trust',sector:'sage',col:'#6b7c5c',weight:1,dir:'still',wheel:90},
+  {id:'fear',label:'Fear',sector:'deep-green',col:'#3a5c3a',weight:3,dir:'contained',wheel:135},
+  {id:'surprise',label:'Surprise',sector:'mist',col:'#8090a8',weight:2,dir:'scattered',wheel:180},
+  {id:'sadness',label:'Sadness',sector:'slate',col:'#607080',weight:1,dir:'draping',wheel:225},
+  {id:'disgust',label:'Disgust',sector:'olive',col:'#7a7a5c',weight:1,dir:'contained',wheel:270},
+  {id:'anger',label:'Anger',sector:'crimson',col:'#8a3030',weight:3,dir:'contained',wheel:315},
+  {id:'nostalgia',label:'Nostalgia',col:'#9a8ab0',weight:1,dir:'draping',wheel:225,blend:['sadness','trust']},
+  {id:'romance',label:'Romance',col:'#a07080',weight:2,dir:'still',wheel:45,blend:['joy','trust']},
+  {id:'awe',label:'Awe',col:'#4a5a7a',weight:3,dir:'traveling',wheel:157,blend:['fear','surprise']},
+  {id:'melancholy',label:'Melancholy',col:'#7080a0',weight:1,dir:'traveling',wheel:247,blend:['sadness','anticipation']},
+  {id:'reverence',label:'Reverence',col:'#6a5a78',weight:2,dir:'still',wheel:112,blend:['fear','trust']},
+  {id:'optimism',label:'Optimism',col:'#b09050',weight:2,dir:'traveling',wheel:22,blend:['joy','anticipation']},
+  {id:'grief',label:'Grief',col:'#505870',weight:1,dir:'draping',wheel:225},
+  {id:'delight',label:'Delight',col:'#c0a040',weight:2,dir:'scattered',wheel:0},
+];
+
+const FORMULAS_ALL = [
+  {id:'crescent',label:'Crescent',arc:'210°–330°',weight:'light',dir:'draping',desc:'Asymmetric sweep — soft, gravitational, memorial'},
+  {id:'side-sweep',label:'Side Sweep',arc:'240°–360°',weight:'medium',dir:'traveling',desc:'Trailing pull left — movement, longing, flow'},
+  {id:'bottom-heavy',label:'Bottom Heavy',arc:'150°–330°',weight:'heavy',dir:'draping',desc:'Weighted downward — gravitas, grief, solemnity'},
+  {id:'diagonal',label:'Diagonal Flow',arc:'225°–45°',weight:'heavy',dir:'traveling',desc:'Corner-to-corner tension — duality, momentum'},
+  {id:'focal-burst',label:'Focal Burst',arc:'270°–420°',weight:'heavy',dir:'expansive',desc:'Single commanding cascade — intensity, celebration'},
+  {id:'garden-scatter',label:'Garden Scatter',arc:'0°–360°',weight:'medium',dir:'scattered',desc:'Full ring, natural gaps — complexity, abundance'},
+  {id:'wild-asymmetry',label:'Wild Asymmetry',arc:'180°–315°',weight:'medium',dir:'contained',desc:'Structured chaos — tension, contradictory emotion'},
+  {id:'half-ring',label:'Half Ring',arc:'180°–360°',weight:'medium',dir:'still',desc:'Lower hemisphere — reverence, ceremony, stillness'},
+  {id:'spiral-flow',label:'Spiral Flow',arc:'240°–420°',weight:'medium',dir:'still',desc:'Unwinding arc — romance, tenderness, intimacy'},
+  {id:'twin-cluster',label:'Twin Cluster',arc:'210°–330°',weight:'medium',dir:'scattered',desc:'Two focal points — duality, partnership, contrast'},
+  {id:'top-cluster',label:'Top Cluster',arc:'30°–150°',weight:'heavy',dir:'expansive',desc:'Crown-weighted — elevation, pride, announcement'},
+  {id:'classic-balanced',label:'Classic Balanced',arc:'0°–360°',weight:'light',dir:'still',desc:'Even ring — harmony, trust, domesticity'},
+];
+
+const FORMULA_ARCS = {
+  crescent:{s:210,e:330},'side-sweep':{s:240,e:360},'bottom-heavy':{s:150,e:330},
+  diagonal:{s:225,e:405},'focal-burst':{s:270,e:420},'garden-scatter':{s:0,e:360},
+  'wild-asymmetry':{s:180,e:315},'half-ring':{s:180,e:360},'spiral-flow':{s:240,e:420},
+  'twin-cluster':{s:210,e:330},'top-cluster':{s:30,e:150},'classic-balanced':{s:0,e:360},
+};
+
+const INVENTORY = [
+  {id:'INV-001',name:'Ivory Garden Rose',color:'#e8e0d0',role:'focal',ep:'joy',es:'trust',blend:'romance',behavior:'mid',bloomSize:3.5,stock:18},
+  {id:'INV-002',name:'Dusty Mauve Peony',color:'#c4a0a0',role:'focal',ep:'sadness',es:'trust',blend:'nostalgia',behavior:'heavy',bloomSize:5,stock:12},
+  {id:'INV-003',name:'Slate Hydrangea',color:'#8090a8',role:'secondary',ep:'sadness',es:'surprise',blend:'melancholy',behavior:'mid',bloomSize:4,stock:8},
+  {id:'INV-004',name:'Dusty Lavender Bundle',color:'#9a8ab0',role:'texture',ep:'sadness',es:'trust',blend:'nostalgia',behavior:'light',bloomSize:1.5,stock:24},
+  {id:'INV-005',name:'Copper Beech Stem',color:'#8c4a2a',role:'bridge',ep:'anticipation',es:'fear',blend:'awe',behavior:'mid',bloomSize:2,stock:15},
+  {id:'INV-006',name:'Sage Eucalyptus',color:'#7a9070',role:'greenery',ep:'trust',es:'joy',blend:'romance',behavior:'light',bloomSize:1,stock:30},
+  {id:'INV-007',name:'Silver Brunia Berry',color:'#b8c0c8',role:'accent',ep:'surprise',es:'sadness',blend:'melancholy',behavior:'wispy',bloomSize:0.8,stock:20},
+  {id:'INV-008',name:'Dried Thistle Head',color:'#7a7890',role:'texture',ep:'sadness',es:'disgust',blend:'remorse',behavior:'light',bloomSize:2,stock:16},
+  {id:'INV-009',name:'Black Fritillaria',color:'#3a3048',role:'accent',ep:'fear',es:'sadness',blend:'awe',behavior:'wispy',bloomSize:1,stock:10},
+  {id:'INV-010',name:'Golden Solidago',color:'#c4a040',role:'filler',ep:'joy',es:'anticipation',blend:'optimism',behavior:'wispy',bloomSize:0.8,stock:28},
+  {id:'INV-011',name:'Preserved Olive Branch',color:'#808860',role:'greenery',ep:'trust',es:'joy',blend:'romance',behavior:'light',bloomSize:1,stock:22},
+  {id:'INV-012',name:'Burgundy Velvet Rose',color:'#6a2838',role:'focal',ep:'anger',es:'trust',blend:'reverence',behavior:'heavy',bloomSize:4.5,stock:14},
+  {id:'INV-013',name:'Pale Ranunculus',color:'#e8d8c8',role:'secondary',ep:'joy',es:'surprise',blend:'optimism',behavior:'mid',bloomSize:2.5,stock:20},
+  {id:'INV-014',name:'Dried Pampas Grass',color:'#c8b890',role:'texture',ep:'anticipation',es:'sadness',blend:'melancholy',behavior:'wispy',bloomSize:1.5,stock:18},
+];
+
+const SLOT_TEMPLATES = {
+  crescent:[{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'},{role:'texture',tier:'Texture'}],
+  'side-sweep':[{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
+  'bottom-heavy':[{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'}],
+  diagonal:[{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'accent',tier:'Accent'},{role:'greenery',tier:'Greenery'},{role:'filler',tier:'Filler'}],
+  'focal-burst':[{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
+  'garden-scatter':[{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'texture',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'},{role:'filler',tier:'Filler'}],
+  'wild-asymmetry':[{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'},{role:'greenery',tier:'Greenery'}],
+  'half-ring':[{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'filler',tier:'Filler'}],
+  'spiral-flow':[{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
+  'twin-cluster':[{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'}],
+  'top-cluster':[{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
+  'classic-balanced':[{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'filler',tier:'Filler'}],
+};
+
+const BEHAVIOR_UNITS = {heavy:3.5,mid:2.5,light:1.5,wispy:0.8};
+const ZONE_SPLITS = {focal:0.30,secondary:0.25,bridge:0.12,texture:0.10,greenery:0.18,accent:0.08,filler:0.07};
+const BUDGET_BY_DIAM = {14:45,18:65,22:90,26:120};
+const ZONE_COLORS = {focal:'#6b7c5c',secondary:'#8b7fa0',bridge:'#b89a5c',texture:'#8b7065',greenery:'#4a6a40',accent:'#708090',filler:'#706858'};
+const OPPOSITES = [['joy','sadness'],['trust','disgust'],['fear','surprise'],['anger','awe'],['anticipation','melancholy']];
+
+let state = {
+  diam:22,
+  emotions:new Set(['nostalgia','sadness','trust']),
+  formulaAuto:'crescent',
+  formulaManual:null,
+  activeInv:new Set(INVENTORY.map(i=>i.id)),
+  result:null,
+  formulaBodyOpen:false,
+};
+
+function getActiveFormula(){ return state.formulaManual || state.formulaAuto; }
+
+function emotionForProfile(emotions){
+  if(!emotions.length) return {formulaId:'crescent',reason:'No emotions — defaulting to Crescent.',weight:1,dir:'draping',tension:'harmonious',override:null};
+  const avgW = emotions.reduce((a,e)=>a+(e.weight||1),0)/emotions.length;
+  const dirs={};
+  emotions.forEach(e=>{dirs[e.dir]=(dirs[e.dir]||0)+1});
+  const domDir = Object.entries(dirs).sort((a,b)=>b[1]-a[1])[0]?.[0]||'draping';
+  const angles = emotions.map(e=>e.wheel||0);
+  let maxDiff=0;
+  for(let i=0;i<angles.length;i++) for(let j=i+1;j<angles.length;j++){
+    const d=Math.abs(angles[i]-angles[j]); maxDiff=Math.max(maxDiff,Math.min(d,360-d));
+  }
+  const hasOpposite = OPPOSITES.some(p=>emotions.some(e=>e.id===p[0]||e.blend?.includes(p[0]))&&emotions.some(e=>e.id===p[1]||e.blend?.includes(p[1])));
+  const tension = hasOpposite?'opposite':maxDiff>120?'wide':maxDiff>60?'moderate':'harmonious';
+  let fid,reason,override=null;
+  if(emotions.length>=4){
+    fid='garden-scatter'; override='4+ emotions → scatter';
+    reason=`${emotions.length} emotion tags active — complexity needs full ring distribution. Garden Scatter prevents forced hierarchy.`;
+  } else if(tension==='opposite'){
+    fid='wild-asymmetry'; override='Opposite sectors → asymmetry';
+    reason=`Opposing wheel sectors detected — Wild Asymmetry holds the contradiction spatially rather than forcing resolution.`;
+  } else if(avgW>=2.5&&emotions.some(e=>e.id==='joy'||e.id==='delight')){
+    fid='focal-burst'; override='High joy intensity → burst';
+    reason=`High-weight joy or delight — one thing, fully committed. Focal Burst lets the emotion lead without apology.`;
+  } else {
+    const map={expansive:avgW>=2?'focal-burst':'garden-scatter',traveling:avgW>=2?'diagonal':'side-sweep',draping:avgW>=2?'bottom-heavy':'crescent',still:emotions.some(e=>e.id==='romance'||e.blend?.includes('joy'))?'spiral-flow':emotions.some(e=>e.id==='reverence')?'half-ring':'classic-balanced',scattered:'garden-scatter',contained:avgW>=2.5?'diagonal':'bottom-heavy'};
+    fid=map[domDir]||'crescent';
+    const wLabel=avgW>=2.5?'heavy':avgW>=1.8?'medium':'soft';
+    reason=`Dominant direction: <strong style="color:var(--text)">${domDir}</strong> · Emotional weight: <strong style="color:var(--text)">${wLabel}</strong> · Tension: <strong style="color:var(--text)">${tension}</strong>`;
+  }
+  return {formulaId:fid,reason,weight:avgW,dir:domDir,tension,override};
+}
+
+function refreshFormula(){
+  const emotions = EMOTION_DATA.filter(e=>state.emotions.has(e.id));
+  if(!emotions.length){
+    document.getElementById('formula-name').textContent='—';
+    document.getElementById('formula-arc').textContent='';
+    return;
+  }
+  const prof = emotionForProfile(emotions);
+  state.formulaAuto = prof.formulaId;
+  if(state.formulaManual && state.formulaManual===prof.formulaId) state.formulaManual=null;
+  const fid = getActiveFormula();
+  const f = FORMULAS_ALL.find(x=>x.id===fid);
+  document.getElementById('formula-name').textContent = f.label;
+  document.getElementById('formula-arc').textContent = f.arc + ' · ' + f.desc;
+  const badge = document.getElementById('formula-badge');
+  badge.textContent = state.formulaManual ? 'manual override' : prof.override ? 'rule override' : 'auto';
+  badge.className = 'formula-badge ' + (state.formulaManual?'badge-manual':prof.override?'badge-override':'badge-auto');
+
+  const wPct=Math.round((prof.weight/3)*100);
+  const wLabel=prof.weight>=2.5?'Heavy':prof.weight>=1.8?'Medium':'Soft';
+  const dPcts={expansive:90,traveling:70,draping:40,still:30,scattered:80,contained:50};
+  const tPcts={opposite:100,wide:70,moderate:45,harmonious:20};
+  const tCols={opposite:'#a06060',wide:'#a08040',moderate:'#808060',harmonious:'#6b7c5c'};
+  const tLabels={opposite:'Opposite sectors',wide:'Wide spread',moderate:'Moderate blend',harmonious:'Harmonious'};
+  document.getElementById('reads-mini').innerHTML=`
+    <div class="read-m"><div class="read-m-name">Weight</div><div class="read-m-bar"><div class="read-m-fill" style="width:${wPct}%;background:#b89a5c"></div></div><div class="read-m-val">${wLabel}</div></div>
+    <div class="read-m"><div class="read-m-name">Direction</div><div class="read-m-bar"><div class="read-m-fill" style="width:${dPcts[prof.dir]||50}%;background:#6b9a7c"></div></div><div class="read-m-val" style="text-transform:capitalize">${prof.dir}</div></div>
+    <div class="read-m"><div class="read-m-name">Tension</div><div class="read-m-bar"><div class="read-m-fill" style="width:${tPcts[prof.tension]||30}%;background:${tCols[prof.tension]}"></div></div><div class="read-m-val">${tLabels[prof.tension]||prof.tension}</div></div>
+  `;
+  document.getElementById('formula-why').innerHTML=prof.reason;
+  const trow=document.getElementById('trow');
+  trow.innerHTML='';
+  if(prof.override){const p=document.createElement('span');p.className='tpill tp-amb';p.textContent='Override: '+prof.override;trow.appendChild(p);}
+  const tp=document.createElement('span');
+  tp.className='tpill '+(prof.tension==='opposite'?'tp-red':prof.tension==='wide'?'tp-amb':'tp-grn');
+  tp.textContent=tLabels[prof.tension];
+  trow.appendChild(tp);
+  emotions.forEach(e=>{const p=document.createElement('span');p.className='tpill';p.style.cssText=`background:${e.col}20;color:${e.col};border:1px solid ${e.col}50`;p.textContent=e.label;trow.appendChild(p);});
+
+  const alts=FORMULAS_ALL.filter(x=>x.id!==fid);
+  document.getElementById('formula-alts-row').innerHTML=alts.map(a=>`<button class="falt ${state.formulaManual===a.id?'picked':''}" onclick="manualFormula('${a.id}',this)">${a.label}</button>`).join('');
+}
+
+function manualFormula(id,btn){
+  state.formulaManual = (state.formulaManual===id) ? null : id;
+  document.querySelectorAll('.falt').forEach(b=>b.classList.remove('picked'));
+  if(state.formulaManual) btn.classList.add('picked');
+  refreshFormula();
+}
+
+function toggleFormulaBody(){
+  state.formulaBodyOpen=!state.formulaBodyOpen;
+  document.getElementById('formula-body').classList.toggle('open',state.formulaBodyOpen);
+}
+
+function setDiam(d){
+  state.diam=d;
+  document.querySelectorAll('#diam-btns .diam-btn').forEach(b=>b.classList.toggle('active',+b.dataset.v===d));
+}
+
+function initEmotionTags(){
+  const w=document.getElementById('etag-wrap');
+  w.innerHTML=EMOTION_DATA.map(e=>`
+    <div class="etag ${state.emotions.has(e.id)?'on':''}" style="${state.emotions.has(e.id)?'color:'+e.col:''}" onclick="toggleEmotion('${e.id}',this)" data-id="${e.id}">
+      ${e.label}
+      <span class="esub">${e.blend?'blend':'primary'}</span>
+    </div>
+  `).join('');
+}
+
+function toggleEmotion(id,el){
+  if(state.emotions.has(id)){if(state.emotions.size>1){state.emotions.delete(id);el.classList.remove('on');el.style.color='';}}
+  else{state.emotions.add(id);el.classList.add('on');el.style.color=EMOTION_DATA.find(e=>e.id===id)?.col||'';}
+  state.formulaManual=null;
+  refreshFormula();
+  activatePipelineStep(2);
+}
+
+function initInventory(){
+  document.getElementById('inv-list').innerHTML=INVENTORY.map(i=>`
+    <div class="inv-item ${state.activeInv.has(i.id)?'sel':''}" onclick="toggleInv('${i.id}',this)">
+      <span class="idot" style="background:${i.color}"></span>
+      <span class="iname">${i.name}</span>
+      <div class="itags"><span class="itag itag-r">${i.role}</span><span class="itag itag-e">${i.blend||i.ep}</span><span class="itag itag-b">${i.behavior}</span></div>
+    </div>`).join('');
+}
+
+function toggleInv(id,el){
+  if(state.activeInv.has(id))state.activeInv.delete(id);
+  else state.activeInv.add(id);
+  el.classList.toggle('sel',state.activeInv.has(id));
+}
+
+function activatePipelineStep(n){
+  for(let i=1;i<=6;i++) document.getElementById('ps'+i).classList.toggle('active',i<=n);
+}
+
+function runEngine(){
+  activatePipelineStep(6);
+  const fid = getActiveFormula();
+  const budget = BUDGET_BY_DIAM[state.diam];
+  const slots = SLOT_TEMPLATES[fid]||SLOT_TEMPLATES.crescent;
+  const available = INVENTORY.filter(i=>state.activeInv.has(i.id));
+  const emotions = [...state.emotions];
+  const log=[], filledSlots=[];
+  const usedPerTier={};
+
+  for(const slot of slots){
+    const tier=slot.tier;
+    if(!usedPerTier[tier]) usedPerTier[tier]=new Set();
+    const used=usedPerTier[tier];
+    const candidates=available.filter(i=>i.role===slot.role||(slot.role==='texture'&&i.role==='texture'));
+    const matchScored=candidates.map(c=>{const em=[c.ep,c.es,c.blend].filter(Boolean);const m=em.filter(e=>emotions.includes(e)).length;return{item:c,matches:m};}).filter(c=>c.matches>0).sort((a,b)=>b.matches-a.matches);
+    let chosen=null;
+    for(const cand of [...matchScored.map(m=>m.item),...candidates]){
+      const ce=[cand.ep,cand.es,cand.blend].filter(Boolean);
+      const overlap=ce.filter(e=>used.has(e));
+      if(overlap.length===0){chosen=cand;ce.forEach(e=>used.add(e));log.push({pass:true,slot:slot.role,tier,item:cand.name,emotion:cand.blend||cand.ep});break;}
+      else log.push({pass:false,slot:slot.role,tier,item:cand.name,emotion:cand.blend||cand.ep,overlap});
+    }
+    if(!chosen&&candidates.length){chosen=candidates[0];log.push({pass:true,slot:slot.role,tier,item:chosen.name,emotion:chosen.blend||chosen.ep,forced:true});}
+    const slotCount=slots.filter(s=>s.role===slot.role).length;
+    const zoneBudget=Math.round(budget*(ZONE_SPLITS[slot.role]||0.1)/slotCount);
+    const units=BEHAVIOR_UNITS[chosen?chosen.behavior:'mid'];
+    const stemCount=Math.max(1,Math.round(zoneBudget/units));
+    filledSlots.push({...slot,item:chosen,stemCount,zoneBudget,blocked:!chosen});
+  }
+
+  state.result={budget,filledSlots,log,formula:fid,diam:state.diam,emotions:[...emotions]};
+  renderAll();
+}
+
+function renderAll(){
+  const r=state.result;
+  renderSlots(r); renderPlacement(r); renderStems(r); renderPrompt(r);
+}
+
+function renderSlots(r){
+  document.getElementById('e-slots').style.display='none';
+  document.getElementById('c-slots').style.display='block';
+  const blocked=r.log.filter(l=>!l.pass);
+  document.getElementById('vnote').innerHTML=blocked.length>0
+    ?`<strong style="color:var(--gold)">Variety gate fired ${blocked.length}x</strong> — ${[...new Set(blocked.map(b=>b.item))].join(', ')} skipped due to emotion overlap in tier.`
+    :`<strong style="color:var(--sage)">All slots filled cleanly</strong> — no emotion repeats in any tier. Every floral brings a distinct emotional note.`;
+  const tiers=[...new Set(r.filledSlots.map(s=>s.tier))];
+  const el=document.getElementById('slot-tiers');
+  el.innerHTML='';
+  for(const tier of tiers){
+    const ts=r.filledSlots.filter(s=>s.tier===tier);
+    const row=document.createElement('div');
+    row.className='slot-row';
+    const tid='tier-'+tier.replace(/\s/g,'');
+    row.innerHTML=`<div class="stlabel">${tier}</div><div class="scards" id="${tid}"></div>`;
+    el.appendChild(row);
+    ts.forEach((slot,i)=>{
+      const c=document.createElement('div');
+      c.className='scard'+(slot.item?' filled':' blocked');
+      c.innerHTML=slot.item
+        ?`<div class="srole">${slot.role}</div><div class="sname">${slot.item.name}</div><div class="semot">${slot.item.blend||slot.item.ep}</div>`
+        :`<div class="srole">${slot.role}</div><div class="sblocked">No inventory match</div>`;
+      document.getElementById(tid).appendChild(c);
+      setTimeout(()=>c.classList.add('vis'),i*110+50);
+    });
+  }
+}
+
+function renderPlacement(r){
+  document.getElementById('e-placement').style.display='none';
+  document.getElementById('c-placement').style.display='block';
+  const cx=170,cy=170,maxR=128;
+  const arcDef=FORMULA_ARCS[r.formula]||{s:0,e:360};
+  const arcSpan=((arcDef.e-arcDef.s)+360)%360||360;
+  const svg=document.getElementById('polar-svg');
+  svg.innerHTML='';
+  const mk=(tag,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[k,v]of Object.entries(attrs))el.setAttribute(k,v);return el;};
+  const ap=(sd,ed,r)=>{const tr=d=>(d-90)*Math.PI/180;const sp=((ed-sd)+360)%360;if(sp>=359)return`M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx-.01} ${cy-r}`;const lg=sp>180?1:0;const sx=cx+r*Math.cos(tr(sd));const sy=cy+r*Math.sin(tr(sd));const ex=cx+r*Math.cos(tr(ed));const ey=cy+r*Math.sin(tr(ed));return`M ${cx} ${cy} L ${sx.toFixed(1)} ${sy.toFixed(1)} A ${r} ${r} 0 ${lg} 1 ${ex.toFixed(1)} ${ey.toFixed(1)} Z`;};
+  for(let i=1;i<=4;i++) svg.appendChild(mk('circle',{cx,cy,r:maxR*i/4,fill:'none',stroke:'#2e2a22','stroke-width':'0.5'}));
+  svg.appendChild(mk('path',{d:ap(arcDef.e%360,arcDef.s,maxR),fill:'rgba(22,20,16,0.7)',stroke:'none'}));
+  svg.appendChild(mk('path',{d:ap(arcDef.s,arcDef.e,maxR),fill:'rgba(107,124,92,0.05)',stroke:'#6b7c5c','stroke-width':'0.5','stroke-dasharray':'3 3'}));
+  const ROLE_RADII={focal:[0.62,0.72],secondary:[0.48,0.60],bridge:[0.35,0.52],greenery:[0.68,0.90],accent:[0.60,0.82],texture:[0.42,0.65],filler:[0.30,0.80]};
+  const rng=seed=>{let s=seed*9301+49297;return(s%233280)/233280;};
+  let seed=42;
+  const legend=[];
+  r.filledSlots.filter(s=>s.item).forEach(slot=>{
+    seed++;const rr=ROLE_RADII[slot.role]||[0.4,0.7];const rn=rr[0]+rng(seed)*(rr[1]-rr[0]);const rad=rn*maxR;
+    seed++;const ang=arcDef.s+rng(seed)*arcSpan;const ar=(ang-90)*Math.PI/180;
+    const px=cx+rad*Math.cos(ar);const py=cy+rad*Math.sin(ar);
+    const dr=slot.role==='focal'?9:slot.role==='secondary'?7:slot.role==='greenery'?5:4;
+    const zc=ZONE_COLORS[slot.role];
+    const g=mk('g',{});
+    g.appendChild(mk('circle',{cx:px.toFixed(1),cy:py.toFixed(1),r:dr+2,fill:zc,opacity:'0.28'}));
+    g.appendChild(mk('circle',{cx:px.toFixed(1),cy:py.toFixed(1),r:dr,fill:slot.item.color,stroke:zc,'stroke-width':'1'}));
+    svg.appendChild(g);
+    legend.push({role:slot.role,name:slot.item.name,color:zc,dc:slot.item.color});
+  });
+  svg.appendChild(mk('circle',{cx,cy,r:9,fill:'#161410',stroke:'#2e2a22','stroke-width':'0.5'}));
+  const f=FORMULAS_ALL.find(x=>x.id===r.formula);
+  document.getElementById('placement-legend').innerHTML=`
+    <div style="font-size:10px;color:var(--faint);margin-bottom:.5rem"><span style="color:var(--sage)">${f?.label}</span> — arc ${f?.arc} · dark = silence zone</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px">${legend.map(l=>`<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;color:var(--faint)"><span style="width:7px;height:7px;border-radius:50%;background:${l.dc};border:1px solid ${l.color};display:inline-block;flex-shrink:0"></span>${l.name}</span>`).join('')}</div>`;
+}
+
+function renderStems(r){
+  document.getElementById('e-stems').style.display='none';
+  document.getElementById('c-stems').style.display='block';
+  const tot=r.filledSlots.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0);
+  const foc=r.filledSlots.filter(s=>s.role==='focal'&&s.item).reduce((a,b)=>a+b.stemCount,0);
+  const cnt=r.filledSlots.filter(s=>s.item).length;
+  document.getElementById('stats-row').innerHTML=`
+    <div class="stat"><div class="stat-v">${r.diam}"</div><div class="stat-l">Diameter</div></div>
+    <div class="stat"><div class="stat-v">${tot}</div><div class="stat-l">Total stems</div></div>
+    <div class="stat"><div class="stat-v">${foc}</div><div class="stat-l">Focal stems</div></div>
+    <div class="stat"><div class="stat-v">${cnt}</div><div class="stat-l">Florals used</div></div>`;
+  const roles=[...new Set(r.filledSlots.map(s=>s.role))];
+  const bars=document.getElementById('budget-bars');
+  bars.innerHTML='';
+  roles.forEach(role=>{
+    const rs=r.filledSlots.filter(s=>s.role===role&&s.item);
+    if(!rs.length)return;
+    const total=Math.round(r.budget*(ZONE_SPLITS[role]||0.1));
+    const used=rs.reduce((a,b)=>a+b.stemCount,0);
+    const pct=Math.min(100,Math.round(used/total*100));
+    const c=ZONE_COLORS[role];
+    const row=document.createElement('div');
+    row.className='brow';
+    row.innerHTML=`<div class="bhead"><span class="bname">${role}</span><span class="bnums">${used} of ${total} stems · ${pct}%</span></div><div class="btrack"><div class="bfill" style="width:0%;background:${c}" id="bb-${role}"></div></div><div style="margin-top:3px;font-size:9px;color:var(--faint)">${rs.map(s=>`${s.item.name}: ${s.stemCount} (${s.item.behavior})`).join(' · ')}</div>`;
+    bars.appendChild(row);
+    setTimeout(()=>{const b=document.getElementById('bb-'+role);if(b)b.style.width=pct+'%';},80);
+  });
+  const vl=document.getElementById('vlog');
+  vl.innerHTML='';
+  r.log.forEach((e,i)=>{
+    const d=document.createElement('div');
+    d.className='lentry';
+    d.innerHTML=e.pass
+      ?`<span class="lpass">✓</span><span class="ltext"><span class="lemot">${e.emotion}</span> → ${e.item} placed in <em>${e.tier}</em>${e.forced?' (fallback)':''}</span>`
+      :`<span class="lblock">✗</span><span class="ltext"><span class="lemot">${e.emotion}</span> — ${e.item} blocked (${e.overlap?.join(', ')} in ${e.tier})</span>`;
+    vl.appendChild(d);
+    setTimeout(()=>d.classList.add('vis'),i*55);
+  });
+}
+
+function renderPrompt(r){
+  document.getElementById('e-prompt').style.display='none';
+  document.getElementById('c-prompt').style.display='block';
+  const foc=r.filledSlots.filter(s=>s.role==='focal'&&s.item).map(s=>s.item.name);
+  const sec=r.filledSlots.filter(s=>s.role==='secondary'&&s.item).map(s=>s.item.name);
+  const gr=r.filledSlots.filter(s=>s.role==='greenery'&&s.item).map(s=>s.item.name);
+  const tx=r.filledSlots.filter(s=>(s.role==='texture'||s.role==='accent')&&s.item).map(s=>s.item.name);
+  const f=FORMULAS_ALL.find(x=>x.id===r.formula);
+  const eStr=r.emotions.join(', ');
+  const prompt=`Luxury faux botanical wreath, ${f?.label.toLowerCase()||r.formula} composition, ${r.diam}-inch grapevine base, artisan-crafted. Emotional tone: ${eStr}. Focal blooms: ${foc.join(', ')||'mixed focal florals'}. Supporting fill: ${sec.join(', ')||'soft secondary blooms'}. Structural greenery: ${gr.join(', ')||'trailing foliage'}. Texture and accent: ${tx.join(', ')||'dried accent pieces'}. Intentional negative space exposes raw grapevine structure. Premium silk florals — no fresh flowers, no plastic, no craft-store aesthetic. Editorial product photography, shallow depth of field, warm diffused natural light from upper left, matte aged plaster wall, luxury handcrafted decor brand. --ar 4:5 --style raw --q 2`;
+  document.getElementById('prompt-text').textContent=prompt;
+  const id='EC_WR_V2_'+(Math.floor(Math.random()*9000)+1000);
+  document.getElementById('pmeta').innerHTML=`<strong style="color:var(--muted)">ID:</strong> ${id} &nbsp;·&nbsp; <strong style="color:var(--muted)">Formula:</strong> ${f?.label} &nbsp;·&nbsp; <strong style="color:var(--muted)">Diameter:</strong> ${r.diam}" &nbsp;·&nbsp; <strong style="color:var(--muted)">Total stems:</strong> ${r.filledSlots.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0)} &nbsp;·&nbsp; <strong style="color:var(--muted)">Unique florals:</strong> ${r.filledSlots.filter(s=>s.item).length}`;
+}
+
+function switchTab(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  el.classList.add('active');
+}
+
+function copyPrompt(){
+  const t=document.getElementById('prompt-text').textContent;
+  navigator.clipboard.writeText(t).then(()=>{const b=document.querySelector('.cbtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1500);});
+}
+
+initEmotionTags();
+initInventory();
+refreshFormula();
+</script>
+</body>
+</html>

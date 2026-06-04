@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Blueprint Engine v2</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#0c0b09;--sf:#141210;--s2:#1a1815;--s3:#222019;
+  --bd:#2a2620;--bd2:#3a3630;
+  --tx:#e4ddd2;--mu:#928880;--fa:#524840;
+  --gold:#b8965a;--gd:rgba(184,150,90,.13);
+  --sage:#687859;--sgd:rgba(104,120,89,.15);
+  --dust:#8a7d9e;--dsd:rgba(138,125,158,.14);
+  --clay:#9c5a3e;--cld:rgba(156,90,62,.14);
+  --mist:#5e6e7e;--msd:rgba(94,110,126,.14);
+  --champ:#c8b07a;--chd:rgba(200,176,122,.13);
+  --ok:#4e7a50;--er:#7a4242;
+  --r:10px;--rsm:6px;--rlg:14px;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',system-ui,sans-serif;
+  --tr:180ms ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:13px;line-height:1.6}
+.app{max-width:1080px;margin:0 auto;padding:1.75rem 1.5rem 4rem}
+/* header */
+.hdr{margin-bottom:1.5rem;border-bottom:1px solid var(--bd);padding-bottom:1.1rem}
+.eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:500;margin-bottom:.25rem}
+h1{font-family:var(--serif);font-size:1.9rem;font-weight:400;line-height:1.1;color:var(--tx)}
+.sub{font-size:11px;color:var(--mu);margin-top:.25rem;font-weight:300}
+/* pipeline */
+.pipe{display:flex;align-items:center;flex-wrap:wrap;gap:3px;background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:7px 12px;margin-bottom:1.5rem}
+.ps{font-size:10px;letter-spacing:.05em;color:var(--fa);font-weight:500;white-space:nowrap;padding:2px 0;transition:color .3s}
+.ps.active{color:var(--gold)}
+.parr{color:var(--bd2);font-size:9px;margin:0 3px}
+/* layout */
+.grid{display:grid;grid-template-columns:300px 1fr;gap:1.1rem;align-items:start}
+@media(max-width:740px){.grid{grid-template-columns:1fr}}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);padding:1.1rem;margin-bottom:1rem}
+.card:last-child{margin-bottom:0}
+.cl{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--fa);font-weight:600;margin-bottom:.65rem}
+/* pass badge */
+.pass-badge{display:inline-flex;align-items:center;gap:4px;font-size:9px;padding:2px 8px;border-radius:20px;font-weight:600;letter-spacing:.05em;margin-left:6px;vertical-align:middle}
+.pass1{background:rgba(104,120,89,.2);color:var(--sage);border:1px solid rgba(104,120,89,.35)}
+.pass2{background:rgba(138,125,158,.2);color:var(--dust);border:1px solid rgba(138,125,158,.35)}
+/* diameter */
+.dg{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.db{padding:8px 4px;border-radius:var(--rsm);border:1px solid var(--bd2);background:var(--s2);color:var(--mu);font-family:var(--sans);font-size:11px;cursor:pointer;transition:all var(--tr);text-align:center;line-height:1.3}
+.db:hover{background:var(--s3);color:var(--tx)}
+.db.on{background:var(--gd);border-color:var(--gold);color:var(--gold)}
+.db .ds{font-size:9px;color:var(--fa);display:block;margin-top:1px}
+/* emotion chips */
+.ewrap{display:flex;flex-wrap:wrap;gap:4px}
+.ec{padding:4px 9px;border-radius:var(--rsm);border:1px solid var(--bd2);background:var(--s2);color:var(--mu);font-size:11px;cursor:pointer;transition:all var(--tr);text-align:center;line-height:1.3}
+.ec:hover{background:var(--s3)}
+.ec.on{border-color:currentColor;background:var(--s3)}
+.ec .esub{display:block;font-size:9px;color:var(--fa);margin-top:1px}
+/* formula reveal */
+.frev{border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.fhdr{padding:9px 13px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:var(--s2);gap:8px}
+.fhdr:hover{background:var(--s3)}
+.fname{font-size:13px;font-weight:500;color:var(--tx);flex:1}
+.fbadge{font-size:9px;padding:2px 7px;border-radius:20px;font-weight:600;white-space:nowrap}
+.ba{background:var(--sgd);color:var(--sage);border:1px solid rgba(104,120,89,.3)}
+.bm{background:var(--cld);color:var(--clay);border:1px solid rgba(156,90,62,.3)}
+.bo{background:var(--gd);color:var(--gold);border:1px solid rgba(184,150,90,.3)}
+.fbody{padding:0 13px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
+.fbody.open{max-height:400px;padding:11px 13px}
+.rmini{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:9px}
+.rm{background:var(--s3);border-radius:var(--rsm);padding:7px 8px}
+.rmn{font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--fa);margin-bottom:3px}
+.rmbar{height:3px;background:var(--bd);border-radius:2px;overflow:hidden;margin-bottom:3px}
+.rmfill{height:100%;border-radius:2px;transition:width .5s ease}
+.rmv{font-size:11px;font-weight:500;color:var(--tx)}
+.fwhy{font-size:11px;color:var(--mu);line-height:1.6;border-left:2px solid var(--bd2);padding-left:9px;margin-bottom:9px}
+.falts{display:flex;flex-wrap:wrap;gap:4px}
+.fa-btn{padding:3px 8px;border-radius:20px;border:1px solid var(--bd2);background:transparent;font-family:var(--sans);font-size:9px;color:var(--fa);cursor:pointer;transition:all var(--tr)}
+.fa-btn:hover{color:var(--tx);border-color:var(--bd)}
+.fa-btn.picked{color:var(--clay);border-color:var(--clay);background:var(--cld)}
+/* inventory */
+.iscroll{max-height:300px;overflow-y:auto;padding-right:2px}
+.iscroll::-webkit-scrollbar{width:3px}
+.iscroll::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+.iitem{display:flex;align-items:flex-start;gap:6px;padding:6px 8px;border-radius:var(--rsm);border:1px solid var(--bd);background:var(--s2);margin-bottom:4px;cursor:pointer;transition:all var(--tr);user-select:none}
+.iitem:hover{border-color:var(--bd2);background:var(--s3)}
+.iitem.sel{border-color:var(--gold);background:var(--gd)}
+.idot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.iright{flex:1;min-width:0}
+.iname{font-size:11px;color:var(--tx);font-weight:400;line-height:1.3;margin-bottom:3px}
+.itags{display:flex;gap:3px;flex-wrap:wrap}
+.it{font-size:9px;padding:1px 5px;border-radius:20px;font-weight:500}
+.it-role{background:var(--sgd);color:var(--sage)}
+.it-emot{background:var(--dsd);color:var(--dust)}
+.it-arch{background:var(--gd);color:var(--gold)}
+.it-fin{background:var(--s3);color:var(--mu);border:1px solid var(--bd2)}
+.it-pass1{background:rgba(104,120,89,.2);color:var(--sage);border:1px solid rgba(104,120,89,.3)}
+.it-pass2{background:rgba(138,125,158,.2);color:var(--dust);border:1px solid rgba(138,125,158,.3)}
+/* run btn */
+.run{width:100%;padding:11px;border-radius:var(--r);border:1px solid var(--gold);background:var(--gd);color:var(--gold);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--tr);letter-spacing:.04em;margin-top:.75rem}
+.run:hover{background:rgba(184,150,90,.22)}
+.run:active{transform:scale(.99)}
+/* tabs */
+.tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:1rem;overflow-x:auto}
+.tab{padding:7px 12px;font-size:11px;font-weight:500;color:var(--fa);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color var(--tr)}
+.tab:hover{color:var(--mu)}
+.tab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.panel{display:none}
+.panel.on{display:block}
+.empty{text-align:center;padding:2rem 1rem;color:var(--fa);font-size:12px;font-style:italic}
+/* slot output */
+.pass-section{margin-bottom:1.25rem}
+.psect-hdr{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;padding:5px 10px;border-radius:var(--rsm);margin-bottom:.6rem;display:inline-flex;align-items:center;gap:6px}
+.psect-p1{background:rgba(104,120,89,.15);color:var(--sage)}
+.psect-p2{background:rgba(138,125,158,.15);color:var(--dust)}
+.srow{display:flex;gap:6px;margin-bottom:6px;align-items:stretch}
+.stl{width:60px;flex-shrink:0;font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--fa);font-weight:500;padding-top:9px;text-align:right}
+.scards{display:flex;gap:5px;flex-wrap:wrap;flex:1}
+.sc{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 10px;min-width:115px;flex:1;transition:all .3s ease;opacity:0;transform:translateY(4px)}
+.sc.vis{opacity:1;transform:translateY(0)}
+.sc.p1{border-color:var(--sage);background:rgba(104,120,89,.08)}
+.sc.p2{border-color:var(--dust);background:rgba(138,125,158,.08)}
+.sc.blocked{border-color:rgba(122,66,66,.4);background:rgba(122,66,66,.06)}
+.sc-role{font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--fa);margin-bottom:3px}
+.sc-name{font-size:11px;font-weight:500;color:var(--tx);margin-bottom:2px;line-height:1.3}
+.sc-emot{font-size:10px;color:var(--dust);margin-bottom:2px}
+.sc-arch{font-size:9px;color:var(--gold)}
+.sc-fin{font-size:9px;color:var(--mu)}
+.sc-arc{font-size:9px;color:var(--fa);margin-top:3px;border-top:1px solid var(--bd);padding-top:3px}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:1rem}
+.stat{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 8px;text-align:center}
+.stv{font-family:var(--serif);font-size:1.5rem;font-weight:400;color:var(--gold);line-height:1}
+.stl2{font-size:9px;color:var(--fa);margin-top:3px;letter-spacing:.05em;text-transform:uppercase}
+/* budget */
+.brow{margin-bottom:9px}
+.bh{display:flex;justify-content:space-between;margin-bottom:3px;font-size:10px}
+.bn{color:var(--mu);font-weight:500}.bns{color:var(--fa)}
+.btrack{height:5px;background:var(--s3);border-radius:3px;overflow:hidden}
+.bfill{height:100%;border-radius:3px;transition:width .6s ease}
+/* log */
+.vlog{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);padding:9px 11px;max-height:170px;overflow-y:auto}
+.vlog::-webkit-scrollbar{width:3px}
+.vlog::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+.lent{font-size:10px;padding:3px 0;border-bottom:1px solid var(--bd);display:flex;gap:6px;opacity:0;transition:opacity .3s}
+.lent.vis{opacity:1}
+.lent:last-child{border:none}
+.lp{color:var(--ok)}.lb{color:var(--er)}
+.lt{color:var(--mu);flex:1}.le{color:var(--dust);font-weight:500}
+/* note */
+.vnote{font-size:11px;color:var(--fa);background:var(--s3);border-radius:var(--rsm);padding:7px 10px;margin-bottom:.9rem;line-height:1.6;border-left:2px solid var(--gold)}
+/* prompt */
+.pbox{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);padding:11px 13px 11px;font-size:11px;line-height:1.8;color:var(--mu);font-style:italic;position:relative;margin-bottom:.75rem}
+.cbtn{position:absolute;top:7px;right:7px;padding:3px 9px;border-radius:var(--rsm);border:1px solid var(--bd2);background:var(--s3);color:var(--fa);font-size:9px;cursor:pointer;font-family:var(--sans);transition:all var(--tr)}
+.cbtn:hover{color:var(--tx);border-color:var(--gold)}
+.pmeta{font-size:10px;color:var(--fa);line-height:1.8}
+hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
+/* tension pills */
+.trow{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem}
+.tpill{font-size:9px;padding:2px 8px;border-radius:20px;font-weight:500}
+.tgrn{background:rgba(78,122,80,.1);color:#4e7a50;border:1px solid rgba(78,122,80,.25)}
+.tamb{background:rgba(184,150,90,.1);color:var(--gold);border:1px solid rgba(184,150,90,.25)}
+.tred{background:rgba(160,80,60,.1);color:#a0503c;border:1px solid rgba(160,80,60,.25)}
+/* schema view */
+.schema-card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);margin-bottom:8px;overflow:hidden}
+.schema-hdr{padding:8px 11px;display:flex;align-items:center;gap:8px;cursor:pointer;background:var(--s2);transition:background .15s}
+.schema-hdr:hover{background:var(--s3)}
+.schema-body{padding:0 11px;max-height:0;overflow:hidden;transition:max-height .3s ease,padding .3s ease;font-size:10px;color:var(--mu);line-height:1.7}
+.schema-body.open{max-height:200px;padding:8px 11px}
+.schema-key{color:var(--gold);font-weight:500}
+.schema-val{color:var(--dust)}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="hdr">
+  <div class="eyebrow">Evercrafted Studio · Design OS v2</div>
+  <h1>Emotion-to-Botanical Blueprint Engine</h1>
+  <div class="sub">Two-pass selection · Movement archetype · Finish + contrast axes · Arc assignment by emotional hierarchy</div>
+</div>
+
+<div class="pipe">
+  <span class="ps active" id="ps1">Emotions</span><span class="parr">→</span>
+  <span class="ps" id="ps2">Formula</span><span class="parr">→</span>
+  <span class="ps" id="ps3">Pass 1: Structure</span><span class="parr">→</span>
+  <span class="ps" id="ps4">Pass 2: Texture</span><span class="parr">→</span>
+  <span class="ps" id="ps5">Arc assignment</span><span class="parr">→</span>
+  <span class="ps" id="ps6">Stems + prompt</span>
+</div>
+
+<div class="grid">
+
+<!-- LEFT PANEL -->
+<div>
+  <div class="card">
+    <div class="cl">Step 1 — Wreath size</div>
+    <div class="dg" id="diam-btns">
+      <button class="db" data-v="14" onclick="setDiam(14)">14"<span class="ds">45 stems</span></button>
+      <button class="db" data-v="18" onclick="setDiam(18)">18"<span class="ds">65 stems</span></button>
+      <button class="db on" data-v="22" onclick="setDiam(22)">22"<span class="ds">90 stems</span></button>
+      <button class="db" data-v="26" onclick="setDiam(26)">26"<span class="ds">120 stems</span></button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cl">Step 2 — Core + secondary emotions</div>
+    <div style="font-size:10px;color:var(--fa);margin-bottom:.6rem;line-height:1.5">First selection = <span style="color:var(--sage)">core (inner wheel)</span> — drives structural layer. Additional selections = <span style="color:var(--dust)">secondary (outer ring)</span> — drive texture layer.</div>
+    <div class="ewrap" id="etag-wrap"></div>
+  </div>
+
+  <div class="card">
+    <div class="cl">Step 3 — Auto-selected formula</div>
+    <div class="frev" id="frev">
+      <div class="fhdr" onclick="toggleFBody()">
+        <div>
+          <div class="fname" id="fname">—</div>
+          <div style="font-size:10px;color:var(--fa);margin-top:1px" id="farc"></div>
+        </div>
+        <span class="fbadge ba" id="fbadge">auto</span>
+      </div>
+      <div class="fbody" id="fbody">
+        <div class="rmini" id="rmini"></div>
+        <div class="trow" id="trow"></div>
+        <div class="fwhy" id="fwhy"></div>
+        <div style="font-size:9px;color:var(--fa);margin-bottom:4px">Override →</div>
+        <div class="falts" id="falts"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="cl">Inventory — click to toggle</div>
+    <div style="display:flex;gap:8px;margin-bottom:.6rem;font-size:9px;color:var(--fa)">
+      <span style="display:inline-flex;align-items:center;gap:3px"><span style="width:6px;height:6px;border-radius:50%;background:var(--sage);display:inline-block"></span>Pass 1 structural</span>
+      <span style="display:inline-flex;align-items:center;gap:3px"><span style="width:6px;height:6px;border-radius:50%;background:var(--dust);display:inline-block"></span>Pass 2 textural</span>
+    </div>
+    <div class="iscroll" id="inv-list"></div>
+  </div>
+
+  <button class="run" onclick="runEngine()">Generate blueprint →</button>
+</div>
+
+<!-- RIGHT PANEL -->
+<div>
+  <div class="card">
+    <div class="tabs">
+      <div class="tab on" onclick="switchTab('slots',this)">Two-pass fill</div>
+      <div class="tab" onclick="switchTab('placement',this)">Arc placement</div>
+      <div class="tab" onclick="switchTab('stems',this)">Stem counts</div>
+      <div class="tab" onclick="switchTab('schema',this)">Schema</div>
+      <div class="tab" onclick="switchTab('prompt',this)">Render prompt</div>
+    </div>
+
+    <div class="panel on" id="panel-slots">
+      <div class="empty" id="e-slots">Run the engine to see two-pass slot filling →</div>
+      <div id="c-slots" style="display:none">
+        <div class="vnote" id="vnote"></div>
+        <div id="slot-out"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-placement">
+      <div class="empty" id="e-placement">Run the engine to see arc placement →</div>
+      <div id="c-placement" style="display:none">
+        <svg id="psvg" viewBox="0 0 340 340" style="width:100%;max-width:300px;display:block;margin:0 auto"></svg>
+        <div style="margin-top:.75rem" id="pleg"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-stems">
+      <div class="empty" id="e-stems">Run the engine to see stem counts →</div>
+      <div id="c-stems" style="display:none">
+        <div class="stats" id="stats"></div>
+        <div id="bbars"></div>
+        <hr>
+        <div class="cl">Two-pass selection log</div>
+        <div class="vlog" id="vlog"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-schema">
+      <div class="cl" style="margin-bottom:.75rem">Upgraded item schema — v2 fields</div>
+      <div id="schema-items"></div>
+    </div>
+
+    <div class="panel" id="panel-prompt">
+      <div class="empty" id="e-prompt">Run the engine to generate render prompt →</div>
+      <div id="c-prompt" style="display:none">
+        <div class="cl" style="margin-bottom:.4rem">Midjourney / Flux render prompt</div>
+        <div class="pbox"><button class="cbtn" onclick="copyPrompt()">Copy</button><span id="ptext"></span></div>
+        <div class="pmeta" id="pmeta"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+</div>
+
+<script>
+/* ─── EMOTION DATA ─── */
+const EMOTIONS = [
+  {id:'peace',label:'Peace',col:'#8aaa8a',weight:1,dir:'still',wheel:90,ring:'inner'},
+  {id:'joy',label:'Joy',col:'#b89a5c',weight:2,dir:'expansive',wheel:0,ring:'inner'},
+  {id:'sadness',label:'Sadness',col:'#607888',weight:1,dir:'draping',wheel:225,ring:'inner'},
+  {id:'grief',label:'Grief',col:'#485060',weight:1,dir:'draping',wheel:240,ring:'inner'},
+  {id:'fear',label:'Fear',col:'#3a5242',weight:3,dir:'contained',wheel:135,ring:'inner'},
+  {id:'anger',label:'Anger',col:'#8a3030',weight:3,dir:'contained',wheel:315,ring:'inner'},
+  {id:'trust',label:'Trust',col:'#6b7c5c',weight:1,dir:'still',wheel:90,ring:'inner'},
+  {id:'anticipation',label:'Anticipation',col:'#a06040',weight:2,dir:'traveling',wheel:45,ring:'inner'},
+  {id:'nostalgia',label:'Nostalgia',col:'#9a8ab0',weight:1,dir:'draping',wheel:230,ring:'outer',blend:['sadness','trust']},
+  {id:'melancholy',label:'Melancholy',col:'#7080a0',weight:1,dir:'traveling',wheel:247,ring:'outer',blend:['sadness','anticipation']},
+  {id:'reverence',label:'Reverence',col:'#6a5a78',weight:2,dir:'still',wheel:112,ring:'outer',blend:['fear','trust']},
+  {id:'awe',label:'Awe',col:'#4a5a7a',weight:3,dir:'traveling',wheel:157,ring:'outer',blend:['fear','surprise']},
+  {id:'romance',label:'Romance',col:'#a07080',weight:2,dir:'still',wheel:45,ring:'outer',blend:['joy','trust']},
+  {id:'hope',label:'Hope',col:'#7a9a7a',weight:2,dir:'expansive',wheel:20,ring:'outer',blend:['joy','trust']},
+  {id:'reflective',label:'Reflective',col:'#8a9aaa',weight:1,dir:'still',wheel:200,ring:'outer'},
+  {id:'longing',label:'Longing',col:'#7878a0',weight:1,dir:'traveling',wheel:230,ring:'outer'},
+];
+
+/* ─── INVENTORY v2 ─── */
+const INVENTORY = [
+  {id:'INV-001',name:'Matte Charcoal Manzanita Branch',color:'#3a3832',
+   role:'structural',pass:1,ep:'sadness',es:'grief',blend:'',
+   intensity:[2,3],movement:'architectural',finish:'matte',palette:'neutral-dark',contrast:'stark',
+   weight:'heavy',arcs:['7:00–11:00','8:00–10:00'],stock:8},
+  {id:'INV-002',name:'Weeping Silver Eucalyptus Spray',color:'#8a9a8a',
+   role:'structural',pass:1,ep:'peace',es:'reflective',blend:'',
+   intensity:[1,2],movement:'weeping',finish:'matte',palette:'neutral-light',contrast:'unified',
+   weight:'mid',arcs:['7:00–11:00','6:00–10:00'],stock:20},
+  {id:'INV-003',name:'Champagne-Dusted Faux Fern',color:'#c8b87a',
+   role:'structural',pass:1,ep:'joy',es:'hope',blend:'',
+   intensity:[1,2],movement:'reaching',finish:'metallic',palette:'champagne',contrast:'unified',
+   weight:'mid',arcs:['9:00–12:00','10:00–1:00'],stock:15},
+  {id:'INV-004',name:'Bare Black Architectural Branch',color:'#282420',
+   role:'structural',pass:1,ep:'grief',es:'sadness',blend:'',
+   intensity:[3,3],movement:'architectural',finish:'gloss',palette:'neutral-dark',contrast:'stark',
+   weight:'heavy',arcs:['7:00–11:00','8:00–10:00'],stock:10},
+  {id:'INV-005',name:'Sweeping White Magnolia Spray',color:'#e8e4dc',
+   role:'structural',pass:1,ep:'peace',es:'trust',blend:'',
+   intensity:[1,1],movement:'sweeping',finish:'matte',palette:'neutral-light',contrast:'unified',
+   weight:'mid',arcs:['8:00–12:00','7:00–11:00'],stock:12},
+  {id:'INV-006',name:'Dusty Mauve Peony',color:'#c4a0a0',
+   role:'focal',pass:1,ep:'nostalgia',es:'sadness',blend:'nostalgia',
+   intensity:[1,2],movement:'still',finish:'matte',palette:'neutral-mid',contrast:'unified',
+   weight:'heavy',arcs:['8:00–10:00','9:00–11:00'],stock:14},
+  {id:'INV-007',name:'Deep Burgundy Velvet Rose',color:'#6a2838',
+   role:'focal',pass:1,ep:'grief',es:'reverence',blend:'reverence',
+   intensity:[2,3],movement:'still',finish:'satin',palette:'neutral-dark',contrast:'unified',
+   weight:'heavy',arcs:['8:00–10:00','7:00–9:00'],stock:12},
+  {id:'INV-008',name:'Matte Silver-Leaf Spray',color:'#b0b8b8',
+   role:'secondary',pass:2,ep:'reflective',es:'peace',blend:'',
+   intensity:[1,2],movement:'sweeping',finish:'metallic',palette:'silver',contrast:'unified',
+   weight:'light',arcs:['secondary','accent zones'],stock:22},
+  {id:'INV-009',name:'Charcoal Thistle Head',color:'#686070',
+   role:'secondary',pass:2,ep:'melancholy',es:'sadness',blend:'melancholy',
+   intensity:[1,2],movement:'still',finish:'matte',palette:'neutral-dark',contrast:'unified',
+   weight:'light',arcs:['secondary','accent zones'],stock:18},
+  {id:'INV-010',name:'Pale Champagne Berry Cluster',color:'#d4c090',
+   role:'accent',pass:2,ep:'hope',es:'joy',blend:'',
+   intensity:[1,2],movement:'still',finish:'metallic',palette:'champagne',contrast:'unified',
+   weight:'wispy',arcs:['accent','fill zones'],stock:24},
+  {id:'INV-011',name:'Stark White Bleached Branch',color:'#e8e4de',
+   role:'structural',pass:1,ep:'grief',es:'awe',blend:'',
+   intensity:[3,3],movement:'architectural',finish:'raw',palette:'neutral-light',contrast:'stark',
+   weight:'heavy',arcs:['7:00–11:00','8:00–10:00'],stock:8},
+  {id:'INV-012',name:'Matte Sage Seeded Eucalyptus',color:'#7a8a6a',
+   role:'greenery',pass:2,ep:'peace',es:'trust',blend:'',
+   intensity:[1,1],movement:'sweeping',finish:'matte',palette:'botanical-green',contrast:'unified',
+   weight:'light',arcs:['edge','fill zones'],stock:30},
+  {id:'INV-013',name:'Luminous Ivory Ranunculus',color:'#e8dcc8',
+   role:'focal',pass:1,ep:'hope',es:'romance',blend:'romance',
+   intensity:[1,2],movement:'still',finish:'satin',palette:'neutral-light',contrast:'unified',
+   weight:'mid',arcs:['focal zones'],stock:18},
+  {id:'INV-014',name:'Dried Pampas Whisp',color:'#c8b890',
+   role:'texture',pass:2,ep:'longing',es:'melancholy',blend:'melancholy',
+   intensity:[1,2],movement:'weeping',finish:'raw',palette:'champagne',contrast:'unified',
+   weight:'wispy',arcs:['texture','edge zones'],stock:20},
+  {id:'INV-015',name:'High-Gloss Black Magnolia Leaf',color:'#1e1c18',
+   role:'structural',pass:1,ep:'fear',es:'awe',blend:'',
+   intensity:[2,3],movement:'architectural',finish:'gloss',palette:'neutral-dark',contrast:'stark',
+   weight:'mid',arcs:['7:00–11:00','8:00–10:00'],stock:16},
+  {id:'INV-016',name:'Champagne Metallic Grass Bundle',color:'#d4c080',
+   role:'texture',pass:2,ep:'joy',es:'anticipation',blend:'',
+   intensity:[1,2],movement:'reaching',finish:'metallic',palette:'champagne',contrast:'unified',
+   weight:'wispy',arcs:['texture','edge zones'],stock:22},
+];
+
+/* ─── FORMULAS ─── */
+const FORMULAS = [
+  {id:'crescent',label:'Crescent',arc:'210°–330°',wt:'light',dir:'draping',desc:'Asymmetric sweep — soft, gravitational, memorial'},
+  {id:'side-sweep',label:'Side Sweep',arc:'240°–360°',wt:'medium',dir:'traveling',desc:'Trailing pull left — movement, longing, flow'},
+  {id:'bottom-heavy',label:'Bottom Heavy',arc:'150°–330°',wt:'heavy',dir:'draping',desc:'Weighted downward — gravitas, grief, solemnity'},
+  {id:'diagonal',label:'Diagonal Flow',arc:'225°–45°',wt:'heavy',dir:'traveling',desc:'Corner-to-corner tension — duality, momentum'},
+  {id:'focal-burst',label:'Focal Burst',arc:'270°–420°',wt:'heavy',dir:'expansive',desc:'Single commanding cascade — intensity, celebration'},
+  {id:'garden-scatter',label:'Garden Scatter',arc:'0°–360°',wt:'medium',dir:'scattered',desc:'Full ring, natural gaps — complexity, abundance'},
+  {id:'wild-asymmetry',label:'Wild Asymmetry',arc:'180°–315°',wt:'medium',dir:'contained',desc:'Structured chaos — tension, contradictory emotion'},
+  {id:'half-ring',label:'Half Ring',arc:'180°–360°',wt:'medium',dir:'still',desc:'Lower hemisphere — reverence, ceremony, stillness'},
+  {id:'spiral-flow',label:'Spiral Flow',arc:'240°–420°',wt:'medium',dir:'still',desc:'Unwinding arc — romance, tenderness, intimacy'},
+  {id:'twin-cluster',label:'Twin Cluster',arc:'210°–330°',wt:'medium',dir:'scattered',desc:'Two focal points — duality, partnership'},
+  {id:'classic-balanced',label:'Classic Balanced',arc:'0°–360°',wt:'light',dir:'still',desc:'Even ring — harmony, trust, domesticity'},
+];
+
+const FARCS = {
+  crescent:{s:210,e:330},'side-sweep':{s:240,e:360},'bottom-heavy':{s:150,e:330},
+  diagonal:{s:225,e:405},'focal-burst':{s:270,e:420},'garden-scatter':{s:0,e:360},
+  'wild-asymmetry':{s:180,e:315},'half-ring':{s:180,e:360},'spiral-flow':{s:240,e:420},
+  'twin-cluster':{s:210,e:330},'classic-balanced':{s:0,e:360},
+};
+
+/* ─── PASS 1 SLOTS (structural layer) ─── */
+const P1_SLOTS = {
+  crescent:[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+  'side-sweep':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+  'bottom-heavy':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+  diagonal:[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+  'focal-burst':[{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+  'garden-scatter':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+  'wild-asymmetry':[{role:'structural',tier:'Foundation'},{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+  'half-ring':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+  'spiral-flow':[{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+  'twin-cluster':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+  'classic-balanced':[{role:'structural',tier:'Foundation'},{role:'focal',tier:'Foundation'}],
+};
+
+/* ─── PASS 2 SLOTS (textural layer) ─── */
+const P2_SLOTS = {
+  crescent:[{role:'secondary',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
+  'side-sweep':[{role:'secondary',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
+  'bottom-heavy':[{role:'secondary',tier:'Texture'},{role:'secondary',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'}],
+  diagonal:[{role:'secondary',tier:'Texture'},{role:'secondary',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
+  'focal-burst':[{role:'secondary',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'},{role:'accent',tier:'Accent'}],
+  'garden-scatter':[{role:'secondary',tier:'Texture'},{role:'secondary',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
+  'wild-asymmetry':[{role:'secondary',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'}],
+  'half-ring':[{role:'secondary',tier:'Texture'},{role:'secondary',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
+  'spiral-flow':[{role:'secondary',tier:'Texture'},{role:'secondary',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'}],
+  'twin-cluster':[{role:'secondary',tier:'Texture'},{role:'secondary',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'}],
+  'classic-balanced':[{role:'secondary',tier:'Texture'},{role:'secondary',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
+};
+
+const BU={heavy:3.5,mid:2.5,light:1.5,wispy:0.8};
+const ZS={structural:0.28,focal:0.22,secondary:0.18,texture:0.10,greenery:0.14,accent:0.08};
+const BD={14:45,18:65,22:90,26:120};
+const ZC={structural:'#6b7c5c',focal:'#8b7fa0',secondary:'#b89a5c',texture:'#8b7065',greenery:'#4a6a40',accent:'#708090'};
+const OPPOSITES=[['joy','sadness'],['trust','disgust'],['fear','surprise'],['anger','awe'],['anticipation','melancholy']];
+
+/* ─── STATE ─── */
+let S={diam:22,emotions:new Set(['sadness','nostalgia']),formulaAuto:'crescent',formulaManual:null,activeInv:new Set(INVENTORY.map(i=>i.id)),result:null,fbOpen:false};
+function getF(){return S.formulaManual||S.formulaAuto;}
+
+/* ─── FORMULA LOGIC ─── */
+function pickFormula(emotions){
+  if(!emotions.length) return {id:'crescent',reason:'No input — default.',weight:1,dir:'draping',tension:'harmonious',override:null};
+  const avgW=emotions.reduce((a,e)=>a+(e.weight||1),0)/emotions.length;
+  const dc={};emotions.forEach(e=>{dc[e.dir]=(dc[e.dir]||0)+1});
+  const dom=Object.entries(dc).sort((a,b)=>b[1]-a[1])[0]?.[0]||'draping';
+  const angles=emotions.map(e=>e.wheel||0);
+  let mx=0;
+  for(let i=0;i<angles.length;i++) for(let j=i+1;j<angles.length;j++){const d=Math.abs(angles[i]-angles[j]);mx=Math.max(mx,Math.min(d,360-d));}
+  const hasOpp=OPPOSITES.some(p=>emotions.some(e=>e.id===p[0]||e.blend?.includes(p[0]))&&emotions.some(e=>e.id===p[1]||e.blend?.includes(p[1])));
+  const tension=hasOpp?'opposite':mx>120?'wide':mx>60?'moderate':'harmonious';
+  let id,reason,override=null;
+  if(emotions.length>=4){id='garden-scatter';override='4+ emotions → scatter';reason=`${emotions.length} emotions active — full ring distribution prevents forced hierarchy.`;}
+  else if(tension==='opposite'){id='wild-asymmetry';override='Opposite sectors → asymmetry';reason=`Opposing wheel sectors — Wild Asymmetry holds contradiction spatially.`;}
+  else if(avgW>=2.5&&emotions.some(e=>e.id==='joy'||e.id==='hope')){id='focal-burst';override='High joy → burst';reason=`High-weight joy/hope — Focal Burst commits fully.`;}
+  else{
+    const map={expansive:'focal-burst',traveling:avgW>=2?'diagonal':'side-sweep',draping:avgW>=2?'bottom-heavy':'crescent',still:emotions.some(e=>e.id==='romance'||e.id==='hope')?'spiral-flow':emotions.some(e=>e.id==='reverence')?'half-ring':'classic-balanced',scattered:'garden-scatter',contained:avgW>=2.5?'diagonal':'bottom-heavy'};
+    id=map[dom]||'crescent';
+    const wl=avgW>=2.5?'heavy':avgW>=1.8?'medium':'soft';
+    reason=`Direction: <strong style="color:var(--tx)">${dom}</strong> · Weight: <strong style="color:var(--tx)">${wl}</strong> · Tension: <strong style="color:var(--tx)">${tension}</strong>`;
+  }
+  return{id,reason,weight:avgW,dir:dom,tension,override};
+}
+
+function refreshFormula(){
+  const emos=EMOTIONS.filter(e=>S.emotions.has(e.id));
+  if(!emos.length){document.getElementById('fname').textContent='—';document.getElementById('farc').textContent='';return;}
+  const prof=pickFormula(emos);
+  S.formulaAuto=prof.id;
+  if(S.formulaManual===prof.id) S.formulaManual=null;
+  const fid=getF();
+  const f=FORMULAS.find(x=>x.id===fid);
+  document.getElementById('fname').textContent=f.label;
+  document.getElementById('farc').textContent=f.arc+' · '+f.desc;
+  const badge=document.getElementById('fbadge');
+  badge.textContent=S.formulaManual?'manual override':prof.override?'rule override':'auto';
+  badge.className='fbadge '+(S.formulaManual?'bm':prof.override?'bo':'ba');
+  const wP=Math.round((prof.weight/3)*100);
+  const wL=prof.weight>=2.5?'Heavy':prof.weight>=1.8?'Medium':'Soft';
+  const dP={expansive:90,traveling:70,draping:40,still:30,scattered:80,contained:50};
+  const tP={opposite:100,wide:70,moderate:45,harmonious:20};
+  const tC={opposite:'#a06060',wide:'#a08040',moderate:'#808060',harmonious:'#6b7c5c'};
+  const tL={opposite:'Opposite sectors',wide:'Wide spread',moderate:'Moderate blend',harmonious:'Harmonious'};
+  document.getElementById('rmini').innerHTML=`
+    <div class="rm"><div class="rmn">Weight</div><div class="rmbar"><div class="rmfill" style="width:${wP}%;background:#b8965a"></div></div><div class="rmv">${wL}</div></div>
+    <div class="rm"><div class="rmn">Direction</div><div class="rmbar"><div class="rmfill" style="width:${dP[prof.dir]||50}%;background:#688070"></div></div><div class="rmv" style="text-transform:capitalize">${prof.dir}</div></div>
+    <div class="rm"><div class="rmn">Tension</div><div class="rmbar"><div class="rmfill" style="width:${tP[prof.tension]||30}%;background:${tC[prof.tension]}"></div></div><div class="rmv">${tL[prof.tension]}</div></div>`;
+  document.getElementById('fwhy').innerHTML=prof.reason;
+  const tr=document.getElementById('trow');
+  tr.innerHTML='';
+  if(prof.override){const p=document.createElement('span');p.className='tpill tamb';p.textContent='Override: '+prof.override;tr.appendChild(p);}
+  const tp=document.createElement('span');
+  tp.className='tpill '+(prof.tension==='opposite'?'tred':prof.tension==='wide'?'tamb':'tgrn');
+  tp.textContent=tL[prof.tension];tr.appendChild(tp);
+  emos.forEach(e=>{const p=document.createElement('span');p.className='tpill';p.style.cssText=`background:${e.col}22;color:${e.col};border:1px solid ${e.col}55`;p.textContent=e.label;tr.appendChild(p);});
+  const alts=FORMULAS.filter(x=>x.id!==fid);
+  document.getElementById('falts').innerHTML=alts.map(a=>`<button class="fa-btn ${S.formulaManual===a.id?'picked':''}" onclick="manualF('${a.id}',this)">${a.label}</button>`).join('');
+}
+
+function manualF(id,btn){
+  S.formulaManual=(S.formulaManual===id)?null:id;
+  document.querySelectorAll('.fa-btn').forEach(b=>b.classList.remove('picked'));
+  if(S.formulaManual) btn.classList.add('picked');
+  refreshFormula();
+}
+
+function toggleFBody(){
+  S.fbOpen=!S.fbOpen;
+  document.getElementById('fbody').classList.toggle('open',S.fbOpen);
+}
+
+/* ─── INIT ─── */
+function initEmotions(){
+  document.getElementById('etag-wrap').innerHTML=EMOTIONS.map(e=>`
+    <div class="ec ${S.emotions.has(e.id)?'on':''}" style="${S.emotions.has(e.id)?'color:'+e.col:''}" onclick="toggleE('${e.id}',this)" data-id="${e.id}">
+      ${e.label}<span class="esub">${e.ring} wheel</span>
+    </div>`).join('');
+}
+
+function toggleE(id,el){
+  if(S.emotions.has(id)){if(S.emotions.size>1){S.emotions.delete(id);el.classList.remove('on');el.style.color='';}}
+  else{S.emotions.add(id);el.classList.add('on');el.style.color=EMOTIONS.find(e=>e.id===id)?.col||'';}
+  S.formulaManual=null;
+  refreshFormula();
+  activePipe(2);
+}
+
+function initInventory(){
+  document.getElementById('inv-list').innerHTML=INVENTORY.map(i=>`
+    <div class="iitem ${S.activeInv.has(i.id)?'sel':''}" onclick="toggleInv('${i.id}',this)">
+      <span class="idot" style="background:${i.color}"></span>
+      <div class="iright">
+        <div class="iname">${i.name}</div>
+        <div class="itags">
+          <span class="it it-pass${i.pass}">Pass ${i.pass}</span>
+          <span class="it it-role">${i.role}</span>
+          <span class="it it-arch">${i.movement}</span>
+          <span class="it it-fin">${i.finish}</span>
+          <span class="it it-emot">${i.blend||i.ep}</span>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function toggleInv(id,el){
+  if(S.activeInv.has(id))S.activeInv.delete(id);else S.activeInv.add(id);
+  el.classList.toggle('sel',S.activeInv.has(id));
+}
+
+function setDiam(d){
+  S.diam=d;
+  document.querySelectorAll('#diam-btns .db').forEach(b=>b.classList.toggle('on',+b.dataset.v===d));
+}
+
+function activePipe(n){for(let i=1;i<=6;i++)document.getElementById('ps'+i).classList.toggle('active',i<=n);}
+
+/* ─── TWO-PASS ENGINE ─── */
+function runEngine(){
+  activePipe(6);
+  const fid=getF();
+  const budget=BD[S.diam];
+  const avail=INVENTORY.filter(i=>S.activeInv.has(i.id));
+  const coreEmotions=[...S.emotions].filter(id=>EMOTIONS.find(e=>e.id===id&&e.ring==='inner'));
+  const secEmotions=[...S.emotions].filter(id=>EMOTIONS.find(e=>e.id===id&&e.ring==='outer'));
+  const allEmotions=[...S.emotions];
+  const log=[];
+  const p1slots=P1_SLOTS[fid]||P1_SLOTS.crescent;
+  const p2slots=P2_SLOTS[fid]||P2_SLOTS.crescent;
+
+  /* INTENSITY from core emotion weight */
+  const coreEmoObjs=EMOTIONS.filter(e=>coreEmotions.includes(e.id));
+  const avgIntensity=coreEmoObjs.length?coreEmoObjs.reduce((a,e)=>a+(e.weight||1),0)/coreEmoObjs.length:1.5;
+  const intensityLevel=avgIntensity>=2.5?3:avgIntensity>=1.8?2:1;
+
+  /* PASS 1 — structural/focal layer, driven by core emotions */
+  const usedP1={};
+  const p1filled=[];
+  for(const slot of p1slots){
+    const tier='P1-'+slot.tier;
+    if(!usedP1[tier])usedP1[tier]={archetypes:new Set(),emotions:new Set()};
+    const u=usedP1[tier];
+    const cands=avail.filter(i=>i.pass===1&&(i.role===slot.role||(slot.role==='focal'&&i.role==='focal'))||(slot.role==='structural'&&i.role==='structural'));
+    /* score: emotion match on core + intensity range fit + archetype not yet used */
+    const scored=cands.map(c=>{
+      const ce=[c.ep,c.es,c.blend].filter(Boolean);
+      const emotMatch=ce.filter(e=>coreEmotions.includes(e)||allEmotions.includes(e)).length;
+      const inRange=c.intensity[0]<=intensityLevel&&c.intensity[1]>=intensityLevel?1:0;
+      const archOk=!u.archetypes.has(c.movement)?1:0;
+      const finOk=!u.emotions.has(c.ep)?1:0;
+      return{item:c,score:emotMatch*3+inRange*2+archOk*2+finOk,emotMatch};
+    }).filter(c=>c.emotMatch>0||cands.length<=2).sort((a,b)=>b.score-a.score);
+    let chosen=null;
+    for(const cand of scored.map(s=>s.item)){
+      const ce=[cand.ep,cand.es,cand.blend].filter(Boolean);
+      const archClash=u.archetypes.has(cand.movement);
+      const emotClash=ce.some(e=>u.emotions.has(e));
+      if(!archClash&&!emotClash){
+        chosen=cand;
+        u.archetypes.add(cand.movement);
+        ce.forEach(e=>u.emotions.add(e));
+        log.push({pass:1,ok:true,slot:slot.role,item:cand.name,emotion:cand.blend||cand.ep,arch:cand.movement,finish:cand.finish});
+        break;
+      } else {
+        log.push({pass:1,ok:false,slot:slot.role,item:cand.name,emotion:cand.blend||cand.ep,reason:archClash?`archetype '${cand.movement}' already in arc`:`emotion '${cand.ep}' already in arc`});
+      }
+    }
+    if(!chosen&&cands.length){chosen=cands[0];log.push({pass:1,ok:true,slot:slot.role,item:chosen.name,emotion:chosen.blend||chosen.ep,arch:chosen.movement,finish:chosen.finish,forced:true});}
+    const slotCount=p1slots.filter(s=>s.role===slot.role).length;
+    const zb=Math.round(budget*(ZS[slot.role]||0.15)/slotCount);
+    const sc=Math.max(1,Math.round(zb/(BU[chosen?chosen.weight:'mid']||2.5)));
+    p1filled.push({...slot,pass:1,item:chosen,stemCount:sc,zoneBudget:zb});
+  }
+
+  /* PASS 2 — textural/accent layer, driven by secondary emotions */
+  const usedP2={};
+  const p2filled=[];
+  for(const slot of p2slots){
+    const tier='P2-'+slot.tier;
+    if(!usedP2[tier])usedP2[tier]={archetypes:new Set(),emotions:new Set(),finishes:new Set()};
+    const u=usedP2[tier];
+    const cands=avail.filter(i=>i.pass===2&&(i.role===slot.role||(slot.role==='texture'&&i.role==='texture')||(slot.role==='accent'&&i.role==='accent')||(slot.role==='greenery'&&i.role==='greenery')||(slot.role==='secondary'&&i.role==='secondary')));
+    const scored=cands.map(c=>{
+      const ce=[c.ep,c.es,c.blend].filter(Boolean);
+      const secMatch=ce.filter(e=>secEmotions.includes(e)||allEmotions.includes(e)).length;
+      const finNoRepeat=!u.finishes.has(c.finish)?1:0;
+      const archOk=!u.archetypes.has(c.movement)?1:0;
+      const emotOk=!u.emotions.has(c.ep)?1:0;
+      return{item:c,score:secMatch*2+finNoRepeat*2+archOk+emotOk,secMatch};
+    }).sort((a,b)=>b.score-a.score);
+    let chosen=null;
+    for(const cand of scored.map(s=>s.item)){
+      const ce=[cand.ep,cand.es,cand.blend].filter(Boolean);
+      const finClash=u.finishes.has(cand.finish)&&u.finishes.size>=2;
+      const emotClash=ce.some(e=>u.emotions.has(e));
+      if(!finClash&&!emotClash){
+        chosen=cand;
+        u.finishes.add(cand.finish);
+        u.archetypes.add(cand.movement);
+        ce.forEach(e=>u.emotions.add(e));
+        log.push({pass:2,ok:true,slot:slot.role,item:cand.name,emotion:cand.blend||cand.ep,arch:cand.movement,finish:cand.finish});
+        break;
+      } else {
+        log.push({pass:2,ok:false,slot:slot.role,item:cand.name,emotion:cand.blend||cand.ep,reason:finClash?`finish '${cand.finish}' overused`:`emotion '${cand.ep}' already in tier`});
+      }
+    }
+    if(!chosen&&cands.length){chosen=cands[0];log.push({pass:2,ok:true,slot:slot.role,item:chosen.name,emotion:chosen.blend||chosen.ep,arch:chosen.movement,finish:chosen.finish,forced:true});}
+    const slotCount=p2slots.filter(s=>s.role===slot.role).length;
+    const zb=Math.round(budget*(ZS[slot.role]||0.10)/slotCount);
+    const sc=Math.max(1,Math.round(zb/(BU[chosen?chosen.weight:'light']||1.5)));
+    p2filled.push({...slot,pass:2,item:chosen,stemCount:sc,zoneBudget:zb});
+  }
+
+  S.result={budget,p1:p1filled,p2:p2filled,all:[...p1filled,...p2filled],log,formula:fid,diam:S.diam,emotions:[...S.emotions],intensityLevel,coreEmotions,secEmotions};
+  renderAll();
+}
+
+function renderAll(){
+  renderSlots();renderPlacement();renderStems();renderSchema();renderPrompt();
+}
+
+/* ─── RENDER SLOTS ─── */
+function renderSlots(){
+  const r=S.result;
+  document.getElementById('e-slots').style.display='none';
+  document.getElementById('c-slots').style.display='block';
+  const bl=r.log.filter(l=>!l.ok).length;
+  document.getElementById('vnote').innerHTML=`<strong style="color:var(--gold)">Intensity level ${r.intensityLevel}/3</strong> from core emotions · ${bl>0?`Variety gate fired <strong style="color:var(--gold)">${bl}x</strong> — archetype or finish clash prevented repeats`:'All slots filled cleanly — no archetype or emotion repeats in any pass'}`;
+  const out=document.getElementById('slot-out');
+  out.innerHTML='';
+  for(const pass of [1,2]){
+    const slots=pass===1?r.p1:r.p2;
+    if(!slots.length) continue;
+    const sec=document.createElement('div');
+    sec.className='pass-section';
+    sec.innerHTML=`<div class="psect-hdr psect-p${pass}"><span class="pass-badge pass${pass}">Pass ${pass}</span>${pass===1?'Structural layer — inner wheel · foundational arc':'Textural layer — outer wheel · secondary zones'}</div>`;
+    out.appendChild(sec);
+    const tiers=[...new Set(slots.map(s=>s.tier))];
+    for(const tier of tiers){
+      const ts=slots.filter(s=>s.tier===tier);
+      const row=document.createElement('div');
+      row.className='srow';
+      const tid=`tier-p${pass}-${tier.replace(/\s/g,'')}`;
+      row.innerHTML=`<div class="stl">${tier}</div><div class="scards" id="${tid}"></div>`;
+      sec.appendChild(row);
+      ts.forEach((sl,i)=>{
+        const c=document.createElement('div');
+        c.className=`sc ${sl.item?`p${pass}`:'blocked'}`;
+        c.innerHTML=sl.item
+          ?`<div class="sc-role">${sl.role}</div><div class="sc-name">${sl.item.name}</div><div class="sc-emot">${sl.item.blend||sl.item.ep}</div><div class="sc-arch">${sl.item.movement}</div><div class="sc-fin">${sl.item.finish} · ${sl.item.palette} · ${sl.item.contrast}</div><div class="sc-arc">${sl.item.arcs?.[0]||'arc zone'}</div>`
+          :`<div class="sc-role">${sl.role}</div><div class="sc-name" style="color:var(--er)">No inventory match</div>`;
+        document.getElementById(tid)?.appendChild(c);
+        setTimeout(()=>c.classList.add('vis'),i*100+50);
+      });
+    }
+  }
+}
+
+/* ─── RENDER PLACEMENT ─── */
+function renderPlacement(){
+  const r=S.result;
+  document.getElementById('e-placement').style.display='none';
+  document.getElementById('c-placement').style.display='block';
+  const cx=170,cy=170,mR=128;
+  const ad=FARCS[r.formula]||{s:0,e:360};
+  const span=((ad.e-ad.s)+360)%360||360;
+  const svg=document.getElementById('psvg');
+  svg.innerHTML='';
+  const mk=(tag,attrs)=>{const el=document.createElementNS('http://www.w3.org/2000/svg',tag);for(const[k,v]of Object.entries(attrs))el.setAttribute(k,v);return el;};
+  const ap=(sd,ed,r)=>{const tr=d=>(d-90)*Math.PI/180;const sp=((ed-sd)+360)%360;if(sp>=359)return`M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx-.01} ${cy-r}`;const lg=sp>180?1:0;const sx=cx+r*Math.cos(tr(sd));const sy=cy+r*Math.sin(tr(sd));const ex=cx+r*Math.cos(tr(ed));const ey=cy+r*Math.sin(tr(ed));return`M ${cx} ${cy} L ${sx.toFixed(1)} ${sy.toFixed(1)} A ${r} ${r} 0 ${lg} 1 ${ex.toFixed(1)} ${ey.toFixed(1)} Z`;};
+  for(let i=1;i<=4;i++) svg.appendChild(mk('circle',{cx,cy,r:mR*i/4,fill:'none',stroke:'#2a2620','stroke-width':'0.5'}));
+  /* P1 arc zone */
+  svg.appendChild(mk('path',{d:ap(ad.s,ad.e,mR*0.82),fill:'rgba(104,120,89,.06)',stroke:'none'}));
+  /* silence */
+  svg.appendChild(mk('path',{d:ap(ad.e%360,ad.s,mR),fill:'rgba(12,11,9,.65)',stroke:'none'}));
+  /* arc outline */
+  svg.appendChild(mk('path',{d:ap(ad.s,ad.e,mR),fill:'none',stroke:'#687859','stroke-width':'0.5','stroke-dasharray':'3 3'}));
+
+  const RRAD={structural:[0.55,0.75],focal:[0.60,0.72],secondary:[0.42,0.58],texture:[0.38,0.60],greenery:[0.65,0.88],accent:[0.55,0.80]};
+  const rng=s=>{let v=s*9301+49297;return(v%233280)/233280;};
+  let seed=42;const leg=[];
+
+  /* Pass 1 — place in foundational arc zone */
+  r.p1.filter(s=>s.item).forEach(sl=>{
+    seed++;const rr=RRAD[sl.role]||[0.5,0.7];const rn=rr[0]+rng(seed)*(rr[1]-rr[0]);const rad=rn*mR;
+    seed++;const ang=ad.s+rng(seed)*span;const ar=(ang-90)*Math.PI/180;
+    const px=cx+rad*Math.cos(ar);const py=cy+rad*Math.sin(ar);
+    const dr=sl.role==='structural'?10:sl.role==='focal'?8:5;
+    const g=mk('g',{});
+    g.appendChild(mk('circle',{cx:px.toFixed(1),cy:py.toFixed(1),r:dr+3,fill:'#687859',opacity:'0.2'}));
+    g.appendChild(mk('circle',{cx:px.toFixed(1),cy:py.toFixed(1),r:dr,fill:sl.item.color,stroke:'#687859','stroke-width':'1'}));
+    svg.appendChild(g);
+    leg.push({name:sl.item.name,col:sl.item.color,border:'#687859',pass:1});
+  });
+
+  /* Pass 2 — place in outer/secondary zone, wider spread */
+  const p2arc={s:ad.s-20,e:ad.e+20};
+  const p2span=((p2arc.e-p2arc.s)+360)%360||360;
+  r.p2.filter(s=>s.item).forEach(sl=>{
+    seed++;const rr=RRAD[sl.role]||[0.35,0.65];const rn=rr[0]+rng(seed)*(rr[1]-rr[0]);const rad=rn*mR;
+    seed++;const ang=p2arc.s+rng(seed)*p2span;const ar=(ang-90)*Math.PI/180;
+    const px=cx+rad*Math.cos(ar);const py=cy+rad*Math.sin(ar);
+    const dr=sl.role==='secondary'?6:sl.role==='greenery'?4:3;
+    const g=mk('g',{});
+    g.appendChild(mk('circle',{cx:px.toFixed(1),cy:py.toFixed(1),r:dr+2,fill:'#8a7d9e',opacity:'0.2'}));
+    g.appendChild(mk('circle',{cx:px.toFixed(1),cy:py.toFixed(1),r:dr,fill:sl.item.color,stroke:'#8a7d9e','stroke-width':'0.8'}));
+    svg.appendChild(g);
+    leg.push({name:sl.item.name,col:sl.item.color,border:'#8a7d9e',pass:2});
+  });
+  svg.appendChild(mk('circle',{cx,cy,r:8,fill:'#141210',stroke:'#2a2620','stroke-width':'0.5'}));
+
+  const f=FORMULAS.find(x=>x.id===r.formula);
+  document.getElementById('pleg').innerHTML=`
+    <div style="font-size:10px;color:var(--fa);margin-bottom:.5rem"><span style="color:var(--sage)">${f?.label}</span> — arc ${f?.arc} · dark zone = silence</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px">
+      ${leg.map(l=>`<span style="display:inline-flex;align-items:center;gap:3px;font-size:9px;color:var(--fa)"><span style="width:7px;height:7px;border-radius:50%;background:${l.col};border:1px solid ${l.border};display:inline-block;flex-shrink:0"></span>${l.name}<span style="font-size:8px;color:${l.pass===1?'var(--sage)':'var(--dust)'}">P${l.pass}</span></span>`).join('')}
+    </div>`;
+}
+
+/* ─── RENDER STEMS ─── */
+function renderStems(){
+  const r=S.result;
+  document.getElementById('e-stems').style.display='none';
+  document.getElementById('c-stems').style.display='block';
+  const tot=r.all.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0);
+  const p1tot=r.p1.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0);
+  const p2tot=r.p2.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0);
+  const uniq=r.all.filter(s=>s.item).length;
+  document.getElementById('stats').innerHTML=`
+    <div class="stat"><div class="stv">${r.diam}"</div><div class="stl2">Diameter</div></div>
+    <div class="stat"><div class="stv">${tot}</div><div class="stl2">Total stems</div></div>
+    <div class="stat"><div class="stv">${p1tot}</div><div class="stl2">P1 structural</div></div>
+    <div class="stat"><div class="stv">${p2tot}</div><div class="stl2">P2 textural</div></div>`;
+  const roles=[...new Set(r.all.map(s=>s.role))];
+  const bars=document.getElementById('bbars');
+  bars.innerHTML='';
+  roles.forEach(role=>{
+    const rs=r.all.filter(s=>s.role===role&&s.item);
+    if(!rs.length)return;
+    const total=Math.round(r.budget*(ZS[role]||0.1));
+    const used=rs.reduce((a,b)=>a+b.stemCount,0);
+    const pct=Math.min(100,Math.round(used/total*100));
+    const c=ZC[role]||'#888';
+    const div=document.createElement('div');
+    div.className='brow';
+    div.innerHTML=`<div class="bh"><span class="bn">${role}</span><span class="bns">${used} of ${total} · ${pct}%</span></div><div class="btrack"><div class="bfill" style="width:0%;background:${c}" id="bf-${role}"></div></div><div style="margin-top:3px;font-size:9px;color:var(--fa)">${rs.map(s=>`${s.item.name}: ${s.stemCount} (${s.item.weight}/${s.item.finish})`).join(' · ')}</div>`;
+    bars.appendChild(div);
+    setTimeout(()=>{const b=document.getElementById(`bf-${role}`);if(b)b.style.width=pct+'%';},80);
+  });
+  const vl=document.getElementById('vlog');
+  vl.innerHTML='';
+  S.result.log.forEach((e,i)=>{
+    const d=document.createElement('div');
+    d.className='lent';
+    d.innerHTML=e.ok
+      ?`<span class="lp">P${e.pass}✓</span><span class="lt"><span class="le">${e.emotion}</span> → ${e.item} · arch: ${e.arch} · ${e.finish}${e.forced?' (fallback)':''}</span>`
+      :`<span class="lb">P${e.pass}✗</span><span class="lt"><span class="le">${e.emotion}</span> — ${e.item} blocked: ${e.reason}</span>`;
+    vl.appendChild(d);
+    setTimeout(()=>d.classList.add('vis'),i*45);
+  });
+}
+
+/* ─── RENDER SCHEMA ─── */
+function renderSchema(){
+  const r=S.result;
+  const placed=r.all.filter(s=>s.item).map(s=>s.item);
+  const el=document.getElementById('schema-items');
+  el.innerHTML=`<div style="font-size:11px;color:var(--mu);margin-bottom:.75rem;line-height:1.7">New v2 fields on each item: <span style="color:var(--gold)">movement_archetype</span> · <span style="color:var(--gold)">finish</span> · <span style="color:var(--gold)">palette_family</span> · <span style="color:var(--gold)">contrast_level</span> · <span style="color:var(--gold)">intensity_range</span> · <span style="color:var(--gold)">suitable_arcs</span></div>`+
+  placed.slice(0,5).map((item,i)=>`
+    <div class="schema-card">
+      <div class="schema-hdr" onclick="toggleSchema(${i})">
+        <span class="idot" style="background:${item.color};width:8px;height:8px;border-radius:50%;flex-shrink:0"></span>
+        <span style="flex:1;font-size:12px;font-weight:500;color:var(--tx)">${item.name}</span>
+        <div style="display:flex;gap:3px"><span class="it it-pass${item.pass}">Pass ${item.pass}</span><span class="it it-arch">${item.movement}</span><span class="it it-fin">${item.finish}</span></div>
+      </div>
+      <div class="schema-body" id="sb-${i}">
+        <span class="schema-key">emotion_primary:</span> <span class="schema-val">${item.ep}</span><br>
+        <span class="schema-key">emotion_secondary:</span> <span class="schema-val">${item.es||'—'}</span><br>
+        <span class="schema-key">blend:</span> <span class="schema-val">${item.blend||'—'}</span><br>
+        <span class="schema-key">movement_archetype:</span> <span class="schema-val">${item.movement}</span><br>
+        <span class="schema-key">finish:</span> <span class="schema-val">${item.finish}</span><br>
+        <span class="schema-key">palette_family:</span> <span class="schema-val">${item.palette}</span><br>
+        <span class="schema-key">contrast_level:</span> <span class="schema-val">${item.contrast}</span><br>
+        <span class="schema-key">intensity_range:</span> <span class="schema-val">[${item.intensity.join(', ')}]</span><br>
+        <span class="schema-key">suitable_arcs:</span> <span class="schema-val">${item.arcs?.join(' / ')||'—'}</span>
+      </div>
+    </div>`).join('');
+}
+
+function toggleSchema(i){
+  const el=document.getElementById('sb-'+i);
+  if(el) el.classList.toggle('open');
+}
+
+/* ─── RENDER PROMPT ─── */
+function renderPrompt(){
+  const r=S.result;
+  document.getElementById('e-prompt').style.display='none';
+  document.getElementById('c-prompt').style.display='block';
+  const str=items=>items.filter(s=>s.item).map(s=>s.item.name).join(', ')||'mixed';
+  const arch=[...new Set(r.p1.filter(s=>s.item).map(s=>s.item.movement))].join(', ');
+  const finishes=[...new Set(r.all.filter(s=>s.item).map(s=>s.item.finish))];
+  const palettes=[...new Set(r.all.filter(s=>s.item).map(s=>s.item.palette))];
+  const f=FORMULAS.find(x=>x.id===r.formula);
+  const intLabel=r.intensityLevel===3?'high-contrast stark':r.intensityLevel===2?'medium contrast satin-to-matte':'low contrast unified matte';
+  const prompt=`Luxury faux botanical wreath, ${f?.label.toLowerCase()} composition, ${r.diam}-inch grapevine base. Emotional tone: ${r.emotions.join(', ')}. Structural foundation: ${str(r.p1.filter(s=>s.role==='structural'||s.role==='focal'))} — ${arch} forms, placed in the ${f?.arc} foundational arc. Secondary textural layer: ${str(r.p2)}. Finish palette: ${finishes.join(', ')}. Color palette: ${palettes.join(', ')}. Intensity expression: ${intLabel}. Intentional negative space exposes raw grapevine. Premium silk and preserved botanicals — no fresh flowers, no plastic, no craft-store aesthetic. Editorial product photography, shallow depth of field, warm diffused natural light from upper left, matte aged plaster wall, luxury handcrafted decor. --ar 4:5 --style raw --q 2`;
+  document.getElementById('ptext').textContent=prompt;
+  const id='EC_WR_V2_'+(Math.floor(Math.random()*9000)+1000);
+  document.getElementById('pmeta').innerHTML=`<strong style="color:var(--mu)">ID:</strong> ${id} &nbsp;·&nbsp; <strong style="color:var(--mu)">Formula:</strong> ${f?.label} &nbsp;·&nbsp; <strong style="color:var(--mu)">Intensity:</strong> ${r.intensityLevel}/3 &nbsp;·&nbsp; <strong style="color:var(--mu)">Total stems:</strong> ${r.all.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0)}`;
+}
+
+function switchTab(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  document.getElementById('panel-'+id).classList.add('on');
+  el.classList.add('on');
+}
+
+function copyPrompt(){
+  const t=document.getElementById('ptext').textContent;
+  navigator.clipboard.writeText(t).then(()=>{const b=document.querySelector('.cbtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',1500);});
+}
+
+initEmotions();
+initInventory();
+refreshFormula();
+</script>
+</body>
+</html>
