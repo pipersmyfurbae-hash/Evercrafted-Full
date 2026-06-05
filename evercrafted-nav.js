@@ -38,7 +38,7 @@
   const css = `
   .ec-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;
     padding:14px clamp(16px,4vw,48px);background:#F9F7F4;border-bottom:1px solid #E4DFD8;
-    font-family:'Jost',system-ui,sans-serif;position:relative;z-index:9000}
+    font-family:'Inter',system-ui,sans-serif;position:relative;z-index:9000}
   .ec-nav a{text-decoration:none}
   .ec-logo{font-family:'Italiana',Georgia,serif;font-size:1.35rem;color:#2c2a26;letter-spacing:.02em}
   .ec-logo b{font-weight:400}.ec-logo .g{color:#4a6741}
@@ -48,9 +48,9 @@
   .ec-cta{padding:9px 18px;border-radius:100px;background:#4a6741;color:#fff!important;
     font-size:12px;font-weight:600;letter-spacing:.05em}
   .ec-cta:hover{background:#3c5435}
-  .ec-foot{background:#3A5532;color:rgba(255,255,255,.6);font-family:'Jost',system-ui,sans-serif;
+  .ec-foot{background:#3A5532;color:rgba(255,255,255,.6);font-family:'Inter',system-ui,sans-serif;
     padding:clamp(2.75rem,5vw,3.5rem) clamp(16px,4vw,48px) 1.75rem}
-  .ec-foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:clamp(1.5rem,3vw,3rem);
+  .ec-foot-top{display:grid;grid-template-columns:2.4fr 1fr 1fr;gap:clamp(1.5rem,3vw,3rem);
     max-width:1200px;margin:0 auto 2.5rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,.1)}
   @media(max-width:768px){.ec-foot-top{grid-template-columns:1fr 1fr}}
   @media(max-width:480px){.ec-foot-top{grid-template-columns:1fr}}
@@ -71,7 +71,7 @@
   if (!document.querySelector('link[href*="Italiana"]')) {
     const f = document.createElement('link');
     f.rel = 'stylesheet';
-    f.href = 'https://fonts.googleapis.com/css2?family=Italiana&family=Jost:wght@300;400;500;600&display=swap';
+    f.href = 'https://fonts.googleapis.com/css2?family=Italiana&family=Inter:wght@300;400;500;600&display=swap';
     document.head.appendChild(f);
   }
   const st = document.createElement('style');
@@ -104,7 +104,6 @@
         <div class="ec-foot-tag">The design system for faux botanical wreath artists. Turn a feeling into something you can build.</div>
       </div>
       ${col('Product', PRODUCT)}
-      ${col('Tools', TOOLS)}
       ${col('Company', COMPANY)}
     </div>
     <div class="ec-foot-bot">

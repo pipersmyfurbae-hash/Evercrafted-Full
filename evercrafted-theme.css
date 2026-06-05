@@ -15,7 +15,7 @@
   --border:#E4DFD8; --border-dark:#CCC7BE;
   /* type */
   --serif:'Italiana',Georgia,serif;
-  --sans:'Jost',system-ui,sans-serif;
+  --sans:'Inter',system-ui,sans-serif;
   --script:'Dancing Script',cursive;
   /* radius / shadow / motion */
   --rsm:6px; --rpill:100px;

@@ -6,7 +6,7 @@
 <title>Pricing — Evercrafted</title>
 <meta name="description" content="Start free with Bloom. Grow into Craft, Studio, or Atelier. Every tier lets you design from memory — higher tiers give you the tools to go further.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Dancing+Script:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Dancing+Script:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --white:#FFFFFF;--off:#F9F7F4;--paper:#F2EFE9;--warm:#EDE8E0;
@@ -17,7 +17,7 @@
   --dust:#7A5A80;--dustp:#F5EEF4;
   --bd:#E4DFD8;--bdd:#CCC7BE;
   --serif:'Italiana',Georgia,serif;
-  --sans:'Jost',system-ui,sans-serif;
+  --sans:'Inter',system-ui,sans-serif;
   --script:'Dancing Script',cursive;
   --sh:0 1px 4px rgba(0,0,0,.06);
   --sm:0 4px 20px rgba(0,0,0,.08);
@@ -166,7 +166,10 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .gb-body{font-size:13px;color:var(--muted);line-height:1.55}
 
 /* CTA BAND */
-.cta-band{background:var(--green);padding:5rem 0;text-align:center}
+.cta-band{background:var(--green);padding:5rem 0;text-align:center;position:relative;overflow:hidden}
+.cta-band::before{content:"";position:absolute;inset:0;background:url('/assets/waitlist-bg.png') center/cover no-repeat;opacity:.22;z-index:0}
+.cta-band::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(58,85,50,.82),rgba(48,71,42,.93));z-index:0}
+.cta-band > *{position:relative;z-index:1}
 .cta-band h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--white);margin-bottom:.75rem;line-height:1.2}
 .cta-band p{font-size:16px;color:rgba(255,255,255,.7);max-width:480px;margin:0 auto 2rem;font-weight:300}
 .cta-form{display:flex;gap:.6rem;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center}
