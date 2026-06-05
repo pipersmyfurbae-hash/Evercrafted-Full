@@ -153,6 +153,7 @@ app.get('/api/usage', async (req, res) => {
 // (see vercel.json); these routes only handle requests reaching the function.
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'evercrafted-marketing-site.html')));
 app.get('/evercrafted-schema.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-schema.js')));
+app.get('/evercrafted-nav.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-nav.js')));
 app.get('/:page.html', (req, res, next) => {
   const file = path.join(__dirname, `${req.params.page}.html`);
   fs.existsSync(file) ? res.sendFile(file) : next();
