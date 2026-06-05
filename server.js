@@ -512,7 +512,7 @@ Return ONLY valid JSON, no markdown, no backticks:
   "map_query": "city + country for map embed (e.g. Benidorm Spain). If no location, use Columbus Ohio"
 }
 
-ideal_recipe MUST contain: 1-2 focal species (carrying any stated materials), 1-2 secondary, 1-2 filler, 2-3 greenery, 1 accent — sized to a 24 inch wreath (roughly 9-12 focal blooms total, fuller greenery). Every floral gets a true colour hex drawn from the resolved palette.`;
+ideal_recipe MUST contain: 1-2 focal species (carrying any stated materials), 1-2 secondary, 1-2 filler, 2-3 greenery, 1 accent — sized to a 24 inch wreath. Counts: focal blooms 9-12 total; greenery GENEROUS so the base wraps the full ring (each greenery slot count 8-12); filler 4-6; accent 3-4. Every floral gets a true colour hex drawn from the resolved palette.`;
   };
 
   function isValid(data) {
