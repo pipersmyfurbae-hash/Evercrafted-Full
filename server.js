@@ -1082,7 +1082,9 @@ app.patch('/api/inventory/:id', async (req, res) => {
     Object.keys(patch).forEach(k => {
       if (k === 'in_stock') list[idx].inStock = patch[k];
       else if (k === 'asset_prompt') list[idx].assetPrompt = patch[k];
-      else list[idx][k] = patch[k]; // stock, role, pass, behavior, movement, finish, palette, ep, es
+      else if (k === 'recommended_qty') list[idx].recommendedQty = patch[k];
+      else if (k === 'stock_unit') list[idx].stockUnit = patch[k];
+      else list[idx][k] = patch[k]; // stock, name, price, description, category, supplier, role, pass, …
     });
     fs.writeFileSync(INVENTORY_PATH, JSON.stringify(list, null, 2));
     return res.json({ success: true, data: list[idx] });
