@@ -166,6 +166,13 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .gb-body{font-size:13px;color:var(--muted);line-height:1.55}
 
 /* CTA BAND */
+.fb-band{position:relative;min-height:66vh;display:flex;align-items:center;overflow:hidden;background:#e9e2d6}
+.fb-band>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.fb-band .fb-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(253,252,250,.94),rgba(253,252,250,.6) 38%,rgba(253,252,250,.08) 70%,rgba(253,252,250,0))}
+.fb-band .fb-inner{position:relative;z-index:2;max-width:760px;padding:0 clamp(20px,6vw,90px)}
+.fb-band .fb-ov{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.fb-band h2{font-family:var(--serif);font-weight:400;font-size:clamp(2.2rem,5vw,4rem);line-height:1.08;letter-spacing:.01em;color:var(--charcoal,#2e2e2e)}
+.fb-band p{margin-top:1.2rem;max-width:30rem;color:var(--ink,#4a4a4a);font-size:1.05rem;line-height:1.7}
 .cta-band{background:var(--green);padding:5rem 0;text-align:center;position:relative;overflow:hidden}
 .cta-band::before{content:"";position:absolute;inset:0;background:url('/assets/waitlist-bg.png') center/cover no-repeat;opacity:.22;z-index:0}
 .cta-band::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(58,85,50,.82),rgba(48,71,42,.93));z-index:0}
@@ -411,6 +418,16 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 </section>
 
 <!-- WAITLIST CTA -->
+<section class="fb-band">
+  <img src="/assets/band-interior.png" alt="A finished Evercrafted wreath in a room">
+  <div class="fb-scrim"></div>
+  <div class="fb-inner">
+    <div class="fb-ov">Made by makers, for makers</div>
+    <h2>The tool behind<br>the pieces.</h2>
+    <p>Every plan turns a feeling into something real — at whatever tier fits the way you work.</p>
+  </div>
+</section>
+
 <section class="cta-band" id="waitlist">
   <div class="container">
     <h2>Lock in your founding price.</h2>
