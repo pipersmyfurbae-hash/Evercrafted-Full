@@ -1049,11 +1049,17 @@ async function generateImage(prompt, aspect) {
   const clean = prompt.replace(/--\w+\s+\S+/g, ' ').replace(/\s+/g, ' ').trim();
 
   if (provider === 'fal') {
+    const model = process.env.FAL_MODEL || 'fal-ai/ideogram/v3';
     const image_size = aspect === 'square' ? 'square_hd' : 'portrait_4_3';
-    const r = await fetch('https://fal.run/' + (process.env.FAL_MODEL || 'fal-ai/flux-pro/v1.1'), {
+    const body = { prompt: clean, image_size, num_images: 1 };
+    // Ideogram V3: turn OFF prompt expansion (its "magic prompt" re-invents scenery)
+    // so our wreath-first prompt is rendered literally; ask for clean realism.
+    if (model.includes('ideogram')) Object.assign(body, { rendering_speed: 'QUALITY', style: 'REALISTIC', expand_prompt: false });
+    else if (model.includes('recraft')) Object.assign(body, { style: 'realistic_image' });
+    const r = await fetch('https://fal.run/' + model, {
       method: 'POST',
       headers: { 'Authorization': `Key ${process.env.FAL_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: clean, image_size, num_images: 1 }),
+      body: JSON.stringify(body),
     });
     const j = await r.json();
     if (!r.ok) throw new Error(j.detail || j.error || `fal error ${r.status}`);
