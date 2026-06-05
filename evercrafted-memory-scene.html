@@ -600,9 +600,13 @@ function buildPolarSVG(filledSlots, formula) {
     svg.appendChild(g);
   });
 
-  // one legend entry per chosen floral (not per placed unit)
-  filledSlots.filter(s => s.item).forEach(slot => {
-    legendItems.push({ name: slot.item.name, color: slot.item.color, border: ZONE_COLORS[slot.role] || '#888', role: slot.role, stems: slot.stemCount });
+  // one legend entry per chosen floral (not per placed unit); works for curated
+  // recipe slots (top-level name/colorHex) and inventory-filled slots (.item)
+  filledSlots.filter(s => s && (s.item || s.role)).forEach(slot => {
+    legendItems.push({
+      name: (slot.item && slot.item.name) || slot.name || '',
+      color: (slot.item && (slot.item.color || slot.item.colorHex)) || slot.colorHex || '#c9b7a8',
+      border: ZONE_COLORS[slot.role] || '#888', role: slot.role, stems: slot.stemCount });
   });
 
   // Center
@@ -877,8 +881,23 @@ function renderBlueprint(r) {
     }
   }
 
-  // Run slot fill using poem emotions for tier-specific weighting
-  const filledSlots = runSlotFill(emotions, formula, intensity, poemEmotions);
+  // CURATE-FIRST: the design brain (server /api/scene) returns ideal_slots — the
+  // dream design's named florals in their TRUE colours, honouring any stated
+  // materials. That is what we place and draw. If absent (older response), fall
+  // back to designing from the maker's tagged inventory.
+  const idealSlots = Array.isArray(r.ideal_slots) && r.ideal_slots.length >= 4
+    ? r.ideal_slots
+    : (Array.isArray(r.ideal_recipe) ? EC_SCHEMA.recipeToSlots(r.ideal_recipe) : []);
+  const curated = idealSlots.length >= 4;
+  const filledSlots = curated ? idealSlots : runSlotFill(emotions, formula, intensity, poemEmotions);
+  // display accessors that work for BOTH curated slots and inventory-filled slots
+  const sName  = s => (s.item && s.item.name) || s.name || '';
+  const sColor = s => (s.item && (s.item.color || s.item.colorHex)) || s.colorHex || '#c9b7a8';
+  const sEp    = s => (s.item && (s.item.blend || s.item.ep)) || s.ep || '';
+  const sHas   = s => !!(s && (s.item || s.role));
+
+  // Palette + design-DNA panel (curated path)
+  renderDesignDNA(r, curated);
 
   // Build polar SVG
   const { svg, legendItems } = buildPolarSVG(filledSlots, formula);
@@ -902,17 +921,17 @@ function renderBlueprint(r) {
     const tiers = [...new Set(filledSlots.map(s => s.tier))];
     let html = '';
     for (const tier of tiers) {
-      const ts = filledSlots.filter(s => s.tier === tier && s.item);
+      const ts = filledSlots.filter(s => s.tier === tier && sHas(s));
       if (!ts.length) continue;
       html += `<div style="margin-bottom:.65rem">
         <div style="font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--fa);margin-bottom:.3rem">${tier}</div>`;
       ts.forEach(slot => {
         const zc = ZONE_COLORS[slot.role] || '#888';
         html += `<div style="display:flex;align-items:center;gap:.6rem;padding:.4rem .5rem;border-radius:var(--rsm);background:var(--s2);border:1px solid var(--bd);margin-bottom:.3rem">
-          <span style="width:8px;height:8px;border-radius:50%;background:${slot.item.color};border:1.5px solid ${zc};flex-shrink:0"></span>
-          <span style="flex:1;font-size:11px;font-weight:500;color:var(--tx)">${slot.item.name}</span>
+          <span style="width:8px;height:8px;border-radius:50%;background:${sColor(slot)};border:1.5px solid ${zc};flex-shrink:0"></span>
+          <span style="flex:1;font-size:11px;font-weight:500;color:var(--tx)">${sName(slot)}</span>
           <span style="font-size:9px;padding:1px 6px;border-radius:20px;background:${zc}18;color:${zc};border:1px solid ${zc}30;font-weight:600">${slot.role}</span>
-          <span style="font-size:9px;color:var(--fa)">${slot.item.blend || slot.item.ep}</span>
+          <span style="font-size:9px;color:var(--fa)">${sEp(slot)}</span>
           <span style="font-size:11px;font-weight:600;color:var(--green);min-width:22px;text-align:right">${slot.stemCount}</span>
         </div>`;
       });
@@ -922,7 +941,7 @@ function renderBlueprint(r) {
   }
 
   // Total stems
-  const total = filledSlots.filter(s => s.item).reduce((a, b) => a + b.stemCount, 0);
+  const total = filledSlots.filter(sHas).reduce((a, b) => a + (b.stemCount || 0), 0);
   const totEl = document.getElementById('total-stems');
   if (totEl) totEl.textContent = total;
 
@@ -938,12 +957,13 @@ function renderBlueprint(r) {
       renderPrompt: document.getElementById('prompt-text')?.textContent || r.render_prompt || '',
       renderSurface: r.render_surface || '',
       location: r.map_query || (typeof answers !== 'undefined' ? (answers.location || '') : ''),
-      slots: filledSlots.filter(s => s.item).map(s => ({ role: s.role, tier: s.tier, name: s.item.name, stemCount: s.stemCount, floralUnits: s.floralUnits, bloomSize: s.bloomSize, ep: s.item.ep, colorHex: s.item.color, behavior: s.item.behavior, movement: s.item.movement, palette: s.item.palette, assetUrl: s.item.assetUrl || '' })),
+      slots: filledSlots.filter(sHas).map(s => ({ role: s.role, tier: s.tier, name: sName(s), stemCount: s.stemCount, floralUnits: s.floralUnits, bloomSize: s.bloomSize, ep: sEp(s), colorHex: sColor(s), behavior: s.behavior || (s.item && s.item.behavior) || 'mid', movement: s.movement || (s.item && s.item.movement) || 'still', palette: s.palette || (s.item && s.item.palette) || 'neutral-mid', assetUrl: (s.item && s.item.assetUrl) || '' })),
     },
   });
 
-  // Suggest shop pieces for any roles the maker's inventory can't fill
-  renderGapSuggestions(filledSlots, formula, emotions, poemEmotions);
+  // Reconcile the dream design against the maker's inventory: have vs. source
+  if (curated) renderSourcing(filledSlots);
+  else renderGapSuggestions(filledSlots, formula, emotions, poemEmotions);
 }
 
 // ── Save design ───────────────────────────────────────────────────────────────
@@ -1034,6 +1054,80 @@ async function loadUserInventory() {
 }
 
 // For any slot the inventory can't fill, suggest shop pieces that fit the composition
+// ── Design DNA panel: 60-30-10 palette, archetypes, spec block, honoured materials ──
+function renderDesignDNA(r, curated) {
+  let wrap = document.getElementById('design-dna');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'design-dna';
+    wrap.style.cssText = 'max-width:1100px;margin:1.25rem auto 0;padding:0 1.25rem';
+    const out = document.getElementById('output-view');
+    if (out) out.appendChild(wrap);
+  }
+  wrap.innerHTML = '';
+  if (!curated) return;
+  const pal = r.color_palette || {};
+  const nb = r.normalized_brief || {};
+  const sw = c => (c && c.hex) ? `<span style="display:inline-flex;align-items:center;gap:.4rem">
+      <span style="width:16px;height:16px;border-radius:50%;background:${c.hex};border:1px solid #0002;flex-shrink:0"></span>
+      <span style="font-size:11px;color:var(--tx)">${c.name || ''}</span></span>` : '';
+  const mats = (nb.material_preferences || []).filter(Boolean);
+  const ambs = (nb.ambiguities || []).filter(Boolean);
+  let html = `<div style="border-top:1px solid var(--bd);padding-top:1.25rem">
+    <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.25rem">Design DNA</div>
+    <div style="font-family:var(--serif,'Cormorant Garamond',serif);font-size:1.35rem;margin-bottom:.9rem;color:var(--tx)">${r.atmosphere_archetype || ''}${r.movement_archetype ? ' · ' + r.movement_archetype : ''}</div>`;
+  if (pal.dominant || pal.supporting || pal.accent) {
+    html += `<div style="display:flex;flex-wrap:wrap;gap:1.1rem;align-items:center;margin-bottom:.9rem">
+      ${sw(pal.dominant)}${sw(pal.supporting)}${sw(pal.accent)}
+      ${pal.warm_cool_lean ? `<span style="font-size:10px;color:var(--mu)">${pal.warm_cool_lean} · ${pal.contrast_level || ''} contrast · ${pal.seasonal_fit || ''}</span>` : ''}
+    </div>`;
+  }
+  if (mats.length) {
+    html += `<div style="font-size:11px;color:var(--mu);margin-bottom:.6rem">Honouring your materials: ${mats.map(m => `<span style="background:var(--gp);color:var(--green);padding:1px 8px;border-radius:20px;font-weight:600">${m}</span>`).join(' ')}</div>`;
+  }
+  if (r.spec_block) {
+    html += `<pre style="font-family:var(--sans,system-ui);font-size:11px;line-height:1.7;color:var(--tx);white-space:pre-wrap;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);padding:.85rem 1rem;margin:0 0 .6rem">${r.spec_block.replace(/</g,'&lt;')}</pre>`;
+  }
+  if (ambs.length) {
+    html += `<div style="font-size:10px;color:var(--gold,#9a7b3a);line-height:1.5">${ambs.map(a => '⚑ ' + a).join('<br>')}</div>`;
+  }
+  html += `</div>`;
+  wrap.innerHTML = html;
+}
+
+// ── Reconcile the dream design against the maker's inventory: have vs. source ──
+function renderSourcing(filledSlots) {
+  let wrap = document.getElementById('gap-suggestions');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'gap-suggestions';
+    wrap.style.cssText = 'max-width:1100px;margin:1.5rem auto 0;padding:0 1.25rem';
+    const out = document.getElementById('output-view');
+    if (out) out.appendChild(wrap);
+  }
+  const inv = Array.isArray(ACTIVE_INVENTORY) ? ACTIVE_INVENTORY : [];
+  // a curated floral is "covered" if the maker stocks something in the same role
+  // that shares an emotion — otherwise it's on the sourcing list
+  const covered = (s) => inv.some(i => i.role === s.role && (!s.ep ||
+    [i.ep, i.es, i.blend].filter(Boolean).map(x => x.toLowerCase()).includes(String(s.ep).toLowerCase())));
+  const items = filledSlots.filter(s => s && s.role);
+  const have = items.filter(covered);
+  const source = items.filter(s => !covered(s));
+  const row = (s, mode) => `<div style="display:flex;align-items:center;gap:.6rem;padding:.45rem .6rem;border-radius:var(--rsm);background:var(--s2);border:1px solid var(--bd);margin-bottom:.35rem">
+      <span style="width:14px;height:14px;border-radius:50%;background:${s.colorHex || '#c9b7a8'};border:1px solid #0002;flex-shrink:0"></span>
+      <span style="flex:1;font-size:12px;font-weight:500;color:var(--tx)">${s.name || s.role}</span>
+      <span style="font-size:9px;color:var(--fa)">${s.role} · ${s.stemCount || s.floralUnits || 1}</span>
+      <span style="font-size:9px;font-weight:700;padding:1px 8px;border-radius:20px;${mode==='have'?'background:var(--gp);color:var(--green)':'background:#f3e6d4;color:#9a7b3a'}">${mode==='have'?'in stock':'to source'}</span>
+    </div>`;
+  let html = `<div style="border-top:1px solid var(--bd);padding-top:1.25rem">
+    <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.25rem">Sourcing</div>
+    <div style="font-family:var(--serif,'Cormorant Garamond',serif);font-size:1.35rem;margin-bottom:1rem;color:var(--tx)">What this design calls for</div>`;
+  if (source.length) html += `<div style="font-size:10px;color:var(--mu);margin-bottom:.4rem">To source (${source.length})</div>` + source.map(s => row(s, 'source')).join('');
+  if (have.length) html += `<div style="font-size:10px;color:var(--mu);margin:.7rem 0 .4rem">Your inventory can cover (${have.length})</div>` + have.map(s => row(s, 'have')).join('');
+  html += `</div>`;
+  wrap.innerHTML = html;
+}
+
 async function renderGapSuggestions(filledSlots, formula, emotions, poemEmotions) {
   let wrap = document.getElementById('gap-suggestions');
   if (!wrap) {

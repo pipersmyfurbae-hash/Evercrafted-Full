@@ -635,8 +635,47 @@
   // Public: emotion(s) → suggested canonical formula.
   function suggestFormula(emotions) { return deriveDesignParams(emotions).formula; }
 
+  // ── CURATE-FIRST: AI ideal recipe → placeable slots ─────────────────────────
+  // The intake+translator brain (server /api/scene) curates the IDEAL named
+  // florals for a memory (honouring client-stated materials, painted in the
+  // 60-30-10 palette) — independent of what the maker has in stock. This turns
+  // that recipe into the slot shape placeSlots consumes, so the dream design is
+  // what gets placed and drawn. Inventory reconciliation ("have / source")
+  // happens separately, downstream. Falls back gracefully on partial data.
+  function recipeToSlots(recipe) {
+    if (!Array.isArray(recipe)) return [];
+    const TIER = { focal: 'Foundation', structural: 'Foundation', secondary: 'Secondary',
+                   bridge: 'Bridge', greenery: 'Greenery', accent: 'Accent', texture: 'Texture', filler: 'Texture' };
+    const DEF_BEH = { focal: 'heavy', structural: 'mid', secondary: 'mid', bridge: 'mid',
+                      greenery: 'light', filler: 'light', texture: 'wispy', accent: 'wispy' };
+    return recipe.filter(r => r && r.role).map(r => {
+      const role = String(r.role).toLowerCase().trim();
+      const beh = ['heavy', 'mid', 'light', 'wispy'].includes(r.behavior) ? r.behavior : (DEF_BEH[role] || 'mid');
+      const rawHex = (r.color && (r.color.hex || r.color)) || r.colorHex || '';
+      const hex = /^#?[0-9a-fA-F]{6}$/.test(String(rawHex).trim())
+        ? (String(rawHex).trim().startsWith('#') ? String(rawHex).trim() : '#' + String(rawHex).trim()) : '';
+      const bloom = (+r.bloom_size_in > 0) ? +r.bloom_size_in : (+r.bloomSize > 0 ? +r.bloomSize : (DEFAULT_BLOOM[beh] || 2.5));
+      let count = Math.max(1, Math.min(14, Math.round(+r.count || +r.floralUnits || 3)));
+      if (role === 'focal' || role === 'secondary') count = toOdd(count);
+      const tags = Array.isArray(r.emotion_tags) ? r.emotion_tags : [];
+      return {
+        role, tier: TIER[role] || 'Secondary',
+        name: typeof r.name === 'string' ? r.name.slice(0, 120) : '',
+        colorHex: hex, color: hex,
+        colorName: (r.color && r.color.name) || r.colorName || '',
+        bloomSize: bloom, behavior: beh,
+        floralUnits: count, stemCount: Math.max(1, Math.round(+r.count || count)),
+        palette: r.palette || 'neutral-mid',
+        movement: r.movement || 'still',
+        ep: tags[0] || '', es: tags[1] || '',
+        ringBand: (r.ring_band || r.ringBand || '').toString().toUpperCase().slice(0, 1),
+        cluster: r.cluster || '',
+      };
+    });
+  }
+
   return { EC_CANON: 'v1', VOCAB, EMOTION_VA, normalizeTag, unitSpec, BUDGET, ZS, BU,
-           SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill, STEM_DENSITY, PLACE_YIELD, coverageFor,
+           SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill, recipeToSlots, STEM_DENSITY, PLACE_YIELD, coverageFor,
            ROLE_BAND, ROLE_Z, placeSlots, quadrantFor, emotionToVA, deriveDesignParams, suggestFormula,
            WREATH_SIZES, wreathRadii, toOdd, degToClock, SEASONS, seasonFor, CONSTRUCTION, compileBlueprint };
 });

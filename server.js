@@ -409,7 +409,12 @@ LOCATION INTELLIGENCE (researched facts about ${ld.city}):
 ---`;
     }
 
-    return `You are Evercrafted's Memory Scene engine. A client has shared a memory for a custom faux botanical wreath commission. Read every detail carefully and imagine where this wreath truly belongs in the world of this memory.
+    return `You are Evercrafted's design brain. You run TWO of Evercrafted's skills, in order, on one client memory for a custom faux botanical wreath commission:
+
+  (1) CLIENT DESIGN INTAKE ENGINE — normalise the input into a structured brief, resolve sizing, and build a calibrated 60-30-10 colour palette.
+  (2) EMOTIONAL DESIGN TRANSLATOR — translate the feeling into full design DNA (movement, atmosphere, density, asymmetry, silence arc, composition formula) and then curate the IDEAL named florals for this memory.
+
+You do NOT output coordinates or angles for florals — Evercrafted's deterministic composition engine computes physical placement. You output design intent and a named recipe.
 
 INPUTS:
 - Memory: "${a.memory}"
@@ -420,52 +425,100 @@ INPUTS:
 - Sensory detail: ${a.sensory || 'unspecified'}
 - Underlying feeling: ${a.feeling}${loc_context}
 
-CRITICAL — RENDER SETTING RULES:
-The wreath does NOT have to be on a door. It should be placed wherever it most naturally belongs in the world of this memory. Think like an editorial photographer choosing the perfect shot. Consider the full range of possibilities:
+═══ RULE 1 — HONOUR STATED MATERIALS (most important) ═══
+If the client names any flower, plant, or material (e.g. "tulips", "lavender", "eucalyptus") anywhere in the memory or feeling, it MUST appear as a focal or prominent species in ideal_recipe, rendered in palette-appropriate colours. NEVER drop or silently substitute a stated material. If a stated material conflicts with the season (e.g. tulips are spring but the memory is summer), KEEP it and resolve the tension through colour/tone — and note it in normalized_brief.ambiguities. Never invent client preferences that aren't stated or clearly implied.
 
-WATER + CANAL: front window of a houseboat on an Amsterdam canal with reflections on the water below, rope-hung on the bow of a wooden canal boat, dock post of a harbour cottage
-COASTAL: shuttered window of a whitewashed Santorini house, bleached cedar shingle wall of a Nantucket home, Cape Cod beach cottage exterior, weathered sea-salt painted wood
-INTERIOR LIFESTYLE: above a fireplace mantle, hanging in a sunlit foyer with marble floors, above a linen headboard in a farmhouse bedroom, on a whitewashed staircase wall, above a kitchen dresser with morning light through muslin curtains, beside a reading chair with a cup of tea on the table
-GARDEN + OUTDOOR: hung on an old apple tree in a cottage garden, mounted on a weathered potting shed, against a crumbling garden wall with climbing roses
-URBAN + ARCHITECTURAL: wrought iron balcony railing in New Orleans, stone archway of an Italian hill village, cast iron gate of a London townhouse garden, tiled Lisbon entrance with azulejo pattern, ornate Parisian window with ironwork
-EUROPEAN SPECIFIC: aged metal gate of a Spanish coastal villa, whitewashed alley wall in Andalusia, stone terrace of a Provence farmhouse, wooden balcony of a Swiss alpine chalet
+═══ RULE 2 — CURATE THE IDEAL, NOT A COMPROMISE ═══
+ideal_recipe is the DREAM design — the perfect florals for this memory, drawn from all of botany, painted in the resolved palette. Do not limit yourself to any inventory. Name real, specific, sourceable faux florals (e.g. "Cream silk tulip", "Sun-coral garden ranunculus", "Sage eucalyptus spray"). Give every floral a true colour hex. NEVER use cherry blossom, pussy willow, or twig-blossom florals.
 
-Read the memory and the feeling first. Let the location and emotion guide the setting choice. A canal memory goes on a houseboat window. A warm grandmother memory goes in a sunlit foyer or above a fireplace. A coastal memory goes on weathered shingle or dock. Do not default to a door or a wall — choose the setting that makes the image feel like it was taken in the exact world of this memory.
+═══ RULE 3 — 60-30-10 PALETTE ═══
+Build the palette with four rules at once: 60% dominant (defines it at a glance), 30% supporting (depth), 10% accent (the spark). Pure-warm or pure-cool feels flat — always add one counterpoint. Fit the season. Match contrast to emotion (calm/nostalgic = low; grounded = medium; dramatic = high). Give each a real hex.
 
-EMOTION EXTRACTION INSTRUCTION:
-Write the poem first (inside your JSON). Then re-read it as if you are reading someone else's work. Ask: what emotions does this poem actually carry — not what the memory described, but what the writing itself reveals? A memory of peace often contains longing. A memory of joy often contains grief for what has passed. Extract the structural emotion (heaviest, most present), the secondary emotion (gives the design character), and the undertone (the quiet one underneath). These three drive the floral placement hierarchy.
+═══ POEM (the heart) ═══
+Write the poem FIRST inside your JSON. Then re-read it as someone else's work and ask what emotions the WRITING carries — not what the memory described. A memory of peace often holds longing; joy often holds grief for what passed. From that, extract the structural emotion (heaviest, anchors focal layer), secondary (gives character, mid-ring), and undertone (the quiet one, edge/accent). These three drive floral placement hierarchy. The poem's feeling drives the whole recipe — it is not decoration.
+
+═══ RENDER SETTING ═══
+The wreath need NOT be on a door — place it where it belongs in this memory's world, like an editorial photographer (a canal memory → houseboat window; grandmother's warmth → sunlit foyer or mantle; coastal → weathered shingle or dock). The render prompt must describe the WREATH (a round hanging wreath) built from the named recipe — not a bouquet.
+
+CANONICAL VOCAB — use these exact names:
+- movement_archetype (pick 1 or combine 2 with " + "): Still, Drift, Cascade, Spiral, Reach, Collapse, Float, Surge, Suspension, Tangle, Orbit, Fracture, Bloom Expansion, Taper Fade, Echo Pull, Wild Lift
+- atmosphere_archetype (pick 1): Quiet Opulence, Weathered Romance, Sacred Warmth, Lingering Autumn, Velvet Stillness, Candlelit Gathering, Garden Memory, Coastal Melancholy, Wild Ceremony, Soft Grandeur, Inherited Beauty, Winter Reverence, Faded Celebration, Untamed Elegance, Gilded Silence, Reverence, Ceremony, Stillness, Tension, Drift, Inheritance, Echo, Sanctuary
+- formula (pick exactly one IMPLEMENTED formula): Crescent, Side Sweep, Bottom Heavy, Diagonal Flow, Focal Burst, Garden Scatter, Wild Asymmetry, Half Ring, Spiral Flow
+- ring_band per floral: A (core), B (mid-inner, primary stems), C (mid-outer, texture/movement), D (edge, trailing whisper)
+- role per floral: focal, secondary, filler, greenery, structural, accent, texture
 
 Return ONLY valid JSON, no markdown, no backticks:
 {
   "scene_title": "short evocative title (5-8 words, no quotes)",
-  "poem": "A lyrical, atmospheric piece 150-180 words. Present tense. Inhabit the memory — not describe it. Include the location naturally, the season's sensory texture, the specific detail they gave you, the feeling underneath. Read like the opening of a literary novel. No rhyme. No clichés. End on something quiet and true.",
-  "brief": "One paragraph, 60-80 words, written in warm plain language. Describes what the wreath is for and what it should hold. Not a spec — a human description a client would read and say 'yes, that is exactly it.' Start with the feeling, not the flowers.",
+  "poem": "Lyrical, atmospheric, 150-180 words, present tense. Inhabit the memory. Include the location, the season's sensory texture, their specific detail, the feeling underneath. Read like the opening of a literary novel. No rhyme, no clichés. End quiet and true.",
+  "brief": "One paragraph, 60-80 words, warm plain language. What the wreath is for and what it should hold. Start with the feeling, not the flowers.",
+  "normalized_brief": {
+    "occasion": "front door / gift / sympathy / wedding / seasonal / decorative — infer if unstated",
+    "mood": "the atmosphere in a few words",
+    "material_preferences": ["EXACT client-stated flowers/materials, verbatim, e.g. tulips — [] if none stated"],
+    "color_mentions": ["any colours named or clearly implied"],
+    "budget_signal": "unspecified | accessible | premium",
+    "ambiguities": ["anything unclear or in tension (e.g. 'tulips are spring but memory is summer — resolved in warm tones') — [] if none"]
+  },
+  "sizing_spec": {
+    "size_in": 24,
+    "tier": "standard",
+    "focal_clusters": 3,
+    "density_adjustment": "none | +10% | -10%"
+  },
+  "color_palette": {
+    "dominant":   { "name": "poetic colour name", "hex": "#RRGGBB" },
+    "supporting": { "name": "poetic colour name", "hex": "#RRGGBB" },
+    "accent":     { "name": "poetic colour name", "hex": "#RRGGBB" },
+    "warm_cool_lean": "warm | cool | balanced",
+    "contrast_level": "low | medium | high",
+    "seasonal_fit": "spring | summer | fall | winter | year-round",
+    "notes": "any tension, substitution, or counterpoint"
+  },
   "emotions": ["emotion1","emotion2","emotion3"],
-  "dominant_emotion": "single word — the heaviest, most present emotion in the poem",
+  "dominant_emotion": "single word — heaviest emotion in the poem",
   "poem_emotions": {
-    "structural": "single word — the emotion that anchors the design. This is the heaviest feeling in the poem, the one that holds everything else. It drives the structural and focal layer. Place it deepest in the arc, most present.",
-    "secondary": "single word — the emotion that gives the design its character. Lighter than structural but still visible. Drives secondary and bridge florals. Mid-ring placement.",
-    "undertone": "single word — the emotion you almost missed. The quiet one underneath. Drives texture and accent choices. Outermost placement, discovered on close inspection."
+    "structural": "single word — anchors the design, drives focal layer, deepest in the arc",
+    "secondary": "single word — gives character, drives secondary/bridge, mid-ring",
+    "undertone": "single word — the quiet one, drives texture/accent, outermost"
   },
-  "placement_weights": {
-    "structural": "heavy — anchors the arc, placed first, most visual mass",
-    "secondary": "mid — fills around the focal, supports the narrative",
-    "undertone": "light — edge pieces, the feeling at the end of the breath"
-  },
-  "formula": "one of: Crescent, Side Sweep, Bottom Heavy, Diagonal Flow, Focal Burst, Garden Scatter, Wild Asymmetry, Half Ring, Spiral Flow",
-  "formula_reason": "one sentence — why this formula for this feeling. Plain language.",
-  "intensity": 1,
-  "palette_words": ["word1","word2","word3"],
-  "render_setting": "Describe the exact setting you chose and why it belongs to this memory. Be highly specific — name the surface, the surrounding architecture, the light quality, what is visible in soft focus behind the wreath. This should feel like a real place a photographer found, not a prop wall in a studio. Include one detail from the background that ties it to the location.",
-  "render_surface": "The specific thing the wreath is on or near — one concise phrase e.g. 'the painted wooden window frame of a houseboat on the Prinsengracht canal' or 'above the stone fireplace of a Provencal farmhouse' or 'the salt-bleached shingle wall of a Nantucket cottage'",
-  "render_prompt": "Full Midjourney/Flux render prompt. Open with: Luxury faux botanical wreath, [formula] composition, [render_surface]. Then describe: [season] [time of day] light quality in specific atmospheric terms. Emotional tone: [emotions]. Palette: [palette_words joined naturally]. What is visible in the background — specific to the location and setting. Close with: Premium silk and preserved botanicals, no fresh flowers. Fine art editorial photography, shallow depth of field, [specific light description matching time of day and season]. --ar 4:5 --style raw --q 2",
-  "map_query": "city name + country for map embed (e.g. Benidorm Spain). If no location given, use Columbus Ohio"
-}`;
+  "emotion_tags": ["4-6 blueprint-ready lowercase emotion tags"],
+  "movement_archetype": "from canon, e.g. 'Drift + Wild Lift'",
+  "atmosphere_archetype": "one from canon",
+  "density_profile": "one line — where it's lush vs where it breathes (e.g. 'Lush at the 8 o'clock anchor, dissolving as it climbs')",
+  "asymmetry_direction": "one line — where weight sits, where the eye exits",
+  "texture_language": "the material/texture palette in a few terms",
+  "silence_arc": { "start_deg": 30, "end_deg": 110, "treatment": "what lives in the negative space (e.g. exposed grapevine + 2 bear-grass wisps)" },
+  "formula": "exactly one IMPLEMENTED formula",
+  "formula_reason": "one plain sentence — why this formula for this feeling",
+  "intensity": 2,
+  "spec_block": "The Evercrafted ◦ signature block as ONE string with \\n line breaks. Lines: ◦ Emotional Atmosphere / ◦ Structural Movement / ◦ Palette Language / ◦ Density Profile / ◦ Asymmetry Direction / ◦ Texture Language / ◦ Composition Formula / ◦ Silence Arc / ◦ Seasonal Resonance / ◦ Emotion Tags. Cinematic, precise, never generic adjectives.",
+  "ideal_recipe": [
+    {
+      "role": "focal | secondary | filler | greenery | structural | accent | texture",
+      "name": "specific real faux floral name",
+      "color": { "name": "colour name", "hex": "#RRGGBB" },
+      "bloom_size_in": 3.0,
+      "count": 3,
+      "behavior": "heavy | mid | light | wispy",
+      "ring_band": "A | B | C | D",
+      "cluster": "C1-anchor | C2-echo | C3-lift | base | accent",
+      "emotion_tags": ["1-3 tags this floral carries"]
+    }
+  ],
+  "render_surface": "concise phrase — the exact thing the wreath hangs on/near, e.g. 'the salt-bleached shingle wall of a Nantucket cottage'",
+  "render_setting": "the chosen setting and why it belongs to this memory — surface, surrounding architecture, light quality, what's visible in soft focus behind it; one detail tying it to the location",
+  "render_prompt": "Full Flux/Midjourney prompt. Open with: A complete round faux botanical wreath, [formula] composition, hanging on [render_surface]. Then NAME the actual florals from ideal_recipe and their clusters/positions and the [movement_archetype] lean. Describe [season] [time of day] light. Palette: the three palette colours by name. Background visible in soft focus, specific to the location. Close with: Premium silk and preserved botanicals, no fresh flowers, round wreath form, open center. Fine art editorial photography, shallow depth of field. --ar 4:5 --style raw --q 2",
+  "map_query": "city + country for map embed (e.g. Benidorm Spain). If no location, use Columbus Ohio"
+}
+
+ideal_recipe MUST contain: 1-2 focal species (carrying any stated materials), 1-2 secondary, 1-2 filler, 2-3 greenery, 1 accent — sized to a 24 inch wreath (roughly 9-12 focal blooms total, fuller greenery). Every floral gets a true colour hex drawn from the resolved palette.`;
   };
 
   function isValid(data) {
     return data && data.poem && Array.isArray(data.emotions) && data.formula &&
-           data.poem_emotions && data.poem_emotions.structural && data.poem_emotions.secondary && data.poem_emotions.undertone;
+           data.poem_emotions && data.poem_emotions.structural && data.poem_emotions.secondary && data.poem_emotions.undertone &&
+           Array.isArray(data.ideal_recipe) && data.ideal_recipe.length >= 4;
   }
 
   try {
@@ -492,6 +545,9 @@ Return ONLY valid JSON, no markdown, no backticks:
     }
     data.design_params = bridge;
     data.suggested_formula = bridge.formula;
+    // Curate-first: turn the AI's ideal recipe into placeable slots (the dream
+    // design that gets drawn). Inventory reconciliation happens client-side.
+    data.ideal_slots = EC.recipeToSlots(data.ideal_recipe);
     return res.json({ success: true, data });
   } catch (err) {
     console.error('[/api/scene]', err.message);
