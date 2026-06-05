@@ -153,6 +153,7 @@ app.get('/api/usage', async (req, res) => {
 // (see vercel.json); these routes only handle requests reaching the function.
 app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'evercrafted-marketing-site.html')));
 app.get('/evercrafted-schema.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-schema.js')));
+app.get('/engine.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'engine.js')));
 app.get('/evercrafted-nav.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-nav.js')));
 app.get('/evercrafted-theme.css', (_req, res) => res.type('text/css').sendFile(path.join(__dirname, 'evercrafted-theme.css')));
 // Static assets (hero video, posters, images). sendFile sets the mime from the extension.

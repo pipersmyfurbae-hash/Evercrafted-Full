@@ -48,6 +48,11 @@ model, so they under-represent the actual intelligence described in the skill.
 
 ## Phased convergence plan
 
+> **Status:** the engine is now extracted to `engine.js` (pure/headless, UMD, served at
+> `/engine.js`) with a golden-master test (`npm test`) and `roleMap` parameterization —
+> see `docs/skills/engine-README.md`. `schema.js` convergence can now happen against
+> this shared module rather than a second implementation.
+
 **Phase 0 — Align conventions (low risk, no behavior change).**
 Swap `seeded()` → mulberry32; adopt canon `r_work`; adopt R4 yields; delete/convert
 `quadrantFor`. Re-baseline the marketing visuals against the new seeds.
