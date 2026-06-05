@@ -942,6 +942,27 @@ app.post('/api/pack-interest', async (req, res) => {
   }
 });
 
+// ── POST /api/ai-generate ─────────────────────────────────────────────────────
+// Reusable secure Claude proxy for marketplace apps — keeps the API key server-side
+// (the apps currently call api.anthropic from the browser, exposing the key). Apps
+// pass their own {system, content}; the server holds the key. Returns raw text the
+// client parses. (Server-side entitlement enforcement lands with auth; the UI gate
+// + this key-hiding proxy are the immediate wins.)
+app.post('/api/ai-generate', async (req, res) => {
+  try {
+    const system = typeof req.body.system === 'string' ? req.body.system.slice(0, 8000) : '';
+    const content = typeof req.body.content === 'string' ? req.body.content.slice(0, 8000) : '';
+    const maxTokens = Math.min(2000, Math.max(200, parseInt(req.body.max_tokens, 10) || 1500));
+    if (!content) return res.status(400).json({ success: false, error: 'content required' });
+    if (!process.env.ANTHROPIC_API_KEY) return res.status(503).json({ success: false, error: 'AI not configured on this server' });
+    const text = await callClaude({ system, prompt: content, maxTokens });
+    return res.json({ success: true, text });
+  } catch (err) {
+    console.error('[/api/ai-generate]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ── Inventory (saved tagged items) ────────────────────────────────────────────
 const INVENTORY_PATH = './inventory.json';
 

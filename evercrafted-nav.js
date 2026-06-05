@@ -10,12 +10,14 @@
   const NAV = [
     { label: 'How it works', href: 'evercrafted-how-it-works.html' },
     { label: 'Pricing',      href: 'evercrafted-pricing.html' },
+    { label: 'Add-ons',      href: 'evercrafted-marketplace.html' },
     { label: 'About',        href: 'evercrafted-about.html' },
     { label: 'Try it',       href: 'evercrafted-try.html' },
   ];
   const PRODUCT = [
     { label: 'How it works', href: 'evercrafted-how-it-works.html' },
     { label: 'Pricing',      href: 'evercrafted-pricing.html' },
+    { label: 'Add-ons',      href: 'evercrafted-marketplace.html' },
     { label: 'Try it',       href: 'evercrafted-try.html' },
     { label: 'Waitlist',     href: WAITLIST },
   ];
