@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FeelSpace — Turn Feelings Into Shoppable Spaces</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300;1,9..144,700&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #160E05;
+  --cream: #F7F1E6;
+  --parchment: #EDE5D4;
+  --mist: #DDD5C3;
+  --stone: #857A6A;
+  --rust: #C04E2A;
+  --amber: #D68A38;
+  --sage: #537A57;
+  --warm: #FBF7EF;
+  --glow: rgba(214,138,56,0.15);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { font-family: 'Instrument Sans', sans-serif; background: var(--cream); color: var(--ink); overflow-x: hidden; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 0 3.5rem;
+  height: 64px; display: flex; align-items: center; justify-content: space-between;
+  background: rgba(247,241,230,0.9); backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(221,213,195,0.6);
+}
+.logo { font-family: 'Fraunces', serif; font-size: 1.5rem; letter-spacing: -0.02em; }
+.logo em { color: var(--rust); font-style: italic; }
+.nav-links { display: flex; gap: 2.5rem; align-items: center; }
+.nav-links a { font-size: 0.85rem; color: var(--stone); text-decoration: none; transition: color 0.2s; }
+.nav-links a:hover { color: var(--ink); }
+.nav-cta {
+  padding: 0.5rem 1.4rem !important;
+  background: var(--ink) !important; color: var(--cream) !important;
+  border-radius: 2px; font-weight: 500 !important;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--rust) !important; }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 55% 45%;
+  padding: 8rem 3.5rem 5rem;
+  gap: 3rem; align-items: center;
+  position: relative; overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute; right: -200px; bottom: -200px;
+  width: 700px; height: 700px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(214,138,56,0.1) 0%, transparent 65%);
+  pointer-events: none;
+}
+
+.hero-label {
+  display: inline-flex; align-items: center; gap: 0.6rem;
+  font-size: 0.7rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--rust); margin-bottom: 2rem;
+}
+.hero-label::before { content:''; width:24px; height:1px; background:var(--rust); }
+.hero-label::after { content:''; width:24px; height:1px; background:var(--rust); }
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  font-weight: 300; line-height: 1.05;
+  letter-spacing: -0.03em; color: var(--ink);
+  margin-bottom: 1.75rem;
+}
+h1 em { font-style: italic; color: var(--rust); }
+h1 strong { font-weight: 700; }
+
+.hero-sub {
+  font-size: 1.05rem; font-weight: 300; line-height: 1.75;
+  color: var(--stone); max-width: 480px; margin-bottom: 2.75rem;
+}
+
+.cta-row { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 3.5rem; }
+
+.btn-primary {
+  padding: 0.9rem 2rem; background: var(--ink); color: var(--cream);
+  border: none; border-radius: 2px; font-family: 'Instrument Sans',sans-serif;
+  font-size: 0.88rem; font-weight: 500; cursor: pointer; text-decoration: none;
+  display: inline-block; letter-spacing: 0.02em; transition: background 0.2s, transform 0.15s;
+}
+.btn-primary:hover { background: var(--rust); transform: translateY(-1px); }
+
+.btn-outline {
+  padding: 0.9rem 1.75rem; background: transparent; color: var(--stone);
+  border: 1px solid var(--mist); border-radius: 2px; font-family: 'Instrument Sans',sans-serif;
+  font-size: 0.85rem; cursor: pointer; text-decoration: none; display: inline-block;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-outline:hover { border-color: var(--ink); color: var(--ink); }
+
+.hero-kpis { display: flex; gap: 3rem; padding-top: 2.5rem; border-top: 1px solid var(--mist); }
+.kpi-val { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 300; color: var(--ink); line-height: 1; margin-bottom: 0.25rem; }
+.kpi-label { font-size: 0.75rem; color: var(--stone); }
+
+/* Hero visual */
+.hero-visual { position: relative; }
+
+.hero-card {
+  background: var(--warm); border: 1px solid var(--mist); border-radius: 6px;
+  overflow: hidden; position: relative;
+  box-shadow: 32px 32px 0 rgba(22,14,5,0.05);
+  animation: cardFloat 7s ease-in-out infinite;
+}
+@keyframes cardFloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+
+.hcard-bar {
+  padding: 0.85rem 1.1rem; border-bottom: 1px solid var(--mist);
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--warm);
+}
+.hcard-mood { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rust); }
+.hcard-dots { display:flex; gap:5px; }
+.hcard-dots span { width:7px;height:7px;border-radius:50%;background:var(--mist); }
+
+.hcard-scene {
+  height: 210px; position: relative; overflow: hidden;
+  background: #F0E4CE;
+}
+.hcard-scene svg { position:absolute;top:0;left:0;width:100%;height:100%; }
+
+.pip {
+  position: absolute; width:20px; height:20px; border-radius:50%;
+  background: rgba(253,250,245,0.95); border: 2px solid var(--amber);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:var(--amber);
+  animation: pipBeat 2.5s ease-in-out infinite;
+}
+.pip2{animation-delay:.8s} .pip3{animation-delay:1.6s} .pip4{animation-delay:2.4s}
+@keyframes pipBeat{0%,100%{box-shadow:0 0 0 0 rgba(214,138,56,.4)}50%{box-shadow:0 0 0 6px rgba(214,138,56,0)}}
+
+.hcard-prods {
+  padding: 0.85rem; display:flex; gap:6px; overflow-x:auto;
+  background: var(--warm);
+}
+.hcard-prods::-webkit-scrollbar{display:none}
+.hprod {
+  flex-shrink:0; background:var(--cream); border:1px solid var(--mist); border-radius:2px;
+  padding:0.5rem 0.65rem; display:flex;align-items:center;gap:0.45rem;
+}
+.hprod-icon{font-size:14px}
+.hprod-name{font-size:0.65rem;font-weight:500;color:var(--ink);white-space:nowrap}
+.hprod-price{font-size:0.62rem;color:var(--stone)}
+
+.hcard-foot {
+  padding:0.75rem 1.1rem; border-top:1px solid var(--mist);
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--warm);
+}
+.hcard-total{font-size:0.78rem;color:var(--stone)}
+.hcard-total strong{color:var(--ink)}
+.hcard-shopbtn{
+  padding:0.4rem 1rem; background:var(--rust); color:white;
+  border:none;border-radius:2px;font-size:0.72rem;font-weight:500;
+  font-family:'Instrument Sans',sans-serif;cursor:pointer;
+}
+
+.float-tags {
+  position:absolute; top:15%; right:-50px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.ftag {
+  background:var(--warm);border:1px solid var(--mist);border-radius:3px;
+  padding:0.45rem 0.85rem;font-size:0.72rem;font-weight:500;color:var(--ink);
+  box-shadow:3px 3px 0 rgba(22,14,5,0.06);white-space:nowrap;
+  animation:tagFloat 6s ease-in-out infinite;
+}
+.ftag:nth-child(2){animation-delay:2s} .ftag:nth-child(3){animation-delay:4s}
+@keyframes tagFloat{0%,100%{transform:translateX(0) rotate(-0.5deg)}50%{transform:translateX(-6px) rotate(0.5deg)}}
+
+/* ── MARQUEE ── */
+.marquee-bar {
+  border-top:1px solid var(--mist); border-bottom:1px solid var(--mist);
+  background:var(--warm); overflow:hidden; padding:1.1rem 0;
+}
+.marquee-track {
+  display:flex;gap:4rem;white-space:nowrap;
+  animation:marquee 22s linear infinite;
+}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.marquee-item {
+  font-family:'Fraunces',serif; font-size:0.95rem; font-weight:300; font-style:italic;
+  color:var(--mist); flex-shrink:0; display:flex;align-items:center;gap:1rem;
+}
+.marquee-dot{width:5px;height:5px;border-radius:50%;background:var(--amber);flex-shrink:0}
+
+/* ── SECTIONS ── */
+section { padding: 7rem 3.5rem; }
+.sec-label {
+  font-size:0.68rem;font-weight:500;letter-spacing:0.2em;text-transform:uppercase;
+  color:var(--rust);margin-bottom:1rem;
+}
+h2 {
+  font-family:'Fraunces',serif;font-size:clamp(2rem,3vw,3rem);
+  font-weight:300;letter-spacing:-0.025em;color:var(--ink);
+  line-height:1.12;margin-bottom:1.25rem;
+}
+h2 em{font-style:italic}
+.sec-sub {
+  font-size:1rem;font-weight:300;line-height:1.75;color:var(--stone);max-width:520px;
+}
+
+/* ── HOW ── */
+.how-section { background: var(--warm); border-top:1px solid var(--mist); border-bottom:1px solid var(--mist); }
+.how-grid { max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:start; }
+.steps-list { margin-top:3rem; }
+.step {
+  display:flex;gap:1.5rem;padding:2rem 0;
+  border-bottom:1px solid var(--mist);
+}
+.step:last-child{border-bottom:none}
+.step:hover .step-n{color:var(--amber)}
+.step-n {
+  font-family:'Fraunces',serif;font-size:2.5rem;font-weight:300;
+  color:var(--mist);line-height:1;flex-shrink:0;width:44px;
+  transition:color 0.3s;
+}
+.step-title{font-size:1rem;font-weight:500;color:var(--ink);margin-bottom:0.4rem}
+.step-desc{font-size:0.85rem;font-weight:300;line-height:1.65;color:var(--stone)}
+
+.flow-box {
+  background:var(--cream);border:1px solid var(--mist);border-radius:4px;
+  padding:2rem;display:flex;flex-direction:column;gap:0;margin-top:3rem;
+  position:sticky;top:6rem;
+}
+.fnode {
+  background:var(--warm);border:1px solid var(--mist);border-radius:3px;
+  padding:1.1rem 1.25rem;transition:border-color 0.2s;cursor:default;
+}
+.fnode:hover{border-color:var(--amber)}
+.fnode-label{font-size:0.65rem;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--stone);margin-bottom:0.35rem}
+.fnode-val{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:300;font-style:italic;color:var(--ink)}
+.farrow{text-align:center;color:var(--amber);font-size:1.1rem;padding:0.4rem 0;line-height:1}
+.fnode-accent{border-color:var(--rust)!important}
+.fnode-accent .fnode-val{color:var(--rust)}
+
+/* ── FEATURES ── */
+.features-section{max-width:1100px;margin:0 auto}
+.feat-grid {
+  margin-top:4rem;
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border:1px solid var(--mist);
+  outline:1px solid var(--mist);
+}
+.feat-cell {
+  padding:2.25rem;border-right:1px solid var(--mist);border-bottom:1px solid var(--mist);
+  transition:background 0.2s;
+}
+.feat-cell:hover{background:var(--warm)}
+.feat-cell:nth-child(3n){border-right:none}
+.feat-cell:nth-last-child(-n+3){border-bottom:none}
+.feat-ico {
+  width:38px;height:38px;background:rgba(192,78,42,0.08);border-radius:2px;
+  display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:1.25rem;
+}
+.feat-title{font-size:0.95rem;font-weight:500;color:var(--ink);margin-bottom:0.5rem}
+.feat-desc{font-size:0.83rem;font-weight:300;line-height:1.65;color:var(--stone)}
+
+/* ── DEMO ── */
+.demo-section{background:var(--ink);padding:6rem 3.5rem}
+.demo-section .sec-label{color:var(--amber)}
+.demo-section h2{color:var(--cream)}
+.demo-section .sec-sub{color:rgba(247,241,230,0.55);margin-bottom:3rem}
+
+.demo-pills{display:flex;gap:0.6rem;flex-wrap:wrap;margin-bottom:2.5rem}
+.dpill {
+  padding:0.5rem 1.1rem;border:1px solid rgba(221,213,195,0.2);border-radius:2px;
+  background:transparent;color:rgba(247,241,230,0.5);
+  font-family:'Instrument Sans',sans-serif;font-size:0.8rem;cursor:pointer;transition:all 0.2s;
+}
+.dpill:hover{border-color:rgba(221,213,195,0.5);color:rgba(247,241,230,0.9)}
+.dpill.active{background:var(--rust);border-color:var(--rust);color:white}
+.demo-prods-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border:1px solid rgba(221,213,195,0.1);
+}
+.dprod{
+  padding:1.75rem;border-right:1px solid rgba(221,213,195,0.08);
+  background:rgba(255,255,255,0.03);transition:background 0.2s;
+}
+.dprod:last-child{border-right:none}
+.dprod:hover{background:rgba(255,255,255,0.06)}
+.dprod-ico{font-size:2.2rem;margin-bottom:1rem}
+.dprod-name{font-size:0.85rem;font-weight:500;color:rgba(247,241,230,0.9);margin-bottom:0.35rem}
+.dprod-desc{font-size:0.75rem;font-weight:300;color:rgba(247,241,230,0.4);line-height:1.55;margin-bottom:1rem}
+.dprod-price{font-family:'Fraunces',serif;font-size:1.15rem;font-weight:300;color:var(--amber)}
+
+/* ── TESTIMONIALS ── */
+.testi-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:4rem;
+}
+.tcard{
+  background:var(--warm);border:1px solid var(--mist);border-radius:3px;
+  padding:2rem;display:flex;flex-direction:column;justify-content:space-between;gap:1.5rem;
+  transition:box-shadow 0.2s;
+}
+.tcard:hover{box-shadow:6px 6px 0 rgba(22,14,5,0.06)}
+.tmetric{
+  display:inline-block;font-size:0.68rem;font-weight:500;letter-spacing:0.08em;
+  background:rgba(83,122,87,0.1);color:var(--sage);padding:0.25rem 0.6rem;
+  border-radius:1px;margin-bottom:0.75rem;
+}
+.tquote{
+  font-family:'Fraunces',serif;font-size:1rem;font-weight:300;font-style:italic;
+  line-height:1.65;color:var(--ink);
+}
+.tauthor{display:flex;align-items:center;gap:0.85rem}
+.tavatar{
+  width:36px;height:36px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:500;flex-shrink:0;
+}
+.av-r{background:rgba(192,78,42,0.1);color:var(--rust)}
+.av-s{background:rgba(83,122,87,0.12);color:var(--sage)}
+.av-a{background:rgba(214,138,56,0.12);color:var(--amber)}
+.tname{font-size:0.8rem;font-weight:500;color:var(--ink)}
+.trole{font-size:0.72rem;color:var(--stone)}
+
+/* ── PRICING ── */
+.pricing-section{background:var(--ink)}
+.pricing-section .sec-label{color:var(--amber)}
+.pricing-section h2{color:var(--cream)}
+.pricing-section .sec-sub{color:rgba(247,241,230,0.5)}
+.pricing-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  border:1px solid rgba(221,213,195,0.1);margin-top:3.5rem;
+}
+.pcard{
+  padding:2.5rem;border-right:1px solid rgba(221,213,195,0.1);
+  display:flex;flex-direction:column;background:var(--ink);transition:background 0.2s;
+}
+.pcard:last-child{border-right:none}
+.pcard:hover{background:rgba(255,255,255,0.03)}
+.pcard.feat{background:var(--rust)!important}
+.pcard.feat:hover{background:#B03A1C!important}
+.ptier{font-size:0.68rem;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:rgba(247,241,230,0.4);margin-bottom:1rem}
+.pcard.feat .ptier{color:rgba(247,241,230,0.75)}
+.pamount{font-family:'Fraunces',serif;font-size:3rem;font-weight:300;color:var(--cream);line-height:1;margin-bottom:0.2rem}
+.pperiod{font-size:0.75rem;color:rgba(247,241,230,0.35);margin-bottom:2.25rem}
+.pcard.feat .pperiod{color:rgba(247,241,230,0.65)}
+.pfeatures{flex:1;display:flex;flex-direction:column;gap:0.7rem;margin-bottom:2rem}
+.pfeat{font-size:0.82rem;font-weight:300;color:rgba(247,241,230,0.65);display:flex;gap:0.6rem}
+.pfeat::before{content:'—';color:var(--amber);flex-shrink:0}
+.pcard.feat .pfeat{color:rgba(247,241,230,0.88)}
+.pbtn{
+  padding:0.8rem;font-family:'Instrument Sans',sans-serif;font-size:0.82rem;font-weight:500;
+  border:1px solid rgba(247,241,230,0.2);background:transparent;color:var(--cream);
+  border-radius:2px;cursor:pointer;transition:all 0.2s;
+}
+.pbtn:hover{background:rgba(247,241,230,0.1)}
+.pcard.feat .pbtn{background:var(--cream);color:var(--rust);border-color:transparent}
+.pcard.feat .pbtn:hover{background:rgba(247,241,230,0.9)}
+
+/* ── CTA ── */
+.cta-section{text-align:center;padding:9rem 3.5rem;position:relative;overflow:hidden}
+.cta-section::before{
+  content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:700px;height:700px;border-radius:50%;
+  background:radial-gradient(circle,rgba(192,78,42,0.07) 0%,transparent 65%);
+  pointer-events:none;
+}
+.cta-section .sec-label{display:block;text-align:center}
+.cta-section h2{margin:0 auto 1.25rem;max-width:720px}
+.cta-section .sec-sub{margin:0 auto 3rem;text-align:center}
+.cta-row-c{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ── */
+footer{
+  background:rgba(22,14,5,0.97);padding:3rem 3.5rem;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;
+}
+.flogo{font-family:'Fraunces',serif;font-size:1.2rem;color:var(--cream)}
+.flogo em{color:var(--rust)}
+.flinks{display:flex;gap:2rem}
+.flinks a{font-size:0.75rem;color:rgba(247,241,230,0.35);text-decoration:none;transition:color 0.2s}
+.flinks a:hover{color:rgba(247,241,230,0.8)}
+.fcopy{font-size:0.72rem;color:rgba(247,241,230,0.25)}
+
+/* ── ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .65s ease,transform .65s ease}
+.reveal.in{opacity:1;transform:none}
+.reveal:nth-child(2){transition-delay:.1s}
+.reveal:nth-child(3){transition-delay:.18s}
+.reveal:nth-child(4){transition-delay:.26s}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;min-height:auto;padding-top:7rem}
+  .how-grid,.feat-grid,.testi-grid,.pricing-grid,.demo-prods-grid{grid-template-columns:1fr}
+  nav{padding:0 1.5rem}
+  section{padding:5rem 1.5rem}
+  .hero{padding:6rem 1.5rem 3rem}
+  .float-tags{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Feel<em>Space</em></div>
+  <div class="nav-links">
+    <a href="#how">How it works</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="feelspace-app.html" class="nav-cta">Open app</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="hero-label">Emotional Commerce Platform</div>
+    <h1>People don't shop<br>for decor.<br>They shop for <em>how<br>it feels.</em></h1>
+    <p class="hero-sub">FeelSpace turns a customer's mood into a complete, shoppable entryway scene — with your products placed contextually. Emotion in. Basket out.</p>
+    <div class="cta-row">
+      <a href="feelspace-app.html" class="btn-primary">Try the app free</a>
+      <a href="#how" class="btn-outline">See how it works</a>
+    </div>
+    <div class="hero-kpis">
+      <div><div class="kpi-val">3.4×</div><div class="kpi-label">higher conversion</div></div>
+      <div><div class="kpi-val">$127</div><div class="kpi-label">avg. scene basket</div></div>
+      <div><div class="kpi-val">68%</div><div class="kpi-label">scene share rate</div></div>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="float-tags">
+      <div class="ftag">🍁 Maple Wreath — $48</div>
+      <div class="ftag">✨ "Warm fall welcome"</div>
+      <div class="ftag">🛒 Scene total: $167</div>
+    </div>
+    <div class="hero-card">
+      <div class="hcard-bar">
+        <div class="hcard-mood">Warm fall welcome</div>
+        <div class="hcard-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="hcard-scene">
+        <svg viewBox="0 0 440 210" xmlns="http://www.w3.org/2000/svg">
+          <rect width="440" height="210" fill="#F0E4CE"/>
+          <rect x="0" y="160" width="440" height="50" fill="#C8A87A"/>
+          <rect x="170" y="35" width="100" height="130" rx="3" fill="#5C3318"/>
+          <rect x="177" y="42" width="86" height="117" rx="2" fill="#7B4A2D"/>
+          <rect x="182" y="48" width="34" height="46" rx="1" fill="rgba(0,0,0,0.11)"/>
+          <rect x="224" y="48" width="34" height="46" rx="1" fill="rgba(0,0,0,0.11)"/>
+          <rect x="182" y="100" width="76" height="52" rx="1" fill="rgba(0,0,0,0.08)"/>
+          <circle cx="185" cy="127" r="4" fill="#D4863A"/>
+          <circle cx="220" cy="65" r="20" fill="none" stroke="#5C3318" stroke-width="7" opacity="0.8"/>
+          <circle cx="220" cy="65" r="20" fill="none" stroke="#D4863A" stroke-width="4" stroke-dasharray="4 3" opacity="0.65"/>
+          <circle cx="220" cy="45" r="5" fill="#D4863A" opacity="0.9"/>
+          <circle cx="236" cy="54" r="4" fill="#7B4A2D" opacity="0.85"/>
+          <circle cx="240" cy="70" r="5" fill="#D4863A" opacity="0.8"/>
+          <circle cx="230" cy="83" r="4" fill="#7B4A2D" opacity="0.85"/>
+          <circle cx="210" cy="83" r="4" fill="#D4863A" opacity="0.85"/>
+          <circle cx="200" cy="70" r="5" fill="#7B4A2D" opacity="0.8"/>
+          <circle cx="204" cy="54" r="4" fill="#D4863A" opacity="0.9"/>
+          <rect x="100" y="150" width="34" height="18" rx="2" fill="#D4863A" opacity="0.7"/>
+          <ellipse cx="117" cy="150" rx="16" ry="12" fill="#5A7A3A" opacity="0.8"/>
+          <ellipse cx="111" cy="146" rx="9" ry="7" fill="#D4863A" opacity="0.9"/>
+          <rect x="306" y="150" width="34" height="18" rx="2" fill="#D4863A" opacity="0.7"/>
+          <ellipse cx="323" cy="150" rx="16" ry="12" fill="#5A7A3A" opacity="0.8"/>
+          <ellipse cx="317" cy="146" rx="9" ry="7" fill="#D4863A" opacity="0.9"/>
+          <rect x="82" y="120" width="14" height="24" rx="2" fill="#C8943A" opacity="0.8"/>
+          <rect x="84" y="115" width="10" height="6" rx="1" fill="#A07030" opacity="0.8"/>
+          <rect x="84" y="122" width="10" height="16" rx="1" fill="#FFDD88" opacity="0.4"/>
+          <rect x="182" y="160" width="76" height="12" rx="2" fill="#8A6840" opacity="0.7"/>
+        </svg>
+        <div class="pip" style="top:28%;left:47%">+</div>
+        <div class="pip pip2" style="top:64%;left:23%">+</div>
+        <div class="pip pip3" style="top:64%;right:21%">+</div>
+        <div class="pip pip4" style="bottom:10%;left:46%">+</div>
+      </div>
+      <div class="hcard-prods">
+        <div class="hprod"><div class="hprod-icon">🍁</div><div><div class="hprod-name">Maple Wreath</div><div class="hprod-price">$48</div></div></div>
+        <div class="hprod"><div class="hprod-icon">🌼</div><div><div class="hprod-name">Mums Planter</div><div class="hprod-price">$34</div></div></div>
+        <div class="hprod"><div class="hprod-icon">🕯️</div><div><div class="hprod-name">Copper Lantern</div><div class="hprod-price">$56</div></div></div>
+        <div class="hprod"><div class="hprod-icon">🟫</div><div><div class="hprod-name">Jute Doormat</div><div class="hprod-price">$29</div></div></div>
+      </div>
+      <div class="hcard-foot">
+        <div class="hcard-total">4 items · <strong>$167</strong></div>
+        <button class="hcard-shopbtn">Shop scene</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="marquee-track">
+    <span class="marquee-item"><span class="marquee-dot"></span>Emotion-driven commerce</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Entryway scene generation</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Seasonal drops</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Creator economy layer</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Catalog scene injection</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Viral share cards</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Mood-to-product matching</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Emotion-driven commerce</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Entryway scene generation</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Seasonal drops</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Creator economy layer</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Catalog scene injection</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Viral share cards</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>Mood-to-product matching</span>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="how">
+  <div class="how-grid">
+    <div>
+      <div class="sec-label">How it works</div>
+      <h2>Emotion in.<br><em>Cart out.</em></h2>
+      <p class="sec-sub">Your customers never stare at a grid of products again. They describe a feeling — FeelSpace builds a complete scene from your catalog.</p>
+      <div class="steps-list">
+        <div class="step reveal"><div class="step-n">01</div><div><div class="step-title">Customer describes a feeling</div><div class="step-desc">Free text, quick-select moods, or dial-in sliders for warmth, lushness, and natural feel.</div></div></div>
+        <div class="step reveal"><div class="step-n">02</div><div><div class="step-title">AI maps emotion to design</div><div class="step-desc">Our emotion engine translates the mood into a color palette, seasonal accent, texture profile, and composition style.</div></div></div>
+        <div class="step reveal"><div class="step-n">03</div><div><div class="step-title">Scene renders with your products</div><div class="step-desc">Your catalog items are placed as interactive hotspots inside a fully composed entryway scene.</div></div></div>
+        <div class="step reveal"><div class="step-n">04</div><div><div class="step-title">One click. Full basket.</div><div class="step-desc">"Shop this scene" adds everything. Average basket: $127. Average browse basket: $31.</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="flow-box">
+        <div class="fnode"><div class="fnode-label">Customer input</div><div class="fnode-val">"I want my entry to feel like a cozy autumn morning"</div></div>
+        <div class="farrow">↓</div>
+        <div class="fnode"><div class="fnode-label">Emotion engine</div><div class="fnode-val">Warm palette · Natural textures · Seasonal depth</div></div>
+        <div class="farrow">↓</div>
+        <div class="fnode"><div class="fnode-label">Scene + catalog injection</div><div class="fnode-val">Entryway rendered, your products placed as hotspots</div></div>
+        <div class="farrow">↓</div>
+        <div class="fnode fnode-accent"><div class="fnode-label">Purchase event</div><div class="fnode-val">$201 basket · 4 items · One click · Scene shared</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="features-section">
+    <div class="sec-label">Platform features</div>
+    <h2>Everything to sell<br><em>by feeling.</em></h2>
+    <div class="feat-grid">
+      <div class="feat-cell reveal"><div class="feat-ico">🎨</div><div class="feat-title">Emotion-to-scene engine</div><div class="feat-desc">Natural language or mood sliders convert any feeling into a complete entryway environment matched to color, texture, and season.</div></div>
+      <div class="feat-cell reveal"><div class="feat-ico">🛍️</div><div class="feat-title">Catalog scene injection</div><div class="feat-desc">Upload once. AI emotion-tags your products and places them into scenes as interactive, add-to-cart hotspots automatically.</div></div>
+      <div class="feat-cell reveal"><div class="feat-ico">🔁</div><div class="feat-title">Scene composer controls</div><div class="feat-desc">"Make it cozier." "More plants." Customers iterate the scene in natural language. AI updates instantly.</div></div>
+      <div class="feat-cell reveal"><div class="feat-ico">📦</div><div class="feat-title">Seasonal drops</div><div class="feat-desc">Launch weekly emotion-curated collections. Calm Drop. Cozy Drop. Joy Drop. Scarcity meets emotional storytelling.</div></div>
+      <div class="feat-cell reveal"><div class="feat-ico">✍️</div><div class="feat-title">Creator economy layer</div><div class="feat-desc">Invite creators to publish mood scenes. Their followers shop the scene. Creators earn revenue share. You get viral distribution.</div></div>
+      <div class="feat-cell reveal"><div class="feat-ico">📤</div><div class="feat-title">Viral share cards</div><div class="feat-desc">"Your entryway feeling: Autumn Calm." Every scene becomes a shareable card. 68% of customers share — every share is a referral.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO -->
+<section class="demo-section" id="demo">
+  <div class="sec-label">Live demo</div>
+  <h2>Pick a mood.<br><em>See the scene.</em></h2>
+  <p class="sec-sub">Click any mood to see how FeelSpace assembles a matched product set in real time.</p>
+  <div class="demo-pills">
+    <button class="dpill active" onclick="demoSwitch(this,'autumn')">Warm autumn</button>
+    <button class="dpill" onclick="demoSwitch(this,'winter')">Festive winter</button>
+    <button class="dpill" onclick="demoSwitch(this,'spring')">Bright spring</button>
+    <button class="dpill" onclick="demoSwitch(this,'minimal')">Calm minimal</button>
+    <button class="dpill" onclick="demoSwitch(this,'cottage')">Cozy cottage</button>
+  </div>
+  <div class="demo-prods-grid" id="demoProdGrid"></div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <div class="sec-label">From merchants</div>
+  <h2>Results in baskets,<br><em>not clicks.</em></h2>
+  <div class="testi-grid">
+    <div class="tcard reveal">
+      <div><div class="tmetric">+312% avg. order value</div><div class="tquote">"We went from customers buying a single wreath to buying the full autumn entry. FeelSpace sells the vision, not the SKU."</div></div>
+      <div class="tauthor"><div class="tavatar av-r">SR</div><div><div class="tname">Sarah R.</div><div class="trole">Founder, WreathWorks</div></div></div>
+    </div>
+    <div class="tcard reveal">
+      <div><div class="tmetric">68% scene share rate</div><div class="tquote">"Our customers post their generated porches on Instagram before they've even received the order. The most viral thing we've ever shipped."</div></div>
+      <div class="tauthor"><div class="tavatar av-s">MK</div><div><div class="tname">Marcus K.</div><div class="trole">GM, HomeRoots</div></div></div>
+    </div>
+    <div class="tcard reveal">
+      <div><div class="tmetric">3 hrs to go live</div><div class="tquote">"Uploaded our catalog Monday. By Wednesday we had our first Seasonal Drop live. The AI tagging just knows where things belong."</div></div>
+      <div class="tauthor"><div class="tavatar av-a">JL</div><div><div class="tname">Jenna L.</div><div class="trole">Co-founder, SageLeaf Co.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="sec-label">Pricing</div>
+  <h2>Start free.<br><em>Scale with confidence.</em></h2>
+  <p class="sec-sub">All plans include the emotion engine and scene generation. No hidden fees.</p>
+  <div class="pricing-grid">
+    <div class="pcard"><div class="ptier">Seed</div><div class="pamount">$0</div><div class="pperiod">Free forever · 50 scenes/mo</div><div class="pfeatures"><div class="pfeat">Up to 200 catalog items</div><div class="pfeat">Emotion engine + scene generation</div><div class="pfeat">3 seasonal drops per month</div><div class="pfeat">Shareable scene cards</div></div><button class="pbtn">Get started free</button></div>
+    <div class="pcard feat"><div class="ptier">Grow · Most popular</div><div class="pamount">$149</div><div class="pperiod">per month · unlimited scenes</div><div class="pfeatures"><div class="pfeat">Unlimited catalog items</div><div class="pfeat">Full scene composer controls</div><div class="pfeat">Unlimited seasonal drops</div><div class="pfeat">Creator economy access</div><div class="pfeat">White-label scenes</div><div class="pfeat">Analytics dashboard</div></div><button class="pbtn">Start 14-day trial</button></div>
+    <div class="pcard"><div class="ptier">Merchant</div><div class="pamount">$499</div><div class="pperiod">per month · full infrastructure</div><div class="pfeatures"><div class="pfeat">Everything in Grow</div><div class="pfeat">API access + webhooks</div><div class="pfeat">Custom emotion model tuning</div><div class="pfeat">Dedicated creator network</div><div class="pfeat">Priority scene rendering</div></div><button class="pbtn">Talk to sales</button></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="sec-label">Ready?</div>
+  <h2>Your customers know what they want to feel.<br><em>Give them a way to buy it.</em></h2>
+  <p class="sec-sub">Join 400+ home & garden merchants turning emotion into revenue with FeelSpace.</p>
+  <div class="cta-row-c">
+    <a href="feelspace-app.html" class="btn-primary">Open the app free</a>
+    <a href="#" class="btn-outline">Book a demo</a>
+  </div>
+</section>
+
+<footer>
+  <div class="flogo">Feel<em>Space</em></div>
+  <div class="flinks"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Docs</a><a href="#">Blog</a></div>
+  <div class="fcopy">© 2025 FeelSpace Inc.</div>
+</footer>
+
+<script>
+const demoProds = {
+  autumn:[
+    {ico:"🍁",name:"Maple Leaf Wreath",desc:"Hand-dried maple, rust wire frame, 22\"",price:"$48"},
+    {ico:"🌼",name:"Amber Mums Planter ×2",desc:"Terracotta pots, warm amber blooms",price:"$68"},
+    {ico:"🕯️",name:"Copper Lantern",desc:"Aged copper finish, LED-safe, 16\"",price:"$56"},
+    {ico:"🟫",name:"Woven Jute Doormat",desc:"Natural jute, 18×30\", all-weather",price:"$29"},
+  ],
+  winter:[
+    {ico:"🎄",name:"Pine & Berry Wreath",desc:"Fresh pine, frosted berries, 24\"",price:"$64"},
+    {ico:"🕯️",name:"Frosted Glass Lantern",desc:"Etched frost, LED candle inside",price:"$48"},
+    {ico:"🌿",name:"Cedar Garland 6ft",desc:"Blue cedar, burlap ribbon wrap",price:"$38"},
+    {ico:"✨",name:"Warm White Lights",desc:"50ct, outdoor-safe, 25ft",price:"$22"},
+  ],
+  spring:[
+    {ico:"🌸",name:"Wildflower Wreath",desc:"Mixed dried bloom, 20\", pastel",price:"$44"},
+    {ico:"🌷",name:"Yellow Ceramic Pots ×2",desc:"Matte finish, drainage hole, 10\"",price:"$36"},
+    {ico:"💜",name:"Lavender Planter",desc:"English lavender, terracotta, 8\"",price:"$36"},
+    {ico:"🟩",name:"Striped Jute Doormat",desc:"Cream & green stripe, 18×30\"",price:"$31"},
+  ],
+  minimal:[
+    {ico:"🫒",name:"Olive Branch Wreath",desc:"Preserved olive, 22\", natural tones",price:"$52"},
+    {ico:"🪴",name:"Eucalyptus Linen Pot",desc:"Textured linen planter, fresh cut",price:"$41"},
+    {ico:"⬜",name:"Stone Grey Doormat",desc:"Recycled cotton, 18×30\"",price:"$32"},
+    {ico:"🏺",name:"Ceramic Bud Vase",desc:"Speckled glaze, H 9\", sculptural",price:"$27"},
+  ],
+  cottage:[
+    {ico:"💐",name:"Dried Lavender Wreath",desc:"French lavender bundle, 18\"",price:"$42"},
+    {ico:"🧺",name:"Wicker Plant Basket",desc:"Hand-woven, W 12\", with liner",price:"$38"},
+    {ico:"🪑",name:"Teak Entry Bench",desc:"FSC-certified teak, W 42\"",price:"$129"},
+    {ico:"🟤",name:"Striped Cotton Mat",desc:"Hand-woven natural cotton, 24×36\"",price:"$33"},
+  ],
+};
+
+function demoSwitch(btn, key) {
+  document.querySelectorAll('.dpill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  const grid = document.getElementById('demoProdGrid');
+  grid.style.opacity = '0';
+  setTimeout(()=>{
+    grid.innerHTML = demoProds[key].map(p=>`
+      <div class="dprod">
+        <div class="dprod-ico">${p.ico}</div>
+        <div class="dprod-name">${p.name}</div>
+        <div class="dprod-desc">${p.desc}</div>
+        <div class="dprod-price">${p.price}</div>
+      </div>
+    `).join('');
+    grid.style.transition='opacity .3s';
+    grid.style.opacity='1';
+  }, 180);
+}
+demoSwitch(document.querySelector('.dpill.active'), 'autumn');
+
+// Scroll reveals
+const obs = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

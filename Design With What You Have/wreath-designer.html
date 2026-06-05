@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design With What I Have — Wreath Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #7a9471;
+    --sage-light: #a8bf9f;
+    --sage-dark: #4e6b49;
+    --cream: #f5f0e8;
+    --parchment: #ede6d6;
+    --bark: #5c4a32;
+    --bark-light: #8b6f4e;
+    --dusty-rose: #c4857a;
+    --dusty-rose-light: #e8b5ae;
+    --deep-green: #2d3f2b;
+    --mist: #e8ede6;
+    --white: #fdfcf9;
+    --text-main: #2a2218;
+    --text-soft: #6b5e4a;
+    --text-ghost: #a89880;
+    --border: rgba(90,75,50,0.15);
+    --shadow: 0 4px 24px rgba(45,63,43,0.1);
+    --shadow-strong: 0 8px 40px rgba(45,63,43,0.18);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Jost', sans-serif;
+    background: var(--cream);
+    color: var(--text-main);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(122,148,113,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 90%, rgba(196,133,122,0.08) 0%, transparent 60%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ─── DECORATIVE BOTANICALS ─── */
+  .botanical-bg {
+    position: fixed;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.07;
+  }
+  .botanical-bg.tl { top: -40px; left: -40px; width: 320px; transform: rotate(-15deg); }
+  .botanical-bg.br { bottom: -40px; right: -60px; width: 280px; transform: rotate(165deg); }
+
+  /* ─── LAYOUT ─── */
+  .app-shell {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(253,252,249,0.85);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-soft);
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    background: none;
+    border: none;
+    font-family: 'Jost', sans-serif;
+    padding: 0;
+  }
+  .back-btn:hover { color: var(--sage-dark); }
+  .back-btn svg { width: 16px; height: 16px; }
+
+  .header-divider {
+    width: 1px;
+    height: 24px;
+    background: var(--border);
+  }
+
+  .wordmark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--deep-green);
+    letter-spacing: 0.02em;
+  }
+  .wordmark em {
+    font-style: italic;
+    color: var(--sage-dark);
+  }
+
+  .header-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--sage-dark);
+    background: var(--mist);
+    border: 1px solid rgba(122,148,113,0.3);
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+  }
+
+  /* ─── PROGRESS ─── */
+  .progress-bar-wrap {
+    padding: 0 40px;
+    background: rgba(253,252,249,0.6);
+    border-bottom: 1px solid var(--border);
+  }
+  .progress-steps {
+    display: flex;
+    gap: 0;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  .step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 12px 12px;
+    position: relative;
+    gap: 6px;
+  }
+  .step::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 40%;
+    background: var(--border);
+  }
+  .step:last-child::after { display: none; }
+  .step-num {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    border: 1.5px solid var(--border);
+    color: var(--text-ghost);
+    background: transparent;
+    transition: all 0.3s;
+  }
+  .step.active .step-num {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: white;
+  }
+  .step.done .step-num {
+    background: var(--sage-dark);
+    border-color: var(--sage-dark);
+    color: white;
+  }
+  .step-label {
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    transition: color 0.3s;
+  }
+  .step.active .step-label { color: var(--sage-dark); }
+  .step.done .step-label { color: var(--text-soft); }
+
+  /* ─── MAIN CONTENT ─── */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 40px 80px;
+    position: relative;
+  }
+
+  .content-col {
+    width: 100%;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  /* ─── SCREEN PANELS (animated) ─── */
+  .screen {
+    display: none;
+    flex-direction: column;
+    gap: 32px;
+    animation: fadeSlideIn 0.4s ease forwards;
+  }
+  .screen.active { display: flex; }
+
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── TITLES ─── */
+  .screen-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 38px;
+    font-weight: 400;
+    line-height: 1.15;
+    color: var(--deep-green);
+  }
+  .screen-title em {
+    font-style: italic;
+    color: var(--sage-dark);
+  }
+  .screen-subtitle {
+    margin-top: 8px;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--text-soft);
+    line-height: 1.6;
+  }
+
+  /* ─── MODE SELECTION (Screen A) ─── */
+  .mode-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .mode-card {
+    cursor: pointer;
+    padding: 28px 20px 24px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: var(--white);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .mode-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(122,148,113,0.06), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .mode-card:hover { border-color: var(--sage-light); box-shadow: var(--shadow); }
+  .mode-card:hover::before { opacity: 1; }
+  .mode-card.primary-card { border-color: var(--sage); }
+  .mode-card.primary-card::before { opacity: 1; }
+
+  .card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    background: var(--mist);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .mode-card.primary-card .card-icon {
+    background: rgba(122,148,113,0.2);
+  }
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--deep-green);
+    line-height: 1.3;
+  }
+  .card-desc {
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.55;
+    font-weight: 300;
+  }
+  .card-arrow {
+    font-size: 18px;
+    color: var(--sage);
+    margin-top: auto;
+    transition: transform 0.2s;
+  }
+  .mode-card:hover .card-arrow { transform: translateX(4px); }
+
+  /* ─── INPUT MODE CHOICE (Screen B) ─── */
+  .input-choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .input-choice {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--white);
+    transition: all 0.2s;
+  }
+  .input-choice:hover { border-color: var(--sage-light); background: var(--mist); }
+  .input-choice-icon {
+    font-size: 26px;
+    width: 44px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .input-choice-text strong {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--deep-green);
+    margin-bottom: 3px;
+  }
+  .input-choice-text span {
+    font-size: 13px;
+    color: var(--text-soft);
+    font-weight: 300;
+  }
+  .input-choice-right {
+    margin-left: auto;
+    font-size: 20px;
+    color: var(--text-ghost);
+  }
+  .beta-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(196,133,122,0.15);
+    color: var(--dusty-rose);
+    text-transform: uppercase;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  /* ─── INSTRUCTION STRIP ─── */
+  .instruction-strip {
+    border-left: 3px solid var(--sage);
+    padding: 16px 20px;
+    background: rgba(122,148,113,0.06);
+    border-radius: 0 8px 8px 0;
+  }
+  .instruction-strip .label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--deep-green);
+    margin-bottom: 6px;
+  }
+  .instruction-strip .helper {
+    font-size: 13.5px;
+    color: var(--text-soft);
+    line-height: 1.6;
+    font-weight: 300;
+  }
+  .instruction-strip .example {
+    margin-top: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--bark-light);
+    background: rgba(92,74,50,0.07);
+    padding: 8px 12px;
+    border-radius: 6px;
+    line-height: 1.6;
+  }
+  .see-more {
+    margin-top: 8px;
+    display: inline-block;
+    font-size: 12px;
+    color: var(--sage-dark);
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 400;
+  }
+
+  /* ─── TEXTAREA ZONE ─── */
+  .textarea-zone { display: flex; flex-direction: column; gap: 0; }
+
+  .field-label {
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 10px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 180px;
+    padding: 18px 20px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px 10px 0 0;
+    background: var(--white);
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    font-weight: 300;
+    color: var(--text-main);
+    line-height: 1.7;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  textarea::placeholder { color: var(--text-ghost); }
+  textarea:focus { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(122,148,113,0.1); }
+
+  .textarea-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border: 1.5px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    background: rgba(237,230,214,0.4);
+  }
+  .qty-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-soft);
+    cursor: pointer;
+    user-select: none;
+  }
+  .qty-check input[type=checkbox] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--sage);
+    cursor: pointer;
+  }
+  .clear-btn {
+    background: none;
+    border: none;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    color: var(--text-ghost);
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .clear-btn:hover { color: var(--dusty-rose); background: rgba(196,133,122,0.1); }
+
+  /* ─── AI HINT BAR ─── */
+  .ai-hint {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: linear-gradient(90deg, rgba(122,148,113,0.1), rgba(122,148,113,0.04));
+    border: 1px dashed rgba(122,148,113,0.4);
+    border-radius: 8px;
+    margin-top: 14px;
+  }
+  .ai-hint-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--sage);
+    flex-shrink: 0;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+  .ai-hint span {
+    font-size: 12.5px;
+    color: var(--sage-dark);
+    line-height: 1.5;
+  }
+
+  /* ─── DETECTED CHIPS ─── */
+  .chips-section {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.3s;
+  }
+  .chips-section.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .chips-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    margin-bottom: 10px;
+  }
+  .chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px 6px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 400;
+    border: 1.5px solid;
+    cursor: default;
+    animation: chipIn 0.25s ease forwards;
+    position: relative;
+  }
+  @keyframes chipIn {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  .chip.base     { background: rgba(92,74,50,0.08); border-color: rgba(92,74,50,0.25); color: var(--bark); }
+  .chip.greenery { background: rgba(122,148,113,0.12); border-color: rgba(122,148,113,0.35); color: var(--sage-dark); }
+  .chip.floral   { background: rgba(196,133,122,0.1); border-color: rgba(196,133,122,0.3); color: var(--dusty-rose); }
+  .chip.ribbon   { background: rgba(168,191,159,0.15); border-color: rgba(168,191,159,0.4); color: var(--sage-dark); }
+  .chip.accent   { background: rgba(139,111,78,0.1); border-color: rgba(139,111,78,0.25); color: var(--bark-light); }
+  .chip.uncertain { background: rgba(237,230,214,0.6); border-color: var(--border); color: var(--text-soft); border-style: dashed; }
+
+  .chip-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background: currentColor;
+    opacity: 0.7;
+  }
+  .chip-remove {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    color: currentColor;
+    opacity: 0.5;
+    font-size: 14px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.15s;
+  }
+  .chip-remove:hover { opacity: 1; }
+  .chip-uncertain-icon {
+    font-size: 12px;
+    opacity: 0.7;
+  }
+
+  /* ─── REVIEW SCREEN (Screen D) ─── */
+  .inventory-review { display: flex; flex-direction: column; gap: 0; }
+  .inventory-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 18px;
+    background: rgba(122,148,113,0.1);
+    border: 1px solid rgba(122,148,113,0.25);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13.5px;
+    color: var(--sage-dark);
+  }
+  .inventory-banner svg { flex-shrink: 0; width: 18px; height: 18px; }
+
+  .inventory-group { margin-bottom: 24px; }
+  .group-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+  }
+  .group-name {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .group-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: var(--mist);
+    color: var(--text-ghost);
+  }
+  .add-item-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--sage);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: transform 0.2s;
+  }
+  .add-item-btn:hover { transform: scale(1.2); }
+
+  .inventory-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    margin-bottom: 8px;
+    transition: box-shadow 0.2s;
+  }
+  .inventory-item:hover { box-shadow: 0 2px 12px rgba(45,63,43,0.08); }
+  .item-color-swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+  }
+  .item-info { flex: 1; min-width: 0; }
+  .item-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-main);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .item-meta {
+    font-size: 12px;
+    color: var(--text-ghost);
+    margin-top: 2px;
+  }
+  .item-qty {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--text-soft);
+    background: var(--mist);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .item-actions {
+    display: flex;
+    gap: 4px;
+  }
+  .item-action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 6px;
+    color: var(--text-ghost);
+    font-size: 15px;
+    transition: all 0.15s;
+  }
+  .item-action-btn:hover { background: var(--mist); color: var(--text-soft); }
+  .item-action-btn.danger:hover { background: rgba(196,133,122,0.15); color: var(--dusty-rose); }
+
+  /* ─── DESIGN INTENT (Screen E) ─── */
+  .intent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+  .intent-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-soft);
+    margin-bottom: 8px;
+  }
+
+  .toggle-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .toggle-btn {
+    padding: 8px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: var(--white);
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 400;
+  }
+  .toggle-btn:hover { border-color: var(--sage-light); color: var(--sage-dark); }
+  .toggle-btn.active {
+    border-color: var(--sage);
+    background: rgba(122,148,113,0.12);
+    color: var(--sage-dark);
+    font-weight: 500;
+  }
+
+  .ai-suggest-toggle {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    border: 1.5px dashed rgba(122,148,113,0.4);
+    border-radius: 10px;
+    background: rgba(122,148,113,0.04);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .ai-suggest-toggle:hover { background: rgba(122,148,113,0.08); }
+  .ai-suggest-toggle .info { display: flex; flex-direction: column; gap: 4px; }
+  .ai-suggest-toggle strong { font-size: 14px; color: var(--deep-green); font-weight: 500; }
+  .ai-suggest-toggle span { font-size: 12.5px; color: var(--text-soft); font-weight: 300; }
+
+  .toggle-switch {
+    width: 40px;
+    height: 22px;
+    border-radius: 11px;
+    background: var(--border);
+    position: relative;
+    flex-shrink: 0;
+    transition: background 0.25s;
+  }
+  .toggle-switch.on { background: var(--sage); }
+  .toggle-switch::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: white;
+    transition: transform 0.25s;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+  }
+  .toggle-switch.on::after { transform: translateX(18px); }
+
+  /* ─── LOADING (Screen F) ─── */
+  .loading-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    padding: 60px 0;
+  }
+  .wreath-spinner {
+    width: 120px;
+    height: 120px;
+    position: relative;
+  }
+  .wreath-spinner svg {
+    animation: spinWreath 4s linear infinite;
+  }
+  @keyframes spinWreath {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  .loading-text {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .loading-text h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 400;
+    color: var(--deep-green);
+  }
+  .loading-text p {
+    font-size: 14px;
+    color: var(--text-soft);
+    font-weight: 300;
+  }
+  .loading-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .loading-step {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-ghost);
+    transition: color 0.3s;
+  }
+  .loading-step.done { color: var(--sage-dark); }
+  .loading-step.active { color: var(--text-main); }
+  .loading-step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    transition: background 0.3s;
+  }
+  .loading-step.done .loading-step-dot { background: var(--sage); }
+  .loading-step.active .loading-step-dot { background: var(--sage); animation: pulse 1s infinite; }
+
+  /* ─── GALLERY (Screen G) ─── */
+  .gallery-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .gallery-filters span {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    font-weight: 500;
+    margin-right: 4px;
+  }
+
+  .design-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+  .design-card {
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: var(--white);
+    overflow: hidden;
+    transition: all 0.25s;
+  }
+  .design-card:hover { box-shadow: var(--shadow-strong); transform: translateY(-3px); border-color: var(--sage-light); }
+  .design-card.selected { border-color: var(--sage); box-shadow: 0 0 0 3px rgba(122,148,113,0.15); }
+
+  .design-card-img {
+    width: 100%;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 56px;
+    background: var(--mist);
+    position: relative;
+  }
+  .design-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    padding: 3px 7px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .badge-inventory { background: rgba(122,148,113,0.2); color: var(--sage-dark); }
+  .badge-addons { background: rgba(196,133,122,0.15); color: var(--dusty-rose); }
+
+  .design-card-body { padding: 14px; }
+  .design-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--deep-green);
+    margin-bottom: 5px;
+  }
+  .design-meta {
+    font-size: 11.5px;
+    color: var(--text-ghost);
+    line-height: 1.5;
+  }
+  .design-tags {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .design-tag {
+    font-size: 10px;
+    padding: 3px 8px;
+    border-radius: 10px;
+    background: var(--mist);
+    color: var(--text-soft);
+    border: 1px solid var(--border);
+  }
+
+  /* ─── DETAIL SCREEN (Screen H) ─── */
+  .detail-layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 24px;
+  }
+  .detail-preview {
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    background: var(--mist);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    font-size: 120px;
+  }
+  .detail-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .detail-panel-section {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    background: var(--white);
+  }
+  .detail-section-title {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-ghost);
+    margin-bottom: 12px;
+  }
+  .usage-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .usage-item:last-child { border-bottom: none; }
+  .usage-item .name { color: var(--text-main); font-weight: 400; }
+  .usage-item .qty { color: var(--text-ghost); font-family: 'DM Mono', monospace; font-size: 12px; }
+  .addon-callout {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(196,133,122,0.08);
+    border: 1px dashed rgba(196,133,122,0.3);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 12.5px;
+    color: var(--bark-light);
+    line-height: 1.5;
+  }
+  .addon-callout:last-child { margin-bottom: 0; }
+  .addon-callout-icon { font-size: 16px; flex-shrink: 0; }
+  .emotion-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+  .emotion-tag {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    border: 1.5px solid;
+  }
+
+  /* ─── QUICK EDIT (Screen I) ─── */
+  .edit-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .edit-chip {
+    padding: 8px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: var(--white);
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    color: var(--text-soft);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .edit-chip:hover { border-color: var(--sage-light); background: var(--mist); color: var(--sage-dark); }
+  .edit-chip.active { border-color: var(--sage); background: rgba(122,148,113,0.1); color: var(--sage-dark); }
+
+  /* ─── BOTTOM ACTIONS ─── */
+  .actions-bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 50;
+    background: rgba(245,240,232,0.95);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 0 -40px;
+    width: calc(100% + 80px);
+  }
+
+  .actions-hint {
+    font-size: 12.5px;
+    color: var(--text-ghost);
+    font-weight: 300;
+    font-style: italic;
+  }
+  .actions-right { display: flex; gap: 12px; align-items: center; }
+
+  .btn {
+    font-family: 'Jost', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary {
+    background: var(--sage-dark);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--deep-green); box-shadow: 0 4px 16px rgba(45,63,43,0.25); transform: translateY(-1px); }
+  .btn-primary:disabled { background: var(--text-ghost); cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-ghost {
+    background: transparent;
+    color: var(--text-soft);
+    border: 1.5px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--sage-light); color: var(--sage-dark); background: rgba(122,148,113,0.06); }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 680px) {
+    header { padding: 16px 20px; }
+    .progress-bar-wrap { padding: 0 20px; }
+    main { padding: 32px 20px 80px; }
+    .actions-bar { padding: 16px 20px; margin: 0 -20px; width: calc(100% + 40px); }
+    .mode-cards { grid-template-columns: 1fr; }
+    .design-grid { grid-template-columns: 1fr 1fr; }
+    .detail-layout { grid-template-columns: 1fr; }
+    .intent-grid { grid-template-columns: 1fr; }
+    .wordmark { font-size: 18px; }
+  }
+  @media (max-width: 420px) {
+    .design-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Decorative botanical SVGs -->
+<svg class="botanical-bg tl" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="80" stroke="#4e6b49" stroke-width="3"/>
+  <circle cx="100" cy="100" r="60" stroke="#4e6b49" stroke-width="2"/>
+  <ellipse cx="100" cy="30" rx="12" ry="20" fill="#4e6b49" opacity="0.6" transform="rotate(0 100 100)"/>
+  <ellipse cx="100" cy="30" rx="12" ry="20" fill="#4e6b49" opacity="0.6" transform="rotate(45 100 100)"/>
+  <ellipse cx="100" cy="30" rx="12" ry="20" fill="#4e6b49" opacity="0.6" transform="rotate(90 100 100)"/>
+  <ellipse cx="100" cy="30" rx="12" ry="20" fill="#4e6b49" opacity="0.6" transform="rotate(135 100 100)"/>
+  <ellipse cx="100" cy="30" rx="12" ry="20" fill="#4e6b49" opacity="0.6" transform="rotate(180 100 100)"/>
+  <ellipse cx="100" cy="30" rx="12" ry="20" fill="#4e6b49" opacity="0.6" transform="rotate(225 100 100)"/>
+  <ellipse cx="100" cy="30" rx="12" ry="20" fill="#4e6b49" opacity="0.6" transform="rotate(270 100 100)"/>
+  <ellipse cx="100" cy="30" rx="12" ry="20" fill="#4e6b49" opacity="0.6" transform="rotate(315 100 100)"/>
+</svg>
+
+<div class="app-shell">
+  <!-- HEADER -->
+  <header>
+    <div class="header-left">
+      <button class="back-btn" onclick="handleBack()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back
+      </button>
+      <div class="header-divider"></div>
+      <div class="wordmark">Wreath <em>Studio</em></div>
+    </div>
+    <div class="header-badge">AI-Powered Design</div>
+  </header>
+
+  <!-- PROGRESS -->
+  <div class="progress-bar-wrap">
+    <div class="progress-steps" id="progressSteps">
+      <div class="step active" data-step="1">
+        <div class="step-num">1</div>
+        <div class="step-label">Entry</div>
+      </div>
+      <div class="step" data-step="2">
+        <div class="step-num">2</div>
+        <div class="step-label">Materials</div>
+      </div>
+      <div class="step" data-step="3">
+        <div class="step-num">3</div>
+        <div class="step-label">Review</div>
+      </div>
+      <div class="step" data-step="4">
+        <div class="step-num">4</div>
+        <div class="step-label">Intent</div>
+      </div>
+      <div class="step" data-step="5">
+        <div class="step-num">5</div>
+        <div class="step-label">Generate</div>
+      </div>
+      <div class="step" data-step="6">
+        <div class="step-num">6</div>
+        <div class="step-label">Design</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main>
+    <div class="content-col">
+
+      <!-- SCREEN A: Entry / Mode Selection -->
+      <div class="screen active" id="screenA">
+        <div>
+          <h1 class="screen-title">How would you like<br><em>to start designing?</em></h1>
+          <p class="screen-subtitle">Choose your entry point. You can always switch modes later.</p>
+        </div>
+
+        <div class="mode-cards">
+          <div class="mode-card primary-card" onclick="goTo('B')">
+            <div class="card-icon">🌿</div>
+            <div class="card-title">Design With What I Have</div>
+            <div class="card-desc">Tell the AI what materials you already own — it'll design within those limits.</div>
+            <div class="card-arrow">→</div>
+          </div>
+          <div class="mode-card" onclick="showToast('Opening full catalog…')">
+            <div class="card-icon">📦</div>
+            <div class="card-title">Browse Full Catalog</div>
+            <div class="card-desc">Explore all available florals, bases, and accents from our collection.</div>
+            <div class="card-arrow">→</div>
+          </div>
+          <div class="mode-card" onclick="showToast('Loading blueprint library…')">
+            <div class="card-icon">📐</div>
+            <div class="card-title">Start From Blueprint</div>
+            <div class="card-desc">Choose a proven design template and customize it to your taste.</div>
+            <div class="card-arrow">→</div>
+          </div>
+        </div>
+
+        <div class="actions-bar">
+          <span class="actions-hint">Not sure? Start with "Design With What I Have" — it's the fastest path.</span>
+          <div class="actions-right">
+            <button class="btn btn-primary" onclick="goTo('B')">Design With What I Have →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN B: Input Mode -->
+      <div class="screen" id="screenB">
+        <div>
+          <h1 class="screen-title">How would you like<br>to <em>enter your materials?</em></h1>
+          <p class="screen-subtitle">Tell us what you already own and we'll build a design just for those materials.</p>
+        </div>
+
+        <div class="input-choice-list">
+          <div class="input-choice" onclick="goTo('C')">
+            <div class="input-choice-icon">✏️</div>
+            <div class="input-choice-text">
+              <strong>Type or Paste a List</strong>
+              <span>Write out your materials in plain English — the AI understands natural language.</span>
+            </div>
+            <div class="input-choice-right">›</div>
+          </div>
+          <div class="input-choice" onclick="loadSavedStash()">
+            <div class="input-choice-icon">📋</div>
+            <div class="input-choice-text">
+              <strong>Use My Saved Stash</strong>
+              <span>Reload materials from a previous session. Saved 3 days ago: 12 items.</span>
+            </div>
+            <div class="input-choice-right">›</div>
+          </div>
+          <div class="input-choice" onclick="showToast('Camera/scan feature coming soon!')">
+            <div class="input-choice-icon">📷</div>
+            <div class="input-choice-text">
+              <strong>Scan / Photo <span class="beta-badge">Beta</span></strong>
+              <span>Take a photo of your materials and let AI identify them automatically.</span>
+            </div>
+            <div class="input-choice-right">›</div>
+          </div>
+        </div>
+
+        <div class="actions-bar">
+          <span class="actions-hint">The AI can recognize most materials, colors, and quantities from plain text.</span>
+          <div class="actions-right">
+            <button class="btn btn-ghost" onclick="goTo('A')">← Back</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN C: Typed Inventory Input -->
+      <div class="screen" id="screenC">
+        <div class="instruction-strip">
+          <div class="label">List your materials</div>
+          <div class="helper">Type or paste what you have: bases, greenery, florals, ribbon, accents. Use commas or new lines to separate items.</div>
+          <div class="example">Example: 1 grapevine wreath base, 3 eucalyptus stems, 2.5" red velvet ribbon, 5 white peony stems, dried orange slices</div>
+          <a class="see-more" onclick="fillExample()">Insert sample list ↗</a>
+        </div>
+
+        <div class="textarea-zone">
+          <label class="field-label">Your Materials</label>
+          <textarea id="materialTextarea"
+            placeholder="e.g. 1 grapevine wreath base, 3 eucalyptus stems, 2.5″ cream velvet ribbon, 5 white peony stems…"
+            oninput="onTextareaInput()"
+          ></textarea>
+          <div class="textarea-controls">
+            <label class="qty-check">
+              <input type="checkbox" id="qtyApprox"> I'm not sure on exact quantities
+            </label>
+            <button class="clear-btn" onclick="clearTextarea()">Clear list ✕</button>
+          </div>
+        </div>
+
+        <div class="ai-hint">
+          <div class="ai-hint-dot"></div>
+          <span>The AI will recognize materials, colors, and quantities from whatever you type — no special formatting needed.</span>
+        </div>
+
+        <div class="chips-section" id="chipsSection">
+          <div class="chips-label">Detected Items (Preview)</div>
+          <div class="chips-row" id="chipsRow"></div>
+        </div>
+
+        <div class="actions-bar">
+          <span class="actions-hint">You can fine-tune names, colors, and quantities on the next step.</span>
+          <div class="actions-right">
+            <button class="btn btn-ghost" onclick="goTo('B')">← Back</button>
+            <button class="btn btn-primary" id="parseBtn" onclick="parseAndGoToD()" disabled>Parse My Materials →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN D: Parsed Inventory Review -->
+      <div class="screen" id="screenD">
+        <div>
+          <h1 class="screen-title"><em>Review</em> your<br>parsed inventory</h1>
+        </div>
+
+        <div class="inventory-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M9 12l2 2 4-4"/></svg>
+          We'll design using only these materials. You can add more or allow smart add-ons on the next step.
+        </div>
+
+        <div id="inventoryGroups"></div>
+
+        <div class="actions-bar">
+          <span class="actions-hint">Everything look right? Edit anything before generating.</span>
+          <div class="actions-right">
+            <button class="btn btn-ghost" onclick="goTo('C')">← Edit List</button>
+            <button class="btn btn-primary" onclick="goTo('E')">Set Design Intent →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN E: Design Intent -->
+      <div class="screen" id="screenE">
+        <div>
+          <h1 class="screen-title">Set your<br><em>design intent</em></h1>
+          <p class="screen-subtitle">Help the AI understand the mood, occasion, and style you're aiming for.</p>
+        </div>
+
+        <div class="intent-grid">
+          <div class="intent-field">
+            <label>Occasion</label>
+            <div class="toggle-group" id="occasionGroup">
+              <button class="toggle-btn" onclick="selectToggle(this, 'occasion')">Everyday</button>
+              <button class="toggle-btn active" onclick="selectToggle(this, 'occasion')">Christmas</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'occasion')">Spring</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'occasion')">Wedding</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'occasion')">Fall Harvest</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'occasion')">Birthday</button>
+            </div>
+          </div>
+
+          <div class="intent-field">
+            <label>Style</label>
+            <div class="toggle-group" id="styleGroup">
+              <button class="toggle-btn active" onclick="selectToggle(this, 'style')">Rustic</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'style')">Glam</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'style')">Cottagecore</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'style')">Minimal</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'style')">Maximalist</button>
+            </div>
+          </div>
+
+          <div class="intent-field">
+            <label>Emotional Tone</label>
+            <div class="toggle-group" id="emotionGroup">
+              <button class="toggle-btn active" onclick="selectToggle(this, 'emotion')">Warm &amp; Cozy</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'emotion')">Romantic</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'emotion')">Fresh &amp; Airy</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'emotion')">Dramatic</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'emotion')">Playful</button>
+            </div>
+          </div>
+
+          <div class="intent-field">
+            <label>Wreath Size</label>
+            <div class="toggle-group" id="sizeGroup">
+              <button class="toggle-btn" onclick="selectToggle(this, 'size')">10"</button>
+              <button class="toggle-btn active" onclick="selectToggle(this, 'size')">14"</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'size')">18"</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'size')">24"</button>
+              <button class="toggle-btn" onclick="selectToggle(this, 'size')">Custom</button>
+            </div>
+          </div>
+
+          <div class="ai-suggest-toggle" onclick="toggleAiSuggest()">
+            <div class="info">
+              <strong>✨ Let AI suggest emotion from my palette</strong>
+              <span>Analyzes the colors in your inventory and auto-selects the best emotional tone.</span>
+            </div>
+            <div class="toggle-switch on" id="aiSuggestSwitch"></div>
+          </div>
+
+          <div class="ai-suggest-toggle" onclick="toggleAddOns()">
+            <div class="info">
+              <strong>🛒 Allow smart add-on suggestions</strong>
+              <span>AI will recommend 1–3 complementary items to fill creative gaps in your design.</span>
+            </div>
+            <div class="toggle-switch" id="addOnsSwitch"></div>
+          </div>
+        </div>
+
+        <div class="actions-bar">
+          <span class="actions-hint">The AI will generate 6 unique designs from your exact materials.</span>
+          <div class="actions-right">
+            <button class="btn btn-ghost" onclick="goTo('D')">← Back</button>
+            <button class="btn btn-primary" onclick="startGenerating()">Generate Designs →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN F: Loading -->
+      <div class="screen" id="screenF">
+        <div class="loading-center">
+          <div class="wreath-spinner">
+            <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" width="120" height="120">
+              <circle cx="60" cy="60" r="46" stroke="#a8bf9f" stroke-width="3" fill="none" stroke-dasharray="8 6"/>
+              <circle cx="60" cy="60" r="34" stroke="#7a9471" stroke-width="2.5" fill="none" stroke-dasharray="5 4"/>
+              <!-- Leaves -->
+              <g>
+                <ellipse cx="60" cy="14" rx="7" ry="12" fill="#7a9471" transform="rotate(0 60 60)"/>
+                <ellipse cx="60" cy="14" rx="7" ry="12" fill="#4e6b49" transform="rotate(60 60 60)"/>
+                <ellipse cx="60" cy="14" rx="7" ry="12" fill="#7a9471" transform="rotate(120 60 60)"/>
+                <ellipse cx="60" cy="14" rx="7" ry="12" fill="#4e6b49" transform="rotate(180 60 60)"/>
+                <ellipse cx="60" cy="14" rx="7" ry="12" fill="#7a9471" transform="rotate(240 60 60)"/>
+                <ellipse cx="60" cy="14" rx="7" ry="12" fill="#4e6b49" transform="rotate(300 60 60)"/>
+              </g>
+              <!-- Florals -->
+              <circle cx="60" cy="22" r="5" fill="#c4857a" transform="rotate(30 60 60)"/>
+              <circle cx="60" cy="22" r="5" fill="#e8b5ae" transform="rotate(150 60 60)"/>
+              <circle cx="60" cy="22" r="5" fill="#c4857a" transform="rotate(270 60 60)"/>
+            </svg>
+          </div>
+
+          <div class="loading-text">
+            <h3>Composing your designs…</h3>
+            <p>The AI is building within your exact inventory.</p>
+          </div>
+
+          <div class="loading-steps" id="loadingSteps">
+            <div class="loading-step active" id="ls1">
+              <div class="loading-step-dot"></div>
+              Parsing your inventory
+            </div>
+            <div class="loading-step" id="ls2">
+              <div class="loading-step-dot"></div>
+              Mapping color &amp; emotion
+            </div>
+            <div class="loading-step" id="ls3">
+              <div class="loading-step-dot"></div>
+              Running composition engine
+            </div>
+            <div class="loading-step" id="ls4">
+              <div class="loading-step-dot"></div>
+              Generating 6 blueprint variations
+            </div>
+            <div class="loading-step" id="ls5">
+              <div class="loading-step-dot"></div>
+              Finalizing previews
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN G: Gallery -->
+      <div class="screen" id="screenG">
+        <div>
+          <h1 class="screen-title"><em>6 designs</em><br>built from your materials</h1>
+          <p class="screen-subtitle">All designs below use only what you provided. Tap to explore details and iterate.</p>
+        </div>
+
+        <div class="gallery-filters">
+          <span>Sort:</span>
+          <button class="toggle-btn active" style="padding:6px 12px;font-size:12px;" onclick="selectGalleryFilter(this)">Maximize Inventory</button>
+          <button class="toggle-btn" style="padding:6px 12px;font-size:12px;" onclick="selectGalleryFilter(this)">Minimal Add-ons</button>
+          <button class="toggle-btn" style="padding:6px 12px;font-size:12px;" onclick="selectGalleryFilter(this)">Most Balanced</button>
+          <button class="toggle-btn" style="padding:6px 12px;font-size:12px;" onclick="selectGalleryFilter(this)">Most Romantic</button>
+        </div>
+
+        <div class="design-grid" id="designGrid"></div>
+
+        <div class="actions-bar">
+          <span class="actions-hint">Select a design to view its full blueprint and materials breakdown.</span>
+          <div class="actions-right">
+            <button class="btn btn-ghost" onclick="goTo('E')">← Adjust Intent</button>
+            <button class="btn btn-primary" id="viewDetailBtn" disabled onclick="goTo('H')">View Blueprint →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- SCREEN H: Detail -->
+      <div class="screen" id="screenH">
+        <div>
+          <h1 class="screen-title" id="detailTitle"><em>Woodland</em> Holiday Wreath</h1>
+        </div>
+
+        <div class="detail-layout">
+          <div class="detail-preview" id="detailPreview">🌿</div>
+
+          <div class="detail-panel">
+            <div class="detail-panel-section">
+              <div class="detail-section-title">Material Usage</div>
+              <div class="usage-item"><span class="name">Grapevine Base (14")</span><span class="qty">×1</span></div>
+              <div class="usage-item"><span class="name">Eucalyptus Stems</span><span class="qty">×3</span></div>
+              <div class="usage-item"><span class="name">Red Velvet Ribbon</span><span class="qty">×1</span></div>
+              <div class="usage-item"><span class="name">White Peony Stems</span><span class="qty">×4</span></div>
+              <div class="usage-item"><span class="name">Pine Sprigs</span><span class="qty">×2</span></div>
+            </div>
+
+            <div class="detail-panel-section">
+              <div class="detail-section-title">Optional Add-ons</div>
+              <div class="addon-callout">
+                <span class="addon-callout-icon">+</span>
+                <span>3 dried orange slices would improve visual balance and add warmth to the lower left cluster.</span>
+              </div>
+              <div class="addon-callout">
+                <span class="addon-callout-icon">+</span>
+                <span>A small sprig of red berries near the ribbon bow would tie in the dusty rose tones.</span>
+              </div>
+            </div>
+
+            <div class="detail-panel-section">
+              <div class="detail-section-title">Emotion &amp; Style</div>
+              <div class="emotion-tags">
+                <span class="emotion-tag" style="border-color:rgba(122,148,113,0.4);color:var(--sage-dark);background:rgba(122,148,113,0.08)">🌲 Rustic</span>
+                <span class="emotion-tag" style="border-color:rgba(196,133,122,0.4);color:var(--dusty-rose);background:rgba(196,133,122,0.08)">🕯 Warm</span>
+                <span class="emotion-tag" style="border-color:rgba(92,74,50,0.3);color:var(--bark);background:rgba(92,74,50,0.06)">🍂 Earthy</span>
+                <span class="emotion-tag" style="border-color:rgba(168,191,159,0.4);color:var(--sage-dark);background:rgba(168,191,159,0.1)">Christmas</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Edit (Screen I) -->
+        <div style="margin-top:8px;">
+          <div class="field-label" style="margin-bottom:14px;">Quick Adjustments</div>
+          <div class="edit-chips" id="editChips">
+            <button class="edit-chip" onclick="toggleEditChip(this)">Less ribbon</button>
+            <button class="edit-chip" onclick="toggleEditChip(this)">More greenery</button>
+            <button class="edit-chip" onclick="toggleEditChip(this)">Shift florals right</button>
+            <button class="edit-chip active" onclick="toggleEditChip(this)">Add asymmetry</button>
+            <button class="edit-chip" onclick="toggleEditChip(this)">Darken palette</button>
+            <button class="edit-chip" onclick="toggleEditChip(this)">More fullness</button>
+            <button class="edit-chip" onclick="toggleEditChip(this)">Lighter base visible</button>
+          </div>
+        </div>
+
+        <div class="actions-bar">
+          <span class="actions-hint"></span>
+          <div class="actions-right">
+            <button class="btn btn-ghost" onclick="goTo('G')">← Gallery</button>
+            <button class="btn btn-ghost" onclick="showToast('Regenerating with adjustments…')">Regenerate ↺</button>
+            <button class="btn btn-primary" onclick="showToast('Blueprint saved! Add missing items to cart.')">Save &amp; Export →</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" style="
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--deep-green);color:white;padding:12px 20px;border-radius:8px;
+  font-size:13.5px;font-family:'Jost',sans-serif;font-weight:400;
+  opacity:0;transition:all 0.3s;pointer-events:none;z-index:999;
+  white-space:nowrap;
+"></div>
+
+<script>
+  // ─── STATE ───
+  const state = {
+    currentScreen: 'A',
+    rawText: '',
+    parsedItems: [],
+    selectedDesign: null,
+    aiSuggest: true,
+    allowAddOns: false,
+  };
+
+  const SCREEN_STEP_MAP = { A:1, B:1, C:2, D:3, E:4, F:5, G:6, H:6 };
+
+  // ─── NAVIGATION ───
+  function goTo(screen) {
+    document.getElementById('screen' + state.currentScreen).classList.remove('active');
+    document.getElementById('screen' + screen).classList.add('active');
+    state.currentScreen = screen;
+    updateProgress(SCREEN_STEP_MAP[screen]);
+    window.scrollTo({top:0, behavior:'smooth'});
+    if (screen === 'D') renderInventory();
+    if (screen === 'G') renderGallery();
+  }
+
+  function handleBack() {
+    const prev = {A:'A',B:'A',C:'B',D:'C',E:'D',F:'E',G:'F',H:'G'};
+    goTo(prev[state.currentScreen] || 'A');
+  }
+
+  function updateProgress(activeStep) {
+    document.querySelectorAll('.step').forEach(s => {
+      const n = parseInt(s.dataset.step);
+      s.classList.remove('active','done');
+      if (n < activeStep) s.classList.add('done');
+      else if (n === activeStep) s.classList.add('active');
+    });
+  }
+
+  // ─── SCREEN C LOGIC ───
+  const SAMPLE_TEXT = `1 grapevine wreath base (14"), 3 eucalyptus stems, 2.5" red velvet ribbon, 5 white peony stems, 2 pine sprigs, dried orange slices, a bit of baby's breath`;
+
+  const PARSE_RULES = [
+    { pattern: /grape.*base|grapevine/i, category:'base', label:'Grapevine Base', color:'#8B6F4E' },
+    { pattern: /eucalyptus/i, category:'greenery', label:'Eucalyptus', color:'#7a9471' },
+    { pattern: /ribbon/i, category:'ribbon', label:'Velvet Ribbon', color:'#c4857a' },
+    { pattern: /peony|peonies/i, category:'floral', label:'Peony Stems', color:'#f5f0f0' },
+    { pattern: /pine|sprigs/i, category:'greenery', label:'Pine Sprigs', color:'#4e6b49' },
+    { pattern: /orange/i, category:'accent', label:'Dried Oranges', color:'#e8943a' },
+    { pattern: /baby.?s breath|gypsophila/i, category:'floral', label:"Baby's Breath", color:'#f0ede8' },
+    { pattern: /rose/i, category:'floral', label:'Roses', color:'#c4857a' },
+    { pattern: /lavender/i, category:'greenery', label:'Lavender Stems', color:'#9b85b3' },
+    { pattern: /berry|berries/i, category:'accent', label:'Berry Sprigs', color:'#b33a3a' },
+    { pattern: /pinecone/i, category:'accent', label:'Pinecones', color:'#6b4e2a' },
+    { pattern: /moss/i, category:'greenery', label:'Sheet Moss', color:'#5a7a40' },
+    { pattern: /twigs?|branches/i, category:'base', label:'Twig Bundle', color:'#7a5c3a' },
+    { pattern: /cotton/i, category:'accent', label:'Cotton Stems', color:'#ede6d6' },
+  ];
+
+  function parseText(text) {
+    const results = [];
+    const segments = text.split(/[,\n]+/).map(s => s.trim()).filter(Boolean);
+    segments.forEach(seg => {
+      const matched = PARSE_RULES.find(r => r.pattern.test(seg));
+      const qty = (seg.match(/(\d+)\s*(?:x|stems?|pieces?|pcs?)?/i) || [])[1] || '1';
+      if (matched) {
+        results.push({ id: Math.random().toString(36).slice(2), label: matched.label, category: matched.category, color: matched.color, qty, confidence: 0.9, rawSeg: seg });
+      } else if (seg.length > 3) {
+        results.push({ id: Math.random().toString(36).slice(2), label: seg.length > 28 ? seg.slice(0,28)+'…' : seg, category: 'accent', color: '#a89880', qty, confidence: 0.5, rawSeg: seg });
+      }
+    });
+    return results;
+  }
+
+  function fillExample() {
+    document.getElementById('materialTextarea').value = SAMPLE_TEXT;
+    onTextareaInput();
+  }
+
+  function clearTextarea() {
+    document.getElementById('materialTextarea').value = '';
+    onTextareaInput();
+  }
+
+  let debounceTimer;
+  function onTextareaInput() {
+    const val = document.getElementById('materialTextarea').value;
+    state.rawText = val;
+    document.getElementById('parseBtn').disabled = val.trim().length === 0;
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      if (val.trim().length > 5) {
+        state.parsedItems = parseText(val);
+        renderChips();
+        document.getElementById('chipsSection').classList.add('visible');
+      } else {
+        document.getElementById('chipsSection').classList.remove('visible');
+      }
+    }, 400);
+  }
+
+  function renderChips() {
+    const row = document.getElementById('chipsRow');
+    row.innerHTML = '';
+    state.parsedItems.slice(0, 12).forEach(item => {
+      const chip = document.createElement('div');
+      chip.className = `chip ${item.confidence < 0.7 ? 'uncertain' : item.category}`;
+      chip.innerHTML = `
+        <span class="chip-dot"></span>
+        ${item.label}${item.confidence < 0.7 ? ' <span class="chip-uncertain-icon">?</span>' : ''}
+        <button class="chip-remove" onclick="removeChip('${item.id}')">×</button>
+      `;
+      row.appendChild(chip);
+    });
+  }
+
+  function removeChip(id) {
+    state.parsedItems = state.parsedItems.filter(i => i.id !== id);
+    renderChips();
+  }
+
+  function parseAndGoToD() {
+    if (state.parsedItems.length === 0) {
+      state.parsedItems = parseText(state.rawText);
+    }
+    goTo('D');
+  }
+
+  function loadSavedStash() {
+    state.rawText = SAMPLE_TEXT;
+    state.parsedItems = parseText(state.rawText);
+    showToast('Loaded 7 items from your saved stash ✓');
+    setTimeout(() => goTo('D'), 700);
+  }
+
+  // ─── SCREEN D LOGIC ───
+  const CATEGORY_LABELS = { base:'Base', greenery:'Greenery', floral:'Florals', ribbon:'Ribbon', accent:'Accents' };
+  const CATEGORY_ORDER = ['base','greenery','floral','ribbon','accent'];
+
+  function renderInventory() {
+    const container = document.getElementById('inventoryGroups');
+    container.innerHTML = '';
+    if (!state.parsedItems.length) {
+      container.innerHTML = '<p style="color:var(--text-ghost);font-size:14px;text-align:center;padding:32px">No items parsed yet. Go back and enter your materials.</p>';
+      return;
+    }
+    const grouped = {};
+    state.parsedItems.forEach(item => {
+      if (!grouped[item.category]) grouped[item.category] = [];
+      grouped[item.category].push(item);
+    });
+    CATEGORY_ORDER.forEach(cat => {
+      if (!grouped[cat]) return;
+      const grp = document.createElement('div');
+      grp.className = 'inventory-group';
+      grp.innerHTML = `
+        <div class="group-header">
+          <div class="group-name">
+            ${CATEGORY_LABELS[cat] || cat}
+            <span class="group-count">${grouped[cat].length}</span>
+          </div>
+          <button class="add-item-btn" onclick="showToast('Add item to ${cat} group')">+</button>
+        </div>
+      `;
+      grouped[cat].forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'inventory-item';
+        row.innerHTML = `
+          <div class="item-color-swatch" style="background:${item.color}20;border-color:${item.color}40;"></div>
+          <div class="item-info">
+            <div class="item-name">${item.label}</div>
+            <div class="item-meta">${item.category} ${item.confidence < 0.7 ? '· <span style="color:var(--dusty-rose)">Low confidence — please verify</span>' : '· Recognized'}</div>
+          </div>
+          <div class="item-qty">×${item.qty}</div>
+          <div class="item-actions">
+            <button class="item-action-btn" onclick="showToast('Edit item')">✎</button>
+            <button class="item-action-btn danger" onclick="removeInventoryItem('${item.id}')">✕</button>
+          </div>
+        `;
+        grp.appendChild(row);
+      });
+      container.appendChild(grp);
+    });
+  }
+
+  function removeInventoryItem(id) {
+    state.parsedItems = state.parsedItems.filter(i => i.id !== id);
+    renderInventory();
+  }
+
+  // ─── SCREEN E LOGIC ───
+  function selectToggle(btn, group) {
+    document.querySelectorAll(`#${group}Group .toggle-btn`).forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function toggleAiSuggest() {
+    state.aiSuggest = !state.aiSuggest;
+    document.getElementById('aiSuggestSwitch').classList.toggle('on', state.aiSuggest);
+  }
+  function toggleAddOns() {
+    state.allowAddOns = !state.allowAddOns;
+    document.getElementById('addOnsSwitch').classList.toggle('on', state.allowAddOns);
+  }
+
+  // ─── SCREEN F: LOADING ANIMATION ───
+  function startGenerating() {
+    goTo('F');
+    runLoadingAnimation();
+  }
+
+  function runLoadingAnimation() {
+    const steps = [1,2,3,4,5];
+    const durations = [600, 900, 1200, 1000, 700];
+    let elapsed = 0;
+    steps.forEach((n, i) => {
+      setTimeout(() => {
+        const el = document.getElementById('ls' + n);
+        el.classList.add('done');
+        el.classList.remove('active');
+        if (i < steps.length - 1) {
+          document.getElementById('ls' + (n+1)).classList.add('active');
+        }
+      }, elapsed);
+      elapsed += durations[i];
+    });
+    setTimeout(() => goTo('G'), elapsed + 400);
+  }
+
+  // ─── SCREEN G: GALLERY ───
+  const DESIGNS = [
+    { id:'d1', name:'Woodland Holiday', emoji:'🌿', tags:['Rustic','Warm','Christmas'], badge:'inventory', meta:'Uses 100% of your materials', color:'#7a9471' },
+    { id:'d2', name:'Garden Romance', emoji:'🌸', tags:['Romantic','Soft','Cottagecore'], badge:'inventory', meta:'Uses all eucalyptus + peonies', color:'#c4857a' },
+    { id:'d3', name:'Nordic Wreath', emoji:'🍃', tags:['Minimal','Cool','Elegant'], badge:'addons', meta:'Uses 80% · +1 suggested item', color:'#4e6b49' },
+    { id:'d4', name:'Floral Cascade', emoji:'💐', tags:['Glam','Abundant','Bold'], badge:'inventory', meta:'Uses 100% of your materials', color:'#e8b5ae' },
+    { id:'d5', name:'Wild & Asymmetric', emoji:'🌾', tags:['Rustic','Artisanal','Free'], badge:'addons', meta:'Uses 90% · +2 suggested items', color:'#8b6f4e' },
+    { id:'d6', name:'Winter Spice', emoji:'🍊', tags:['Warm','Festive','Earthy'], badge:'inventory', meta:'Uses 100% of your materials', color:'#e8943a' },
+  ];
+
+  function renderGallery() {
+    const grid = document.getElementById('designGrid');
+    grid.innerHTML = '';
+    DESIGNS.forEach(d => {
+      const card = document.createElement('div');
+      card.className = 'design-card';
+      card.id = 'card-' + d.id;
+      card.onclick = () => selectDesign(d.id, d.name, d.emoji);
+      card.innerHTML = `
+        <div class="design-card-img" style="background:${d.color}18;">
+          ${d.emoji}
+          <span class="design-badge ${d.badge === 'inventory' ? 'badge-inventory' : 'badge-addons'}">
+            ${d.badge === 'inventory' ? 'Your Materials Only' : '+Add-ons'}
+          </span>
+        </div>
+        <div class="design-card-body">
+          <div class="design-name">${d.name}</div>
+          <div class="design-meta">${d.meta}</div>
+          <div class="design-tags">${d.tags.map(t => `<span class="design-tag">${t}</span>`).join('')}</div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+  }
+
+  function selectDesign(id, name, emoji) {
+    document.querySelectorAll('.design-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('card-' + id).classList.add('selected');
+    state.selectedDesign = { id, name, emoji };
+    document.getElementById('viewDetailBtn').disabled = false;
+  }
+
+  function selectGalleryFilter(btn) {
+    document.querySelectorAll('.gallery-filters .toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  // ─── SCREEN H ───
+  // (prepopulated with static data — would be dynamic in production)
+
+  function toggleEditChip(chip) {
+    chip.classList.toggle('active');
+  }
+
+  // ─── TOAST ───
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.opacity = '1';
+    t.style.transform = 'translateX(-50%) translateY(0)';
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => {
+      t.style.opacity = '0';
+      t.style.transform = 'translateX(-50%) translateY(20px)';
+    }, 2400);
+  }
+
+  // ─── INIT ───
+  // Pre-seed some items for demo purposes
+  state.parsedItems = parseText(SAMPLE_TEXT);
+</script>
+</body>
+</html>

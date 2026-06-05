@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Floral Emotion Tagger — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  /* ── EC Color Tokens ─────────────────────────────────────────── */
+  :root {
+    --ec-white:#FFFFFF; --ec-off-white:#F9F7F4; --ec-paper:#F2EFE9;
+    --ec-black:#1A1A1A; --ec-charcoal:#2E2E2E; --ec-ink:#4A4A4A;
+    --ec-green:#4A6741; --ec-green-light:#6B8F67; --ec-green-pale:#EEF2ED;
+    --ec-green-dim:rgba(74,103,65,0.12);
+    --ec-border:#E8E8E8; --ec-border-dark:#D0D0D0;
+    --ec-shadow: 0 4px 24px rgba(26,26,26,0.07);
+    --ec-shadow-lg: 0 12px 48px rgba(26,26,26,0.11);
+    --radius:10px;
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-script: 'Dancing Script', cursive;
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --font-mono: 'DM Mono', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--ec-off-white);
+    color: var(--ec-ink);
+    min-height: 100vh;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* ── App Shell ───────────────────────────────────────────────── */
+  .app-header {
+    background: var(--ec-white);
+    border-bottom: 1px solid var(--ec-border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 12px rgba(26,26,26,0.05);
+  }
+
+  .app-wordmark {
+    font-family: var(--font-script);
+    font-size: 22px;
+    color: var(--ec-green);
+    line-height: 1;
+  }
+
+  .app-name {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ec-ink);
+    margin-top: 2px;
+  }
+
+  .tier-badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: #EEF4F9;
+    color: #4A6785;
+  }
+  .tier-badge.studio { background: #F5EEF4; color: #7A4A85; }
+
+  .header-left { display: flex; flex-direction: column; gap: 2px; }
+
+  /* ── Layout ──────────────────────────────────────────────────── */
+  .app-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    min-height: calc(100vh - 57px);
+  }
+
+  .sidebar {
+    background: var(--ec-white);
+    border-right: 1px solid var(--ec-border);
+    padding: 28px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+  }
+
+  .main-panel {
+    padding: 32px;
+    overflow-y: auto;
+  }
+
+  /* ── Sidebar Sections ────────────────────────────────────────── */
+  .section-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ec-green);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ec-green-pale);
+  }
+
+  /* Botanical SVG accent */
+  .botanical-accent {
+    display: flex;
+    justify-content: center;
+    padding: 4px 0 8px;
+    opacity: 0.3;
+  }
+
+  /* ── Input Controls ──────────────────────────────────────────── */
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--ec-border);
+    border-radius: var(--radius);
+    background: var(--ec-off-white);
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    color: var(--ec-black);
+    resize: vertical;
+    min-height: 120px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    line-height: 1.6;
+  }
+  textarea:focus {
+    outline: none;
+    border-color: var(--ec-green-light);
+    box-shadow: 0 0 0 3px var(--ec-green-dim);
+  }
+  textarea::placeholder { color: #A8A8A8; }
+
+  .input-hint {
+    font-size: 11.5px;
+    color: #999;
+    margin-top: 6px;
+    line-height: 1.5;
+  }
+
+  /* Mode Toggle */
+  .mode-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid var(--ec-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .mode-btn {
+    padding: 9px 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ec-ink);
+    transition: background 0.18s, color 0.18s;
+    text-align: center;
+  }
+  .mode-btn.active {
+    background: var(--ec-green);
+    color: var(--ec-white);
+  }
+  .mode-btn:not(.active):hover { background: var(--ec-green-pale); }
+
+  /* Run button */
+  .btn-primary {
+    width: 100%;
+    padding: 13px 20px;
+    background: var(--ec-green);
+    color: var(--ec-white);
+    border: none;
+    border-radius: var(--radius);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary:hover { background: #3a5333; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(74,103,65,0.28); }
+  .btn-primary:active { transform: translateY(0); }
+  .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 10px 20px;
+    background: var(--ec-off-white);
+    color: var(--ec-ink);
+    border: 1px solid var(--ec-border);
+    border-radius: var(--radius);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.18s;
+  }
+  .btn-secondary:hover { background: var(--ec-green-pale); border-color: var(--ec-green-light); }
+
+  /* Example chips */
+  .example-chips { display: flex; flex-direction: column; gap: 6px; }
+  .chip {
+    padding: 7px 12px;
+    background: var(--ec-off-white);
+    border: 1px solid var(--ec-border);
+    border-radius: 6px;
+    font-size: 11.5px;
+    color: var(--ec-ink);
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: var(--font-mono);
+    line-height: 1.4;
+  }
+  .chip:hover { background: var(--ec-green-pale); border-color: var(--ec-green-light); color: var(--ec-green); }
+
+  /* ── Main Panel ──────────────────────────────────────────────── */
+  .panel-header {
+    margin-bottom: 28px;
+  }
+  .panel-title {
+    font-family: var(--font-serif);
+    font-size: 30px;
+    font-weight: 400;
+    color: var(--ec-black);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .panel-title em { font-style: italic; color: var(--ec-green); }
+  .panel-subtitle {
+    font-size: 13px;
+    color: #888;
+    margin-top: 6px;
+  }
+
+  /* Divider */
+  .ec-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--ec-green-light);
+    font-size: 11px;
+    opacity: 0.5;
+    margin: 4px 0 20px;
+  }
+  .ec-divider::before, .ec-divider::after { content: ''; flex:1; height:1px; background: var(--ec-border); }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 80px 40px;
+    color: #BBB;
+  }
+  .empty-state svg { opacity: 0.2; margin-bottom: 16px; }
+  .empty-state h3 { font-family: var(--font-serif); font-size: 22px; font-weight: 400; color: #CCC; margin-bottom: 8px; }
+  .empty-state p { font-size: 13px; color: #BBB; }
+
+  /* Loading */
+  .loading-state {
+    text-align: center;
+    padding: 60px 40px;
+  }
+  .loader-ring {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--ec-green-pale);
+    border-top-color: var(--ec-green);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-state p { font-size: 13px; color: #999; font-style: italic; }
+
+  /* ── Results ─────────────────────────────────────────────────── */
+  .results-grid {
+    display: grid;
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+
+  .item-card {
+    background: var(--ec-white);
+    border: 1px solid var(--ec-border);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    box-shadow: var(--ec-shadow);
+    transition: box-shadow 0.2s, transform 0.2s;
+    animation: cardIn 0.35s ease both;
+  }
+  .item-card:hover { box-shadow: var(--ec-shadow-lg); transform: translateY(-2px); }
+  @keyframes cardIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+
+  .item-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .item-name {
+    font-family: var(--font-serif);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--ec-black);
+    letter-spacing: -0.01em;
+  }
+  .item-meta {
+    font-size: 11px;
+    color: #999;
+    font-family: var(--font-mono);
+    margin-top: 2px;
+  }
+
+  .confidence-badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .confidence-badge.high { background: var(--ec-green-pale); color: var(--ec-green); }
+  .confidence-badge.medium { background: #FEF9EC; color: #B8860B; }
+  .confidence-badge.low { background: #FEF0F0; color: #C0392B; }
+
+  .emotion-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 10px;
+  }
+
+  .emotion-tag {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    transition: transform 0.15s;
+  }
+  .emotion-tag:hover { transform: scale(1.05); }
+  .emotion-tag.primary { background: var(--ec-green); color: var(--ec-white); }
+  .emotion-tag.secondary { background: var(--ec-green-pale); color: var(--ec-green); }
+
+  .color-modifier {
+    font-size: 12px;
+    color: #999;
+    font-style: italic;
+    padding-top: 8px;
+    border-top: 1px solid var(--ec-border);
+  }
+  .color-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 5px;
+    border: 1px solid var(--ec-border);
+    vertical-align: middle;
+  }
+
+  /* ── Collection Summary Card ─────────────────────────────────── */
+  .summary-card {
+    background: linear-gradient(135deg, var(--ec-green) 0%, #3a5333 100%);
+    color: var(--ec-white);
+    border-radius: 14px;
+    padding: 28px 28px 24px;
+    margin-top: 8px;
+    box-shadow: 0 8px 32px rgba(74,103,65,0.3);
+    animation: cardIn 0.4s ease 0.2s both;
+  }
+
+  .summary-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 12px;
+  }
+  .summary-title {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    margin-bottom: 16px;
+  }
+
+  .dominant-emotions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .dom-tag {
+    padding: 6px 14px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+  }
+  .summary-stat { font-size: 12px; opacity: 0.85; }
+  .summary-stat strong { display: block; font-size: 13px; opacity: 1; margin-bottom: 2px; }
+
+  .gap-note {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(0,0,0,0.15);
+    border-radius: 8px;
+    font-size: 12px;
+    opacity: 0.9;
+    line-height: 1.5;
+  }
+
+  /* ── Tier Gate ───────────────────────────────────────────────── */
+  .tier-gate {
+    position: relative;
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .tier-gate-blur {
+    filter: blur(4px);
+    pointer-events: none;
+    user-select: none;
+    opacity: 0.4;
+  }
+  .tier-gate-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(249,247,244,0.92);
+    border: 1px dashed var(--ec-border-dark);
+    border-radius: var(--radius);
+    gap: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  .tier-gate-icon { font-size: 24px; }
+  .tier-gate-title { font-family: var(--font-serif); font-size: 17px; color: var(--ec-black); font-weight: 500; }
+  .tier-gate-desc { font-size: 12px; color: #888; line-height: 1.4; }
+  .upgrade-btn {
+    padding: 9px 20px;
+    background: var(--ec-black);
+    color: var(--ec-white);
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+    letter-spacing: 0.04em;
+    transition: background 0.18s;
+  }
+  .upgrade-btn:hover { background: var(--ec-green); }
+
+  /* ── Error ───────────────────────────────────────────────────── */
+  .error-banner {
+    background: #FEF0F0;
+    border: 1px solid #FBBABA;
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #C0392B;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  /* ── Export bar ──────────────────────────────────────────────── */
+  .export-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .export-btn {
+    padding: 8px 16px;
+    background: var(--ec-white);
+    border: 1px solid var(--ec-border);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--ec-ink);
+    transition: background 0.15s;
+    font-family: var(--font-sans);
+  }
+  .export-btn:hover { background: var(--ec-green-pale); border-color: var(--ec-green-light); }
+
+  /* ── Scrollbar ───────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--ec-border-dark); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    .app-layout { grid-template-columns: 1fr; }
+    .sidebar { border-right: none; border-bottom: 1px solid var(--ec-border); }
+    .main-panel { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── App Header ─────────────────────────────────────── -->
+<header class="app-header">
+  <div class="header-left">
+    <div class="app-wordmark">Evercrafted</div>
+    <div class="app-name">Floral Emotion Tagger</div>
+  </div>
+  <span class="tier-badge">Craft</span>
+</header>
+
+<!-- ── App Layout ─────────────────────────────────────── -->
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- Botanical accent -->
+    <div class="botanical-accent">
+      <svg width="120" height="40" viewBox="0 0 120 40" fill="none">
+        <path d="M10 20 Q30 5 60 20 Q90 35 110 20" stroke="#4A6741" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <ellipse cx="35" cy="12" rx="8" ry="5" fill="#4A6741" opacity="0.4" transform="rotate(-20 35 12)"/>
+        <ellipse cx="60" cy="22" rx="9" ry="5" fill="#4A6741" opacity="0.3" transform="rotate(5 60 22)"/>
+        <ellipse cx="85" cy="14" rx="7" ry="4" fill="#4A6741" opacity="0.35" transform="rotate(-15 85 14)"/>
+        <circle cx="10" cy="20" r="2.5" fill="#4A6741" opacity="0.5"/>
+        <circle cx="110" cy="20" r="2.5" fill="#4A6741" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <!-- Input Mode -->
+    <div>
+      <div class="section-label">Input Mode</div>
+      <div class="mode-toggle">
+        <button class="mode-btn active" onclick="setMode('inventory')" id="mode-inventory">Inventory</button>
+        <button class="mode-btn" onclick="setMode('single')" id="mode-single">Single Item</button>
+      </div>
+    </div>
+
+    <!-- Inventory Input -->
+    <div id="inventory-input">
+      <div class="section-label">Inventory Input</div>
+      <textarea id="input-text" placeholder="Enter inventory:&#10;&#10;12 stems white peony&#10;6 dusty rose garden rose&#10;8 sage eucalyptus&#10;4 burgundy dahlia&#10;2 ivory ribbon&#10;&#10;Or paste CSV rows…" rows="7"></textarea>
+      <p class="input-hint">Accepts plain lists, CSV rows, or free descriptions. Include color + floral type for best accuracy.</p>
+    </div>
+
+    <!-- Quick Examples -->
+    <div>
+      <div class="section-label">Quick Examples</div>
+      <div class="example-chips">
+        <div class="chip" onclick="loadExample('romantic')">🌸 Romantic Spring Mix</div>
+        <div class="chip" onclick="loadExample('harvest')">🍂 Harvest Autumn</div>
+        <div class="chip" onclick="loadExample('minimal')">🌿 Minimal Botanical</div>
+        <div class="chip" onclick="loadExample('dramatic')">🖤 Dark Drama</div>
+      </div>
+    </div>
+
+    <!-- Studio tier locked feature -->
+    <div class="tier-gate">
+      <div class="tier-gate-blur">
+        <div class="section-label">Bulk CSV Upload</div>
+        <textarea placeholder="Upload a CSV file..." rows="3" disabled></textarea>
+      </div>
+      <div class="tier-gate-overlay">
+        <div class="tier-gate-icon">🔒</div>
+        <div class="tier-gate-title">Studio Feature</div>
+        <div class="tier-gate-desc">Bulk CSV upload with SKU matching is available on Studio and Atelier tiers.</div>
+        <button class="upgrade-btn" onclick="alert('Redirecting to upgrade...')">Upgrade to Studio</button>
+      </div>
+    </div>
+
+    <!-- Run -->
+    <button class="btn-primary" onclick="runTagger()" id="run-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      Tag Emotions
+    </button>
+
+    <button class="btn-secondary" onclick="clearAll()">Clear</button>
+
+  </aside>
+
+  <!-- MAIN PANEL -->
+  <main class="main-panel">
+
+    <div class="panel-header">
+      <h1 class="panel-title">Emotion <em>Tagging</em></h1>
+      <div class="ec-divider">✦</div>
+      <p class="panel-subtitle">Tag each floral item with its emotional signature — type × color → intent</p>
+    </div>
+
+    <!-- Output area -->
+    <div id="output-area">
+      <!-- Empty state -->
+      <div class="empty-state" id="empty-state">
+        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+          <circle cx="32" cy="32" r="20" stroke="#4A6741" stroke-width="1.5"/>
+          <path d="M32 18 Q38 24 32 30 Q26 24 32 18Z" fill="#4A6741"/>
+          <path d="M18 32 Q24 26 30 32 Q24 38 18 32Z" fill="#4A6741" opacity="0.6"/>
+          <path d="M46 32 Q40 38 34 32 Q40 26 46 32Z" fill="#4A6741" opacity="0.6"/>
+          <path d="M32 46 Q26 40 32 34 Q38 40 32 46Z" fill="#4A6741" opacity="0.4"/>
+          <circle cx="32" cy="32" r="4" fill="#4A6741" opacity="0.3"/>
+        </svg>
+        <h3>Your tagged inventory will appear here</h3>
+        <p>Enter your florals in the sidebar and click "Tag Emotions"</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── Tier Config ──────────────────────────────────────────────────
+const TIER_RANK = { bloom:1, craft:2, studio:3, atelier:4 };
+const USER_TIER = "craft";
+function canAccess(required) { return TIER_RANK[USER_TIER] >= TIER_RANK[required]; }
+
+// ── Mode ─────────────────────────────────────────────────────────
+let currentMode = 'inventory';
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('mode-inventory').classList.toggle('active', mode === 'inventory');
+  document.getElementById('mode-single').classList.toggle('active', mode === 'single');
+  const ta = document.getElementById('input-text');
+  if (mode === 'single') {
+    ta.placeholder = 'Describe one floral:\n\nBurgundy dahlia\nor\nDusty blue hydrangea stem';
+    ta.style.minHeight = '80px';
+  } else {
+    ta.placeholder = 'Enter inventory:\n\n12 stems white peony\n6 dusty rose garden rose\n8 sage eucalyptus\n4 burgundy dahlia\n2 ivory ribbon\n\nOr paste CSV rows…';
+    ta.style.minHeight = '120px';
+  }
+}
+
+// ── Example Presets ──────────────────────────────────────────────
+const EXAMPLES = {
+  romantic: `12 stems blush peony\n6 dusty rose garden rose\n8 cream ranunculus\n4 lavender anemone\n2 ivory velvet ribbon\n10 stems soft white eucalyptus`,
+  harvest: `8 rust-orange dahlia\n6 burgundy berry stem\n10 deep green eucalyptus\n4 terracotta dried grass\n3 natural pinecone stems\n2 amber velvet ribbon`,
+  minimal: `12 stems sage eucalyptus\n8 white magnolia\n6 silver-grey dried grass\n4 cream seed pods\n6 dusty green fern`,
+  dramatic: `6 deep plum hellebore\n4 charcoal-black protea\n8 burgundy foxglove\n6 dark navy anemone\n2 dark velvet ribbon`
+};
+function loadExample(key) {
+  document.getElementById('input-text').value = EXAMPLES[key];
+}
+
+// ── Claude API ───────────────────────────────────────────────────
+async function callClaude(messages, systemPrompt, maxTokens = 2048) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages
+    })
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `API error ${res.status}`);
+  }
+  const data = await res.json();
+  return data.content.filter(b => b.type === "text").map(b => b.text).join("\n");
+}
+
+// ── System Prompt ────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are the Evercrafted Floral Emotion Tagger. Tag floral inventory items with emotion labels.
+
+RULES:
+- Never invent SKUs or quantities — only tag what exists in the input
+- Always assign 2–4 emotion_tags per item (never just one, cap at 4)
+- Flag ambiguous items with confidence: "low"
+- No cherry blossoms, pussy willow, or twig-based blossoms (exclude if present, note exclusion)
+- Use gender-neutral language
+- Be specific about color (infer if needed)
+
+EMOTION REFERENCE (floral type):
+Rose → romance, love, passion, desire, tenderness
+Peony → softness, abundance, grace, joy, nostalgia
+Hydrangea → calm, serenity, understanding, gratitude, heartfelt
+Eucalyptus → clarity, calm, renewal, groundedness
+Lavender → peace, healing, rest, spirituality, memory
+Dahlia → strength, elegance, dignity, mystery, transformation
+Ranunculus → charm, radiance, attraction, delight, warmth
+Anemone → anticipation, protection, vulnerability, wildness
+Garden Rose → nostalgia, warmth, richness, romance, sentimentality
+Magnolia → purity, perseverance, nobility, quiet strength, dignity
+Foxglove → intrigue, drama, boldness, unpredictability
+Hellebore → mystery, resilience, depth, melancholy, quiet beauty
+Protea → courage, transformation, diversity, boldness
+Thistle → resilience, independence, pride, ruggedness
+Fern → sincerity, naturalness, shelter, groundedness
+Moss → quiet, humility, simplicity, stillness
+Cotton stem → comfort, home, warmth, simplicity, harvest
+Berry stem → abundance, harvest, playfulness, earthiness
+Pinecone → stability, winter calm, endurance, nostalgia
+Ribbon/Velvet → elegance, luxury, festivity, celebration
+Dried grass → quiet nostalgia, organic, freedom, wabi-sabi
+Seed pod → mystery, late harvest, texture, intrigue
+
+COLOR MODIFIERS:
+White → purity, peace, clarity (softens all)
+Cream/Ivory → warmth, nostalgia, quiet elegance
+Blush/Light Pink → tenderness, sweetness, romance
+Deep Pink/Hot Pink → passion, playfulness, boldness
+Burgundy/Wine → depth, richness, drama, desire
+Red → passion, urgency, love, vitality
+Peach/Coral → warmth, friendliness, joy, optimism
+Orange → energy, harvest, vibrancy
+Yellow/Gold → joy, hope, cheerfulness, abundance
+Sage/Soft Green → calm, nature, renewal, healing
+Deep Green → groundedness, abundance, forest quiet
+Dusty Blue → nostalgia, serenity, longing, softness
+Navy/Deep Blue → depth, trust, quiet drama, dignity
+Lavender/Lilac → spirituality, dreaming, gentleness
+Deep Purple/Plum → mystery, luxury, transformation
+Charcoal/Black → drama, elegance, power, sophistication
+Rust/Terracotta → earthiness, warmth, harvest, cozy
+Taupe/Greige → quiet luxury, neutrality, sophisticated calm
+Silver/Metallic → elegance, cool, winter magic
+Brown/Kraft → groundedness, rustic, simplicity
+
+OUTPUT: Respond ONLY with valid JSON (no markdown, no backticks):
+{
+  "items": [
+    {
+      "name": "string",
+      "floral_type": "string",
+      "color": "string",
+      "category": "focal|filler|greenery|texture|accent",
+      "quantity": number or null,
+      "emotion_tags": ["tag1","tag2","tag3"],
+      "primary_emotion": "string",
+      "color_modifier": "string — brief description",
+      "confidence": "high|medium|low"
+    }
+  ],
+  "collection_summary": {
+    "dominant_emotions": ["e1","e2","e3","e4"],
+    "emotional_range": "string (e.g. quiet-to-romantic)",
+    "design_intent_suggestion": "string — 1 sentence",
+    "emotion_gaps": ["gap1","gap2"],
+    "gap_note": "string — brief recommendation"
+  }
+}`;
+
+// ── Color mapping for swatches ───────────────────────────────────
+const COLOR_MAP = {
+  white:'#F5F5F0', cream:'#F5EFD6', ivory:'#F5EFD6', blush:'#F5C6C6',
+  'light pink':'#F5C6C6', pink:'#F5A0B0', 'deep pink':'#E75480',
+  'hot pink':'#FF69B4', burgundy:'#800020', wine:'#722F37', red:'#CC2200',
+  peach:'#FFCBA4', coral:'#FF7F50', orange:'#E87722', yellow:'#FFD700',
+  gold:'#DAA520', sage:'#9CAF88', green:'#4A6741', 'deep green':'#2D4A29',
+  'dusty blue':'#9DB3C2', navy:'#1B2A4A', blue:'#4472CA', lavender:'#B39DDB',
+  lilac:'#C8A2C8', purple:'#6B2FA0', plum:'#8E3A59', charcoal:'#36454F',
+  black:'#1A1A1A', rust:'#B7410E', terracotta:'#C1440E', taupe:'#8B7D6B',
+  greige:'#C2B49A', silver:'#C0C0C0', brown:'#795548', kraft:'#A0735A',
+  ivory:'#FFFFF0', natural:'#D4C5A9', 'dusty rose':'#D4A5A5'
+};
+
+function getColorSwatch(colorStr) {
+  const lower = colorStr.toLowerCase();
+  for (const [key, val] of Object.entries(COLOR_MAP)) {
+    if (lower.includes(key)) return val;
+  }
+  return '#E8E8E8';
+}
+
+// ── Render Results ───────────────────────────────────────────────
+function renderResults(data) {
+  const area = document.getElementById('output-area');
+  let html = '';
+
+  // Export bar
+  html += `<div class="export-bar">
+    <button class="export-btn" onclick="exportJSON()">↓ Export JSON</button>
+    <button class="export-btn" onclick="exportCSV()">↓ Export CSV</button>
+    <button class="export-btn" onclick="copyToClipboard()">⎘ Copy Tags</button>
+  </div>`;
+
+  html += `<div class="results-grid">`;
+
+  data.items.forEach((item, i) => {
+    const swatch = getColorSwatch(item.color);
+    const delayStyle = `animation-delay:${i * 0.06}s`;
+    html += `
+    <div class="item-card" style="${delayStyle}">
+      <div class="item-card-header">
+        <div>
+          <div class="item-name">${item.name || item.floral_type}</div>
+          <div class="item-meta">${item.floral_type} · ${item.color} · ${item.category}${item.quantity ? ' · qty '+item.quantity : ''}</div>
+        </div>
+        <span class="confidence-badge ${item.confidence}">${item.confidence}</span>
+      </div>
+      <div class="emotion-tags">
+        <span class="emotion-tag primary">${item.primary_emotion}</span>
+        ${item.emotion_tags.filter(t => t !== item.primary_emotion).map(t => `<span class="emotion-tag secondary">${t}</span>`).join('')}
+      </div>
+      <div class="color-modifier">
+        <span class="color-swatch" style="background:${swatch}"></span>
+        ${item.color_modifier}
+      </div>
+    </div>`;
+  });
+
+  html += `</div>`;
+
+  // Collection summary
+  const s = data.collection_summary;
+  html += `
+  <div class="summary-card">
+    <div class="summary-label">Collection Emotion Summary</div>
+    <div class="summary-title">${s.emotional_range}</div>
+    <div class="dominant-emotions">
+      ${s.dominant_emotions.map(e => `<span class="dom-tag">${e}</span>`).join('')}
+    </div>
+    <div class="summary-grid">
+      <div class="summary-stat"><strong>Design Intent</strong>${s.design_intent_suggestion}</div>
+      <div class="summary-stat"><strong>Emotion Gaps</strong>${(s.emotion_gaps || []).join(', ') || 'None identified'}</div>
+    </div>
+    ${s.gap_note ? `<div class="gap-note">💡 ${s.gap_note}</div>` : ''}
+  </div>`;
+
+  area.innerHTML = html;
+
+  // Store for export
+  window._lastData = data;
+}
+
+// ── Main Run ─────────────────────────────────────────────────────
+async function runTagger() {
+  const input = document.getElementById('input-text').value.trim();
+  if (!input) {
+    alert('Please enter some inventory or a floral item to tag.');
+    return;
+  }
+
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  btn.innerHTML = `<div style="width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;"></div> Tagging…`;
+
+  document.getElementById('output-area').innerHTML = `
+    <div class="loading-state">
+      <div class="loader-ring"></div>
+      <p>Reading floral types and colors…<br>Applying emotion reference tables…</p>
+    </div>`;
+
+  try {
+    const promptText = currentMode === 'single'
+      ? `Tag this single floral item: "${input}"`
+      : `Tag this inventory:\n\n${input}`;
+
+    const raw = await callClaude(
+      [{ role: 'user', content: promptText }],
+      SYSTEM_PROMPT,
+      2048
+    );
+
+    // Parse JSON — strip any accidental markdown fences
+    const cleaned = raw.replace(/```json|```/g, '').trim();
+    const data = JSON.parse(cleaned);
+
+    renderResults(data);
+  } catch (err) {
+    document.getElementById('output-area').innerHTML = `
+      <div class="error-banner">
+        <span>⚠</span>
+        <div><strong>Error:</strong> ${err.message}<br><span style="font-size:11px;opacity:0.7;">Check that your API key is configured and try again.</span></div>
+      </div>`;
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg> Tag Emotions`;
+}
+
+// ── Utils ─────────────────────────────────────────────────────────
+function clearAll() {
+  document.getElementById('input-text').value = '';
+  document.getElementById('output-area').innerHTML = `
+    <div class="empty-state" id="empty-state">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="20" stroke="#4A6741" stroke-width="1.5"/>
+        <path d="M32 18 Q38 24 32 30 Q26 24 32 18Z" fill="#4A6741"/>
+        <path d="M18 32 Q24 26 30 32 Q24 38 18 32Z" fill="#4A6741" opacity="0.6"/>
+        <path d="M46 32 Q40 38 34 32 Q40 26 46 32Z" fill="#4A6741" opacity="0.6"/>
+        <path d="M32 46 Q26 40 32 34 Q38 40 32 46Z" fill="#4A6741" opacity="0.4"/>
+        <circle cx="32" cy="32" r="4" fill="#4A6741" opacity="0.3"/>
+      </svg>
+      <h3>Your tagged inventory will appear here</h3>
+      <p>Enter your florals in the sidebar and click "Tag Emotions"</p>
+    </div>`;
+}
+
+function exportJSON() {
+  if (!window._lastData) return;
+  const blob = new Blob([JSON.stringify(window._lastData, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'emotion-tags.json';
+  a.click();
+}
+
+function exportCSV() {
+  if (!window._lastData) return;
+  const rows = [['Name','Type','Color','Category','Primary Emotion','All Tags','Confidence']];
+  window._lastData.items.forEach(i => {
+    rows.push([i.name||i.floral_type, i.floral_type, i.color, i.category, i.primary_emotion, i.emotion_tags.join(' | '), i.confidence]);
+  });
+  const csv = rows.map(r => r.map(c => `"${c}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'emotion-tags.csv';
+  a.click();
+}
+
+function copyToClipboard() {
+  if (!window._lastData) return;
+  const text = window._lastData.items.map(i =>
+    `${i.name||i.floral_type}: ${i.emotion_tags.join(', ')}`
+  ).join('\n');
+  navigator.clipboard.writeText(text).then(() => alert('Tags copied to clipboard!'));
+}
+</script>
+</body>
+</html>

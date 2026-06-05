@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flower Perception Engine — Evercrafted</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root {
+  --ec-white: #FFFFFF;
+  --ec-off-white: #F9F7F4;
+  --ec-paper: #F2EFE9;
+  --ec-black: #1A1A1A;
+  --ec-charcoal: #2E2E2E;
+  --ec-ink: #4A4A4A;
+  --ec-green: #4A6741;
+  --ec-green-light: #6B8F67;
+  --ec-green-pale: #EEF2ED;
+  --ec-green-dim: rgba(74,103,65,0.12);
+  --ec-border: #E8E8E8;
+  --ec-border-dark: #D0D0D0;
+  --ec-gold: #B8975A;
+  --ec-gold-pale: #F7F2E8;
+  --ec-studio-bg: #F5EEF4;
+  --ec-studio: #7A4A85;
+  --ec-atelier-bg: #1A1A1A;
+  --ec-atelier: #F2EFE9;
+  --ec-craft-bg: #EEF4F9;
+  --ec-craft: #4A6785;
+  --radius: 10px;
+  --shadow: 0 2px 16px rgba(26,26,26,0.07);
+  --shadow-lg: 0 8px 40px rgba(26,26,26,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--ec-off-white);
+  font-family: 'Inter', sans-serif;
+  color: var(--ec-charcoal);
+  min-height: 100vh;
+}
+
+/* ─── HEADER ─── */
+.app-header {
+  background: var(--ec-white);
+  border-bottom: 1px solid var(--ec-border);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-left {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.wordmark {
+  font-family: 'Dancing Script', cursive;
+  font-size: 22px;
+  color: var(--ec-green);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.app-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px;
+  color: var(--ec-ink);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.tier-studio { background: var(--ec-studio-bg); color: var(--ec-studio); }
+.tier-atelier { background: var(--ec-atelier-bg); color: var(--ec-atelier); }
+
+/* ─── SCREEN SYSTEM ─── */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ─── MAIN CONTAINER ─── */
+.container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ─── BOTANICAL SVG DIVIDER ─── */
+.ec-divider {
+  text-align: center;
+  color: var(--ec-green-light);
+  font-size: 13px;
+  letter-spacing: 0.5em;
+  margin: 28px 0;
+  opacity: 0.6;
+}
+
+/* ─── SECTION TITLE ─── */
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  font-weight: 300;
+  color: var(--ec-black);
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+.section-subtitle {
+  font-size: 13px;
+  color: var(--ec-ink);
+  font-weight: 300;
+  margin-bottom: 32px;
+  line-height: 1.6;
+}
+
+/* ─── SCREEN 1: CAPTURE ─── */
+.upload-zone {
+  border: 1.5px dashed var(--ec-border-dark);
+  border-radius: var(--radius);
+  background: var(--ec-white);
+  padding: 56px 32px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--ec-green);
+  background: var(--ec-green-pale);
+}
+.upload-zone input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+.upload-icon {
+  display: block;
+  margin: 0 auto 16px;
+}
+.upload-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--ec-charcoal);
+  margin-bottom: 6px;
+}
+.upload-hint {
+  font-size: 12px;
+  color: var(--ec-ink);
+  opacity: 0.7;
+}
+
+.preview-container {
+  display: none;
+  margin-top: 20px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--ec-border);
+  background: var(--ec-white);
+}
+.preview-container img {
+  width: 100%;
+  max-height: 380px;
+  object-fit: cover;
+  display: block;
+}
+.preview-meta {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--ec-border);
+}
+.preview-filename {
+  font-size: 12px;
+  color: var(--ec-ink);
+  font-weight: 500;
+}
+
+.mode-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.mode-btn {
+  flex: 1;
+  padding: 12px;
+  border: 1.5px solid var(--ec-border);
+  border-radius: var(--radius);
+  background: var(--ec-white);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--ec-ink);
+  font-weight: 500;
+}
+.mode-btn.active {
+  border-color: var(--ec-green);
+  background: var(--ec-green-pale);
+  color: var(--ec-green);
+}
+.mode-btn.locked {
+  opacity: 0.5;
+  cursor: not-allowed;
+  position: relative;
+}
+
+/* ─── BUTTONS ─── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ec-green);
+  color: var(--ec-white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 13px 28px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.btn-primary:hover { background: var(--ec-green-light); transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  color: var(--ec-ink);
+  border: 1.5px solid var(--ec-border-dark);
+  border-radius: var(--radius);
+  padding: 11px 22px;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.03em;
+}
+.btn-ghost:hover { border-color: var(--ec-green); color: var(--ec-green); }
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--ec-gold);
+  color: var(--ec-white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 14px 32px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+.btn-gold:hover { opacity: 0.88; transform: translateY(-1px); }
+
+/* ─── SCREEN 2: PROCESSING ─── */
+.processing-card {
+  background: var(--ec-white);
+  border-radius: var(--radius);
+  border: 1px solid var(--ec-border);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.processing-image-wrap {
+  position: relative;
+  max-height: 360px;
+  overflow: hidden;
+}
+.processing-image-wrap img {
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+  display: block;
+  filter: blur(1px);
+  opacity: 0.85;
+}
+.processing-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(74,103,65,0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+.scan-ring {
+  width: 80px;
+  height: 80px;
+  border: 2.5px solid var(--ec-green);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.processing-steps {
+  padding: 24px 28px;
+}
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--ec-border);
+  font-size: 13px;
+  color: var(--ec-ink);
+}
+.step-item:last-child { border-bottom: none; }
+.step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ec-border-dark);
+  flex-shrink: 0;
+  transition: background 0.3s;
+}
+.step-dot.done { background: var(--ec-green); }
+.step-dot.active {
+  background: var(--ec-green-light);
+  box-shadow: 0 0 0 3px var(--ec-green-pale);
+  animation: pulse-dot 1s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.3); }
+}
+.step-label { flex: 1; }
+.step-check { color: var(--ec-green); font-size: 12px; font-weight: 700; }
+
+/* ─── SCREEN 3: RESULTS ─── */
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 20px;
+}
+@media (max-width: 600px) { .results-grid { grid-template-columns: 1fr; } }
+
+.result-image-panel {
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--ec-border);
+}
+.result-image-panel img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+.result-image-meta {
+  padding: 12px 14px;
+  background: var(--ec-white);
+  border-top: 1px solid var(--ec-border);
+}
+.confidence-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--ec-ink);
+  margin-bottom: 6px;
+}
+.confidence-bar {
+  height: 4px;
+  background: var(--ec-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.confidence-fill {
+  height: 100%;
+  background: var(--ec-green);
+  border-radius: 2px;
+  transition: width 1s ease;
+}
+
+.result-data-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.data-card {
+  background: var(--ec-white);
+  border: 1px solid var(--ec-border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.data-card-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ec-ink);
+  opacity: 0.6;
+  margin-bottom: 12px;
+}
+.emotion-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.emotion-row:last-child { margin-bottom: 0; }
+.emotion-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ec-charcoal);
+  min-width: 90px;
+}
+.emotion-bar-wrap {
+  flex: 1;
+  height: 5px;
+  background: var(--ec-border);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.emotion-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--ec-green), var(--ec-green-light));
+  border-radius: 3px;
+  transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+.emotion-score {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ec-green);
+  min-width: 34px;
+  text-align: right;
+}
+
+.visual-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.visual-pill {
+  background: var(--ec-paper);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--ec-charcoal);
+}
+.visual-pill-label {
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 9px;
+  color: var(--ec-ink);
+  opacity: 0.5;
+  margin-bottom: 2px;
+}
+.visual-pill-value {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ec-charcoal);
+}
+
+.tag-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tag {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+.tag-emotion { background: var(--ec-green-pale); color: var(--ec-green); }
+.tag-color { background: var(--ec-gold-pale); color: var(--ec-gold); }
+.tag-style { background: var(--ec-studio-bg); color: var(--ec-studio); }
+
+/* ─── COLOR SWATCHES ─── */
+.color-swatches {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--ec-white);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  cursor: pointer;
+  title: "";
+}
+
+/* ─── SCREEN 4: ADJUST ─── */
+.adjust-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 600px) { .adjust-grid { grid-template-columns: 1fr; } }
+
+.slider-card {
+  background: var(--ec-white);
+  border: 1px solid var(--ec-border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.slider-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 17px;
+  font-weight: 500;
+  color: var(--ec-charcoal);
+}
+.slider-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ec-green);
+}
+input[type=range] {
+  width: 100%;
+  accent-color: var(--ec-green);
+  height: 4px;
+  cursor: pointer;
+}
+
+/* ─── LOCK OVERLAY ─── */
+.locked-section {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.locked-section .lock-blur {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+.lock-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(249,247,244,0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1.5px solid var(--ec-border);
+  border-radius: var(--radius);
+}
+.lock-icon { font-size: 22px; }
+.lock-label {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ec-charcoal);
+}
+.lock-cta {
+  font-size: 11px;
+  color: var(--ec-studio);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* ─── SCREEN 5: GENERATE ─── */
+.generate-hero {
+  background: var(--ec-white);
+  border: 1px solid var(--ec-border);
+  border-radius: var(--radius);
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+.generate-botanical {
+  margin: 0 auto 24px;
+  display: block;
+}
+.generate-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--ec-black);
+  margin-bottom: 10px;
+}
+.generate-subtitle {
+  font-size: 13px;
+  color: var(--ec-ink);
+  margin-bottom: 28px;
+  line-height: 1.7;
+}
+.perception-summary {
+  background: var(--ec-green-pale);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 12px;
+  color: var(--ec-green);
+  margin-bottom: 28px;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px;
+}
+.perception-summary-item { text-align: center; }
+.perception-summary-item .ps-val {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ec-green);
+  display: block;
+}
+.perception-summary-item .ps-key {
+  font-size: 10px;
+  opacity: 0.7;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ─── SCREEN 6: OUTPUT ─── */
+.output-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.output-success-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--ec-green-pale);
+  color: var(--ec-green);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.blueprint-card {
+  background: var(--ec-white);
+  border: 1px solid var(--ec-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.blueprint-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--ec-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--ec-paper);
+}
+.blueprint-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 19px;
+  font-weight: 500;
+}
+.blueprint-body {
+  padding: 20px;
+}
+.bp-json {
+  background: var(--ec-charcoal);
+  color: #a8d5a2;
+  border-radius: 8px;
+  padding: 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  line-height: 1.7;
+  overflow-x: auto;
+  margin-bottom: 12px;
+  white-space: pre;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+/* SVG LAYOUT PREVIEW */
+.svg-preview-wrap {
+  border: 1px solid var(--ec-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--ec-white);
+  margin-bottom: 20px;
+}
+.svg-preview-wrap svg {
+  width: 100%;
+  height: 260px;
+  display: block;
+}
+
+/* ─── BATCH SECTION (ATELIER LOCKED) ─── */
+.batch-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.batch-thumb {
+  border-radius: 8px;
+  background: var(--ec-paper);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  border: 1px dashed var(--ec-border);
+}
+
+/* ─── STEP INDICATOR ─── */
+.step-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 32px;
+}
+.step-dot-nav {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ec-border-dark);
+  transition: all 0.3s;
+}
+.step-dot-nav.active { background: var(--ec-green); transform: scale(1.35); }
+.step-dot-nav.done { background: var(--ec-green-light); }
+.step-line {
+  width: 28px;
+  height: 1px;
+  background: var(--ec-border);
+}
+
+/* ─── ACTION ROW ─── */
+.action-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  align-items: center;
+}
+
+/* ─── TOAST ─── */
+#toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ec-charcoal);
+  color: var(--ec-white);
+  padding: 11px 22px;
+  border-radius: 24px;
+  font-size: 13px;
+  opacity: 0;
+  transition: all 0.3s;
+  pointer-events: none;
+  z-index: 999;
+  white-space: nowrap;
+}
+#toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ─── PERCEPTION OBJECT SIDEBAR ─── */
+.perception-id-bar {
+  background: var(--ec-paper);
+  border: 1px solid var(--ec-border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--ec-ink);
+}
+.pid-label { opacity: 0.6; letter-spacing: 0.08em; text-transform: uppercase; }
+.pid-val { font-family: 'Courier New', monospace; font-size: 11px; color: var(--ec-green); font-weight: 600; }
+
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header class="app-header">
+  <div class="header-left">
+    <span class="wordmark">Evercrafted</span>
+    <span style="color:var(--ec-border-dark);font-size:14px;margin:0 2px;">·</span>
+    <span class="app-name">Flower Perception Engine</span>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span class="tier-badge tier-studio">◆ Studio</span>
+    <span style="font-size:11px;color:var(--ec-ink);opacity:0.5;">v1.0</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ─── STEP INDICATOR ─── -->
+  <div class="step-indicator" id="stepIndicator">
+    <div class="step-dot-nav active" id="nav0"></div>
+    <div class="step-line"></div>
+    <div class="step-dot-nav" id="nav1"></div>
+    <div class="step-line"></div>
+    <div class="step-dot-nav" id="nav2"></div>
+    <div class="step-line"></div>
+    <div class="step-dot-nav" id="nav3"></div>
+    <div class="step-line"></div>
+    <div class="step-dot-nav" id="nav4"></div>
+    <div class="step-line"></div>
+    <div class="step-dot-nav" id="nav5"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SCREEN 1: CAPTURE                          -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="screen active" id="screen-capture">
+
+    <div class="section-title">Scan a Flower</div>
+    <p class="section-subtitle">Upload or capture a floral image. The perception engine will extract emotional + structural intelligence and feed it directly into your blueprint pipeline.</p>
+
+    <div class="mode-row">
+      <button class="mode-btn active" id="modeSingle" onclick="setMode('single')">Single Image</button>
+      <div class="locked-section" style="flex:1">
+        <button class="mode-btn locked lock-blur" id="modeBatch">Batch (100+)</button>
+        <div class="lock-overlay" style="padding:8px;">
+          <span class="lock-icon">🔒</span>
+          <span class="lock-cta">Atelier Required</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="upload-zone" id="uploadZone">
+      <input type="file" id="fileInput" accept="image/*" onchange="handleFileSelect(event)" />
+      <svg class="upload-icon" width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <circle cx="24" cy="24" r="23" stroke="#4A6741" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.5"/>
+        <path d="M24 14v14M17 21l7-7 7 7" stroke="#4A6741" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M15 33h18" stroke="#4A6741" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+        <!-- botanical leaves -->
+        <path d="M8 36 Q11 30 16 34" stroke="#6B8F67" stroke-width="1.2" fill="none" opacity="0.5"/>
+        <path d="M40 36 Q37 30 32 34" stroke="#6B8F67" stroke-width="1.2" fill="none" opacity="0.5"/>
+      </svg>
+      <div class="upload-label">Drop your floral image here</div>
+      <div class="upload-hint">JPG, PNG, WEBP · Max 10MB</div>
+    </div>
+
+    <div class="preview-container" id="previewContainer">
+      <img id="previewImage" src="" alt="Preview" />
+      <div class="preview-meta">
+        <span class="preview-filename" id="previewFilename">—</span>
+        <button class="btn-ghost" onclick="resetUpload()">✕ Remove</button>
+      </div>
+    </div>
+
+    <div class="ec-divider">✦ ✦ ✦</div>
+
+    <div class="action-row">
+      <button class="btn-primary" id="analyzeBtn" onclick="startProcessing()" disabled>
+        ✦ Analyze Flower
+      </button>
+      <span style="font-size:11px;color:var(--ec-ink);opacity:0.5;">Select an image to begin</span>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SCREEN 2: PROCESSING                       -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-processing">
+
+    <div class="section-title">Perceiving Your Flower</div>
+    <p class="section-subtitle">Extracting visual features, mapping emotional resonance, and building your canonical perception object.</p>
+
+    <div class="processing-card">
+      <div class="processing-image-wrap">
+        <img id="processingImg" src="" alt="" />
+        <div class="processing-overlay">
+          <div class="scan-ring"></div>
+          <span style="font-family:'Cormorant Garamond',serif;font-size:16px;color:var(--ec-white);opacity:0.9;letter-spacing:0.1em;">Analyzing...</span>
+        </div>
+      </div>
+      <div class="processing-steps">
+        <div class="step-item" id="pstep0">
+          <div class="step-dot active" id="pdot0"></div>
+          <div class="step-label">Detecting flower regions + isolating bloom</div>
+          <span class="step-check" id="pcheck0" style="display:none">✓</span>
+        </div>
+        <div class="step-item" id="pstep1">
+          <div class="step-dot" id="pdot1"></div>
+          <div class="step-label">Extracting color profile (HSL + HEX)</div>
+          <span class="step-check" id="pcheck1" style="display:none">✓</span>
+        </div>
+        <div class="step-item" id="pstep2">
+          <div class="step-dot" id="pdot2"></div>
+          <div class="step-label">Classifying shape, texture, structure</div>
+          <span class="step-check" id="pcheck2" style="display:none">✓</span>
+        </div>
+        <div class="step-item" id="pstep3">
+          <div class="step-dot" id="pdot3"></div>
+          <div class="step-label">Mapping visual features → emotional profile</div>
+          <span class="step-check" id="pcheck3" style="display:none">✓</span>
+        </div>
+        <div class="step-item" id="pstep4">
+          <div class="step-dot" id="pdot4"></div>
+          <div class="step-label">Generating canonical perception object</div>
+          <span class="step-check" id="pcheck4" style="display:none">✓</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SCREEN 3: RESULTS                          -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-results">
+
+    <div class="output-header-row">
+      <div>
+        <div class="section-title">Perception Results</div>
+        <p class="section-subtitle" style="margin-bottom:0;">Emotional + structural intelligence extracted from your floral image.</p>
+      </div>
+      <span class="output-success-badge">✓ Perception Complete</span>
+    </div>
+
+    <div class="perception-id-bar">
+      <span class="pid-label">Perception ID</span>
+      <span class="pid-val" id="perceptionIdDisplay">—</span>
+    </div>
+
+    <div class="results-grid">
+      <!-- Left: image -->
+      <div class="result-image-panel">
+        <img id="resultImg" src="" alt="" />
+        <div class="result-image-meta">
+          <div class="confidence-row">
+            <span>Emotional Mapping Confidence</span>
+            <span id="confScore" style="font-weight:700;color:var(--ec-green);">—</span>
+          </div>
+          <div class="confidence-bar">
+            <div class="confidence-fill" id="confFill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: data -->
+      <div class="result-data-panel">
+
+        <!-- Emotion Profile -->
+        <div class="data-card">
+          <div class="data-card-label">Emotional Profile</div>
+          <div id="emotionRows">
+            <!-- filled by JS -->
+          </div>
+        </div>
+
+        <!-- Visual Breakdown -->
+        <div class="data-card">
+          <div class="data-card-label">Visual Breakdown</div>
+          <div class="visual-grid" id="visualGrid">
+            <!-- filled by JS -->
+          </div>
+        </div>
+
+        <!-- Color Profile -->
+        <div class="data-card">
+          <div class="data-card-label">Color Profile</div>
+          <div class="color-swatches" id="colorSwatches"></div>
+        </div>
+
+        <!-- Tags -->
+        <div class="data-card">
+          <div class="data-card-label">Generated Tags</div>
+          <div class="tag-wrap" id="tagWrap"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="ec-divider">✦ ✦ ✦</div>
+
+    <div class="action-row">
+      <button class="btn-primary" onclick="goToScreen('adjust')">Refine Emotions →</button>
+      <button class="btn-ghost" onclick="goToScreen('generate')">Skip to Generate</button>
+      <button class="btn-ghost" onclick="goToScreen('capture')">↩ New Image</button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SCREEN 4: ADJUST                           -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-adjust">
+
+    <div class="section-title">Refine Perception</div>
+    <p class="section-subtitle">Fine-tune the emotional intensity and toggle tags before generating your blueprint. Your adjustments are saved to the perception object.</p>
+
+    <div class="adjust-grid" id="adjustGrid">
+      <!-- filled by JS -->
+    </div>
+
+    <div class="ec-divider">✦ ✦ ✦</div>
+
+    <!-- Batch Intelligence — ATELIER LOCKED -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-ink);opacity:0.6;margin-bottom:12px;">Batch Inventory Tag Intelligence</div>
+      <div class="locked-section">
+        <div class="lock-blur">
+          <div class="batch-preview-grid">
+            <div class="batch-thumb">🌸</div>
+            <div class="batch-thumb">🌿</div>
+            <div class="batch-thumb">🪻</div>
+          </div>
+        </div>
+        <div class="lock-overlay">
+          <span class="lock-icon">🔒</span>
+          <span class="lock-label">Batch Intelligence</span>
+          <span style="font-size:11px;color:var(--ec-ink);">Tag 100+ inventory images at once</span>
+          <span class="lock-cta">Upgrade to Atelier</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <button class="btn-primary" onclick="saveAdjustments()">Save & Continue →</button>
+      <button class="btn-ghost" onclick="goToScreen('results')">↩ Back to Results</button>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SCREEN 5: GENERATE                         -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-generate">
+
+    <div class="generate-hero">
+
+      <!-- Botanical SVG -->
+      <svg class="generate-botanical" width="80" height="80" viewBox="0 0 80 80" fill="none">
+        <circle cx="40" cy="40" r="38" stroke="#4A6741" stroke-width="1" stroke-dasharray="6 4" opacity="0.3"/>
+        <path d="M40 20 Q48 30 40 40 Q32 30 40 20Z" fill="#6B8F67" opacity="0.5"/>
+        <path d="M40 60 Q48 50 40 40 Q32 50 40 60Z" fill="#4A6741" opacity="0.4"/>
+        <path d="M20 40 Q30 32 40 40 Q30 48 20 40Z" fill="#6B8F67" opacity="0.4"/>
+        <path d="M60 40 Q50 32 40 40 Q50 48 60 40Z" fill="#4A6741" opacity="0.35"/>
+        <circle cx="40" cy="40" r="5" fill="#4A6741" opacity="0.6"/>
+      </svg>
+
+      <div class="generate-title">Build Your Wreath</div>
+      <p class="generate-subtitle">Your perception object is ready. The pipeline will translate emotional + structural data from your scan into a fully structured wreath blueprint.</p>
+
+      <div class="perception-summary" id="generateSummary">
+        <!-- filled by JS -->
+      </div>
+
+      <button class="btn-gold" onclick="generateBlueprint()">
+        ✦ Build My Wreath
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SCREEN 6: OUTPUT                           -->
+  <!-- ══════════════════════════════════════════ -->
+  <div class="screen" id="screen-output">
+
+    <div class="output-header-row">
+      <div>
+        <div class="section-title">Blueprint Generated</div>
+        <p class="section-subtitle" style="margin-bottom:0;">Canonical blueprint produced from image perception data.</p>
+      </div>
+      <span class="output-success-badge">✦ Pipeline Complete</span>
+    </div>
+
+    <!-- SVG Layout Preview -->
+    <div class="svg-preview-wrap">
+      <svg id="wreath-svg" viewBox="0 0 400 260" xmlns="http://www.w3.org/2000/svg">
+        <!-- filled by JS -->
+      </svg>
+    </div>
+
+    <!-- Blueprint JSON Card -->
+    <div class="blueprint-card">
+      <div class="blueprint-header">
+        <span class="blueprint-title">Blueprint Object</span>
+        <div style="display:flex;gap:8px;">
+          <span class="tier-badge tier-studio">origin: image_perception</span>
+        </div>
+      </div>
+      <div class="blueprint-body">
+        <div class="bp-json" id="bpJson">—</div>
+        <div class="action-row">
+          <button class="btn-ghost" onclick="copyJson()">⊕ Copy JSON</button>
+          <button class="btn-ghost" onclick="downloadPdf()">↓ Download PDF</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="ec-divider">✦ ✦ ✦</div>
+
+    <div class="action-row">
+      <button class="btn-primary" onclick="goToScreen('capture')">✦ New Scan</button>
+      <button class="btn-ghost" onclick="goToScreen('results')">↩ Back to Results</button>
+    </div>
+
+  </div>
+
+</div><!-- /container -->
+
+<div id="toast"></div>
+
+<script>
+// ─── TIER SYSTEM ───────────────────────────────
+const TIER_RANK = { bloom:1, craft:2, studio:3, atelier:4 };
+const USER_TIER = "studio";
+function canAccess(required) { return TIER_RANK[USER_TIER] >= TIER_RANK[required]; }
+
+// ─── STATE ─────────────────────────────────────
+let state = {
+  imageFile: null,
+  imageBase64: null,
+  imageDataUrl: null,
+  perceptionId: null,
+  perceptionObject: null,
+  adjustments: {},
+  blueprintObject: null
+};
+
+const SCREENS = ['capture','processing','results','adjust','generate','output'];
+
+// ─── NAVIGATION ────────────────────────────────
+function goToScreen(name) {
+  SCREENS.forEach((s, i) => {
+    const el = document.getElementById('screen-' + s);
+    const nav = document.getElementById('nav' + i);
+    const idx = SCREENS.indexOf(name);
+    if (s === name) {
+      el.classList.add('active');
+      nav.classList.add('active');
+      nav.classList.remove('done');
+    } else {
+      el.classList.remove('active');
+      nav.classList.remove('active');
+      if (i < idx) { nav.classList.add('done'); }
+      else { nav.classList.remove('done'); }
+    }
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── UPLOAD ────────────────────────────────────
+function setMode(m) {
+  document.getElementById('modeSingle').classList.toggle('active', m === 'single');
+}
+
+function handleFileSelect(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  state.imageFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    state.imageDataUrl = e.target.result;
+    state.imageBase64 = e.target.result.split(',')[1];
+    document.getElementById('previewImage').src = e.target.result;
+    document.getElementById('previewContainer').style.display = 'block';
+    document.getElementById('previewFilename').textContent = file.name;
+    document.getElementById('analyzeBtn').disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+// drag-drop
+const zone = document.getElementById('uploadZone');
+zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+zone.addEventListener('drop', e => {
+  e.preventDefault();
+  zone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const fake = { target: { files: [file] } };
+    handleFileSelect(fake);
+  }
+});
+
+function resetUpload() {
+  state.imageFile = null; state.imageBase64 = null; state.imageDataUrl = null;
+  document.getElementById('previewContainer').style.display = 'none';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('analyzeBtn').disabled = true;
+}
+
+// ─── PROCESSING ────────────────────────────────
+async function startProcessing() {
+  goToScreen('processing');
+  document.getElementById('processingImg').src = state.imageDataUrl;
+
+  // Animate steps while API call runs
+  const stepLabels = ['Detecting regions','Extracting color','Classifying shape','Mapping emotions','Building object'];
+  let stepIdx = 0;
+
+  const stepTimer = setInterval(() => {
+    if (stepIdx > 0) {
+      document.getElementById('pdot'+(stepIdx-1)).classList.remove('active');
+      document.getElementById('pdot'+(stepIdx-1)).classList.add('done');
+      document.getElementById('pcheck'+(stepIdx-1)).style.display = 'inline';
+    }
+    if (stepIdx < 5) {
+      if (stepIdx < 5) {
+        const dot = document.getElementById('pdot'+stepIdx);
+        if (dot) dot.classList.add('active');
+      }
+      stepIdx++;
+    } else {
+      clearInterval(stepTimer);
+    }
+  }, 520);
+
+  try {
+    state.perceptionId = 'perc_' + Math.random().toString(36).substr(2,9).toUpperCase();
+    const perceptionResult = await callClaudeVision(state.imageBase64, state.imageFile ? state.imageFile.type : 'image/jpeg');
+
+    // Finish all steps
+    clearInterval(stepTimer);
+    for (let i=0; i<5; i++) {
+      const d = document.getElementById('pdot'+i);
+      const c = document.getElementById('pcheck'+i);
+      if(d) { d.classList.remove('active'); d.classList.add('done'); }
+      if(c) c.style.display = 'inline';
+    }
+
+    state.perceptionObject = perceptionResult;
+    await new Promise(r => setTimeout(r, 600));
+    renderResults();
+    goToScreen('results');
+
+  } catch (err) {
+    clearInterval(stepTimer);
+    showToast('Analysis failed — ' + err.message);
+    goToScreen('capture');
+  }
+}
+
+// ─── CLAUDE VISION API ─────────────────────────
+async function callClaudeVision(base64, mediaType) {
+  const systemPrompt = `You are the Evercrafted Flower Perception Engine — a specialist AI that analyzes floral images and returns structured emotional + botanical intelligence.
+
+Respond ONLY with valid JSON. No markdown, no backticks, no explanation.
+
+Return this exact schema:
+{
+  "visual_features": {
+    "color_profile": {
+      "dominant_hsl": {"h": number, "s": number, "l": number},
+      "palette_hex": ["#hex1","#hex2","#hex3","#hex4"],
+      "color_family": "string (e.g. 'Soft Blues','Warm Pinks')",
+      "warm_cool_balance": "warm | cool | neutral"
+    },
+    "shape_attributes": {
+      "classification": "string (e.g. 'Rounded','Star','Ruffled','Tubular')",
+      "petal_density": "sparse | moderate | full | lush",
+      "symmetry": "radial | bilateral | irregular"
+    },
+    "texture_features": {
+      "surface": "string (e.g. 'Velvety','Waxy','Papery','Silky')",
+      "visual_weight": "light | medium | heavy"
+    },
+    "structural_analysis": {
+      "bloom_size": "small | medium | large | oversized",
+      "stem_attachment": "single | clustered | trailing",
+      "density": "low | medium | high"
+    }
+  },
+  "emotional_profile": {
+    "primary_emotions": [
+      {"name": "string", "score": number_0_to_1},
+      {"name": "string", "score": number_0_to_1}
+    ],
+    "secondary_emotions": [
+      {"name": "string", "score": number_0_to_1}
+    ],
+    "overall_intensity": number_0_to_1,
+    "modifiers": {
+      "shape_influence": number_neg1_to_1,
+      "texture_influence": number_neg1_to_1
+    }
+  },
+  "tags": {
+    "emotion_tags": ["array of 3-5 string emotion labels"],
+    "color_tags": ["array of 2-3 color descriptors"],
+    "style_tags": ["array of 2-4 design style labels"]
+  },
+  "spatial_injection": {
+    "density": "low | medium | high",
+    "curve_type": "string",
+    "negative_space": "minimal | moderate | expanded"
+  },
+  "confidence_score": number_0.6_to_0.99,
+  "botanical_name": "string (best guess species name or 'Unknown')",
+  "common_name": "string"
+}`;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1200,
+      system: systemPrompt,
+      messages: [{
+        role: 'user',
+        content: [
+          {
+            type: 'image',
+            source: { type: 'base64', media_type: mediaType, data: base64 }
+          },
+          { type: 'text', text: 'Analyze this floral image and return the perception object.' }
+        ]
+      }]
+    })
+  });
+
+  if (!response.ok) throw new Error('API error ' + response.status);
+  const data = await response.json();
+  const raw = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+  const clean = raw.replace(/```json|```/g,'').trim();
+  return JSON.parse(clean);
+}
+
+// ─── RENDER RESULTS ────────────────────────────
+function renderResults() {
+  const p = state.perceptionObject;
+  if (!p) return;
+
+  document.getElementById('resultImg').src = state.imageDataUrl;
+  document.getElementById('perceptionIdDisplay').textContent = state.perceptionId;
+
+  // Confidence
+  const conf = Math.round((p.confidence_score || 0.82) * 100);
+  document.getElementById('confScore').textContent = conf + '%';
+  setTimeout(() => {
+    document.getElementById('confFill').style.width = conf + '%';
+  }, 200);
+
+  // Emotions
+  const allEmotions = [...(p.emotional_profile?.primary_emotions||[]), ...(p.emotional_profile?.secondary_emotions||[])];
+  document.getElementById('emotionRows').innerHTML = allEmotions.slice(0,4).map(e => `
+    <div class="emotion-row">
+      <span class="emotion-name">${capitalize(e.name)}</span>
+      <div class="emotion-bar-wrap"><div class="emotion-bar-fill" style="width:0%" data-val="${Math.round(e.score*100)}"></div></div>
+      <span class="emotion-score">${Math.round(e.score*100)}%</span>
+    </div>
+  `).join('');
+  setTimeout(() => {
+    document.querySelectorAll('.emotion-bar-fill').forEach(el => {
+      el.style.width = el.dataset.val + '%';
+    });
+  }, 100);
+
+  // Visual breakdown
+  const vf = p.visual_features;
+  document.getElementById('visualGrid').innerHTML = `
+    <div class="visual-pill"><div class="visual-pill-label">Shape</div><div class="visual-pill-value">${vf?.shape_attributes?.classification||'—'}</div></div>
+    <div class="visual-pill"><div class="visual-pill-label">Texture</div><div class="visual-pill-value">${vf?.texture_features?.surface||'—'}</div></div>
+    <div class="visual-pill"><div class="visual-pill-label">Density</div><div class="visual-pill-value">${capitalize(vf?.structural_analysis?.density||'medium')}</div></div>
+    <div class="visual-pill"><div class="visual-pill-label">Weight</div><div class="visual-pill-value">${capitalize(vf?.texture_features?.visual_weight||'medium')}</div></div>
+  `;
+
+  // Colors
+  const palette = vf?.color_profile?.palette_hex || ['#D4B8C0','#8FA88B','#C9B99A','#E8D5C4'];
+  document.getElementById('colorSwatches').innerHTML = palette.map(hex => `
+    <div class="swatch" style="background:${hex}" title="${hex}"></div>
+  `).join('');
+
+  // Tags
+  const tags = p.tags || {};
+  const allTags = [
+    ...(tags.emotion_tags||[]).map(t=>`<span class="tag tag-emotion">${t}</span>`),
+    ...(tags.color_tags||[]).map(t=>`<span class="tag tag-color">${t}</span>`),
+    ...(tags.style_tags||[]).map(t=>`<span class="tag tag-style">${t}</span>`)
+  ];
+  document.getElementById('tagWrap').innerHTML = allTags.join('');
+
+  // Populate adjust screen
+  renderAdjustSliders();
+  renderGenerateSummary();
+}
+
+function renderAdjustSliders() {
+  const p = state.perceptionObject;
+  if (!p) return;
+  const allEmotions = [...(p.emotional_profile?.primary_emotions||[]), ...(p.emotional_profile?.secondary_emotions||[])];
+  state.adjustments = {};
+  allEmotions.forEach(e => { state.adjustments[e.name] = e.score; });
+
+  document.getElementById('adjustGrid').innerHTML = allEmotions.slice(0,4).map(e => `
+    <div class="slider-card">
+      <div class="slider-header">
+        <span class="slider-name">${capitalize(e.name)}</span>
+        <span class="slider-val" id="sval-${e.name}">${Math.round(e.score*100)}%</span>
+      </div>
+      <input type="range" min="0" max="100" value="${Math.round(e.score*100)}"
+        oninput="updateSlider('${e.name}', this.value)" />
+    </div>
+  `).join('');
+}
+
+function updateSlider(name, val) {
+  state.adjustments[name] = parseInt(val)/100;
+  document.getElementById('sval-'+name).textContent = val + '%';
+}
+
+function saveAdjustments() {
+  // Patch emotion scores back into perception object
+  if (state.perceptionObject?.emotional_profile?.primary_emotions) {
+    state.perceptionObject.emotional_profile.primary_emotions.forEach(e => {
+      if (state.adjustments[e.name] !== undefined) e.score = state.adjustments[e.name];
+    });
+  }
+  showToast('Adjustments saved to perception object');
+  goToScreen('generate');
+}
+
+function renderGenerateSummary() {
+  const p = state.perceptionObject;
+  if (!p) return;
+  const topEmotion = (p.emotional_profile?.primary_emotions||[{name:'Calm'}])[0];
+  const colorFamily = p.visual_features?.color_profile?.color_family || 'Mixed';
+  const bloomSize = p.visual_features?.structural_analysis?.bloom_size || 'medium';
+  document.getElementById('generateSummary').innerHTML = `
+    <div class="perception-summary-item"><span class="ps-val">${capitalize(topEmotion.name)}</span><span class="ps-key">Lead Emotion</span></div>
+    <div class="perception-summary-item"><span class="ps-val">${colorFamily.split(' ')[0]}</span><span class="ps-key">Color Family</span></div>
+    <div class="perception-summary-item"><span class="ps-val">${capitalize(bloomSize)}</span><span class="ps-key">Bloom Scale</span></div>
+  `;
+}
+
+// ─── GENERATE BLUEPRINT ────────────────────────
+async function generateBlueprint() {
+  const btn = document.querySelector('.btn-gold');
+  btn.disabled = true;
+  btn.textContent = '⟳ Building...';
+
+  try {
+    const p = state.perceptionObject;
+    const topEmotions = (p.emotional_profile?.primary_emotions||[]).map(e=>e.name).join(', ');
+    const colorFamily = p.visual_features?.color_profile?.color_family || 'Neutral';
+    const shape = p.visual_features?.shape_attributes?.classification || 'Rounded';
+    const density = p.visual_features?.structural_analysis?.density || 'medium';
+    const spatial = p.spatial_injection || {};
+
+    const systemPrompt = `You are the Evercrafted Blueprint Generator. Convert a flower perception object into a structured wreath blueprint.
+Respond ONLY with valid JSON. No markdown, no backticks.
+
+Schema:
+{
+  "blueprint_id": "string (bp_ + 8 chars)",
+  "origin": "image_perception",
+  "source_perception_id": "string",
+  "form": {"diameter_inches": 24, "form_type": "asymmetrical"},
+  "emotional_intent": "string (sentence describing emotional goal)",
+  "clusters": [
+    {"id":"C1","role":"focal","placement_degrees":30,"radius_ratio":0.72,"florals":[{"type":"string","count":number,"color":"string"}]},
+    {"id":"C2","role":"supporting","placement_degrees":150,"radius_ratio":0.65,"florals":[{"type":"string","count":number,"color":"string"}]},
+    {"id":"C3","role":"supporting","placement_degrees":250,"radius_ratio":0.68,"florals":[{"type":"string","count":number,"color":"string"}]}
+  ],
+  "greenery": {"type":"string","coverage":"60-70%","flow":"cascading"},
+  "render_hint": {"lighting":"soft directional","depth":"multi-plane","realism":"photo-real"},
+  "midjourney_style_note": "string"
+}`;
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{
+          role: 'user',
+          content: `Perception data:
+- Lead emotions: ${topEmotions}
+- Color family: ${colorFamily}
+- Shape: ${shape}
+- Density: ${density}
+- Spatial curve: ${spatial.curve_type || 'soft arc'}
+- Negative space: ${spatial.negative_space || 'moderate'}
+- Source perception ID: ${state.perceptionId}
+
+Generate the blueprint.`
+        }]
+      })
+    });
+
+    if (!resp.ok) throw new Error('Blueprint API error ' + resp.status);
+    const bpData = await resp.json();
+    const bpRaw = bpData.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const bpClean = bpRaw.replace(/```json|```/g,'').trim();
+    state.blueprintObject = JSON.parse(bpClean);
+    state.blueprintObject.source_perception_id = state.perceptionId;
+
+    renderOutput();
+    goToScreen('output');
+
+  } catch (err) {
+    showToast('Blueprint generation failed — ' + err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✦ Build My Wreath';
+  }
+}
+
+// ─── RENDER OUTPUT ─────────────────────────────
+function renderOutput() {
+  const bp = state.blueprintObject;
+  if (!bp) return;
+
+  // JSON display
+  document.getElementById('bpJson').textContent = JSON.stringify(bp, null, 2);
+
+  // SVG wreath layout
+  renderWreathSVG(bp);
+}
+
+function renderWreathSVG(bp) {
+  const svg = document.getElementById('wreath-svg');
+  const cx = 200, cy = 130, r = 90;
+  const colors = state.perceptionObject?.visual_features?.color_profile?.palette_hex || ['#D4B8C0','#8FA88B','#C9B99A'];
+
+  let svgContent = `
+    <!-- Background -->
+    <rect width="400" height="260" fill="#F9F7F4"/>
+    <!-- Wreath base ring -->
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#4A6741" stroke-width="10" stroke-dasharray="18 6" opacity="0.25"/>
+    <!-- Greenery suggestion -->
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#6B8F67" stroke-width="6" opacity="0.15"/>
+  `;
+
+  // Render clusters
+  const clusters = bp.clusters || [];
+  clusters.forEach((cluster, i) => {
+    const angle = (cluster.placement_degrees || (i * 120)) * Math.PI / 180;
+    const rr = (cluster.radius_ratio || 0.7) * r;
+    const x = cx + rr * Math.cos(angle);
+    const y = cy + rr * Math.sin(angle);
+    const color = colors[i % colors.length] || '#C9A8B8';
+    const size = cluster.role === 'focal' ? 22 : 15;
+
+    svgContent += `
+      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${size}" fill="${color}" opacity="0.85"/>
+      <circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(size*0.55).toFixed(1)}" fill="${color}" opacity="0.5"/>
+      <text x="${x.toFixed(1)}" y="${(y+4).toFixed(1)}" text-anchor="middle" font-size="9" fill="white" opacity="0.9" font-family="Inter">${cluster.id||'C'+(i+1)}</text>
+    `;
+
+    // Add smaller sub-florals
+    const subAngles = [45, 135, 225];
+    subAngles.forEach(sa => {
+      const sAngle = (angle + sa * Math.PI/180);
+      const sx = x + 12 * Math.cos(sAngle);
+      const sy = y + 12 * Math.sin(sAngle);
+      svgContent += `<circle cx="${sx.toFixed(1)}" cy="${sy.toFixed(1)}" r="5" fill="${color}" opacity="0.45"/>`;
+    });
+  });
+
+  // Label
+  svgContent += `
+    <text x="200" y="240" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="11" fill="#4A4A4A" opacity="0.7" letter-spacing="3">24" ASYMMETRICAL · IMAGE PERCEPTION ORIGIN</text>
+  `;
+
+  svg.innerHTML = svgContent;
+}
+
+// ─── COPY JSON ─────────────────────────────────
+function copyJson() {
+  const text = JSON.stringify(state.blueprintObject, null, 2);
+  navigator.clipboard.writeText(text).then(() => showToast('Blueprint JSON copied'));
+}
+
+function downloadPdf() {
+  showToast('PDF export — connect to Blueprint PDF skill');
+}
+
+// ─── TOAST ─────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── UTILS ─────────────────────────────────────
+function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+</script>
+</body>
+</html>

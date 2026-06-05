@@ -1,0 +1,281 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif}
+.app{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+.header{text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.header h1{font-family:'Playfair Display',serif;font-size:28px;font-weight:600;color:var(--color-text-primary);letter-spacing:-0.5px}
+.header p{font-size:14px;color:var(--color-text-secondary);margin-top:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1.25rem}
+.card-title{font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:1rem}
+.emotion-row{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.emotion-label{font-size:13px;color:var(--color-text-primary);width:90px;flex-shrink:0}
+.emotion-row input[type=range]{flex:1;height:4px}
+.weight-badge{font-size:12px;font-weight:500;color:var(--color-text-secondary);min-width:36px;text-align:right}
+.tag-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.tag{padding:5px 12px;border-radius:20px;font-size:12px;cursor:pointer;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);transition:all .15s}
+.tag.active{border-color:#3C3489;background:#EEEDFE;color:#3C3489}
+.tag.active.season{border-color:#085041;background:#E1F5EE;color:#085041}
+.tag.active.style{border-color:#712B13;background:#FAECE7;color:#712B13}
+.section-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px;font-weight:500}
+.prompt-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:1rem;font-size:13px;line-height:1.8;color:var(--color-text-primary);min-height:100px;font-family:'DM Sans',sans-serif}
+.prompt-mj{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:1rem;font-size:12px;line-height:1.7;color:#3C3489;font-family:'Courier New',monospace;min-height:80px;word-break:break-word}
+.btn-row{display:flex;gap:8px;margin-top:1rem}
+button.primary{flex:1;padding:9px 16px;border-radius:var(--border-radius-md);border:none;background:#3C3489;color:#EEEDFE;font-size:13px;font-weight:500;cursor:pointer;transition:opacity .15s}
+button.primary:hover{opacity:.85}
+button.secondary{padding:9px 14px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-primary);font-size:13px;cursor:pointer}
+button.secondary:hover{background:var(--color-background-secondary)}
+.copy-msg{font-size:12px;color:#0F6E56;margin-left:8px;opacity:0;transition:opacity .3s}
+.full-width{grid-column:1/-1}
+.ar-select select{border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:6px 10px;font-size:13px;background:var(--color-background-primary);color:var(--color-text-primary);cursor:pointer}
+.weight-control{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.weight-control label{font-size:13px;color:var(--color-text-secondary);flex:1}
+.weight-control input[type=range]{width:100px}
+.weight-control span{font-size:12px;font-weight:500;color:var(--color-text-primary);min-width:28px}
+.divider{height:0.5px;background:var(--color-border-tertiary);margin:1rem 0}
+.legend-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;font-size:11px;color:var(--color-text-secondary)}
+.legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+</style>
+
+<div class="app">
+  <div class="header">
+    <h1>EmotionLens Prompt Composer</h1>
+    <p>AI-powered Midjourney prompt generator for wreath designs</p>
+  </div>
+
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-title">Emotion weights</div>
+      <div id="emotions-panel"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Season</div>
+      <div class="tag-grid" id="season-tags"></div>
+      <div class="divider"></div>
+      <div class="card-title" style="margin-top:1rem">Design style</div>
+      <div class="tag-grid" id="style-tags"></div>
+      <div class="divider"></div>
+      <div class="card-title" style="margin-top:1rem">Shape</div>
+      <div class="tag-grid" id="shape-tags"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Materials</div>
+      <div class="tag-grid" id="material-tags"></div>
+      <div class="divider"></div>
+      <div class="card-title" style="margin-top:1rem">Lighting</div>
+      <div class="tag-grid" id="lighting-tags"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Prompt parameters</div>
+      <div class="weight-control">
+        <label>Subject weight</label>
+        <input type="range" min="10" max="20" value="16" id="subject-weight" step="1">
+        <span id="sw-out">::1.6</span>
+      </div>
+      <div class="weight-control">
+        <label>Emotion scale (max)</label>
+        <input type="range" min="10" max="16" value="14" id="emo-max" step="1">
+        <span id="em-out">1.4</span>
+      </div>
+      <div class="weight-control">
+        <label>Emotion scale (min)</label>
+        <input type="range" min="6" max="10" value="8" id="emo-min" step="1">
+        <span id="emn-out">0.8</span>
+      </div>
+      <div class="divider"></div>
+      <div class="card-title">Aspect ratio &amp; style</div>
+      <div style="display:flex;gap:8px;margin-top:4px">
+        <div class="ar-select">
+          <select id="ar-select">
+            <option value="--ar 1:1">1:1 square</option>
+            <option value="--ar 4:5">4:5 portrait</option>
+            <option value="--ar 3:4">3:4 tall</option>
+            <option value="--ar 3:2">3:2 wide</option>
+            <option value="--ar 2:3">2:3</option>
+            <option value="--ar 16:9">16:9</option>
+          </select>
+        </div>
+        <div class="ar-select">
+          <select id="style-select">
+            <option value="--style raw">--style raw</option>
+            <option value="--style expressive">--style expressive</option>
+            <option value="">no style flag</option>
+          </select>
+        </div>
+        <div class="ar-select">
+          <select id="chaos-select">
+            <option value="">no chaos</option>
+            <option value="--chaos 10">--chaos 10</option>
+            <option value="--chaos 25">--chaos 25</option>
+            <option value="--chaos 50">--chaos 50</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card full-width">
+      <div class="card-title">Natural language description</div>
+      <div class="prompt-box" id="natural-prompt">Configure your settings above and click Generate.</div>
+    </div>
+
+    <div class="card full-width">
+      <div class="card-title">Midjourney prompt</div>
+      <div class="prompt-mj" id="mj-prompt">–</div>
+      <div class="btn-row">
+        <button class="primary" onclick="generatePrompt()">Generate prompt</button>
+        <button class="secondary" onclick="copyPrompt()">Copy MJ</button>
+        <span class="copy-msg" id="copy-msg">Copied!</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const EMOTIONS = [
+  {id:'gratitude',label:'Gratitude',phrase:'gentle gratitude',valence:.7,arousal:.3,warmth:.8},
+  {id:'calm',label:'Calm',phrase:'soothing calm',valence:.6,arousal:.2,warmth:.5},
+  {id:'joy',label:'Joy',phrase:'joyful celebration',valence:.9,arousal:.8,warmth:.9},
+  {id:'nostalgia',label:'Nostalgia',phrase:'nostalgic warmth',valence:.5,arousal:.3,warmth:.7},
+  {id:'serenity',label:'Serenity',phrase:'serene calm',valence:.7,arousal:.1,warmth:.5},
+  {id:'hope',label:'Hope',phrase:'fragile hope',valence:.6,arousal:.5,warmth:.6},
+];
+const SEASONS = ['Spring','Summer','Autumn','Winter'];
+const STYLES = ['Farmhouse','Luxe','Minimalist','Wild','Vintage','Organic'];
+const SHAPES = ['Circular','Asymmetrical','Trailing','Loose'];
+const MATERIALS = ['Eucalyptus','Dried florals','Pine','Lamb\'s ear','Berry clusters','Linen ribbon','Satin ribbon','Cotton bolls','Wildflowers','Dried oranges'];
+const LIGHTING = ['Golden-hour','Soft natural','Editorial','Warm fireplace','Dramatic side','Cool studio'];
+
+const COLOR_MAP = {
+  gratitude:{primary:'muted amber and warm neutrals',accent:'soft cream'},
+  calm:{primary:'sage green and muted ivory',accent:'dusty blue'},
+  joy:{primary:'warm coral and sunlit gold',accent:'fresh white'},
+  nostalgia:{primary:'faded rose and aged ivory',accent:'dusty mauve'},
+  serenity:{primary:'soft grey-green and white',accent:'pale sage'},
+  hope:{primary:'pale blush and soft gold',accent:'ivory white'}
+};
+const TEXTURE_MAP = {
+  gratitude:'natural dried textures, aged ribbon, organic layering',
+  calm:'airy wispy sprigs, fine tendrils, delicate silhouette',
+  joy:'lush fullness, bold blooms, rich layering',
+  nostalgia:'slightly faded florals, aged greenery, worn ribbon',
+  serenity:'minimal botanical, quiet spacing, sparse elegance',
+  hope:'gentle mixed blooms, light layering, soft openness'
+};
+
+let state = {
+  emotions:{gratitude:.9,calm:.6,joy:0,nostalgia:0,serenity:0,hope:0},
+  season:'Autumn',style:'Farmhouse',shape:'Circular',
+  materials:['Eucalyptus','Linen ribbon'],lighting:'Golden-hour',
+  subjectWeight:1.6,emoMax:1.4,emoMin:.8,
+  ar:'--ar 1:1',mjStyle:'--style raw',chaos:''
+};
+
+function buildEmotionPanel(){
+  const p = document.getElementById('emotions-panel');
+  p.innerHTML = EMOTIONS.map(e=>`
+    <div class="emotion-row">
+      <span class="emotion-label">${e.label}</span>
+      <input type="range" min="0" max="10" value="${Math.round(state.emotions[e.id]*10)}" step="1"
+        oninput="state.emotions['${e.id}']=this.value/10;updateBadge(this,'b-${e.id}')"
+        style="flex:1">
+      <span class="weight-badge" id="b-${e.id}">${state.emotions[e.id].toFixed(1)}</span>
+    </div>`).join('');
+}
+function updateBadge(el,id){
+  document.getElementById(id).textContent=parseFloat(el.value/10).toFixed(1);
+}
+function buildTags(ids,containerId,key,cssClass){
+  const c=document.getElementById(containerId);
+  c.innerHTML=ids.map(t=>`
+    <span class="tag ${cssClass} ${state[key]===t?'active':''}"
+      onclick="selectTag('${key}','${t}','${containerId}','${cssClass}')">${t}</span>`).join('');
+}
+function buildMultiTags(ids,containerId,key,cssClass){
+  const c=document.getElementById(containerId);
+  c.innerHTML=ids.map(t=>`
+    <span class="tag ${cssClass} ${state[key].includes(t)?'active':''}"
+      onclick="toggleTag('${key}','${t}','${containerId}','${cssClass}')">${t}</span>`).join('');
+}
+function selectTag(key,val,cid,cls){
+  state[key]=val;buildTags(
+    key==='season'?SEASONS:key==='style'?STYLES:SHAPES,cid,key,cls);
+}
+function toggleTag(key,val,cid,cls){
+  const arr=state[key];const i=arr.indexOf(val);
+  if(i>-1)arr.splice(i,1);else arr.push(val);
+  buildMultiTags(key==='materials'?MATERIALS:LIGHTING,cid,key,cls);
+}
+function initParams(){
+  const sw=document.getElementById('subject-weight');
+  const em=document.getElementById('emo-max');
+  const emn=document.getElementById('emo-min');
+  sw.oninput=()=>{state.subjectWeight=sw.value/10;document.getElementById('sw-out').textContent=`::${(sw.value/10).toFixed(1)}`};
+  em.oninput=()=>{state.emoMax=em.value/10;document.getElementById('em-out').textContent=(em.value/10).toFixed(1)};
+  emn.oninput=()=>{state.emoMin=emn.value/10;document.getElementById('emn-out').textContent=(emn.value/10).toFixed(1)};
+  document.getElementById('ar-select').onchange=e=>state.ar=e.target.value;
+  document.getElementById('style-select').onchange=e=>state.mjStyle=e.target.value;
+  document.getElementById('chaos-select').onchange=e=>state.chaos=e.target.value;
+}
+function getTopEmotions(){
+  return Object.entries(state.emotions)
+    .filter(([,v])=>v>0)
+    .sort(([,a],[,b])=>b-a)
+    .slice(0,3);
+}
+function mapWeight(v,min,max){
+  return min+v*(max-min);
+}
+function generatePrompt(){
+  const top=getTopEmotions();
+  if(!top.length){
+    document.getElementById('natural-prompt').textContent='Set at least one emotion weight above to generate a prompt.';
+    document.getElementById('mj-prompt').textContent='–';
+    return;
+  }
+  const [topEmoId]=top[0];
+  const colors=COLOR_MAP[topEmoId]||{primary:'warm neutrals',accent:'soft cream'};
+  const texture=TEXTURE_MAP[topEmoId]||'organic layering';
+  const mats=state.materials.length?state.materials.join(', ').toLowerCase():'eucalyptus';
+  const season=state.season.toLowerCase();
+  const style=state.style.toLowerCase();
+  const shape=state.shape.toLowerCase();
+  const lighting=state.lighting.toLowerCase();
+  const emoPhrase=top.map(([id])=>EMOTIONS.find(e=>e.id===id)?.phrase).filter(Boolean).join(', ');
+
+  const natural=`A handcrafted ${season} wreath with ${mats}, ${colors.primary} palette, ${colors.accent} accents, ${texture}. The ${shape} composition carries a ${style} sensibility, ${emoPhrase}, captured in ${lighting} light.`;
+  document.getElementById('natural-prompt').textContent=natural;
+
+  const subjectChunk=`handcrafted ${season} ${mats} wreath, ${colors.primary}, ${colors.accent} accents, ${texture}, ${shape} form, ${style} setting`;
+  const emoChunks=top.map(([id,v],i)=>{
+    const phrase=EMOTIONS.find(e=>e.id===id)?.phrase||id;
+    const w=(mapWeight(v,state.emoMin,state.emoMax)).toFixed(1);
+    return `${phrase}::${w}`;
+  }).join(' ');
+  const lightingChunk=`${lighting} lighting, editorial product photography`;
+  const params=[state.ar,state.mjStyle,state.chaos].filter(Boolean).join(' ');
+  const mj=`${subjectChunk}::${state.subjectWeight.toFixed(1)} ${emoChunks} ${lightingChunk}::1.0 ${params}`.trim();
+  document.getElementById('mj-prompt').textContent=mj;
+}
+function copyPrompt(){
+  const txt=document.getElementById('mj-prompt').textContent;
+  if(txt==='–')return;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const m=document.getElementById('copy-msg');
+    m.style.opacity=1;setTimeout(()=>m.style.opacity=0,1800);
+  });
+}
+buildEmotionPanel();
+buildTags(SEASONS,'season-tags','season','season');
+buildTags(STYLES,'style-tags','style','style');
+buildTags(SHAPES,'shape-tags','shape','');
+buildMultiTags(MATERIALS,'material-tags','materials','');
+buildMultiTags(LIGHTING,'lighting-tags','lighting','');
+initParams();
+</script>
