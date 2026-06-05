@@ -24,6 +24,13 @@ a{color:inherit;text-decoration:none}
 .overline::before{content:"";width:42px;height:1px;background:var(--gold);opacity:.5}
 .hero h1{font-family:var(--serif);font-weight:400;font-size:clamp(3rem,6.8vw,6.2rem);line-height:1.05;letter-spacing:.005em;color:var(--cream)}
 .hero h1 .it{color:var(--green);font-style:italic}
+/* animated rotating word (ported from the React animated-hero, vanilla) */
+.rotator{position:relative;display:inline-block;overflow:hidden;vertical-align:bottom;line-height:1.05}
+.rotator .sizer{visibility:hidden;white-space:nowrap}
+.rotator .rw{position:absolute;left:0;top:0;white-space:nowrap;font-style:italic;color:var(--green);opacity:0;transform:translateY(120%);transition:transform .62s cubic-bezier(.22,1,.36,1),opacity .5s ease}
+.rotator .rw.up{transform:translateY(-120%);opacity:0}
+.rotator .rw.active{transform:translateY(0);opacity:1}
+@media(prefers-reduced-motion:reduce){.rotator .rw{transition:opacity .3s ease}.rotator .rw:not(.active){transform:none}}
 .lead{font-size:1.12rem;line-height:1.7;color:var(--mut);max-width:30rem;margin:2.2rem 0 2.6rem;font-weight:300}
 .cta-row{display:flex;gap:1rem;flex-wrap:wrap}
 .btn{display:inline-flex;align-items:center;gap:.55rem;padding:15px 30px;border-radius:100px;font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:.04em;cursor:pointer;transition:all .22s;border:1px solid transparent}
@@ -93,7 +100,7 @@ h2{font-family:var(--serif);font-weight:400;font-size:clamp(2.3rem,5vw,3.8rem);l
 <section class="hero">
   <div>
     <div class="overline">Design intelligence for wreath artists</div>
-    <h1>Emotion,<br>made into<br>something you<br>can <span class="it">hold</span>.</h1>
+    <h1>Emotion, made into<br>something you can<br><span class="rotator" id="rotator"><span class="sizer">pass&nbsp;down</span><span class="rw active">hold</span><span class="rw">keep</span><span class="rw">treasure</span><span class="rw">pass&nbsp;down</span></span></h1>
     <p class="lead">Describe a memory — a person, a season, a feeling. Evercrafted reads what a piece should feel like and turns it into a wreath you can actually build.</p>
     <div class="cta-row">
       <a class="btn btn-p" href="evercrafted-try.html">Try a memory →</a>
@@ -155,5 +162,23 @@ h2{font-family:var(--serif);font-weight:400;font-size:clamp(2.3rem,5vw,3.8rem);l
   </div>
 </section>
 
+<script>
+// Rotating hero word — vanilla port of the animated-hero (framer-motion) effect:
+// active word springs to center; passed words exit up, upcoming wait below.
+(function(){
+  const words=[...document.querySelectorAll('#rotator .rw')];
+  if(!words.length) return;
+  let i=0;
+  setInterval(function(){
+    const n=(i+1)%words.length;
+    words.forEach(function(w,j){
+      w.classList.remove('active','up');
+      if(j===n) w.classList.add('active');
+      else if(j<n) w.classList.add('up');   // already passed → exit upward
+    });
+    i=n;
+  },2200);
+})();
+</script>
 <script src="/evercrafted-nav.js" defer></script>
 </body></html>
