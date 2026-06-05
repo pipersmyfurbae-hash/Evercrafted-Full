@@ -6,7 +6,7 @@
 <title>How It Works — Evercrafted</title>
 <meta name="description" content="See how Evercrafted turns a memory or feeling into a physically buildable luxury wreath blueprint — step by step.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Dancing+Script:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Dancing+Script:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --white:#FFFFFF;--off:#F9F7F4;--paper:#F2EFE9;--warm:#EDE8E0;
@@ -16,7 +16,7 @@
   --dust:#7A5A80;--dustp:#F5EEF4;--dustd:rgba(122,90,128,.10);
   --blue:#4A6785;--bluep:#EEF4F9;--blued:rgba(74,103,133,.10);
   --bd:#E4DFD8;--bdd:#CCC7BE;
-  --serif:'Cormorant Garamond',Georgia,serif;
+  --serif:'Italiana',Georgia,serif;
   --sans:'Jost',system-ui,sans-serif;
   --script:'Dancing Script',cursive;
   --sh:0 1px 4px rgba(0,0,0,.06);
@@ -46,7 +46,9 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .hb-ring{position:absolute;border-radius:50%;border:1px solid rgba(74,103,65,.07)}
 .hb-1{width:700px;height:700px;top:-250px;right:-200px}
 .hb-2{width:500px;height:500px;bottom:-200px;left:-150px;border-color:rgba(154,122,64,.05)}
-.hero-inner{max-width:780px;margin:0 auto;padding:0 2rem;position:relative}
+.hib-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.hib-scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 85% 78% at 50% 45%,rgba(242,239,233,.72),rgba(242,239,233,.93))}
+.hero-inner{max-width:780px;margin:0 auto;padding:0 2rem;position:relative;z-index:2}
 .hero-overline{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:1.1rem;display:flex;align-items:center;justify-content:center;gap:.6rem}
 .hero-overline::before,.hero-overline::after{content:'';height:1px;width:24px;background:var(--green);opacity:.5}
 .hero-h1{font-family:var(--serif);font-size:clamp(2.8rem,6vw,5rem);font-weight:400;line-height:1.08;letter-spacing:-.02em;margin-bottom:1.25rem}
@@ -247,7 +249,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-bg"><div class="hb-ring hb-1"></div><div class="hb-ring hb-2"></div></div>
+  <div class="hero-bg"><video class="hib-vid" autoplay loop muted playsinline poster="/assets/wreath-poster.jpg"><source src="/assets/wreath-hero.mp4" type="video/mp4"></video><div class="hib-scrim"></div><div class="hb-ring hb-1"></div><div class="hb-ring hb-2"></div></div>
   <div class="hero-inner">
     <div class="hero-overline">The Evercrafted experience</div>
     <h1 class="hero-h1">From <em>feeling</em> to<br><span class="sc">blueprint</span></h1>

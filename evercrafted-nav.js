@@ -40,21 +40,21 @@
     padding:14px clamp(16px,4vw,48px);background:#F9F7F4;border-bottom:1px solid #E4DFD8;
     font-family:'Jost',system-ui,sans-serif;position:relative;z-index:9000}
   .ec-nav a{text-decoration:none}
-  .ec-logo{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.35rem;color:#2c2a26;letter-spacing:.02em}
-  .ec-logo b{font-weight:600}.ec-logo .g{color:#4a6741}
+  .ec-logo{font-family:'Italiana',Georgia,serif;font-size:1.35rem;color:#2c2a26;letter-spacing:.02em}
+  .ec-logo b{font-weight:400}.ec-logo .g{color:#4a6741}
   .ec-links{display:flex;align-items:center;gap:clamp(.8rem,2vw,1.7rem);flex-wrap:wrap;justify-content:flex-end}
   .ec-links a{font-size:13px;color:#6b6258;letter-spacing:.02em;transition:color .15s}
   .ec-links a:hover{color:#4a6741}
   .ec-cta{padding:9px 18px;border-radius:100px;background:#4a6741;color:#fff!important;
     font-size:12px;font-weight:600;letter-spacing:.05em}
   .ec-cta:hover{background:#3c5435}
-  .ec-foot{background:#1A1A1A;color:rgba(255,255,255,.6);font-family:'Jost',system-ui,sans-serif;
+  .ec-foot{background:#3A5532;color:rgba(255,255,255,.6);font-family:'Jost',system-ui,sans-serif;
     padding:clamp(2.75rem,5vw,3.5rem) clamp(16px,4vw,48px) 1.75rem}
   .ec-foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:clamp(1.5rem,3vw,3rem);
     max-width:1200px;margin:0 auto 2.5rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,.1)}
   @media(max-width:768px){.ec-foot-top{grid-template-columns:1fr 1fr}}
   @media(max-width:480px){.ec-foot-top{grid-template-columns:1fr}}
-  .ec-foot-brand{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.4rem;font-weight:400;color:#fff;margin-bottom:.75rem}
+  .ec-foot-brand{font-family:'Italiana',Georgia,serif;font-size:1.4rem;font-weight:400;color:#fff;margin-bottom:.75rem}
   .ec-foot-brand .g{color:#C4A06A}
   .ec-foot-tag{font-size:13px;line-height:1.65;color:rgba(255,255,255,.45);max-width:300px}
   .ec-foot-h{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.9rem}
@@ -68,10 +68,10 @@
   .ec-foot-bot a:hover{color:rgba(255,255,255,.6)}
   `;
   // Guarantee the brand fonts on every page (tool pages may not import them)
-  if (!document.querySelector('link[href*="Cormorant+Garamond"]')) {
+  if (!document.querySelector('link[href*="Italiana"]')) {
     const f = document.createElement('link');
     f.rel = 'stylesheet';
-    f.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap';
+    f.href = 'https://fonts.googleapis.com/css2?family=Italiana&family=Jost:wght@300;400;500;600&display=swap';
     document.head.appendChild(f);
   }
   const st = document.createElement('style');
