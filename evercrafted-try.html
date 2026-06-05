@@ -468,6 +468,27 @@ async function handleGate(e){
   document.getElementById('gate-note').style.color='var(--green)';
   document.getElementById('gate-note').style.fontWeight='500';
   document.getElementById('gate-email').value='';
+  showFeedback();
+}
+
+// Calibration corpus: did the generated scene capture the memory? (kind='scene')
+function showFeedback(){
+  const form=document.querySelector('.gate-form'); if(!form||document.getElementById('fb-wrap'))return;
+  const w=document.createElement('div'); w.id='fb-wrap';
+  w.style.cssText='margin-top:1.1rem;text-align:center';
+  w.innerHTML=`<div style="font-size:12px;color:var(--mu);margin-bottom:.5rem">Did this capture the feeling?</div>`
+    +`<div style="display:flex;gap:.5rem;justify-content:center">`
+    +`<button type="button" id="fb-up" style="cursor:pointer;border:1.5px solid var(--bd);background:var(--sf);border-radius:100px;padding:7px 16px;font-size:13px">Yes ✦</button>`
+    +`<button type="button" id="fb-down" style="cursor:pointer;border:1.5px solid var(--bd);background:var(--sf);border-radius:100px;padding:7px 16px;font-size:13px">Not quite</button></div>`;
+  form.parentNode.insertBefore(w,form.nextSibling);
+  const send=async vote=>{
+    w.innerHTML=`<div style="font-size:12px;color:var(--green);font-weight:500">Thank you — that helps us tune the design.</div>`;
+    try{ await fetch(`${CONFIG.apiBase}/api/layout-feedback`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({vote,kind:'scene',scene_title:sceneData?.scene_title||'',memory:answers.memory||'',source:'try-page'})}); }
+    catch(err){ console.warn('Feedback:',err.message); }
+  };
+  document.getElementById('fb-up').onclick=()=>send('up');
+  document.getElementById('fb-down').onclick=()=>send('down');
 }
 
 function resetAll(){

@@ -858,6 +858,50 @@ app.post('/api/waitlist', async (req, res) => {
   }
 });
 
+// ── POST /api/layout-feedback ─────────────────────────────────────────────────
+// Approve/reject signal for generated scenes & layouts — the calibration corpus.
+// kind='scene' (try-page) today; kind='layout' carries seed/genome from the build
+// view once placements are shown. Mirrors the waitlist endpoint's storage pattern.
+const FEEDBACK_PATH = './layout-feedback.json';
+
+app.post('/api/layout-feedback', async (req, res) => {
+  try {
+    const vote = sanitizeInput(req.body.vote);
+    if (!['up', 'down'].includes(vote)) {
+      return res.status(400).json({ success: false, error: "vote must be 'up' or 'down'" });
+    }
+    const entry = {
+      vote,
+      kind:        sanitizeInput(req.body.kind) || 'scene',
+      scene_title: sanitizeInput(req.body.scene_title) || '',
+      memory:      sanitizeInput(req.body.memory) || '',
+      design_id:   sanitizeInput(req.body.design_id) || '',
+      seed:        sanitizeInput(String(req.body.seed ?? '')).slice(0, 40),
+      genome:      sanitizeInput(req.body.genome) || '',
+      reason:      sanitizeInput(req.body.reason).slice(0, 500),
+      source:      sanitizeInput(req.body.source) || 'try-page',
+    };
+
+    if (supabase) {
+      const { error } = await supabase.from('layout_feedback').insert(entry);
+      if (error) throw new Error(error.message);
+      console.log(`[/api/layout-feedback] (supabase) ${entry.vote} · ${entry.kind} · ${entry.scene_title}`);
+      return res.json({ success: true });
+    }
+
+    // Fallback: append locally (dev only — not durable on Vercel)
+    let list = [];
+    try { list = JSON.parse(fs.readFileSync(FEEDBACK_PATH, 'utf8')); } catch {}
+    list.push({ ...entry, timestamp: new Date().toISOString() });
+    fs.writeFileSync(FEEDBACK_PATH, JSON.stringify(list, null, 2));
+    console.log(`[/api/layout-feedback] (file) ${entry.vote} · ${entry.kind}`);
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('[/api/layout-feedback]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
 // ── Inventory (saved tagged items) ────────────────────────────────────────────
 const INVENTORY_PATH = './inventory.json';
 
