@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blueprint Library — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#F8F5EF;--cream2:#F0EBE2;--cream3:#E6DFCF;--white:#FDFCF9;
+  --ink:#1B1916;--ink2:#332F28;--muted:#8A8278;--muted2:#B4AFA8;
+  --sage:#506347;--sage-l:#C4D4BF;--sage-ll:#EBF1E8;--sage-d:#324030;--sage-dim:rgba(80,99,71,.1);
+  --bark:#8A6E52;--bark-l:#C2A98E;--bark-ll:#EDE5D8;--bark-d:#5A4535;
+  --rule:rgba(27,25,22,.07);--rule2:rgba(27,25,22,.13);
+  --gold:#C9A96E;
+}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh}
+
+/* ── HEADER ── */
+.header{background:var(--white);border-bottom:1px solid var(--rule);height:58px;display:flex;align-items:center;padding:0 28px;gap:12px;position:sticky;top:0;z-index:100}
+.logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;letter-spacing:.06em;color:var(--ink);display:flex;align-items:center;gap:7px}
+.logo-leaf svg{width:15px;height:15px}
+.header-sep{width:1px;height:20px;background:var(--rule2)}
+.app-name{font-size:12px;color:var(--muted);letter-spacing:.03em}
+.tier-pill{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:var(--sage-ll);color:var(--sage-d);margin-left:auto}
+.header-r{display:flex;gap:10px;align-items:center}
+.cart-btn{position:relative;padding:7px 14px;background:var(--ink);color:var(--white);border:none;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:background .15s;display:flex;align-items:center;gap:6px}
+.cart-btn:hover{background:var(--ink2)}
+.cart-count{position:absolute;top:-5px;right:-5px;width:16px;height:16px;background:var(--sage);border-radius:50%;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--white)}
+
+/* ── HERO ── */
+.lib-hero{background:var(--ink);padding:48px 0;text-align:center;position:relative;overflow:hidden}
+.lib-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 60%,rgba(80,99,71,.2) 0%,transparent 50%)}
+.lib-hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 40%,rgba(138,110,82,.13) 0%,transparent 50%)}
+.hero-script{font-family:'Dancing Script',cursive;font-size:20px;color:rgba(196,212,191,.8);display:block;margin-bottom:8px;position:relative;z-index:1}
+.hero-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,52px);font-weight:300;color:rgba(253,252,249,.95);letter-spacing:-.025em;line-height:1.1;margin-bottom:10px;position:relative;z-index:1}
+.hero-h1 em{font-style:italic;color:rgba(196,212,191,.9)}
+.hero-sub{font-size:13px;font-weight:300;color:rgba(253,252,249,.45);max-width:420px;margin:0 auto 28px;line-height:1.8;position:relative;z-index:1}
+.hero-stats{display:flex;gap:36px;justify-content:center;position:relative;z-index:1}
+.hero-stat-n{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:rgba(253,252,249,.85);line-height:1}
+.hero-stat-l{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(253,252,249,.3)}
+
+/* ── FILTER BAR ── */
+.filter-bar{background:var(--white);border-bottom:1px solid var(--rule);padding:14px 28px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;position:sticky;top:58px;z-index:90}
+.search-input{padding:8px 14px;background:var(--cream);border:1.5px solid var(--rule2);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);outline:none;transition:border-color .16s;min-width:200px}
+.search-input:focus{border-color:var(--sage);background:var(--white)}
+.filter-chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:11px;padding:5px 12px;border-radius:99px;border:1px solid var(--rule2);color:var(--muted);cursor:pointer;transition:all .14s;background:var(--white)}
+.chip:hover{border-color:var(--sage-l);color:var(--sage-d)}
+.chip.on{background:var(--sage-ll);border-color:rgba(80,99,71,.25);color:var(--sage-d);font-weight:500}
+.filter-bar-r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.sort-sel{padding:7px 12px;background:var(--cream);border:1.5px solid var(--rule2);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:none}
+.view-toggle{display:flex;border:1.5px solid var(--rule2);border-radius:4px;overflow:hidden}
+.vt-btn{padding:6px 10px;background:var(--white);border:none;cursor:pointer;font-size:12px;color:var(--muted);transition:all .14s}
+.vt-btn.on{background:var(--ink);color:var(--white)}
+
+/* ── GRID VIEW ── */
+.lib-body{max-width:1180px;margin:0 auto;padding:28px}
+.bp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.bp-list{display:flex;flex-direction:column;gap:10px}
+
+/* Blueprint card — grid */
+.bp-card{background:var(--white);border:1px solid var(--rule);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .2s;position:relative}
+.bp-card:hover{box-shadow:0 6px 28px rgba(27,25,22,.09);transform:translateY(-2px);border-color:var(--rule2)}
+.bp-card.in-cart{border-color:var(--sage-l)}
+.bp-thumb{height:170px;position:relative;overflow:hidden}
+.bp-thumb-svg{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+.bp-lock-overlay{position:absolute;inset:0;background:rgba(253,252,249,.88);backdrop-filter:blur(3px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:2}
+.bp-lock-icon{font-size:20px}
+.bp-lock-label{font-size:11px;font-weight:500;color:var(--ink)}
+.bp-lock-price{font-size:10px;color:var(--muted)}
+.bp-kit-badge{position:absolute;top:10px;left:10px;font-size:8px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 8px;border-radius:2px;z-index:3}
+.bp-kit-free{background:var(--sage-ll);color:var(--sage-d)}
+.bp-kit-premium{background:var(--bark-ll);color:var(--bark-d)}
+.bp-kit-locked{background:var(--ink);color:rgba(253,252,249,.8)}
+.bp-season-badge{position:absolute;top:10px;right:10px;font-size:8px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;background:rgba(253,252,249,.9);color:var(--muted);border:1px solid var(--rule);z-index:3}
+.bp-info{padding:14px 16px}
+.bp-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--ink);letter-spacing:-.01em;margin-bottom:4px}
+.bp-meta-row{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.bp-meta-tag{font-size:9px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;color:var(--muted2);background:var(--cream);border:1px solid var(--rule);padding:1px 6px;border-radius:2px}
+.bp-tagline{font-size:11px;font-weight:300;color:var(--muted);line-height:1.55;margin-bottom:12px}
+.bp-footer{display:flex;align-items:center;justify-content:space-between;padding-top:10px;border-top:1px solid var(--rule)}
+.bp-price{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink);line-height:1}
+.bp-price small{font-size:10px;font-weight:300;color:var(--muted);font-family:'DM Sans',sans-serif;margin-left:2px}
+.bp-price.free{color:var(--sage-d);font-size:14px;font-weight:500;font-family:'DM Sans',sans-serif}
+.btn-add-cart{padding:7px 14px;background:var(--ink);color:var(--white);border:none;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:.05em;cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-add-cart:hover{background:var(--ink2)}
+.btn-add-cart.in-cart{background:var(--sage);cursor:default}
+.btn-get-free{padding:7px 14px;background:var(--sage);color:var(--white);border:none;border-radius:3px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:.05em;cursor:pointer;transition:all .15s}
+.btn-get-free:hover{background:var(--sage-d)}
+
+/* List view card */
+.bp-list-card{background:var(--white);border:1px solid var(--rule);border-radius:8px;display:grid;grid-template-columns:140px 1fr auto;overflow:hidden;cursor:pointer;transition:all .18s;position:relative}
+.bp-list-card:hover{box-shadow:0 4px 18px rgba(27,25,22,.07);border-color:var(--rule2)}
+.bp-list-thumb{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.bp-list-info{padding:16px 20px;display:flex;flex-direction:column;justify-content:center}
+.bp-list-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--ink);letter-spacing:-.01em;margin-bottom:4px}
+.bp-list-tagline{font-size:12px;font-weight:300;color:var(--muted);line-height:1.6;margin-bottom:8px;max-width:440px}
+.bp-list-chips{display:flex;gap:6px;flex-wrap:wrap}
+.bp-list-actions{padding:16px 20px;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:8px;flex-shrink:0}
+.bp-list-price{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--ink);line-height:1;text-align:right}
+
+/* Detail drawer */
+.drawer-overlay{position:fixed;inset:0;background:rgba(27,25,22,.35);z-index:200;opacity:0;pointer-events:none;transition:opacity .24s;backdrop-filter:blur(3px)}
+.drawer-overlay.on{opacity:1;pointer-events:all}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:520px;max-width:100vw;background:var(--white);z-index:201;transform:translateX(100%);transition:transform .26s ease;overflow-y:auto;display:flex;flex-direction:column}
+.drawer-overlay.on .drawer{transform:translateX(0)}
+.drawer-header{padding:20px 24px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--white);z-index:10}
+.drawer-close{width:32px;height:32px;border-radius:4px;background:var(--cream);border:1px solid var(--rule2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;transition:all .14s}
+.drawer-close:hover{background:var(--cream2);border-color:var(--rule)}
+.drawer-body{padding:24px;flex:1}
+.drawer-thumb{height:240px;background:var(--cream2);border-radius:8px;margin-bottom:20px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.drawer-name{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--ink);letter-spacing:-.02em;margin-bottom:6px}
+.drawer-tagline{font-size:13px;font-weight:300;color:var(--muted);line-height:1.7;margin-bottom:16px}
+.drawer-section{margin-bottom:20px}
+.drawer-sec-title{font-size:9px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.drawer-sec-title::after{content:'';flex:1;height:1px;background:var(--rule)}
+.element-list{display:flex;flex-direction:column;gap:6px}
+.element-row{display:grid;grid-template-columns:1fr 80px 40px;gap:8px;font-size:12px;font-weight:300;color:var(--ink2);padding:5px 10px;background:var(--cream);border-radius:4px;align-items:center}
+.el-pos{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)}
+.el-cnt{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--ink);text-align:right}
+.emotion-cloud{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.ecl-tag{font-size:10px;padding:3px 10px;border-radius:99px;border:1px solid var(--rule2);color:var(--muted);background:var(--cream)}
+.ecl-tag.primary{background:var(--sage-ll);border-color:rgba(80,99,71,.2);color:var(--sage-d)}
+.genome-box{font-family:'DM Mono',monospace;font-size:10px;color:var(--ink2);background:var(--cream);border:1px solid var(--rule2);border-radius:4px;padding:10px 12px;line-height:1.7;word-break:break-all}
+.drawer-footer{padding:20px 24px;border-top:1px solid var(--rule);background:var(--cream);position:sticky;bottom:0}
+.drawer-price-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.drawer-price{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:300;color:var(--ink);line-height:1}
+.drawer-price small{font-size:12px;font-weight:300;color:var(--muted);font-family:'DM Sans',sans-serif}
+.btn-drawer-cart{width:100%;padding:13px;background:var(--ink);color:var(--white);border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:.06em;cursor:pointer;transition:background .15s}
+.btn-drawer-cart:hover{background:var(--ink2)}
+.btn-drawer-cart.in-cart{background:var(--sage)}
+.btn-drawer-cart.free-dl{background:var(--sage)}
+.btn-drawer-cart.free-dl:hover{background:var(--sage-d)}
+
+/* Cart drawer */
+.cart-overlay{position:fixed;inset:0;background:rgba(27,25,22,.35);z-index:300;opacity:0;pointer-events:none;transition:opacity .22s;backdrop-filter:blur(2px)}
+.cart-overlay.on{opacity:1;pointer-events:all}
+.cart-drawer{position:fixed;top:0;right:0;bottom:0;width:380px;max-width:100vw;background:var(--white);z-index:301;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}
+.cart-overlay.on .cart-drawer{transform:translateX(0)}
+.cart-header{padding:20px 22px;border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between}
+.cart-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--ink)}
+.cart-items{flex:1;overflow-y:auto;padding:16px 22px;display:flex;flex-direction:column;gap:10px}
+.cart-item{display:flex;gap:10px;align-items:center;padding:10px 12px;background:var(--cream);border-radius:6px;border:1px solid var(--rule)}
+.cart-item-name{flex:1;font-size:13px;font-weight:400;color:var(--ink)}
+.cart-item-price{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--ink)}
+.cart-rm{padding:4px 8px;background:transparent;border:1px solid var(--rule2);border-radius:3px;font-size:10px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .14s}
+.cart-rm:hover{border-color:var(--crit-bg,#FEE2E2);color:#B94040}
+.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:200px;gap:12px;color:var(--muted2);font-size:12px;font-weight:300}
+.cart-footer{padding:18px 22px;border-top:1px solid var(--rule);background:var(--cream)}
+.cart-total-row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.cart-total-lbl{font-size:12px;font-weight:400;color:var(--ink2)}
+.cart-total-amt{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--ink)}
+.btn-checkout{width:100%;padding:13px;background:var(--ink);color:var(--white);border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:.06em;cursor:pointer;transition:background .15s}
+.btn-checkout:hover{background:var(--ink2)}
+.btn-checkout:disabled{opacity:.4;cursor:not-allowed}
+
+/* No results */
+.no-results{text-align:center;padding:72px 32px;color:var(--muted2)}
+.no-results-icon{font-size:32px;opacity:.4;margin-bottom:12px}
+.no-results-t{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink);margin-bottom:6px}
+
+/* Toast */
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) translateY(6px);z-index:999;background:var(--ink);color:var(--white);padding:9px 20px;border-radius:99px;font-size:11px;opacity:0;transition:all .22s;pointer-events:none;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media(max-width:640px){
+  .bp-list-card{grid-template-columns:100px 1fr;}.bp-list-actions{display:none}
+  .drawer{width:100%;max-width:100%}
+  .hero-stats{gap:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <span class="logo-leaf"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14C8 14 3 9 3 5.5C3 3.5 5.2 2 8 2C10.8 2 13 3.5 13 5.5C13 9 8 14 8 14Z" stroke="#506347" stroke-width="1.3" fill="none"/><path d="M8 14L8 5" stroke="#506347" stroke-width=".9" stroke-dasharray="1.5 2"/></svg></span>
+    Evercrafted
+  </div>
+  <div class="header-sep"></div>
+  <div class="app-name">Blueprint Library</div>
+  <div class="tier-pill">All Tiers</div>
+  <div class="header-r">
+    <button class="cart-btn" onclick="openCart()">
+      🛒 Cart
+      <span class="cart-count" id="cart-count" style="display:none">0</span>
+    </button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="lib-hero">
+  <span class="hero-script">browse & build</span>
+  <h1 class="hero-h1">The Blueprint <em>Library</em></h1>
+  <div class="hero-sub">Professionally designed wreath blueprints — ready to buy, download, and build. Every design includes a full genome string, build guide, and render prompt.</div>
+  <div class="hero-stats">
+    <div><div class="hero-stat-n">48</div><div class="hero-stat-l">Blueprints</div></div>
+    <div><div class="hero-stat-n">12</div><div class="hero-stat-l">Free designs</div></div>
+    <div><div class="hero-stat-n">6</div><div class="hero-stat-l">Seasons</div></div>
+    <div><div class="hero-stat-n">$4–$12</div><div class="hero-stat-l">Price range</div></div>
+  </div>
+</div>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <input class="search-input" type="text" id="search" placeholder="Search blueprints…" oninput="renderLibrary()">
+  <div class="filter-chips" id="filter-chips">
+    <div class="chip on" data-filter="all" onclick="setFilter('all',this)">All</div>
+    <div class="chip" data-filter="free" onclick="setFilter('free',this)">Free</div>
+    <div class="chip" data-filter="spring" onclick="setFilter('spring',this)">Spring</div>
+    <div class="chip" data-filter="summer" onclick="setFilter('summer',this)">Summer</div>
+    <div class="chip" data-filter="fall" onclick="setFilter('fall',this)">Fall</div>
+    <div class="chip" data-filter="winter" onclick="setFilter('winter',this)">Winter</div>
+    <div class="chip" data-filter="evergreen" onclick="setFilter('evergreen',this)">Evergreen</div>
+    <div class="chip" data-filter="minimal" onclick="setFilter('minimal',this)">Minimal</div>
+    <div class="chip" data-filter="romantic" onclick="setFilter('romantic',this)">Romantic</div>
+    <div class="chip" data-filter="rustic" onclick="setFilter('rustic',this)">Rustic</div>
+  </div>
+  <div class="filter-bar-r">
+    <select class="sort-sel" id="sort-sel" onchange="renderLibrary()">
+      <option value="featured">Featured</option>
+      <option value="price-asc">Price: Low</option>
+      <option value="price-desc">Price: High</option>
+      <option value="name">Name A–Z</option>
+      <option value="season">Season</option>
+    </select>
+    <div class="view-toggle">
+      <button class="vt-btn on" id="vt-grid" onclick="setView('grid')">⊞</button>
+      <button class="vt-btn" id="vt-list" onclick="setView('list')">≡</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIBRARY BODY -->
+<div class="lib-body">
+  <div id="library-container"></div>
+</div>
+
+<!-- DETAIL DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer(event)">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-header">
+      <div style="font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2)">Blueprint Detail</div>
+      <div class="drawer-close" onclick="closeDrawerDirect()">✕</div>
+    </div>
+    <div class="drawer-body" id="drawer-body">—</div>
+    <div class="drawer-footer" id="drawer-footer">—</div>
+  </div>
+</div>
+
+<!-- CART DRAWER -->
+<div class="cart-overlay" id="cart-overlay" onclick="closeCart(event)">
+  <div class="cart-drawer" onclick="event.stopPropagation()">
+    <div class="cart-header">
+      <div class="cart-title">Your Cart</div>
+      <div class="drawer-close" onclick="closeCartDirect()">✕</div>
+    </div>
+    <div class="cart-items" id="cart-items">
+      <div class="cart-empty">🛒<br>Your cart is empty</div>
+    </div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <div class="cart-total-lbl">Total</div>
+        <div class="cart-total-amt" id="cart-total">$0</div>
+      </div>
+      <button class="btn-checkout" id="btn-checkout" onclick="checkout()" disabled>Checkout →</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">🌿 <span id="toast-msg"></span></div>
+
+<script>
+// ── CATALOGUE DATA ───────────────────────────────────────────────
+const BLUEPRINTS = [
+  {id:1,name:"Autumn Welcome",tagline:"Dried eucalyptus with cream peonies and cinnamon accents on a 24-inch grapevine.",price:9,free:false,season:"fall",style:"rustic",size:"24in",stems:47,focals:3,emotions:["nostalgic","warm","grounded"],palette:["cream","cinnamon","sage","bark"],genome:"WGS1|24|round|medium|cream+cinnamon+sage+bark|white-peony:A|cream-rose:B|dusty-miller:A|dried-eucalyptus:A|cotton-stem:C|nostalgic+warm|fall|rustic|asymmetric|AW24R",elements:[{n:"Dried eucalyptus",cat:"greenery",pos:"12:00",cnt:10},{n:"Seeded eucalyptus",cat:"greenery",pos:"5:00",cnt:7},{n:"White peony",cat:"focal",pos:"1:30",cnt:3},{n:"Cream garden rose",cat:"focal",pos:"7:30",cnt:2},{n:"Dried thistle",cat:"focal",pos:"10:00",cnt:2},{n:"Cotton stem",cat:"accent",pos:"4:30",cnt:3},{n:"Dried orange slice",cat:"accent",pos:"8:00",cnt:2},{n:"Dusty miller",cat:"filler",pos:"3:00",cnt:5}]},
+  {id:2,name:"Spring Whisper",tagline:"Airy ranunculus and garden rose on an 18-inch base with soft fern movement.",price:7,free:false,season:"spring",style:"romantic",size:"18in",stems:31,focals:3,emotions:["joy","renewal","tender"],palette:["blush","soft white","eucalyptus","dusty green"],genome:"WGS1|18|round|light|blush+soft-white+eucalyptus|ranunculus:A|garden-rose:B|fern-spray:A|eucalyptus:A|dried-lunaria:C|joy+renewal|spring|romantic|asymmetric|SP18R",elements:[{n:"Eucalyptus spray",cat:"greenery",pos:"12:00",cnt:8},{n:"Fern spray",cat:"greenery",pos:"4:00",cnt:5},{n:"Ranunculus blush",cat:"focal",pos:"2:00",cnt:3},{n:"Garden rose white",cat:"focal",pos:"8:00",cnt:2},{n:"Baby's breath",cat:"focal",pos:"11:00",cnt:2},{n:"Dried lunaria",cat:"accent",pos:"5:30",cnt:3},{n:"Dusty miller",cat:"filler",pos:"3:00",cnt:4}]},
+  {id:3,name:"Winter Solstice",tagline:"Deep magnolia, pine, and berry clusters — a 30-inch showpiece for a grand entry.",price:12,free:false,season:"winter",style:"woodland",size:"30in",stems:62,focals:5,emotions:["calm","strength","celebration"],palette:["forest green","burgundy","white","gold"],genome:"WGS1|30|round|lush|forest-green+burgundy+white+gold|magnolia:A|garden-rose:B|pinecone:A|pine-spray:A|berry-cluster:C|calm+celebration|winter|woodland|asymmetric|WS30W",elements:[{n:"Pine spray",cat:"greenery",pos:"12:00",cnt:12},{n:"Cedar spray",cat:"greenery",pos:"6:00",cnt:8},{n:"Magnolia bloom",cat:"focal",pos:"1:00",cnt:3},{n:"White garden rose",cat:"focal",pos:"4:30",cnt:2},{n:"Dried pinecone",cat:"focal",pos:"8:00",cnt:3},{n:"Berry cluster",cat:"accent",pos:"2:30",cnt:5},{n:"Dried cotton",cat:"accent",pos:"10:30",cnt:4},{n:"Preserved boxwood",cat:"filler",pos:"3:30",cnt:8}]},
+  {id:4,name:"Meadow Light",tagline:"Free blueprint. Pampas grass and dried wildflowers on a 24-inch grapevine — zero fuss.",price:0,free:true,season:"summer",style:"minimal",size:"24in",stems:28,focals:3,emotions:["freedom","organic","airy"],palette:["ivory","warm beige","dried wheat","sage"],genome:"WGS1|24|round|light|ivory+warm-beige+dried-wheat|pampas-grass:A|dried-anemone:B|seed-pod:A|eucalyptus-silver:A|dried-grass:C|freedom+organic|summer|minimal|asymmetric|ML24M",elements:[{n:"Pampas grass",cat:"focal",pos:"2:00",cnt:3},{n:"Dried anemone",cat:"focal",pos:"7:00",cnt:2},{n:"Dried grass stems",cat:"focal",pos:"10:30",cnt:2},{n:"Silver eucalyptus",cat:"greenery",pos:"12:00",cnt:7},{n:"Seed pods",cat:"accent",pos:"4:00",cnt:4},{n:"Dried wheat",cat:"filler",pos:"5:30",cnt:5}]},
+  {id:5,name:"Harvest Moon",tagline:"Deep amber, rust, and dried orange — a fall showstopper for any door.",price:9,free:false,season:"fall",style:"rustic",size:"24in",stems:43,focals:3,emotions:["harvest","warmth","earthiness"],palette:["amber","rust","dried orange","forest"],genome:"WGS1|24|round|medium|amber+rust+dried-orange+forest|dahlia-orange:A|sunflower-mini:B|seeded-eucalyptus:A|dried-eucalyptus:A|dried-orange:C|harvest+warmth|fall|rustic|asymmetric|HM24F",elements:[{n:"Seeded eucalyptus",cat:"greenery",pos:"12:00",cnt:9},{n:"Dried eucalyptus",cat:"greenery",pos:"7:00",cnt:6},{n:"Orange dahlia",cat:"focal",pos:"1:30",cnt:3},{n:"Mini sunflower",cat:"focal",pos:"8:00",cnt:2},{n:"Amber berry",cat:"focal",pos:"11:00",cnt:2},{n:"Dried orange slice",cat:"accent",pos:"3:30",cnt:5},{n:"Pinecone",cat:"accent",pos:"5:00",cnt:3},{n:"Dusty miller",cat:"filler",pos:"2:30",cnt:4}]},
+  {id:6,name:"Coastal Calm",tagline:"Free blueprint. Sea lavender, lunaria, and driftwood touches for a coastal entryway.",price:0,free:true,season:"summer",style:"minimal",size:"18in",stems:24,focals:3,emotions:["peace","calm","clarity"],palette:["sea blue","bleached white","sand","sage"],genome:"WGS1|18|round|light|sea-blue+bleached-white+sand|sea-lavender:A|dried-hydrangea:B|lunaria:A|silver-eucalyptus:A|cotton-stem:C|peace+calm|evergreen|minimal|asymmetric|CC18C",elements:[{n:"Silver eucalyptus",cat:"greenery",pos:"12:00",cnt:6},{n:"Sea lavender",cat:"focal",pos:"2:30",cnt:3},{n:"Dried hydrangea",cat:"focal",pos:"7:00",cnt:2},{n:"Lunaria",cat:"focal",pos:"10:30",cnt:2},{n:"Cotton stem",cat:"accent",pos:"4:30",cnt:3},{n:"Dusty miller",cat:"filler",pos:"3:00",cnt:4}]},
+  {id:7,name:"Dark Romance",tagline:"Burgundy anemone, hellebore, and blackened eucalyptus — dramatic and editorial.",price:11,free:false,season:"fall",style:"romantic",size:"24in",stems:38,focals:5,emotions:["mystery","drama","elegance"],palette:["burgundy","near-black","dusty rose","antique white"],genome:"WGS1|24|round|medium|burgundy+near-black+dusty-rose|anemone-burgundy:A|hellebore:B|dried-rose:A|black-eucalyptus:A|seed-pod:C|mystery+drama|fall|romantic|asymmetric|DR24R",elements:[{n:"Black eucalyptus",cat:"greenery",pos:"12:00",cnt:8},{n:"Preserved fern",cat:"greenery",pos:"6:00",cnt:5},{n:"Burgundy anemone",cat:"focal",pos:"1:00",cnt:3},{n:"Hellebore",cat:"focal",pos:"5:00",cnt:2},{n:"Dried deep rose",cat:"focal",pos:"9:00",cnt:2},{n:"Dusty rose ranunculus",cat:"focal",pos:"7:00",cnt:2},{n:"Seed pods",cat:"focal",pos:"11:00",cnt:2},{n:"Dried berry dark",cat:"accent",pos:"3:00",cnt:4},{n:"Dried grass",cat:"filler",pos:"4:30",cnt:3}]},
+  {id:8,name:"First Light",tagline:"Free blueprint. Soft white ranunculus and bleached eucalyptus — clean and timeless.",price:0,free:true,season:"spring",style:"minimal",size:"18in",stems:22,focals:3,emotions:["clarity","renewal","softness"],palette:["soft white","ivory","pale sage","cream"],genome:"WGS1|18|round|light|soft-white+ivory+pale-sage|white-ranunculus:A|bleached-eucalyptus:B|dried-lunaria:A|seeded-eucalyptus:A|cotton-stem:C|clarity+renewal|spring|minimal|asymmetric|FL18M",elements:[{n:"Seeded eucalyptus",cat:"greenery",pos:"12:00",cnt:6},{n:"Bleached eucalyptus",cat:"greenery",pos:"5:00",cnt:4},{n:"White ranunculus",cat:"focal",pos:"2:00",cnt:3},{n:"White garden rose",cat:"focal",pos:"7:30",cnt:2},{n:"Dried lunaria",cat:"focal",pos:"10:30",cnt:2},{n:"Cotton stem",cat:"accent",pos:"4:00",cnt:3}]},
+  {id:9,name:"Solstice Mist",tagline:"Dusty blue hydrangea, lavender, and preserved moss — ethereal and calming.",price:8,free:false,season:"evergreen",style:"romantic",size:"24in",stems:35,focals:3,emotions:["peace","healing","mystical"],palette:["dusty blue","lavender","sage","mist white"],genome:"WGS1|24|round|balanced|dusty-blue+lavender+sage|hydrangea-blue:A|lavender:B|preserved-moss:A|eucalyptus:A|dried-lunaria:C|peace+healing|evergreen|romantic|asymmetric|SM24E",elements:[{n:"Eucalyptus spray",cat:"greenery",pos:"12:00",cnt:8},{n:"Preserved moss",cat:"greenery",pos:"5:00",cnt:5},{n:"Dusty blue hydrangea",cat:"focal",pos:"2:00",cnt:3},{n:"Dried lavender",cat:"focal",pos:"8:00",cnt:2},{n:"Bleached lunaria",cat:"focal",pos:"11:00",cnt:2},{n:"Dried salvia",cat:"accent",pos:"4:00",cnt:4},{n:"Cotton stem",cat:"accent",pos:"7:00",cnt:3},{n:"Dusty miller",cat:"filler",pos:"3:00",cnt:4}]},
+  {id:10,name:"Woodland Fox",tagline:"Rust protea, dried oak leaf, and acorn — a wild, textured 30-inch statement piece.",price:12,free:false,season:"fall",style:"woodland",size:"30in",stems:55,focals:5,emotions:["courage","wildness","strength"],palette:["rust","terracotta","forest","warm brown"],genome:"WGS1|30|round|lush|rust+terracotta+forest+warm-brown|protea-rust:A|dried-rose-hip:B|oak-leaf:A|pine-spray:A|acorn:C|courage+wildness|fall|woodland|asymmetric|WF30W",elements:[{n:"Pine spray",cat:"greenery",pos:"12:00",cnt:10},{n:"Oak leaf spray",cat:"greenery",pos:"6:00",cnt:7},{n:"Rust protea",cat:"focal",pos:"1:30",cnt:3},{n:"Dried rose hip",cat:"focal",pos:"5:30",cnt:2},{n:"Dried dahlia rust",cat:"focal",pos:"8:30",cnt:2},{n:"Pinecone",cat:"focal",pos:"10:30",cnt:3},{n:"Dried autumn leaf",cat:"focal",pos:"3:00",cnt:2},{n:"Acorn cluster",cat:"accent",pos:"4:30",cnt:5},{n:"Dried berry",cat:"accent",pos:"7:30",cnt:4},{n:"Moss patch",cat:"filler",pos:"2:00",cnt:5}]},
+  {id:11,name:"Linen & Lavender",tagline:"Dried lavender bundles, linen-toned eucalyptus, and cotton — a Provence provençal.",price:8,free:false,season:"summer",style:"minimal",size:"24in",stems:32,focals:3,emotions:["rest","calm","simplicity"],palette:["lavender","linen","pale sage","dusty white"],genome:"WGS1|24|round|medium|lavender+linen+pale-sage|lavender-bundle:A|dried-statice:B|silver-eucalyptus:A|dusty-miller:A|cotton-stem:C|rest+calm|summer|minimal|asymmetric|LL24S",elements:[{n:"Silver eucalyptus",cat:"greenery",pos:"12:00",cnt:8},{n:"Dusty miller",cat:"filler",pos:"4:00",cnt:5},{n:"Lavender bundle",cat:"focal",pos:"2:00",cnt:3},{n:"Dried statice purple",cat:"focal",pos:"7:30",cnt:2},{n:"White dried larkspur",cat:"focal",pos:"10:00",cnt:2},{n:"Cotton stem",cat:"accent",pos:"5:00",cnt:4},{n:"Dried grass",cat:"accent",pos:"3:30",cnt:4}]},
+  {id:12,name:"Bare Winter",tagline:"Free blueprint. Dried twig, preserved berry, and white ranunculus — restrained and beautiful.",price:0,free:true,season:"winter",style:"minimal",size:"18in",stems:20,focals:3,emotions:["stillness","minimal","quiet"],palette:["white","bare wood","burgundy berry","grey"],genome:"WGS1|18|crescent|light|white+bare-wood+burgundy-berry|white-ranunculus:A|berry-stem:B|dried-twig:A|preserved-branch:A|pinecone-mini:C|stillness+minimal|winter|minimal|asymmetric|BW18W",elements:[{n:"Preserved bare branch",cat:"greenery",pos:"12:00",cnt:5},{n:"Dried twig spray",cat:"greenery",pos:"5:00",cnt:4},{n:"White ranunculus",cat:"focal",pos:"2:00",cnt:3},{n:"Berry stem",cat:"focal",pos:"8:00",cnt:2},{n:"Dried white cotton",cat:"focal",pos:"11:00",cnt:2},{n:"Mini pinecone",cat:"accent",pos:"4:00",cnt:3}]}
+];
+
+// ── STATE ───────────────────────────────────────────────────────
+let cart=[];
+let activeFilter='all';
+let viewMode='grid';
+let openDrawerId=null;
+
+// ── FILTER / SORT ────────────────────────────────────────────────
+function setFilter(f,el){
+  activeFilter=f;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+  renderLibrary();
+}
+function setView(v){
+  viewMode=v;
+  document.getElementById('vt-grid').classList.toggle('on',v==='grid');
+  document.getElementById('vt-list').classList.toggle('on',v==='list');
+  renderLibrary();
+}
+
+// ── WREATH SVG THUMBNAIL ─────────────────────────────────────────
+const CAT_COLORS={greenery:'#7A9E7E',focal:'#C4947A',filler:'#B4AFA8',accent:'#C4A96E',ribbon:'#9B7ABF',base:'#8A7A6A'};
+function wreathThumbSVG(bp,size=160,bg='#F0EBE2'){
+  const cx=size/2,cy=size/2,baseR=size*.43;
+  let out=`<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg">`;
+  out+=`<rect width="${size}" height="${size}" fill="${bg}"/>`;
+  out+=`<circle cx="${cx}" cy="${cy}" r="${baseR}" fill="none" stroke="#C2A98E" stroke-width="${size*.1}" opacity=".3"/>`;
+  out+=`<circle cx="${cx}" cy="${cy}" r="${baseR}" fill="none" stroke="#8A6E52" stroke-width="1" opacity=".2" stroke-dasharray="5 5"/>`;
+  out+=`<circle cx="${cx}" cy="${cy}" r="${baseR*.38}" fill="${bg}" opacity=".95"/>`;
+  bp.elements.forEach(el=>{
+    const cat=(el.cat||'filler').toLowerCase();
+    const color=CAT_COLORS[cat]||'#B4AFA8';
+    const parts=String(el.pos||'12:00').split(':');
+    const h=parseInt(parts[0])||0,m=parseInt(parts[1])||0;
+    const angleDeg=(h+m/60)*30;
+    const angleRad=(angleDeg-90)*Math.PI/180;
+    const r=cat==='greenery'?baseR:cat==='focal'?baseR*.65:baseR*.78;
+    const sz=cat==='focal'?7:cat==='greenery'?5:4;
+    const px=cx+Math.cos(angleRad)*r;
+    const py=cy+Math.sin(angleRad)*r;
+    if(cat==='greenery'){out+=`<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${sz+2}" ry="${sz}" fill="${color}" opacity=".65" transform="rotate(${angleDeg},${px.toFixed(1)},${py.toFixed(1)})"/>`;}
+    else{out+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${sz}" fill="${color}" opacity="${cat==='focal'?.85:.6}"/>`;
+    if(cat==='focal')out+=`<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${sz+3}" fill="none" stroke="${color}" stroke-width="1" opacity=".3"/>`;}
+  });
+  out+=`</svg>`;
+  return out;
+}
+
+// ── RENDER LIBRARY ───────────────────────────────────────────────
+function renderLibrary(){
+  const search=document.getElementById('search').value.toLowerCase();
+  const sort=document.getElementById('sort-sel').value;
+  let items=[...BLUEPRINTS];
+  if(activeFilter==='free')items=items.filter(b=>b.free);
+  else if(activeFilter!=='all')items=items.filter(b=>b.season===activeFilter||b.style===activeFilter);
+  if(search)items=items.filter(b=>b.name.toLowerCase().includes(search)||b.tagline.toLowerCase().includes(search)||b.emotions.join(' ').includes(search));
+  items.sort((a,b)=>{
+    if(sort==='price-asc')return a.price-b.price;
+    if(sort==='price-desc')return b.price-a.price;
+    if(sort==='name')return a.name.localeCompare(b.name);
+    if(sort==='season')return a.season.localeCompare(b.season);
+    return 0;
+  });
+
+  const container=document.getElementById('library-container');
+  if(items.length===0){
+    container.innerHTML=`<div class="no-results"><div class="no-results-icon">🌿</div><div class="no-results-t">No blueprints found</div><div style="font-size:12px;color:var(--muted2)">Try adjusting your search or filter.</div></div>`;
+    return;
+  }
+
+  if(viewMode==='grid'){
+    container.innerHTML=`<div class="bp-grid">${items.map(b=>gridCard(b)).join('')}</div>`;
+  } else {
+    container.innerHTML=`<div class="bp-list">${items.map(b=>listCard(b)).join('')}</div>`;
+  }
+}
+
+function inCart(id){return cart.some(c=>c.id===id);}
+
+function gridCard(b){
+  const ic=inCart(b.id);
+  const thumb=wreathThumbSVG(b);
+  const priceHtml=b.free?`<div class="bp-price free">Free</div>`:`<div class="bp-price">$${b.price}<small>digital</small></div>`;
+  const btnHtml=b.free
+    ?`<button class="btn-get-free" onclick="event.stopPropagation();downloadFree(${b.id})">↓ Download</button>`
+    :`<button class="btn-add-cart ${ic?'in-cart':''}" onclick="event.stopPropagation();toggleCart(${b.id})">${ic?'In Cart ✓':'Add to Cart'}</button>`;
+  return `<div class="bp-card ${ic?'in-cart':''}" onclick="openDrawer(${b.id})">
+    <div class="bp-thumb">
+      <div class="bp-thumb-svg">${thumb}</div>
+      <span class="bp-kit-badge ${b.free?'bp-kit-free':'bp-kit-premium'}">${b.free?'Free':'Premium'}</span>
+      <span class="bp-season-badge">${b.season}</span>
+    </div>
+    <div class="bp-info">
+      <div class="bp-name">${b.name}</div>
+      <div class="bp-meta-row">
+        <span class="bp-meta-tag">${b.size}</span>
+        <span class="bp-meta-tag">${b.stems} stems</span>
+        <span class="bp-meta-tag">${b.style}</span>
+      </div>
+      <div class="bp-tagline">${b.tagline}</div>
+      <div class="bp-footer">${priceHtml}${btnHtml}</div>
+    </div>
+  </div>`;
+}
+
+function listCard(b){
+  const ic=inCart(b.id);
+  const thumb=wreathThumbSVG(b,140,'#EBF1E8');
+  return `<div class="bp-list-card" onclick="openDrawer(${b.id})">
+    <div class="bp-list-thumb">${thumb}<span class="bp-kit-badge ${b.free?'bp-kit-free':'bp-kit-premium'}" style="top:8px;left:8px">${b.free?'Free':'$'+b.price}</span></div>
+    <div class="bp-list-info">
+      <div class="bp-list-name">${b.name}</div>
+      <div class="bp-list-tagline">${b.tagline}</div>
+      <div class="bp-list-chips">
+        ${b.emotions.slice(0,3).map(e=>`<span class="bp-meta-tag" style="font-size:9px">${e}</span>`).join('')}
+        <span class="bp-meta-tag" style="font-size:9px">${b.season}</span>
+        <span class="bp-meta-tag" style="font-size:9px">${b.size}</span>
+      </div>
+    </div>
+    <div class="bp-list-actions">
+      <div class="bp-list-price">${b.free?'<span style="font-size:14px;font-family:\'DM Sans\',sans-serif;color:var(--sage-d);font-weight:500">Free</span>':'$'+b.price}</div>
+      ${b.free
+        ?`<button class="btn-get-free" style="font-size:10px;padding:6px 12px" onclick="event.stopPropagation();downloadFree(${b.id})">↓ Download</button>`
+        :`<button class="btn-add-cart ${ic?'in-cart':''}" onclick="event.stopPropagation();toggleCart(${b.id})">${ic?'In Cart ✓':'Add to Cart'}</button>`}
+    </div>
+  </div>`;
+}
+
+// ── DRAWER ───────────────────────────────────────────────────────
+function openDrawer(id){
+  const b=BLUEPRINTS.find(x=>x.id===id);if(!b)return;
+  openDrawerId=id;
+  const thumb=wreathThumbSVG(b,260,'#F0EBE2');
+  const ic=inCart(id);
+  const elRows=b.elements.map(e=>`<div class="element-row"><div>${e.n}</div><div class="el-pos">🕐 ${e.pos}</div><div class="el-cnt">${e.cnt}</div></div>`).join('');
+  const emotionTags=b.emotions.map((e,i)=>`<span class="ecl-tag ${i===0?'primary':''}">${e}</span>`).join('');
+  const palSwatches=b.palette.map(c=>{
+    const m={'cream':'#F0EBE0','cinnamon':'#A06842','sage':'#7A9E7E','bark':'#8A6E52','blush':'#ECC6B8','soft white':'#F8F8F5','eucalyptus':'#8AAF8E','dusty green':'#7A9A7A','forest green':'#4A6741','burgundy':'#7A3A4A','white':'#F8F8F5','gold':'#C9A96E','ivory':'#F5F0E8','warm beige':'#D4C4A8','dried wheat':'#D4B87A','forest':'#4A6741','amber':'#C9A64E','rust':'#A85A38','dried orange':'#C07840','lavender':'#A090C0','linen':'#D4C8B8','pale sage':'#B4C8B0','dusty white':'#E8E4DC','sea blue':'#7A9AB4','sand':'#C4B898','bleached white':'#F2F0EA','terracotta':'#C4784A','warm brown':'#8A6040','dusty blue':'#8A9EB4','mist white':'#E8EAF0','dusty rose':'#D4978A','antique white':'#F0EAE0','near-black':'#2A2420','bare wood':'#A08870','grey':'#A09890'};
+    let hex='#C2A98E';const n=c.toLowerCase();for(const[k,v]of Object.entries(m))if(n.includes(k)){hex=v;break;}
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div style="width:24px;height:24px;border-radius:3px;background:${hex};border:1px solid rgba(0,0,0,.06)"></div><div style="font-size:9px;color:var(--muted);text-align:center;max-width:48px">${c}</div></div>`;
+  }).join('');
+
+  document.getElementById('drawer-body').innerHTML=`
+    <div class="drawer-thumb">${thumb}</div>
+    <div class="drawer-name">${b.name}</div>
+    <div class="drawer-tagline">${b.tagline}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+      <span class="bp-meta-tag">${b.size}</span>
+      <span class="bp-meta-tag">${b.stems} stems</span>
+      <span class="bp-meta-tag">${b.focals} focal clusters</span>
+      <span class="bp-meta-tag">${b.style}</span>
+      <span class="bp-meta-tag">${b.season}</span>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-sec-title">Palette</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">${palSwatches}</div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-sec-title">Emotion Profile</div>
+      <div class="emotion-cloud">${emotionTags}</div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-sec-title">Element Placement (${b.elements.length} elements)</div>
+      <div class="element-list">${elRows}</div>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-sec-title">WGS Genome</div>
+      <div class="genome-box">${b.genome}</div>
+      <button onclick="navigator.clipboard.writeText('${b.genome}').then(()=>toast('Genome copied','🧬'))" style="margin-top:8px;padding:5px 12px;background:var(--sage-ll);border:1px solid rgba(80,99,71,.2);border-radius:3px;font-size:10px;font-weight:500;color:var(--sage-d);cursor:pointer;font-family:'DM Sans',sans-serif">Copy Genome</button>
+    </div>
+
+    <div class="drawer-section">
+      <div class="drawer-sec-title">What's Included</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        ${['Polar-coordinate blueprint with clock positions','Step-by-step build guide with attachment methods','Full materials checklist with stem counts','Midjourney render prompt + 2 variations','Etsy listing copy with 13 SEO tags','WGS Genome String for sharing'].map(t=>`<div style="font-size:12px;font-weight:300;color:var(--ink2);display:flex;gap:8px"><span style="color:var(--sage);font-size:10px;margin-top:2px">✦</span>${t}</div>`).join('')}
+      </div>
+    </div>`;
+
+  const btnHtml=b.free
+    ?`<button class="btn-drawer-cart free-dl" onclick="downloadFree(${b.id})">↓ Download Free Blueprint</button>`
+    :`<button class="btn-drawer-cart ${ic?'in-cart':''}" id="drawer-cart-btn" onclick="toggleCart(${b.id});updateDrawerBtn()">${ic?'In Cart — View Cart':'Add to Cart — $'+b.price}</button>`;
+  document.getElementById('drawer-footer').innerHTML=`
+    <div class="drawer-price-row">
+      <div class="drawer-price">${b.free?`<span style="font-size:16px;font-family:'DM Sans',sans-serif;color:var(--sage-d);font-weight:500">Free Download</span>`:`$${b.price}<small>digital download</small>`}</div>
+    </div>
+    ${btnHtml}`;
+
+  document.getElementById('drawer-overlay').classList.add('on');
+}
+function updateDrawerBtn(){
+  const b=BLUEPRINTS.find(x=>x.id===openDrawerId);if(!b)return;
+  const btn=document.getElementById('drawer-cart-btn');if(!btn)return;
+  const ic=inCart(b.id);
+  btn.className='btn-drawer-cart'+(ic?' in-cart':'');
+  btn.textContent=ic?'In Cart — View Cart':'Add to Cart — $'+b.price;
+}
+function closeDrawer(e){if(e.target===document.getElementById('drawer-overlay'))closeDrawerDirect();}
+function closeDrawerDirect(){document.getElementById('drawer-overlay').classList.remove('on');}
+
+// ── CART ─────────────────────────────────────────────────────────
+function toggleCart(id){
+  const b=BLUEPRINTS.find(x=>x.id===id);if(!b||b.free)return;
+  if(inCart(id)){cart=cart.filter(c=>c.id!==id);toast(`Removed: ${b.name}`,'🗑');}
+  else{cart.push({id:b.id,name:b.name,price:b.price});toast(`Added: ${b.name} ($${b.price})`,'🛒');}
+  updateCartUI();renderLibrary();
+}
+function updateCartUI(){
+  const count=document.getElementById('cart-count');
+  const n=cart.length;
+  count.textContent=n;count.style.display=n?'flex':'none';
+  const items=document.getElementById('cart-items');
+  const total=cart.reduce((s,c)=>s+c.price,0);
+  if(cart.length===0){
+    items.innerHTML='<div class="cart-empty">🛒<br>Your cart is empty</div>';
+  } else {
+    items.innerHTML=cart.map(c=>`<div class="cart-item">
+      <div class="cart-item-name">${c.name}</div>
+      <div class="cart-item-price">$${c.price}</div>
+      <button class="cart-rm" onclick="toggleCart(${c.id})">✕</button>
+    </div>`).join('');
+  }
+  document.getElementById('cart-total').textContent='$'+total;
+  document.getElementById('btn-checkout').disabled=cart.length===0;
+}
+function openCart(){document.getElementById('cart-overlay').classList.add('on');}
+function closeCart(e){if(e.target===document.getElementById('cart-overlay'))closeCartDirect();}
+function closeCartDirect(){document.getElementById('cart-overlay').classList.remove('on');}
+function checkout(){toast('Redirecting to checkout…','💳');setTimeout(closeCartDirect,1200);}
+function downloadFree(id){const b=BLUEPRINTS.find(x=>x.id===id);toast(`Downloading: ${b.name}`,'📄');}
+
+// ── UTILS ────────────────────────────────────────────────────────
+function toast(msg,icon='🌿'){
+  const t=document.getElementById('toast');
+  t.innerHTML=icon+' <span>'+msg+'</span>';
+  t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2400);
+}
+
+// ── INIT ─────────────────────────────────────────────────────────
+renderLibrary();
+</script>
+</body>
+</html>

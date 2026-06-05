@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blooma — AI Wreath Design Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#F8F4EE;--cream-dark:#EDE8DF;--parchment:#E4DDD0;
+  --bark:#7C6A56;--bark-dark:#4A3F32;
+  --moss:#4A6741;--moss-light:#D4E4CF;--moss-dark:#2D4229;
+  --rose:#C4746A;--rose-light:#F2E0DC;--rose-dark:#7A3E37;
+  --gold:#B8912A;--gold-light:#F5EDD4;--gold-dark:#6B530F;
+  --ink:#1C1814;--ink-mid:#3D3529;--muted:#8A7D6F;
+  --border:rgba(124,106,86,0.18);--border-strong:rgba(124,106,86,0.35);
+  --shadow:0 2px 24px rgba(28,24,20,0.08);--shadow-lg:0 8px 48px rgba(28,24,20,0.14);
+  --r:6px;--r-lg:12px;--r-xl:20px
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);overflow-x:hidden}
+.page{display:none;min-height:100vh}.page.active{display:block}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;background:rgba(248,244,238,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;letter-spacing:.04em;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:8px}
+.nav-logo span{color:var(--moss)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:13px;color:var(--muted);text-decoration:none;cursor:pointer;transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-actions{display:flex;align-items:center;gap:12px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:9px 20px;border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;border:none;text-decoration:none}
+.btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--border-strong);color:var(--ink)}
+.btn-primary{background:var(--moss);color:#fff}
+.btn-primary:hover{background:var(--moss-dark)}
+.btn-outline{background:transparent;color:var(--ink);border:1px solid var(--border-strong)}
+.btn-outline:hover{background:var(--cream-dark)}
+.btn-gold{background:var(--gold);color:#fff}
+.btn-gold:hover{background:var(--gold-dark)}
+.btn-lg{padding:14px 32px;font-size:15px;border-radius:var(--r-lg)}
+.btn-xl{padding:18px 40px;font-size:16px;border-radius:var(--r-lg)}
+.btn-ai{background:linear-gradient(135deg,var(--moss),#2D6B8A);color:#fff;border:none}
+.btn-ai:hover{opacity:.9}
+
+/* LANDING */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:120px 48px 80px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0;background:radial-gradient(ellipse 900px 600px at 70% 40%,rgba(74,103,65,.07) 0%,transparent 70%),radial-gradient(ellipse 600px 400px at 20% 70%,rgba(196,116,106,.06) 0%,transparent 60%)}
+.hero-ring{position:absolute;right:-60px;top:50%;transform:translateY(-50%);width:580px;height:580px;border-radius:50%;border:1px solid rgba(74,103,65,.12);pointer-events:none}
+.hero-ring::before{content:'';position:absolute;inset:40px;border-radius:50%;border:1px solid rgba(74,103,65,.08)}
+.hero-ring::after{content:'';position:absolute;inset:80px;border-radius:50%;border:1px dashed rgba(74,103,65,.06)}
+.hero-content{position:relative;z-index:1;max-width:640px}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:99px;background:var(--moss-light);color:var(--moss-dark);font-size:12px;font-weight:500;margin-bottom:28px}
+.hero-badge::before{content:'●';font-size:7px;color:var(--moss)}
+h1{font-family:'Cormorant Garamond',serif;font-size:72px;font-weight:400;line-height:1.05;letter-spacing:-.01em;color:var(--ink);margin-bottom:24px}
+h1 em{font-style:italic;color:var(--moss)}
+h1 span{color:var(--rose)}
+.hero-sub{font-size:17px;line-height:1.7;color:var(--muted);max-width:500px;margin-bottom:40px;font-weight:300}
+.hero-cta{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hero-trust{margin-top:56px;display:flex;align-items:center;gap:28px}
+.trust-stat .num{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;color:var(--ink)}
+.trust-stat .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.trust-div{width:1px;height:36px;background:var(--border)}
+
+.section{padding:100px 48px}
+.sec-center{text-align:center;max-width:640px;margin:0 auto 64px}
+h2{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:400;line-height:1.1;color:var(--ink);margin-bottom:16px}
+h2 em{font-style:italic;color:var(--moss)}
+.sec-sub{font-size:16px;color:var(--muted);line-height:1.7;font-weight:300}
+
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto}
+.feat-card{padding:32px;border-radius:var(--r-xl);background:#fff;border:1px solid var(--border);transition:all .3s;position:relative;overflow:hidden}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--moss),var(--rose));opacity:0;transition:opacity .3s}
+.feat-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.feat-card:hover::before{opacity:1}
+.feat-card.ai-card{background:linear-gradient(135deg,#F0F5EE,#E8F0F5);border-color:rgba(74,103,65,.3)}
+.feat-card.ai-card::before{opacity:1}
+.feat-icon{width:44px;height:44px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:20px;background:var(--cream)}
+.feat-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;margin-bottom:10px}
+.feat-desc{font-size:14px;color:var(--muted);line-height:1.7;font-weight:300}
+
+/* AI FEATURE SHOWCASE on landing */
+.ai-showcase{background:var(--ink);padding:80px 48px;overflow:hidden;position:relative}
+.ai-showcase::before{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(74,103,65,.15),transparent 70%);pointer-events:none}
+.showcase-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;max-width:1100px;margin:0 auto;align-items:center}
+.showcase-text h2{color:var(--cream)}
+.showcase-text h2 em{color:#7EB87A}
+.showcase-text .sec-sub{color:rgba(248,244,238,.55)}
+.prompt-demo{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:var(--r-xl);overflow:hidden}
+.prompt-demo-header{padding:14px 16px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:8px}
+.prompt-demo-dot{width:8px;height:8px;border-radius:50%}
+.thread-demo{padding:16px;display:flex;flex-direction:column;gap:10px;max-height:320px;overflow:hidden}
+.thread-msg{padding:10px 13px;border-radius:10px;font-size:13px;line-height:1.6;max-width:88%}
+.thread-msg.user{background:rgba(74,103,65,.25);color:rgba(248,244,238,.85);align-self:flex-end;border-radius:10px 10px 2px 10px}
+.thread-msg.ai{background:rgba(255,255,255,.07);color:rgba(248,244,238,.7);align-self:flex-start;border-radius:2px 10px 10px 10px}
+.thread-msg.ai strong{color:rgba(248,244,238,.9)}
+.chips-demo{display:flex;gap:6px;flex-wrap:wrap;padding:0 16px 16px}
+.chip-demo{padding:5px 11px;border-radius:99px;background:rgba(255,255,255,.07);color:rgba(248,244,238,.6);font-size:11px;border:1px solid rgba(255,255,255,.12);cursor:pointer}
+.prompt-input-demo{display:flex;align-items:center;gap:8px;padding:12px 16px;border-top:1px solid rgba(255,255,255,.07)}
+.prompt-input-demo input{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:8px 12px;color:rgba(248,244,238,.8);font-size:13px;font-family:'DM Sans',sans-serif}
+.prompt-input-demo input::placeholder{color:rgba(248,244,238,.3)}
+.prompt-input-demo input:focus{outline:none;border-color:rgba(74,103,65,.5)}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;max-width:1000px;margin:0 auto}
+.step{padding:32px 24px;text-align:center;position:relative}
+.step:not(:last-child)::after{content:'→';position:absolute;right:-8px;top:50%;transform:translateY(-60%);font-size:18px;color:var(--parchment)}
+.step-num{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:300;color:var(--parchment);line-height:1;margin-bottom:12px}
+.step-title{font-weight:500;font-size:15px;margin-bottom:8px}
+.step-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* pricing */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:960px;margin:0 auto}
+.pricing-card{padding:36px;border-radius:var(--r-xl);background:#fff;border:1px solid var(--border);position:relative}
+.pricing-card.featured{border-color:var(--moss);background:var(--ink);box-shadow:var(--shadow-lg)}
+.pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--moss);color:#fff;font-size:11px;font-weight:500;padding:4px 14px;border-radius:99px;white-space:nowrap}
+.plan-name{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;margin-bottom:6px}
+.featured .plan-name{color:var(--cream)}
+.plan-desc{font-size:13px;color:var(--muted);margin-bottom:28px;line-height:1.5}
+.featured .plan-desc{color:rgba(248,244,238,.5)}
+.plan-price{display:flex;align-items:baseline;gap:4px;margin-bottom:28px}
+.price-num{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:400;color:var(--ink)}
+.featured .price-num{color:var(--cream)}
+.price-period{font-size:13px;color:var(--muted)}
+.featured .price-period{color:rgba(248,244,238,.5)}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:32px}
+.plan-features li{font-size:13px;display:flex;align-items:flex-start;gap:8px;color:var(--ink-mid);line-height:1.5}
+.featured .plan-features li{color:rgba(248,244,238,.75)}
+.plan-features li::before{content:'✓';color:var(--moss);font-weight:500;flex-shrink:0;margin-top:1px}
+.featured .plan-features li::before{color:#7EB87A}
+.plan-features li.locked::before{content:'–';color:var(--parchment)}
+.featured .plan-features li.locked{opacity:.4}
+
+/* testimonials */
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1060px;margin:0 auto}
+.test-card{padding:28px;border-radius:var(--r-xl);background:#fff;border:1px solid var(--border)}
+.test-text{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;line-height:1.6;color:var(--ink);margin-bottom:20px;font-style:italic}
+.test-author{display:flex;align-items:center;gap:10px}
+.test-avatar{width:36px;height:36px;border-radius:50%;background:var(--moss-light);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--moss-dark);flex-shrink:0}
+.stars{color:var(--gold);font-size:12px;letter-spacing:1px;margin-bottom:14px}
+
+/* footer */
+footer{background:var(--ink);color:rgba(248,244,238,.6);padding:60px 48px 32px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;color:var(--cream);margin-bottom:12px}
+.footer-tagline{font-size:13px;line-height:1.7;font-weight:300;max-width:240px}
+.footer-heading{font-size:12px;font-weight:500;color:var(--cream);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:8px}
+.footer-links a{font-size:13px;color:rgba(248,244,238,.5);text-decoration:none;cursor:pointer;transition:color .2s}
+.footer-links a:hover{color:var(--cream)}
+.footer-bottom{border-top:1px solid rgba(248,244,238,.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center}
+.footer-copy{font-size:12px}
+
+/* DASHBOARD */
+.app-layout{display:flex;height:100vh;padding-top:64px}
+.app-sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--border);background:#fff;display:flex;flex-direction:column;padding:20px 12px;overflow-y:auto}
+.sidebar-section{margin-bottom:24px}
+.sidebar-label{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;padding:0 8px;margin-bottom:4px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:var(--r);cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;border:none;background:transparent;width:100%;text-align:left}
+.sidebar-item:hover{background:var(--cream);color:var(--ink)}
+.sidebar-item.active{background:var(--moss-light);color:var(--moss-dark);font-weight:500}
+.sidebar-item .icon{font-size:15px;width:20px;text-align:center;flex-shrink:0}
+.plan-badge{margin-top:auto;padding:14px;border-radius:var(--r-lg);background:var(--gold-light);border:1px solid rgba(184,145,42,.2)}
+.plan-badge-title{font-size:12px;font-weight:500;color:var(--gold-dark);margin-bottom:4px}
+.plan-badge-sub{font-size:11px;color:var(--bark);line-height:1.4;margin-bottom:10px}
+.app-content{flex:1;overflow-y:auto;background:var(--cream)}
+.dash-header{padding:32px 36px 20px;border-bottom:1px solid var(--border);background:#fff}
+.dash-title{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--ink)}
+.dash-sub{font-size:14px;color:var(--muted);margin-top:4px}
+.dash-body{padding:28px 36px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 22px}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:400;color:var(--ink);line-height:1}
+.stat-label{font-size:12px;color:var(--muted);margin-top:4px;font-weight:300}
+.stat-delta{font-size:11px;color:var(--moss);margin-top:6px}
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.sec-heading{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500}
+.layout-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px}
+.layout-card{background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;cursor:pointer;transition:all .2s}
+.layout-card:hover{box-shadow:var(--shadow);transform:translateY(-2px)}
+.layout-thumb{height:140px;background:var(--cream);display:flex;align-items:center;justify-content:center}
+.layout-info{padding:14px}
+.layout-name{font-size:13px;font-weight:500;margin-bottom:3px}
+.layout-meta{font-size:11px;color:var(--muted);display:flex;gap:8px}
+.tag{display:inline-block;padding:1px 7px;border-radius:99px;font-size:10px;font-weight:500}
+.tag-romantic{background:#F2E0DC;color:#7A3E37}
+.tag-calm{background:#D4E4CF;color:#2D4229}
+.tag-festive{background:#FAEEDA;color:#6B530F}
+.new-layout{background:#fff;border:1.5px dashed var(--parchment);border-radius:var(--r-lg);height:220px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:all .2s;color:var(--muted)}
+.new-layout:hover{border-color:var(--moss);color:var(--moss);background:var(--moss-light)}
+.activity-list{display:flex;flex-direction:column;gap:0}
+.activity-item{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)}
+.activity-item:last-child{border-bottom:none}
+.activity-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.activity-text{font-size:13px;color:var(--ink-mid);line-height:1.5}
+.activity-time{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* STUDIO */
+#studioPage{padding-top:64px}
+.studio-wrap{display:grid;grid-template-columns:220px 1fr 260px;height:calc(100vh - 64px)}
+.s-left{border-right:1px solid var(--border);background:#fff;display:flex;flex-direction:column;padding:14px 11px;gap:14px;overflow-y:auto}
+.s-right{border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.s-main{display:flex;flex-direction:column;align-items:center;background:var(--cream);overflow:hidden;position:relative}
+.panel-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:5px}
+.tool-row{display:flex;flex-direction:column;gap:2px}
+.tool-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r);cursor:pointer;font-size:12px;color:var(--muted);background:transparent;border:none;transition:all .15s;text-align:left;width:100%}
+.tool-item:hover{background:var(--cream);color:var(--ink)}
+.tool-item.active{background:var(--moss-light);color:var(--moss-dark);font-weight:500}
+.tool-icon{width:20px;height:20px;background:var(--cream-dark);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0}
+.emo-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.emo-pill{padding:5px 0;border-radius:99px;font-size:11px;text-align:center;cursor:pointer;border:1.5px solid transparent;font-weight:500;transition:all .15s}
+.emo-romantic{background:var(--rose-light);color:var(--rose-dark)}.emo-romantic.ea{border-color:var(--rose)}
+.emo-calm{background:var(--moss-light);color:var(--moss-dark)}.emo-calm.ea{border-color:var(--moss)}
+.emo-bold{background:#E8E6F8;color:#3A2F8A}.emo-bold.ea{border-color:#534AB7}
+.emo-cozy{background:var(--gold-light);color:var(--gold-dark)}.emo-cozy.ea{border-color:var(--gold)}
+.emo-festive{background:#FAECE7;color:#6B3020}.emo-festive.ea{border-color:#D85A30}
+.emo-fresh{background:#E4F2D8;color:#2D4229}.emo-fresh.ea{border-color:#3B6D11}
+canvas#wreathCanvas{display:block;cursor:crosshair;border-radius:50%}
+.view-tabs{display:flex;background:var(--cream-dark);border-radius:8px;padding:3px;gap:2px}
+.view-tab{padding:5px 16px;border-radius:6px;font-size:12px;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;font-weight:400;transition:all .15s}
+.view-tab.active{background:#fff;color:var(--ink);font-weight:500;box-shadow:0 1px 4px rgba(28,24,20,.08)}
+.health-track{height:5px;border-radius:3px;background:var(--parchment);overflow:hidden;margin-bottom:5px}
+.health-fill{height:100%;border-radius:3px;background:var(--moss);transition:width .4s}
+.health-fill.warn{background:var(--gold)}
+.health-fill.bad{background:var(--rose)}
+.anchor-chips{display:flex;flex-direction:column;gap:3px;max-height:100px;overflow-y:auto}
+.anchor-chip{display:flex;align-items:center;gap:7px;padding:5px 8px;border-radius:var(--r);background:var(--cream);font-size:11px;color:var(--ink-mid)}
+.chip-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.chip-rm{margin-left:auto;cursor:pointer;color:var(--muted);font-size:14px;line-height:1}
+.chip-rm:hover{color:var(--ink)}
+.emo-tags{display:flex;flex-wrap:wrap;gap:4px}
+.emo-tag{padding:3px 9px;border-radius:99px;font-size:10px;font-weight:500}
+.slider-row{display:flex;align-items:center;gap:8px}
+.slider-row input[type=range]{flex:1;accent-color:var(--moss)}
+.slval{font-size:12px;font-weight:500;min-width:32px;text-align:right;color:var(--ink-mid)}
+.action-grp{display:flex;flex-direction:column;gap:5px}
+.action-grp .btn{width:100%;justify-content:center;font-size:12px;padding:8px 12px}
+select{font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 10px;border:1px solid var(--border-strong);border-radius:var(--r);background:#fff;color:var(--ink);width:100%;cursor:pointer}
+select:focus{outline:none;border-color:var(--moss)}
+
+/* ═══ AI PROMPT PANEL (right side of studio) ═══ */
+.ai-panel-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0}
+.ai-tab{flex:1;padding:11px 8px;font-size:12px;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;border-bottom:2px solid transparent;transition:all .15s;font-weight:400}
+.ai-tab.active{color:var(--ink);font-weight:500;border-bottom-color:var(--moss)}
+
+/* Thread tab */
+.thread-panel{display:flex;flex-direction:column;flex:1;overflow:hidden}
+.thread-scroll{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.thread-scroll::-webkit-scrollbar{width:3px}
+.thread-scroll::-webkit-scrollbar-thumb{background:var(--parchment);border-radius:2px}
+
+.msg{max-width:90%;font-size:12.5px;line-height:1.6}
+.msg.user-msg{align-self:flex-end}
+.msg.ai-msg{align-self:flex-start}
+.msg-bubble{padding:9px 12px;border-radius:10px;line-height:1.6}
+.user-msg .msg-bubble{background:var(--moss);color:#fff;border-radius:10px 10px 2px 10px}
+.ai-msg .msg-bubble{background:var(--cream);color:var(--ink-mid);border-radius:2px 10px 10px 10px;border:1px solid var(--border)}
+.msg-meta{font-size:10px;color:var(--muted);margin-top:3px;text-align:right}
+.ai-msg .msg-meta{text-align:left}
+
+.ai-typing{display:none;align-self:flex-start;padding:10px 12px;background:var(--cream);border:1px solid var(--border);border-radius:2px 10px 10px 10px}
+.ai-typing.show{display:flex}
+.dot-pulse{display:flex;gap:4px;align-items:center}
+.dot-pulse span{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:pulse 1.2s infinite}
+.dot-pulse span:nth-child(2){animation-delay:.2s}
+.dot-pulse span:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+.suggestion-chips{padding:8px 14px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:5px;flex-shrink:0;min-height:48px;align-items:center}
+.sug-chip{padding:4px 10px;border-radius:99px;background:var(--cream);border:1px solid var(--border-strong);font-size:11px;color:var(--ink-mid);cursor:pointer;transition:all .15s;white-space:nowrap}
+.sug-chip:hover{background:var(--moss-light);border-color:var(--moss);color:var(--moss-dark)}
+
+.prompt-bar{padding:10px 12px;border-top:1px solid var(--border);background:#fff;flex-shrink:0}
+.prompt-input-wrap{display:flex;align-items:flex-end;gap:6px;background:var(--cream);border:1.5px solid var(--border-strong);border-radius:var(--r-lg);padding:8px 10px;transition:border-color .2s}
+.prompt-input-wrap:focus-within{border-color:var(--moss)}
+.prompt-textarea{flex:1;border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);resize:none;min-height:20px;max-height:80px;line-height:1.5;overflow-y:auto}
+.prompt-textarea:focus{outline:none}
+.prompt-textarea::placeholder{color:var(--muted)}
+.prompt-send{width:30px;height:30px;border-radius:8px;background:var(--moss);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;align-self:flex-end}
+.prompt-send:hover{background:var(--moss-dark)}
+.prompt-send svg{width:14px;height:14px;fill:#fff}
+.prompt-send:disabled{opacity:.4;cursor:not-allowed}
+.prompt-hint{font-size:10px;color:var(--muted);margin-top:5px;text-align:center}
+
+/* Stats tab */
+.stats-panel{padding:14px;display:flex;flex-direction:column;gap:12px;overflow-y:auto;flex:1}
+.mini-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mini-stat{background:var(--cream);border-radius:var(--r);padding:10px}
+.mini-stat-num{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--ink)}
+.mini-stat-label{font-size:10px;color:var(--muted)}
+
+/* Presets tab */
+.presets-panel{padding:14px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;flex:1}
+.preset-item{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--cream);border-radius:var(--r-lg);border:1px solid var(--border);cursor:pointer;transition:all .15s}
+.preset-item:hover{background:var(--moss-light);border-color:var(--moss)}
+.preset-name{font-size:12px;font-weight:500;color:var(--ink-mid)}
+.preset-desc{font-size:10px;color:var(--muted);margin-top:2px}
+.preset-run{font-size:10px;color:var(--moss);white-space:nowrap;margin-left:8px}
+
+/* canvas top bar */
+.canvas-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-bottom:1px solid var(--border);width:100%;flex-shrink:0}
+.canvas-hint-text{font-size:11px;color:var(--muted)}
+.canvas-actions{display:flex;gap:6px}
+.canvas-actions .btn{font-size:11px;padding:6px 12px}
+.canvas-center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:0;position:relative;overflow:hidden}
+
+/* anchor drop animation */
+@keyframes anchorIn{from{opacity:0;transform:scale(0)}to{opacity:1;transform:scale(1)}}
+.anchor-anim{animation:anchorIn .25s cubic-bezier(.34,1.56,.64,1) both}
+
+/* PRICING */
+#pricingPage{padding-top:80px}
+.pricing-hero{text-align:center;padding:60px 48px 48px}
+.toggle-billing{display:inline-flex;align-items:center;gap:12px;margin-top:20px;font-size:13px;color:var(--muted)}
+.tog-track{width:40px;height:22px;border-radius:11px;background:var(--moss);cursor:pointer;position:relative;transition:background .2s}
+.tog-thumb{width:16px;height:16px;border-radius:50%;background:#fff;position:absolute;top:3px;left:3px;transition:transform .2s}
+.tog-track.monthly .tog-thumb{transform:translateX(18px)}
+.save-badge{background:var(--moss-light);color:var(--moss-dark);font-size:11px;font-weight:500;padding:2px 8px;border-radius:99px}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;z-index:300;background:rgba(28,24,20,.5);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--r-xl);padding:40px;max-width:440px;width:90%;box-shadow:var(--shadow-lg);animation:slideUp .25s ease;position:relative}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.modal h3{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:400;margin-bottom:8px}
+.modal-sub{font-size:14px;color:var(--muted);margin-bottom:28px;line-height:1.5}
+.form-group{margin-bottom:16px}
+.form-label{font-size:12px;font-weight:500;color:var(--ink-mid);margin-bottom:6px;display:block}
+.form-input{width:100%;padding:10px 14px;border:1px solid var(--border-strong);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);background:#fff;transition:border-color .2s}
+.form-input:focus{outline:none;border-color:var(--moss)}
+.form-divider{text-align:center;font-size:12px;color:var(--muted);margin:20px 0;position:relative}
+.form-divider::before,.form-divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:var(--border)}
+.form-divider::before{left:0}.form-divider::after{right:0}
+.modal-close{position:absolute;top:16px;right:20px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--muted)}
+
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.fi{animation:fadeIn .5s ease both}
+.fi1{animation-delay:.1s}.fi2{animation-delay:.2s}.fi3{animation-delay:.3s}.fi4{animation-delay:.4s}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--parchment);border-radius:2px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo" onclick="showPage('landing')">🌿 <span>Blooma</span></div>
+  <div class="nav-links">
+    <a onclick="showPage('landing')">Features</a>
+    <a onclick="showPage('pricing')">Pricing</a>
+    <a onclick="showPage('landing')">How it works</a>
+  </div>
+  <div class="nav-actions">
+    <button class="btn btn-ghost" onclick="openModal('loginModal')">Sign in</button>
+    <button class="btn btn-primary" onclick="openModal('signupModal')">Start free →</button>
+  </div>
+</nav>
+
+<!-- ═══ LANDING ═══ -->
+<div id="landingPage" class="page active">
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-ring"></div>
+    <div class="hero-content">
+      <div class="hero-badge fi">Now with AI prompt design</div>
+      <h1 class="fi fi1">Design wreaths<br><em>that sell</em> — <span>faster</span></h1>
+      <p class="hero-sub fi fi2">Describe a wreath in plain words and watch AI place the anchors, map the emotions, and build the structure — then refine with natural conversation.</p>
+      <div class="hero-cta fi fi3">
+        <button class="btn btn-primary btn-xl" onclick="showPage('dashboard')">Start designing free</button>
+        <button class="btn btn-outline btn-lg" onclick="showPage('studio')">Try the studio →</button>
+      </div>
+      <div class="hero-trust fi fi4">
+        <div class="trust-stat"><div class="num">4,200+</div><div class="label">Designers</div></div>
+        <div class="trust-div"></div>
+        <div class="trust-stat"><div class="num">18k</div><div class="label">Wreaths created</div></div>
+        <div class="trust-div"></div>
+        <div class="trust-stat"><div class="num">4.9★</div><div class="label">Rating</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Feature showcase -->
+  <div class="ai-showcase">
+    <div class="showcase-grid">
+      <div class="showcase-text">
+        <h2>Meet your<br><em>AI co-designer</em></h2>
+        <p class="sec-sub" style="margin-top:16px;margin-bottom:28px;">Describe what you want in plain language. The AI parses your intent — symmetry, emotion, density, style — and builds the wreath structure in seconds. Keep talking to refine it.</p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <div style="width:24px;height:24px;border-radius:50%;background:rgba(74,103,65,.25);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;">✓</div>
+            <div style="font-size:14px;color:rgba(248,244,238,.6);line-height:1.5;font-weight:300;">Natural language → anchor map in seconds</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <div style="width:24px;height:24px;border-radius:50%;background:rgba(74,103,65,.25);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;">✓</div>
+            <div style="font-size:14px;color:rgba(248,244,238,.6);line-height:1.5;font-weight:300;">Conversational refinement — iterate in chat</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <div style="width:24px;height:24px;border-radius:50%;background:rgba(74,103,65,.25);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;">✓</div>
+            <div style="font-size:14px;color:rgba(248,244,238,.6);line-height:1.5;font-weight:300;">One-tap suggestion chips after every generation</div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:10px;">
+            <div style="width:24px;height:24px;border-radius:50%;background:rgba(74,103,65,.25);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;">✓</div>
+            <div style="font-size:14px;color:rgba(248,244,238,.6);line-height:1.5;font-weight:300;">Save successful prompts as reusable presets</div>
+          </div>
+        </div>
+        <div style="margin-top:32px;">
+          <button class="btn btn-primary btn-lg" onclick="showPage('studio')">Try it in the studio →</button>
+        </div>
+      </div>
+      <div class="prompt-demo">
+        <div class="prompt-demo-header">
+          <div class="prompt-demo-dot" style="background:#FF5F57"></div>
+          <div class="prompt-demo-dot" style="background:#FEBC2E"></div>
+          <div class="prompt-demo-dot" style="background:#28C840"></div>
+          <span style="font-size:11px;color:rgba(248,244,238,.4);margin-left:8px;">Blooma AI Prompt — Layout Studio</span>
+        </div>
+        <div class="thread-demo">
+          <div class="thread-msg user">A lush asymmetric Christmas wreath, heavy on the left, cozy warm feeling, big ribbon at the bottom</div>
+          <div class="thread-msg ai"><strong>Got it.</strong> I'm placing 12 anchors — a heavy focal cluster at 8 o'clock with 3 large florals, trailing greenery through the upper-left quadrant, and a ribbon zone at 6 o'clock. Emotion is primarily cozy with festive accents. Density is heavy on the left, tapering right.</div>
+          <div class="thread-msg user">Make it a bit less busy on the left</div>
+          <div class="thread-msg ai">Removed 2 support anchors from the 9–10 o'clock zone. The focal cluster stays strong but it breathes more now. Left density reduced from heavy → medium-heavy.</div>
+        </div>
+        <div class="chips-demo">
+          <div class="chip-demo">Add gold accents</div>
+          <div class="chip-demo">More drama</div>
+          <div class="chip-demo">Minimal version</div>
+          <div class="chip-demo">Save as preset</div>
+        </div>
+        <div class="prompt-input-demo">
+          <input type="text" placeholder="Describe a change or ask for a variation…" readonly>
+          <button class="btn btn-primary" style="padding:7px 14px;font-size:12px;flex-shrink:0;">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features -->
+  <section class="section" style="background:#fff;">
+    <div class="sec-center">
+      <h2>Everything you need to <em>design & deliver</em></h2>
+      <p class="sec-sub">From a single sentence to a client-ready wreath — Blooma handles the entire creative workflow.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card ai-card">
+        <div class="feat-icon" style="background:var(--moss-light);">✦</div>
+        <div class="feat-title">AI Prompt Designer</div>
+        <p class="feat-desc">Describe your wreath in plain language. AI parses intent, maps emotions to anchor types, and builds the layout structure — then refines with each reply.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🎨</div>
+        <div class="feat-title">Layout Studio</div>
+        <p class="feat-desc">Interactive ring canvas where you manually place anchors, define clusters, and paint emotion zones for precise creative control.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">🌿</div>
+        <div class="feat-title">Emotion Zoning</div>
+        <p class="feat-desc">Tag ring segments with moods — calm base, festive accent, cozy fill. Nuanced emotional gradients across zones let AI match materials to feeling.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">3 AI Variants</div>
+        <p class="feat-desc">One layout, three interpretations. Different palettes and density shown side by side so clients see options instantly.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📐</div>
+        <div class="feat-title">Prompt Presets</div>
+        <p class="feat-desc">Save successful prompts as named presets. Your signature autumn asymmetric or spring romantic — one click to rerun on any new canvas.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon">📦</div>
+        <div class="feat-title">Export & List</div>
+        <p class="feat-desc">Export mockups for Etsy or send JSON blueprints to your workshop. Link layouts directly to product SKUs in your shop.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="section">
+    <div class="sec-center"><h2>From words to <em>finished design</em></h2></div>
+    <div class="steps">
+      <div class="step"><div class="step-num">01</div><div class="step-title">Describe your wreath</div><p class="step-desc">Type a natural language description in the AI prompt bar inside Layout Studio.</p></div>
+      <div class="step"><div class="step-num">02</div><div class="step-title">AI builds the layout</div><p class="step-desc">Anchors appear on the canvas with emotions, types, and roles assigned from your intent.</p></div>
+      <div class="step"><div class="step-num">03</div><div class="step-title">Refine in conversation</div><p class="step-desc">Reply to the thread with adjustments — "less busy", "add ribbon", "more romantic" — and watch the canvas update.</p></div>
+      <div class="step"><div class="step-num">04</div><div class="step-title">Generate & export</div><p class="step-desc">Trigger AI fill for the full render, pick from 3 variants, and export your client-ready mockup.</p></div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section" style="background:#fff;">
+    <div class="sec-center"><h2>Loved by wreath <em>designers everywhere</em></h2></div>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p class="test-text">"I just typed 'cozy Christmas, heavy left, ribbon at bottom' and Blooma built the entire anchor map. I've never gotten to a client mockup so fast."</p>
+        <div class="test-author"><div class="test-avatar">SR</div><div><div style="font-size:13px;font-weight:500;">Sarah R.</div><div style="font-size:11px;color:var(--muted);">Etsy seller, 3k+ sales</div></div></div>
+      </div>
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p class="test-text">"The conversation refinement is magic. I just keep saying 'a little more romantic' or 'shift the cluster right' and it updates perfectly. It's like having an assistant."</p>
+        <div class="test-author"><div class="test-avatar" style="background:#E8E6F8;color:#3A2F8A;">MK</div><div><div style="font-size:13px;font-weight:500;">Mara K.</div><div style="font-size:11px;color:var(--muted);">Floral designer, Chicago</div></div></div>
+      </div>
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p class="test-text">"I saved all my seasonal styles as prompt presets. Now every October I just run 'my signature autumn' and it loads my entire structure in one click."</p>
+        <div class="test-avatar-wrap" style="display:flex;align-items:center;gap:10px;"><div class="test-avatar" style="background:var(--gold-light);color:var(--gold-dark);">TL</div><div><div style="font-size:13px;font-weight:500;">Teresa L.</div><div style="font-size:11px;color:var(--muted);">Workshop instructor</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section style="background:var(--ink);padding:80px 48px;text-align:center;">
+    <h2 style="color:var(--cream);max-width:560px;margin:0 auto 20px;font-size:42px;">Start designing your<br><em style="color:#7EB87A;">best wreaths</em> today</h2>
+    <p style="color:rgba(248,244,238,.5);margin-bottom:36px;font-size:16px;font-weight:300;">Free for 5 layouts/month. No credit card required.</p>
+    <button class="btn btn-primary btn-xl" onclick="openModal('signupModal')">Create your free account →</button>
+  </section>
+
+  <footer>
+    <div class="footer-grid">
+      <div><div class="footer-logo">🌿 Blooma</div><p class="footer-tagline">AI-powered wreath design studio for florists, makers, and shop owners who take their craft seriously.</p></div>
+      <div><div class="footer-heading">Product</div><ul class="footer-links"><li><a onclick="showPage('studio')">Layout Studio</a></li><li><a onclick="showPage('pricing')">Pricing</a></li><li><a>Templates</a></li></ul></div>
+      <div><div class="footer-heading">Company</div><ul class="footer-links"><li><a>About</a></li><li><a>Blog</a></li><li><a>Careers</a></li></ul></div>
+      <div><div class="footer-heading">Support</div><ul class="footer-links"><li><a>Documentation</a></li><li><a>Help center</a></li><li><a>Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span class="footer-copy">© 2025 Blooma. All rights reserved.</span><div style="display:flex;gap:20px;"><a style="font-size:12px;color:rgba(248,244,238,.4);text-decoration:none;cursor:pointer;">Privacy</a><a style="font-size:12px;color:rgba(248,244,238,.4);text-decoration:none;cursor:pointer;">Terms</a></div></div>
+  </footer>
+</div>
+
+<!-- ═══ DASHBOARD ═══ -->
+<div id="dashboardPage" class="page">
+  <div class="app-layout">
+    <aside class="app-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Studio</div>
+        <button class="sidebar-item active"><span class="icon">⬜</span> Overview</button>
+        <button class="sidebar-item" onclick="showPage('studio')"><span class="icon">🎨</span> Layout Studio</button>
+        <button class="sidebar-item"><span class="icon">📐</span> My layouts</button>
+        <button class="sidebar-item"><span class="icon">✦</span> Prompt presets</button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Business</div>
+        <button class="sidebar-item"><span class="icon">📦</span> Exports</button>
+        <button class="sidebar-item"><span class="icon">📊</span> Analytics</button>
+        <button class="sidebar-item"><span class="icon">💳</span> Billing</button>
+      </div>
+      <div class="plan-badge">
+        <div class="plan-badge-title">Free plan — 3/5 layouts used</div>
+        <div class="plan-badge-sub">Upgrade to unlock unlimited layouts and 3 AI variants.</div>
+        <button class="btn btn-gold" style="width:100%;font-size:11px;padding:7px;" onclick="showPage('pricing')">Upgrade to Pro →</button>
+      </div>
+    </aside>
+    <main class="app-content">
+      <div class="dash-header">
+        <div class="dash-title">Good morning, Sarah ✦</div>
+        <div class="dash-sub">Here's what's happening with your designs today.</div>
+      </div>
+      <div class="dash-body">
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Layouts created</div><div class="stat-delta">↑ 3 this week</div></div>
+          <div class="stat-card"><div class="stat-num">8</div><div class="stat-label">AI prompts used</div><div class="stat-delta">↑ 5 this week</div></div>
+          <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">Exports sent</div><div class="stat-delta">Etsy mockups</div></div>
+          <div class="stat-card"><div class="stat-num">3/5</div><div class="stat-label">Monthly layouts</div><div class="stat-delta" style="color:var(--gold);">2 remaining</div></div>
+        </div>
+        <div class="sec-hdr"><div class="sec-heading">Recent layouts</div><button class="btn btn-outline" style="font-size:12px;padding:7px 14px;" onclick="showPage('studio')">New layout +</button></div>
+        <div class="layout-grid" style="margin-bottom:28px;">
+          <div class="layout-card" onclick="showPage('studio')"><div class="layout-thumb"><canvas id="tc1" width="180" height="140"></canvas></div><div class="layout-info"><div class="layout-name">Autumn Asymmetric</div><div class="layout-meta"><span>14 anchors</span><span class="tag tag-festive">Festive</span></div></div></div>
+          <div class="layout-card" onclick="showPage('studio')"><div class="layout-thumb"><canvas id="tc2" width="180" height="140"></canvas></div><div class="layout-info"><div class="layout-name">Spring Romantic</div><div class="layout-meta"><span>9 anchors</span><span class="tag tag-romantic">Romantic</span></div></div></div>
+          <div class="layout-card" onclick="showPage('studio')"><div class="layout-thumb"><canvas id="tc3" width="180" height="140"></canvas></div><div class="layout-info"><div class="layout-name">Minimal Calm</div><div class="layout-meta"><span>6 anchors</span><span class="tag tag-calm">Calm</span></div></div></div>
+          <div class="new-layout" onclick="showPage('studio')"><div style="font-size:28px;line-height:1;">+</div><div style="font-size:13px;font-weight:500;">New layout</div><div style="font-size:11px;">2 remaining</div></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+          <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;">
+            <div class="sec-heading" style="font-size:18px;margin-bottom:14px;">Recent activity</div>
+            <div class="activity-list">
+              <div class="activity-item"><div class="activity-dot" style="background:var(--moss)"></div><div><div class="activity-text">AI prompt generated <strong>Autumn Asymmetric</strong></div><div class="activity-time">2 hours ago</div></div></div>
+              <div class="activity-item"><div class="activity-dot" style="background:var(--rose)"></div><div><div class="activity-text">Refined <strong>Spring Romantic</strong> with 3 follow-ups</div><div class="activity-time">Yesterday</div></div></div>
+              <div class="activity-item"><div class="activity-dot" style="background:var(--gold)"></div><div><div class="activity-text">Saved "My Cozy Christmas" as prompt preset</div><div class="activity-time">2 days ago</div></div></div>
+              <div class="activity-item"><div class="activity-dot" style="background:var(--bark)"></div><div><div class="activity-text">Exported mockup to Etsy listing</div><div class="activity-time">3 days ago</div></div></div>
+            </div>
+          </div>
+          <div style="background:#fff;border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;">
+            <div class="sec-heading" style="font-size:18px;margin-bottom:14px;">Quick actions</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <button class="btn btn-ai" style="width:100%;justify-content:flex-start;font-size:13px;" onclick="showPage('studio')">✦ Open AI Prompt Studio</button>
+              <button class="btn btn-outline" style="width:100%;justify-content:flex-start;font-size:13px;" onclick="showPage('studio')">🎨 Open Layout Canvas</button>
+              <button class="btn btn-outline" style="width:100%;justify-content:flex-start;font-size:13px;">📐 Browse prompt presets</button>
+              <button class="btn btn-gold" style="width:100%;justify-content:flex-start;font-size:13px;" onclick="showPage('pricing')">✦ Upgrade — unlock 3 AI variants</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ═══ STUDIO ═══ -->
+<div id="studioPage" class="page">
+  <div class="studio-wrap">
+
+    <!-- Left tools panel -->
+    <div class="s-left">
+      <div>
+        <div class="panel-label">Tool mode</div>
+        <div class="tool-row">
+          <button class="tool-item active" data-tool="anchor" onclick="setTool(this,'anchor')"><span class="tool-icon">⬤</span> Anchor node</button>
+          <button class="tool-item" data-tool="focal" onclick="setTool(this,'focal')"><span class="tool-icon">✦</span> Focal cluster</button>
+          <button class="tool-item" data-tool="ribbon" onclick="setTool(this,'ribbon')"><span class="tool-icon">〜</span> Ribbon zone</button>
+          <button class="tool-item" data-tool="erase" onclick="setTool(this,'erase')"><span class="tool-icon">✕</span> Erase</button>
+        </div>
+      </div>
+      <div>
+        <div class="panel-label">Anchor type</div>
+        <select id="s_anchorType">
+          <option value="floral">🌸 Floral</option>
+          <option value="greenery">🌿 Greenery</option>
+          <option value="accent">✦ Accent</option>
+          <option value="ribbon">〜 Ribbon</option>
+          <option value="texture">◈ Texture</option>
+        </select>
+      </div>
+      <div>
+        <div class="panel-label">Emotion</div>
+        <div class="emo-grid">
+          <div class="emo-pill emo-romantic ea" data-emo="romantic" onclick="setEmo(this)">Romantic</div>
+          <div class="emo-pill emo-calm" data-emo="calm" onclick="setEmo(this)">Calm</div>
+          <div class="emo-pill emo-bold" data-emo="bold" onclick="setEmo(this)">Bold</div>
+          <div class="emo-pill emo-cozy" data-emo="cozy" onclick="setEmo(this)">Cozy</div>
+          <div class="emo-pill emo-festive" data-emo="festive" onclick="setEmo(this)">Festive</div>
+          <div class="emo-pill emo-fresh" data-emo="fresh" onclick="setEmo(this)">Fresh</div>
+        </div>
+      </div>
+      <div>
+        <div class="panel-label">Size weight</div>
+        <div class="slider-row">
+          <input type="range" id="s_sizeW" min="1" max="5" value="3" step="1" oninput="document.getElementById('s_sizeWV').textContent=this.value">
+          <span class="slval" id="s_sizeWV">3</span>
+        </div>
+      </div>
+      <div style="margin-top:auto;">
+        <div class="action-grp">
+          <button class="btn btn-outline" onclick="loadSkeleton()">Load skeleton</button>
+          <button class="btn btn-outline" onclick="undoAnchor()" style="color:var(--muted);">↩ Undo</button>
+          <button class="btn btn-outline" onclick="clearCanvas()" style="color:var(--muted);">Clear</button>
+          <button class="btn btn-primary" onclick="saveLayout()">Save layout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main canvas area -->
+    <div class="s-main">
+      <div class="canvas-topbar">
+        <div class="view-tabs">
+          <button class="view-tab active" onclick="setViewMode(this,'layout')">Layout</button>
+          <button class="view-tab" onclick="setViewMode(this,'preview')">AI Preview</button>
+        </div>
+        <div class="canvas-hint-text" id="canvasHint">Click the ring to place an anchor — or use the AI prompt →</div>
+        <div class="canvas-actions">
+          <button class="btn btn-outline" onclick="showPage('dashboard')">← Dashboard</button>
+          <button class="btn btn-outline" style="font-size:11px;">Export</button>
+        </div>
+      </div>
+      <div class="canvas-center">
+        <canvas id="wreathCanvas" width="460" height="460"></canvas>
+      </div>
+    </div>
+
+    <!-- Right AI panel -->
+    <div class="s-right">
+      <div class="ai-panel-tabs">
+        <button class="ai-tab active" onclick="switchAiTab(this,'thread')">✦ AI Prompt</button>
+        <button class="ai-tab" onclick="switchAiTab(this,'stats')">Stats</button>
+        <button class="ai-tab" onclick="switchAiTab(this,'presets')">Presets</button>
+      </div>
+
+      <!-- Thread tab -->
+      <div id="tab-thread" class="thread-panel">
+        <div class="thread-scroll" id="threadScroll">
+          <div style="text-align:center;padding:20px 12px;">
+            <div style="font-size:28px;margin-bottom:10px;">✦</div>
+            <div style="font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;margin-bottom:6px;">AI Prompt Designer</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.6;">Describe your wreath in plain language and AI will place the anchors, map emotions, and build the structure. Then refine with follow-up messages.</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:5px;padding:8px 0;">
+            <div style="font-size:10px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.08em;margin-bottom:2px;">Try saying…</div>
+            <div class="sug-chip" style="align-self:flex-start;" onclick="fillPrompt('A lush asymmetric Christmas wreath, heavy left, cozy feeling, ribbon at the bottom')">"A lush asymmetric Christmas wreath…"</div>
+            <div class="sug-chip" style="align-self:flex-start;" onclick="fillPrompt('Minimal spring wreath, light and calm, just a few florals and lots of greenery')">"Minimal spring wreath, light and calm…"</div>
+            <div class="sug-chip" style="align-self:flex-start;" onclick="fillPrompt('Bold dramatic wreath, full ring, equal all around, very romantic and lush')">"Bold dramatic wreath, full ring…"</div>
+          </div>
+        </div>
+        <div class="ai-typing" id="aiTyping"><div class="dot-pulse"><span></span><span></span><span></span></div></div>
+        <div class="suggestion-chips" id="suggChips" style="display:none;"></div>
+        <div class="prompt-bar">
+          <div class="prompt-input-wrap">
+            <textarea class="prompt-textarea" id="promptInput" placeholder="Describe your wreath or ask for a change…" rows="1" oninput="autoResize(this)" onkeydown="promptKeydown(event)"></textarea>
+            <button class="prompt-send" id="promptSendBtn" onclick="sendPromptToAI()">
+              <svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+            </button>
+          </div>
+          <div class="prompt-hint">Powered by Claude · Enter to send · Shift+Enter for new line</div>
+        </div>
+      </div>
+
+      <!-- Stats tab -->
+      <div id="tab-stats" style="display:none;flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <div class="panel-label">Structure health</div>
+          <div class="health-track"><div class="health-fill" id="s_healthFill" style="width:0%"></div></div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;" id="s_healthMsg">Add anchors to begin</div>
+        </div>
+        <div class="mini-stat-grid">
+          <div class="mini-stat"><div class="mini-stat-num" id="s_statAnchors">0</div><div class="mini-stat-label">Anchors</div></div>
+          <div class="mini-stat"><div class="mini-stat-num" id="s_statSym">—</div><div class="mini-stat-label">Symmetry</div></div>
+          <div class="mini-stat"><div class="mini-stat-num" id="s_statDensity">—</div><div class="mini-stat-label">Density</div></div>
+          <div class="mini-stat"><div class="mini-stat-num" id="s_statFocal">0</div><div class="mini-stat-label">Focal pts</div></div>
+        </div>
+        <div>
+          <div class="panel-label">AI control</div>
+          <div class="slider-row">
+            <input type="range" id="s_aiCtrl" min="0" max="100" value="70" step="1" oninput="document.getElementById('s_aiCtrlV').textContent=this.value+'%'">
+            <span class="slval" id="s_aiCtrlV">70%</span>
+          </div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">Strict ← → Full AI freedom</div>
+        </div>
+        <div>
+          <div class="panel-label">Placed anchors</div>
+          <div class="anchor-chips" id="s_anchorChips"><div style="font-size:11px;color:var(--muted);padding:4px 0;">None placed yet</div></div>
+        </div>
+        <div>
+          <div class="panel-label">Emotion map</div>
+          <div class="emo-tags" id="s_emoMap"><span style="font-size:11px;color:var(--muted);">Place anchors to see emotions</span></div>
+        </div>
+        <div>
+          <div class="panel-label">Saved layouts</div>
+          <div id="s_savedList" style="font-size:11px;color:var(--muted);">No saves yet</div>
+        </div>
+      </div>
+
+      <!-- Presets tab -->
+      <div id="tab-presets" style="display:none;flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px;">Click a preset to run it instantly on the canvas.</div>
+        <div id="presetList"></div>
+        <div style="margin-top:8px;padding:12px;background:var(--gold-light);border-radius:var(--r-lg);border:1px solid rgba(184,145,42,.2);">
+          <div style="font-size:12px;font-weight:500;color:var(--gold-dark);margin-bottom:4px;">Save current prompt as preset</div>
+          <div style="font-size:11px;color:var(--bark);margin-bottom:8px;">After a successful AI generation, save that prompt for instant reuse.</div>
+          <button class="btn btn-gold" style="width:100%;font-size:11px;padding:6px;" onclick="saveCurrentPromptAsPreset()">Save last prompt →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PRICING ═══ -->
+<div id="pricingPage" class="page">
+  <div class="pricing-hero">
+    <h2>Simple, honest <em>pricing</em></h2>
+    <p class="sec-sub">Start free, upgrade when your designs do.</p>
+    <div class="toggle-billing">
+      <span>Annual</span>
+      <div class="tog-track" id="billingToggle" onclick="toggleBilling()"><div class="tog-thumb"></div></div>
+      <span>Monthly</span>
+      <span class="save-badge">Save 20%</span>
+    </div>
+  </div>
+  <div style="padding:0 48px 80px;">
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">Seed</div>
+        <p class="plan-desc">Hobbyists and occasional designers getting started.</p>
+        <div class="plan-price"><span class="price-num">$0</span><span class="price-period">/ month</span></div>
+        <ul class="plan-features">
+          <li>5 layouts per month</li>
+          <li>AI Prompt Designer (3/month)</li>
+          <li>Layout canvas editor</li>
+          <li>Basic emotion tagging</li>
+          <li>PNG export (watermarked)</li>
+          <li class="locked">Prompt presets</li>
+          <li class="locked">3 AI variants</li>
+          <li class="locked">Conversational refinement</li>
+        </ul>
+        <button class="btn btn-outline" style="width:100%;" onclick="openModal('signupModal')">Get started free</button>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-badge">Most popular</div>
+        <div class="plan-name">Studio</div>
+        <p class="plan-desc">Professional designers and Etsy sellers who need full power.</p>
+        <div class="plan-price"><span class="price-num" id="studioPriceNum">$19</span><span class="price-period">/ month</span></div>
+        <ul class="plan-features">
+          <li>Unlimited layouts</li>
+          <li>Unlimited AI prompts</li>
+          <li>Conversational refinement</li>
+          <li>Suggestion chips after every gen</li>
+          <li>Prompt presets library</li>
+          <li>3 AI variants per design</li>
+          <li>Export without watermark</li>
+          <li>Priority AI generation</li>
+        </ul>
+        <button class="btn btn-primary" style="width:100%;background:var(--moss);" onclick="openModal('signupModal')">Start Studio →</button>
+      </div>
+      <div class="pricing-card">
+        <div class="plan-name">Workshop</div>
+        <p class="plan-desc">Teams, studios, and instructors running wreath design workshops.</p>
+        <div class="plan-price"><span class="price-num" id="workshopPriceNum">$49</span><span class="price-period">/ month</span></div>
+        <ul class="plan-features">
+          <li>Everything in Studio</li>
+          <li>5 team seats</li>
+          <li>Shared prompt preset library</li>
+          <li>Client collaboration links</li>
+          <li>SKU / product linking</li>
+          <li>Etsy / Shopify integration</li>
+          <li>Marketplace layout packs</li>
+          <li>Dedicated support</li>
+        </ul>
+        <button class="btn btn-outline" style="width:100%;" onclick="openModal('signupModal')">Start Workshop →</button>
+      </div>
+    </div>
+    <div style="max-width:640px;margin:64px auto 0;">
+      <h2 style="text-align:center;font-size:36px;margin-bottom:36px;">Common <em>questions</em></h2>
+      <div id="faqList" style="display:flex;flex-direction:column;gap:16px;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="signupModal" onclick="closeModalOuter(event,'signupModal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('signupModal')">×</button>
+    <h3>Create your account</h3>
+    <p class="modal-sub">Free forever on the Seed plan. No credit card required.</p>
+    <div class="form-group"><label class="form-label">Full name</label><input class="form-input" type="text" placeholder="Sarah Bloom"></div>
+    <div class="form-group"><label class="form-label">Email address</label><input class="form-input" type="email" placeholder="sarah@yourshop.com"></div>
+    <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="At least 8 characters"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px;padding:12px;" onclick="signupAndEnter()">Create free account →</button>
+    <div class="form-divider">or</div>
+    <p style="text-align:center;font-size:13px;color:var(--muted);">Already have an account? <a style="color:var(--moss);cursor:pointer;" onclick="closeModal('signupModal');openModal('loginModal')">Sign in</a></p>
+  </div>
+</div>
+<div class="modal-overlay" id="loginModal" onclick="closeModalOuter(event,'loginModal')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('loginModal')">×</button>
+    <h3>Welcome back</h3>
+    <p class="modal-sub">Sign in to your Blooma account.</p>
+    <div class="form-group"><label class="form-label">Email address</label><input class="form-input" type="email" placeholder="sarah@yourshop.com"></div>
+    <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password" placeholder="Your password"></div>
+    <button class="btn btn-primary" style="width:100%;margin-top:8px;padding:12px;" onclick="loginAndEnter()">Sign in →</button>
+    <div class="form-divider">or</div>
+    <p style="text-align:center;font-size:13px;color:var(--muted);">New here? <a style="color:var(--moss);cursor:pointer;" onclick="closeModal('loginModal');openModal('signupModal')">Create free account</a></p>
+  </div>
+</div>
+
+<script>
+// ── ROUTING ──
+function showPage(name){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(name+'Page').classList.add('active');
+  window.scrollTo(0,0);
+  if(name==='studio')initStudio();
+  if(name==='dashboard')drawThumbs();
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+function closeModalOuter(e,id){if(e.target===document.getElementById(id))closeModal(id)}
+function signupAndEnter(){closeModal('signupModal');showPage('dashboard')}
+function loginAndEnter(){closeModal('loginModal');showPage('dashboard')}
+
+// ── DASHBOARD THUMBS ──
+function drawThumbs(){
+  const td=[
+    {id:'tc1',anchors:[{a:30,e:'festive'},{a:60,e:'festive'},{a:90,e:'fresh'},{a:130,e:'fresh'},{a:170,e:'festive'},{a:200,e:'cozy'},{a:250,e:'festive'},{a:290,e:'fresh'},{a:320,e:'festive'},{a:350,e:'cozy'},{a:10,e:'festive'},{a:80,e:'fresh'},{a:160,e:'cozy'},{a:240,e:'festive'}]},
+    {id:'tc2',anchors:[{a:20,e:'romantic'},{a:70,e:'romantic'},{a:110,e:'fresh'},{a:150,e:'romantic'},{a:200,e:'calm'},{a:250,e:'romantic'},{a:300,e:'fresh'},{a:350,e:'romantic'},{a:40,e:'romantic'}]},
+    {id:'tc3',anchors:[{a:30,e:'calm'},{a:120,e:'fresh'},{a:210,e:'calm'},{a:300,e:'fresh'},{a:60,e:'calm'},{a:240,e:'calm'}]}
+  ];
+  const EC={romantic:'#C4746A',festive:'#D85A30',calm:'#0F6E56',fresh:'#3B6D11',bold:'#534AB7',cozy:'#B8912A'};
+  td.forEach(d=>{
+    const c=document.getElementById(d.id);if(!c)return;
+    const ctx=c.getContext('2d'),cx=90,cy=70,ro=54,ri=32,rm=43;
+    ctx.clearRect(0,0,180,140);
+    ctx.beginPath();ctx.arc(cx,cy,ro,0,Math.PI*2);ctx.arc(cx,cy,ri,0,Math.PI*2,true);ctx.fillStyle='rgba(74,103,65,.06)';ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,ro,0,Math.PI*2);ctx.strokeStyle='rgba(74,103,65,.2)';ctx.lineWidth=1;ctx.stroke();
+    ctx.beginPath();ctx.arc(cx,cy,ri,0,Math.PI*2);ctx.stroke();
+    d.anchors.forEach(a=>{const r=a.a*Math.PI/180;ctx.beginPath();ctx.arc(cx+rm*Math.cos(r),cy+rm*Math.sin(r),4,0,Math.PI*2);ctx.fillStyle=EC[a.e]||'#888';ctx.fill()});
+  });
+}
+
+// ── PRICING ──
+let isAnnual=true;
+function toggleBilling(){
+  isAnnual=!isAnnual;
+  document.getElementById('billingToggle').classList.toggle('monthly',!isAnnual);
+  document.getElementById('studioPriceNum').textContent=isAnnual?'$19':'$24';
+  document.getElementById('workshopPriceNum').textContent=isAnnual?'$49':'$59';
+}
+const faqs=[
+  {q:'Can I cancel anytime?',a:'Yes — cancel from your account settings with one click. No lock-ins.'},
+  {q:'How many AI prompts do I get on the free plan?',a:'3 AI prompt generations per month on the Seed plan. Studio and Workshop are unlimited.'},
+  {q:'What is conversational refinement?',a:'After the AI generates a layout, you can keep chatting — "make it less busy", "add a ribbon at bottom" — and it updates the canvas each time.'},
+  {q:'Can I save my favourite prompts?',a:'Yes. On Studio and Workshop plans you can save any prompt as a named preset and re-run it on any new canvas with one click.'},
+  {q:'What does "3 AI variants" mean?',a:'One layout structure, three different AI interpretations of materials, palette, and density — shown side by side.'},
+];
+document.getElementById('faqList').innerHTML=faqs.map(f=>`<div style="border:1px solid var(--border);border-radius:var(--r-lg);padding:20px 24px;background:#fff;"><div style="font-weight:500;margin-bottom:6px;">${f.q}</div><div style="font-size:14px;color:var(--muted);line-height:1.6;font-weight:300;">${f.a}</div></div>`).join('');
+
+// ── PRESETS ──
+const BUILTIN_PRESETS=[
+  {name:'My Cozy Christmas',prompt:'A lush asymmetric Christmas wreath, heavy on the left, cozy warm feeling, big ribbon at the bottom, deep reds and greens',desc:'Asymmetric · Festive · Heavy'},
+  {name:'Spring Romantic',prompt:'Light airy spring wreath, delicate romantic feeling, florals concentrated at the top, trailing greenery, pastel pinks',desc:'Symmetric · Romantic · Light'},
+  {name:'Autumn Drama',prompt:'Full ring autumn wreath, very dramatic and bold, rich oranges and burgundy, heavy density all around, strong focal clusters at 10 and 4 o\'clock',desc:'Full ring · Bold · Dense'},
+  {name:'Minimal Calm',prompt:'Very minimal wreath, just 5 or 6 simple greenery anchors, calm and zen feeling, lots of open space, eucalyptus style',desc:'Sparse · Calm · Minimal'},
+  {name:'Boho Asymmetric',prompt:'Boho-style wreath, asymmetric trailing down the right side, eclectic mix of textures, cozy and fresh at the same time, ribbon accent',desc:'Asymmetric · Fresh · Cozy'},
+];
+let userPresets=[];
+function renderPresets(){
+  const el=document.getElementById('presetList');
+  const all=[...BUILTIN_PRESETS,...userPresets];
+  el.innerHTML=all.map((p,i)=>`
+    <div class="preset-item" onclick="runPreset('${p.prompt.replace(/'/g,"\\'")}')">
+      <div style="flex:1;min-width:0;">
+        <div class="preset-name">${p.name}${i>=BUILTIN_PRESETS.length?' <span style="font-size:9px;background:var(--moss-light);color:var(--moss-dark);padding:1px 5px;border-radius:3px;">saved</span>':''}</div>
+        <div class="preset-desc">${p.desc}</div>
+      </div>
+      <div class="preset-run">Run →</div>
+    </div>`).join('');
+}
+
+function runPreset(prompt){
+  switchAiTab(document.querySelector('.ai-tab'),'thread');
+  document.getElementById('promptInput').value=prompt;
+  sendPromptToAI();
+}
+
+function saveCurrentPromptAsPreset(){
+  if(!lastSuccessfulPrompt){alert('Generate a layout with AI first, then save the prompt.');return;}
+  const name=prompt('Name your preset:','My '+currentEmo+' style');
+  if(!name)return;
+  userPresets.push({name,prompt:lastSuccessfulPrompt,desc:'Custom preset'});
+  renderPresets();
+  switchAiTab(document.querySelectorAll('.ai-tab')[2],'presets');
+}
+renderPresets();
+
+// ── STUDIO STATE ──
+const EMO_C={
+  romantic:{fill:'#F2E0DC',stroke:'#C4746A',dot:'#C4746A'},
+  calm:{fill:'#D4E4CF',stroke:'#4A6741',dot:'#4A6741'},
+  bold:{fill:'#E8E6F8',stroke:'#534AB7',dot:'#534AB7'},
+  cozy:{fill:'#F5EDD4',stroke:'#B8912A',dot:'#B8912A'},
+  festive:{fill:'#FAECE7',stroke:'#D85A30',dot:'#D85A30'},
+  fresh:{fill:'#E4F2D8',stroke:'#3B6D11',dot:'#3B6D11'}
+};
+let sTool='anchor',currentEmo='romantic',sLock=false,sMode='layout';
+let sAnchors=[],sHistory=[],sAnimId=null,sPrevOff=0;
+let lastSuccessfulPrompt='';
+let promptHistory=[];// {role,content}
+
+function initStudio(){
+  const c=document.getElementById('wreathCanvas');
+  if(!c||c._init)return;
+  c._init=true;
+  c.addEventListener('click',onCanvasClick);
+  renderStudio();
+}
+
+function switchAiTab(btn,tab){
+  document.querySelectorAll('.ai-tab').forEach(t=>t.classList.remove('active'));
+  // find by tab name
+  document.querySelectorAll('.ai-tab').forEach(t=>{
+    if((tab==='thread'&&t.textContent.includes('AI'))||(tab==='stats'&&t.textContent==='Stats')||(tab==='presets'&&t.textContent==='Presets'))t.classList.add('active');
+  });
+  document.getElementById('tab-thread').style.display=tab==='thread'?'flex':'none';
+  document.getElementById('tab-stats').style.display=tab==='stats'?'flex':'none';
+  document.getElementById('tab-presets').style.display=tab==='presets'?'flex':'none';
+}
+
+function setTool(btn,t){
+  sTool=t;
+  document.querySelectorAll('.tool-item').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const h={anchor:'Click ring to place anchor',focal:'Place a focal cluster',ribbon:'Add a ribbon zone',erase:'Click anchor to remove'};
+  document.getElementById('canvasHint').textContent=h[t];
+}
+
+function setEmo(el){
+  currentEmo=el.dataset.emo;
+  document.querySelectorAll('.emo-pill').forEach(e=>e.classList.remove('ea'));
+  el.classList.add('ea');
+}
+
+function setViewMode(btn,mode){
+  sMode=mode;
+  document.querySelectorAll('.view-tab').forEach((t,i)=>t.classList.toggle('active',(i===0&&mode==='layout')||(i===1&&mode==='preview')));
+  if(mode==='preview')animPreview();
+  else{if(sAnimId)cancelAnimationFrame(sAnimId);renderStudio();}
+}
+
+function onCanvasClick(e){
+  const c=document.getElementById('wreathCanvas');
+  const rect=c.getBoundingClientRect(),sx=c.width/rect.width,sy=c.height/rect.height;
+  const mx=(e.clientX-rect.left)*sx,my=(e.clientY-rect.top)*sy;
+  const CX=230,CY=230,RO=200,RI=122,RM=161;
+  const dx=mx-CX,dy=my-CY,d=Math.sqrt(dx*dx+dy*dy);
+  if(d<RI-12||d>RO+12)return;
+  if(sTool==='erase'){
+    const idx=sAnchors.findIndex(a=>{const dx2=a.px-mx,dy2=a.py-my;return Math.sqrt(dx2*dx2+dy2*dy2)<20;});
+    if(idx>=0){sHistory.push(JSON.parse(JSON.stringify(sAnchors)));sAnchors.splice(idx,1);updateStudioUI();}
+    return;
+  }
+  const ang=Math.atan2(dy,dx);
+  sHistory.push(JSON.parse(JSON.stringify(sAnchors)));
+  addAnchorAt((ang*180/Math.PI+360)%360,document.getElementById('s_anchorType').value,currentEmo,sTool==='focal'?'focal':sTool==='ribbon'?'ribbon':'standard',parseInt(document.getElementById('s_sizeW').value));
+}
+
+function addAnchorAt(angleDeg,type,emotion,role,sizeWeight,animate){
+  const CX=230,CY=230,RM=161;
+  const rad=angleDeg*Math.PI/180;
+  const anchor={id:Date.now()+Math.random(),angle:angleDeg,px:CX+RM*Math.cos(rad),py:CY+RM*Math.sin(rad),sizeWeight,type,emotion,role,locked:sLock,anim:animate};
+  sAnchors.push(anchor);
+  updateStudioUI();
+  return anchor;
+}
+
+function renderStudio(){
+  const c=document.getElementById('wreathCanvas');if(!c)return;
+  const ctx=c.getContext('2d');
+  const CX=230,CY=230,RO=200,RI=122,RM=161;
+  ctx.clearRect(0,0,460,460);
+  ctx.beginPath();ctx.arc(CX,CY,RO,0,Math.PI*2);ctx.arc(CX,CY,RI,0,Math.PI*2,true);ctx.fillStyle='rgba(74,103,65,.07)';ctx.fill();
+  ctx.beginPath();ctx.arc(CX,CY,RO,0,Math.PI*2);ctx.strokeStyle='rgba(74,103,65,.22)';ctx.lineWidth=1.5;ctx.stroke();
+  ctx.beginPath();ctx.arc(CX,CY,RI,0,Math.PI*2);ctx.strokeStyle='rgba(74,103,65,.14)';ctx.lineWidth=1;ctx.stroke();
+  ctx.beginPath();ctx.arc(CX,CY,RM,0,Math.PI*2);ctx.strokeStyle='rgba(74,103,65,.07)';ctx.lineWidth=1;ctx.setLineDash([5,10]);ctx.stroke();ctx.setLineDash([]);
+  for(let a=0;a<360;a+=30){const r=a*Math.PI/180;ctx.beginPath();ctx.moveTo(CX+RI*Math.cos(r),CY+RI*Math.sin(r));ctx.lineTo(CX+RO*Math.cos(r),CY+RO*Math.sin(r));ctx.strokeStyle='rgba(74,103,65,.04)';ctx.lineWidth=.5;ctx.stroke();}
+  sAnchors.forEach(a=>sMode==='preview'?drawFloral(ctx,a):drawNode(ctx,a));
+}
+
+function drawNode(ctx,a){
+  const c=EMO_C[a.emotion],sz=7+a.sizeWeight*2.5;
+  if(a.role==='focal'){ctx.beginPath();ctx.arc(a.px,a.py,sz+8,0,Math.PI*2);ctx.fillStyle=c.fill+'99';ctx.fill();ctx.strokeStyle=c.stroke;ctx.lineWidth=1.5;ctx.stroke();}
+  ctx.beginPath();ctx.arc(a.px,a.py,sz,0,Math.PI*2);ctx.fillStyle=a.locked?'#8A7D6F':c.dot;ctx.fill();
+}
+
+function drawFloral(ctx,a){
+  const c=EMO_C[a.emotion],sz=8+a.sizeWeight*3,petals=a.type==='floral'?6:a.type==='accent'?4:5;
+  ctx.save();ctx.translate(a.px,a.py);ctx.rotate((a.angle+sPrevOff*.4)*Math.PI/180);
+  for(let i=0;i<petals;i++){const ang=(i/petals)*Math.PI*2;ctx.beginPath();ctx.ellipse(Math.cos(ang)*sz*.55,Math.sin(ang)*sz*.55,sz*.4,sz*.25,ang,0,Math.PI*2);ctx.fillStyle=c.fill;ctx.strokeStyle=c.stroke;ctx.lineWidth=.8;ctx.fill();ctx.stroke();}
+  ctx.beginPath();ctx.arc(0,0,sz*.25,0,Math.PI*2);ctx.fillStyle=c.stroke;ctx.fill();ctx.restore();
+}
+
+function animPreview(){if(sMode!=='preview')return;sPrevOff+=.4;renderStudio();sAnimId=requestAnimationFrame(animPreview);}
+
+function updateStudioUI(){
+  renderStudio();
+  const q=[0,0,0,0];sAnchors.forEach(a=>{const qi=Math.floor(a.angle/90);q[Math.min(qi,3)]++;});
+  const mn=Math.min(...q),mx=Math.max(...q);
+  const score=sAnchors.length===0?0:sAnchors.length<3?20:mn===0?35:Math.min(100,Math.max(0,100-(mx-mn)*12));
+  const fill=document.getElementById('s_healthFill');
+  if(fill){fill.style.width=score+'%';fill.className='health-fill'+(score<40?' bad':score<65?' warn':'');}
+  const msgs=['Add anchors to begin','Add more for balance','Decent start','Looking balanced','Great structure','Strong, rich layout'];
+  const hm=document.getElementById('s_healthMsg');if(hm)hm.textContent=msgs[Math.min(Math.floor(score/20),5)];
+  const sa=document.getElementById('s_statAnchors');if(sa)sa.textContent=sAnchors.length;
+  const ss=document.getElementById('s_statSym');if(ss)ss.textContent=sAnchors.length<2?'—':mn===0?'Weak':(mx-mn)<=2?'Strong':'Medium';
+  const sd=document.getElementById('s_statDensity');if(sd)sd.textContent=sAnchors.length<4?'Sparse':sAnchors.length<10?'Medium':'Dense';
+  const sf=document.getElementById('s_statFocal');if(sf)sf.textContent=sAnchors.filter(a=>a.role==='focal').length;
+  const chips=document.getElementById('s_anchorChips');
+  if(chips)chips.innerHTML=sAnchors.length===0?'<div style="font-size:11px;color:var(--muted);padding:4px 0;">None placed yet</div>':sAnchors.map((a,i)=>`<div class="anchor-chip"><span class="chip-dot" style="background:${EMO_C[a.emotion].dot}"></span><span style="flex:1">${a.type}·${Math.round(a.angle)}°</span><span class="chip-rm" onclick="removeAnchor(${i})">×</span></div>`).join('');
+  const counts={};sAnchors.forEach(a=>{counts[a.emotion]=(counts[a.emotion]||0)+1;});
+  const em=document.getElementById('s_emoMap');
+  if(em)em.innerHTML=Object.keys(counts).length===0?'<span style="font-size:11px;color:var(--muted);">Place anchors to see emotions</span>':Object.entries(counts).map(([e,n])=>`<span class="emo-tag" style="background:${EMO_C[e].fill};color:${EMO_C[e].stroke};border:1px solid ${EMO_C[e].stroke}40;">${e} ×${n}</span>`).join('');
+}
+
+function removeAnchor(i){sHistory.push(JSON.parse(JSON.stringify(sAnchors)));sAnchors.splice(i,1);updateStudioUI();}
+function undoAnchor(){if(sHistory.length>0){sAnchors=sHistory.pop();updateStudioUI();}}
+function clearCanvas(){if(sAnchors.length>0){sHistory.push(JSON.parse(JSON.stringify(sAnchors)));sAnchors=[];updateStudioUI();}}
+let savedLayouts=[];
+function saveLayout(){
+  if(sAnchors.length===0)return;
+  savedLayouts.push({name:'Layout '+(savedLayouts.length+1),count:sAnchors.length});
+  const sl=document.getElementById('s_savedList');
+  if(sl)sl.innerHTML=savedLayouts.map(l=>`<div style="display:flex;justify-content:space-between;font-size:11px;padding:4px 0;border-bottom:1px solid var(--border);"><span>${l.name}</span><span style="color:var(--muted)">${l.count}pts</span></div>`).join('');
+}
+function loadSkeleton(){
+  sHistory.push(JSON.parse(JSON.stringify(sAnchors)));
+  const CX=230,CY=230,RM=161;
+  [{a:30,t:'floral',e:'romantic',r:'focal',w:5},{a:65,t:'greenery',e:'fresh',r:'standard',w:3},{a:95,t:'accent',e:'calm',r:'standard',w:2},{a:130,t:'floral',e:'romantic',r:'standard',w:4},{a:165,t:'greenery',e:'fresh',r:'standard',w:3},{a:205,t:'ribbon',e:'cozy',r:'ribbon',w:3},{a:245,t:'floral',e:'bold',r:'focal',w:4},{a:285,t:'greenery',e:'fresh',r:'standard',w:2},{a:325,t:'accent',e:'festive',r:'standard',w:3},{a:355,t:'floral',e:'romantic',r:'standard',w:4}]
+  .forEach(s=>{const rad=s.a*Math.PI/180;sAnchors.push({id:Date.now()+Math.random(),angle:s.a,px:CX+RM*Math.cos(rad),py:CY+RM*Math.sin(rad),sizeWeight:s.w,type:s.t,emotion:s.e,role:s.r,locked:false});});
+  updateStudioUI();
+}
+
+// ── AI PROMPT ENGINE ──
+function autoResize(ta){ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,80)+'px';}
+function promptKeydown(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendPromptToAI();}}
+function fillPrompt(text){document.getElementById('promptInput').value=text;document.getElementById('promptInput').focus();}
+
+function addThreadMsg(role,content){
+  const scroll=document.getElementById('threadScroll');
+  const div=document.createElement('div');
+  div.className='msg '+(role==='user'?'user-msg':'ai-msg');
+  div.innerHTML=`<div class="msg-bubble">${content}</div><div class="msg-meta">${role==='user'?'You':'Blooma AI'} · just now</div>`;
+  scroll.appendChild(div);
+  scroll.scrollTop=scroll.scrollHeight;
+}
+
+function showTyping(show){
+  const t=document.getElementById('aiTyping');
+  t.className='ai-typing'+(show?' show':'');
+  if(show){const scroll=document.getElementById('threadScroll');scroll.scrollTop=scroll.scrollHeight;}
+}
+
+function showSuggestions(chips){
+  const el=document.getElementById('suggChips');
+  if(!chips||chips.length===0){el.style.display='none';return;}
+  el.style.display='flex';
+  el.innerHTML=chips.map(c=>`<div class="sug-chip" onclick="fillPrompt('${c.replace(/'/g,"\\'")}');sendPromptToAI()">${c}</div>`).join('');
+}
+
+async function sendPromptToAI(){
+  const ta=document.getElementById('promptInput');
+  const userText=ta.value.trim();
+  if(!userText)return;
+  ta.value='';ta.style.height='auto';
+  document.getElementById('promptSendBtn').disabled=true;
+  showSuggestions([]);
+
+  addThreadMsg('user',userText);
+  showTyping(true);
+
+  promptHistory.push({role:'user',content:userText});
+
+  const systemPrompt=`You are the AI co-designer inside Blooma, a professional wreath design SaaS. Your job is to interpret the user's natural language description of a wreath and produce a JSON layout object, then explain it conversationally.
+
+Current canvas state: ${sAnchors.length} anchors placed.
+${sAnchors.length>0?'Existing anchors: '+JSON.stringify(sAnchors.map(a=>({angle:Math.round(a.angle),type:a.type,emotion:a.emotion,role:a.role}))):''}
+
+You MUST respond in this exact JSON format (no markdown, no backticks, pure JSON):
+{
+  "action": "generate" | "refine" | "clear_and_generate",
+  "explanation": "A warm, concise 2-3 sentence explanation of what you built and why. Mention anchor count, dominant emotion, any focal clusters or special zones.",
+  "anchors": [
+    {
+      "angle": <0-360 number, spread around ring>,
+      "type": "floral" | "greenery" | "accent" | "ribbon" | "texture",
+      "emotion": "romantic" | "calm" | "bold" | "cozy" | "festive" | "fresh",
+      "role": "standard" | "focal" | "ribbon",
+      "sizeWeight": <1-5 integer>
+    }
+  ],
+  "suggestions": ["short follow-up action 1", "short follow-up action 2", "short follow-up action 3"]
+}
+
+Rules for anchor generation:
+- asymmetric-left: cluster angles 180-270, sparse 0-90
+- asymmetric-right: cluster angles 270-360/0-90, sparse 90-180  
+- full ring: spread anchors 0-360 evenly
+- heavy means 10-16 anchors, medium 6-10, light 3-6
+- focal clusters = role:"focal", sizeWeight 4-5
+- ribbon = angle around 270 (bottom), role:"ribbon", type:"ribbon"
+- romantic: more floral, cozy/festive: mix of floral+accent+ribbon, calm/fresh: more greenery
+- For "refine" action, only include anchors to ADD (merged with existing). For "clear_and_generate", replace all.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:systemPrompt,
+        messages:promptHistory
+      })
+    });
+    const data=await res.json();
+    const rawText=data.content?.map(b=>b.text||'').join('').trim();
+
+    let parsed;
+    try{
+      const clean=rawText.replace(/```json|```/g,'').trim();
+      parsed=JSON.parse(clean);
+    }catch(e){
+      // fallback if JSON malformed
+      parsed={action:'generate',explanation:rawText.slice(0,300)||'I\'ve updated the layout based on your description.',anchors:[],suggestions:['Try a different style','Add more density','Make it lighter']};
+    }
+
+    showTyping(false);
+    promptHistory.push({role:'assistant',content:rawText});
+    lastSuccessfulPrompt=userText;
+
+    // Apply anchors to canvas
+    if(parsed.action==='clear_and_generate'){
+      sHistory.push(JSON.parse(JSON.stringify(sAnchors)));
+      sAnchors=[];
+    }else if(parsed.action==='generate'&&sAnchors.length===0){
+      // first gen, just add
+    }else if(parsed.action==='generate'){
+      sHistory.push(JSON.parse(JSON.stringify(sAnchors)));
+      sAnchors=[];
+    }
+
+    // Animate anchors appearing one by one
+    if(parsed.anchors&&parsed.anchors.length>0){
+      const CX=230,CY=230,RM=161;
+      let delay=0;
+      parsed.anchors.forEach((a,i)=>{
+        setTimeout(()=>{
+          const rad=a.angle*Math.PI/180;
+          sAnchors.push({
+            id:Date.now()+Math.random(),
+            angle:a.angle,
+            px:CX+RM*Math.cos(rad),
+            py:CY+RM*Math.sin(rad),
+            sizeWeight:a.sizeWeight||3,
+            type:a.type||'floral',
+            emotion:a.emotion||'romantic',
+            role:a.role||'standard',
+            locked:false
+          });
+          updateStudioUI();
+        },delay);
+        delay+=70;
+      });
+    }else{
+      updateStudioUI();
+    }
+
+    addThreadMsg('ai',parsed.explanation||'Layout updated.');
+    if(parsed.suggestions)showSuggestions(parsed.suggestions);
+
+  }catch(err){
+    showTyping(false);
+    addThreadMsg('ai','Sorry, I couldn\'t connect to the AI right now. You can still place anchors manually using the tools on the left.');
+  }
+  document.getElementById('promptSendBtn').disabled=false;
+}
+</script>
+</body>
+</html>
