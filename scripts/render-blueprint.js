@@ -1,4 +1,4 @@
-const E = require('./engine.js');
+const E = require(require('path').join(__dirname,'..','engine.js'));
 const fs = require('fs');
 
 // pick a seed whose validation reads well for the marketing example (mostly pass)
