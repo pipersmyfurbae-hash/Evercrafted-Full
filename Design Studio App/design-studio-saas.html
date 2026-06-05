@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Studio SaaS — Evercrafted</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Dancing+Script:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#F8F5EF;--cream2:#F0EBE2;--cream3:#E6DFCF;--white:#FDFCF9;
+  --ink:#1B1916;--ink2:#332F28;--muted:#8A8278;--muted2:#B4AFA8;
+  --sage:#4A6741;--sage-l:#7A9971;--sage-ll:#CEC8BC;--sage-bg:#EDE8E0;--sage-d:#3A5231;
+  --bark:#6E6860;--bark-l:#AEA89E;--bark-ll:#EBE6DE;--bark-d:#504C48;
+  --rule:rgba(27,25,22,.07);--rule2:rgba(27,25,22,.13);--ruledark:rgba(27,25,22,.22);
+  --gold:#B89A6A;--red:#C45A45;
+  --shadow:0 8px 40px rgba(27,25,22,.09);--shadow-sm:0 2px 12px rgba(27,25,22,.06)
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+
+/* LAYOUT */
+.app{display:flex;min-height:100vh}
+.sidebar{width:240px;flex-shrink:0;background:var(--ink);display:flex;flex-direction:column;position:fixed;height:100vh;overflow-y:auto;z-index:200}
+.content{margin-left:240px;flex:1;display:flex;flex-direction:column}
+
+/* ── SIDEBAR ── */
+.sb-logo-area{padding:22px 20px 18px;border-bottom:1px solid rgba(248,245,239,.07)}
+.sb-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;letter-spacing:.05em;color:rgba(248,245,239,.92);display:flex;align-items:center;gap:8px}
+.sb-logo svg{flex-shrink:0}
+.sb-product{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(248,245,239,.28);margin-top:3px;padding-left:26px}
+.sb-plan-badge{margin:12px 20px 0;display:flex;align-items:center;gap:6px;font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,212,191,.9);background:rgba(74,103,65,.25);border:1px solid rgba(74,103,65,.3);padding:4px 10px}
+.sb-section{padding:16px 0 4px}
+.sb-section-label{font-size:9px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(248,245,239,.22);padding:0 20px;margin-bottom:4px}
+.sb-link{display:flex;align-items:center;gap:10px;padding:8px 20px;font-size:12px;color:rgba(248,245,239,.42);cursor:pointer;transition:all .15s;border-left:2px solid transparent;font-weight:300}
+.sb-link:hover{color:rgba(248,245,239,.78);background:rgba(248,245,239,.04)}
+.sb-link.on{color:rgba(248,245,239,.92);font-weight:400;background:rgba(248,245,239,.06);border-left-color:var(--sage-l)}
+.sb-link svg{width:14px;height:14px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;opacity:.7}
+.sb-link .sb-count{margin-left:auto;font-size:9px;background:var(--sage);color:#fff;border-radius:10px;padding:1px 6px;font-weight:500}
+.sb-link .sb-new{margin-left:auto;font-size:9px;color:var(--gold);font-weight:500;letter-spacing:.06em}
+.sb-bottom{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(248,245,239,.07)}
+.sb-user-row{display:flex;align-items:center;gap:10px}
+.sb-av{width:30px;height:30px;border-radius:50%;background:rgba(74,103,65,.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:rgba(196,212,191,.9);flex-shrink:0}
+.sb-uname{font-size:12px;color:rgba(248,245,239,.72);font-weight:400}
+.sb-uplan{font-size:10px;color:rgba(248,245,239,.3)}
+.sb-upgrade-btn{margin-top:10px;width:100%;padding:8px;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:1px solid rgba(196,212,191,.3);background:transparent;color:rgba(196,212,191,.75);font-family:'DM Sans',sans-serif;transition:all .15s;border-radius:0}
+.sb-upgrade-btn:hover{background:rgba(74,103,65,.2);border-color:rgba(196,212,191,.5);color:rgba(196,212,191,1)}
+
+/* ── TOP BAR ── */
+.topbar{height:54px;background:var(--white);border-bottom:1px solid var(--rule);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:100}
+.tb-breadcrumb{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.tb-breadcrumb span{color:var(--ink);font-weight:500}
+.tb-right{margin-left:auto;display:flex;gap:8px;align-items:center}
+.tb-btn{padding:6px 16px;font-size:11px;font-weight:500;letter-spacing:.04em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;border-radius:0}
+.tb-btn-ghost{background:transparent;color:var(--muted);border:1px solid var(--rule2)}
+.tb-btn-ghost:hover{color:var(--ink);border-color:var(--bark-l)}
+.tb-btn-primary{background:var(--sage);color:#fff;border:none}
+.tb-btn-primary:hover{background:var(--sage-d)}
+.tb-btn-ink{background:var(--ink);color:#fff;border:none}
+.tb-btn-ink:hover{background:var(--ink2)}
+.notif-btn{width:32px;height:32px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;color:var(--muted);border:1px solid var(--rule2);background:transparent;transition:all .15s;border-radius:0}
+.notif-btn:hover{color:var(--ink);border-color:var(--bark-l)}
+.notif-dot{position:absolute;top:5px;right:5px;width:6px;height:6px;background:var(--red);border-radius:50%;border:1px solid var(--white)}
+
+/* ── VIEWS ── */
+.view{display:none;padding:28px;flex:1}
+.view.on{display:flex;flex-direction:column}
+
+/* ── DASHBOARD VIEW ── */
+.dash-header{margin-bottom:24px}
+.dash-greeting{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--ink);margin-bottom:4px}
+.dash-greeting em{font-style:italic;color:var(--bark)}
+.dash-sub{font-size:13px;font-weight:300;color:var(--muted)}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:var(--white);border:1px solid var(--rule);padding:18px 20px;transition:border-color .15s}
+.kpi:hover{border-color:var(--rule2)}
+.kpi-n{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--ink);line-height:1;margin-bottom:2px}
+.kpi-l{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2)}
+.kpi-delta{font-size:11px;color:var(--sage);margin-top:5px}
+.kpi-delta.neg{color:var(--red)}
+.dash-2col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.dash-3col{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+.dash-card{background:var(--white);border:1px solid var(--rule)}
+.dc-header{padding:14px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px}
+.dc-title{font-size:12px;font-weight:500;letter-spacing:.06em;color:var(--ink);flex:1}
+.dc-action{font-size:11px;color:var(--sage);cursor:pointer;font-weight:400}
+.dc-body{padding:16px 18px}
+
+/* ACTIVITY FEED */
+.activity-row{display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--rule)}
+.activity-row:last-child{border-bottom:none}
+.act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.act-text{font-size:12px;color:var(--ink2);flex:1;font-weight:300;line-height:1.5}
+.act-time{font-size:10px;color:var(--muted2);white-space:nowrap;margin-top:2px}
+
+/* CLIENT LIST */
+.client-row{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--rule);cursor:pointer;transition:background .12s}
+.client-row:last-child{border-bottom:none}
+.client-row:hover .cr-name{color:var(--sage)}
+.cr-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--sage-d)}
+.cr-name{font-size:12px;font-weight:400;color:var(--ink);transition:color .12s;flex:1}
+.cr-status{font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:2px}
+.cr-status.active{color:var(--sage-d);background:var(--sage-bg)}
+.cr-status.pending{color:var(--gold);background:rgba(184,154,106,.1)}
+
+/* USAGE BAR */
+.usage-item{margin-bottom:12px}
+.usage-row{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.usage-label{font-size:11px;color:var(--ink2);flex:1}
+.usage-val{font-size:11px;color:var(--muted2)}
+.usage-bar{height:4px;background:var(--cream3);border-radius:2px;overflow:hidden}
+.usage-fill{height:100%;background:var(--sage);border-radius:2px;transition:width .5s ease}
+.usage-fill.warn{background:var(--gold)}
+
+/* ── CLIENTS VIEW ── */
+.clients-table{width:100%;border-collapse:collapse}
+.ct-head th{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);padding:10px 14px;border-bottom:1px solid var(--rule);text-align:left;background:var(--cream)}
+.ct-row td{padding:12px 14px;border-bottom:1px solid var(--rule);font-size:12px;color:var(--ink2);font-weight:300}
+.ct-row:hover td{background:var(--cream)}
+.ct-row:last-child td{border-bottom:none}
+.status-pill{font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:2px}
+.sp-active{color:var(--sage-d);background:var(--sage-bg)}
+.sp-draft{color:var(--muted);background:var(--cream2)}
+.sp-review{color:var(--gold);background:rgba(184,154,106,.1)}
+
+/* ── BILLING VIEW ── */
+.plan-card{background:var(--white);border:1px solid var(--rule);margin-bottom:20px}
+.plan-current{background:var(--ink);padding:24px 28px;display:flex;align-items:center;gap:20px}
+.plan-current-name{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:rgba(248,245,239,.9);flex:1}
+.plan-current-price{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:#fff;line-height:1}
+.plan-current-per{font-size:11px;color:rgba(248,245,239,.4)}
+.invoice-row{display:flex;align-items:center;gap:12px;padding:12px 18px;border-bottom:1px solid var(--rule);font-size:12px}
+.invoice-row:last-child{border-bottom:none}
+.inv-date{color:var(--muted2);width:100px;flex-shrink:0}
+.inv-desc{color:var(--ink2);flex:1}
+.inv-amount{color:var(--ink);font-weight:500}
+.inv-status{font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:2px;color:var(--sage-d);background:var(--sage-bg)}
+
+/* TIER COMPARISON */
+.tier-table{width:100%;border-collapse:collapse;margin-top:16px}
+.tier-table th{font-size:11px;font-weight:500;letter-spacing:.06em;color:var(--muted);padding:10px 16px;border-bottom:1px solid var(--rule);text-align:left}
+.tier-table th:not(:first-child){text-align:center}
+.tier-table td{padding:10px 16px;border-bottom:1px solid var(--rule);font-size:12px;color:var(--ink2);font-weight:300}
+.tier-table td:not(:first-child){text-align:center}
+.tier-table tr:last-child td{border-bottom:none}
+.tier-table th.hl{color:var(--sage-d);background:var(--sage-bg)}
+.tier-table td.hl{background:rgba(74,103,65,.04)}
+.check{color:var(--sage);font-size:14px}
+.cross{color:var(--muted2)}
+
+/* SETTINGS */
+.settings-section{background:var(--white);border:1px solid var(--rule);margin-bottom:16px}
+.ss-header{padding:14px 18px;border-bottom:1px solid var(--rule)}
+.ss-title{font-size:13px;font-weight:500;color:var(--ink)}
+.ss-desc{font-size:11px;font-weight:300;color:var(--muted);margin-top:2px}
+.ss-body{padding:18px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-field label{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);display:block;margin-bottom:5px}
+.form-input{width:100%;padding:8px 11px;border:1px solid var(--rule2);background:var(--cream);font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;border-radius:0;transition:border-color .12s}
+.form-input:focus{border-color:var(--sage);background:var(--white)}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--rule)}
+.toggle-row:last-child{border-bottom:none}
+.toggle-label{font-size:12px;color:var(--ink2)}
+.toggle-sub{font-size:11px;color:var(--muted2);margin-top:1px;font-weight:300}
+.toggle{width:36px;height:20px;background:var(--sage);border-radius:10px;position:relative;cursor:pointer;transition:background .15s;flex-shrink:0}
+.toggle.off{background:var(--cream3)}
+.toggle::after{content:'';position:absolute;top:3px;right:3px;width:14px;height:14px;background:#fff;border-radius:50%;transition:right .15s}
+.toggle.off::after{right:auto;left:3px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--cream);font-size:12px;padding:10px 18px;z-index:9999;transform:translateY(16px);opacity:0;transition:all .25s;pointer-events:none}
+.toast.on{transform:translateY(0);opacity:1}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--rule2)}
+
+@media(max-width:960px){
+  .sidebar{display:none}
+  .content{margin-left:0}
+  .kpi-row{grid-template-columns:1fr 1fr}
+  .dash-2col,.dash-3col{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo-area">
+    <div class="sb-logo">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="rgba(196,212,191,.7)" transform="rotate(0,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="rgba(196,212,191,.6)" transform="rotate(72,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="rgba(196,212,191,.7)" transform="rotate(144,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="rgba(196,212,191,.6)" transform="rotate(216,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="rgba(196,212,191,.7)" transform="rotate(288,10,10)"/>
+        <circle cx="10" cy="10" r="2.2" fill="rgba(174,168,158,.8)"/>
+      </svg>
+      Evercrafted
+    </div>
+    <div class="sb-product">Design Studio SaaS</div>
+  </div>
+  <div class="sb-plan-badge">
+    ◎ &nbsp; Studio Plan &nbsp;·&nbsp; Active
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Workspace</div>
+    <div class="sb-link on" onclick="nav('dashboard')">
+      <svg viewBox="0 0 16 16"><path d="M2 2h5v5H2zm7 0h5v5H9zm-7 7h5v5H2zm7 0h5v5H9z"/></svg>
+      Dashboard
+    </div>
+    <div class="sb-link" onclick="nav('studio')">
+      <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><circle cx="8" cy="8" r="3"/><path d="M8 2v2M8 12v2M2 8h2M12 8h2"/></svg>
+      Design Studio
+      <span class="sb-new">Open</span>
+    </div>
+    <div class="sb-link" onclick="nav('clients')">
+      <svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.3 2.7-6 6-6s6 2.7 6 6"/></svg>
+      Clients
+      <span class="sb-count">12</span>
+    </div>
+    <div class="sb-link" onclick="nav('projects')">
+      <svg viewBox="0 0 16 16"><path d="M2 3h12v10H2zM5 3V2h6v1"/></svg>
+      Projects
+      <span class="sb-count">7</span>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-section-label">Platform</div>
+    <div class="sb-link" onclick="nav('billing')">
+      <svg viewBox="0 0 16 16"><rect x="1" y="4" width="14" height="10" rx="1"/><path d="M1 7h14"/></svg>
+      Billing
+    </div>
+    <div class="sb-link" onclick="nav('analytics')">
+      <svg viewBox="0 0 16 16"><path d="M2 12V8M6 12V4M10 12V7M14 12V2"/></svg>
+      Analytics
+    </div>
+    <div class="sb-link" onclick="nav('settings')">
+      <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.4 1.4M11.6 11.6 13 13M3 13l1.4-1.4M11.6 4.4 13 3"/></svg>
+      Settings
+    </div>
+  </div>
+
+  <div class="sb-bottom">
+    <div class="sb-user-row">
+      <div class="sb-av">B</div>
+      <div>
+        <div class="sb-uname">Bret Baden</div>
+        <div class="sb-uplan">Studio Plan</div>
+      </div>
+    </div>
+    <button class="sb-upgrade-btn" onclick="toast('Opening Atelier upgrade…')">Upgrade to Atelier →</button>
+  </div>
+</aside>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- DASHBOARD -->
+  <div id="view-dashboard" class="view on">
+    <div class="topbar" style="position:static">
+      <div class="tb-breadcrumb">Workspace &rsaquo; <span>Dashboard</span></div>
+      <div class="tb-right">
+        <button class="tb-btn tb-btn-ghost" onclick="toast('Exporting report…')">Export report</button>
+        <button class="notif-btn" onclick="toast('No new notifications.')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M7 1C4.2 1 2 3.2 2 6v3L1 11h12l-1-2V6C12 3.2 9.8 1 7 1zM5 11v.5a2 2 0 0 0 4 0V11"/></svg>
+          <div class="notif-dot"></div>
+        </button>
+        <button class="tb-btn tb-btn-primary" onclick="openStudio()">+ New design</button>
+      </div>
+    </div>
+
+    <div style="flex:1;overflow-y:auto;padding:28px">
+      <div class="dash-header">
+        <div class="dash-greeting">Good morning, <em>Bret.</em></div>
+        <div class="dash-sub">You have 2 designs in progress and 1 client review pending.</div>
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi"><div class="kpi-n">12</div><div class="kpi-l">Active clients</div><div class="kpi-delta">↑ 2 this month</div></div>
+        <div class="kpi"><div class="kpi-n">7</div><div class="kpi-l">Active projects</div><div class="kpi-delta">2 in review</div></div>
+        <div class="kpi"><div class="kpi-n">34</div><div class="kpi-l">Blueprints generated</div><div class="kpi-delta">↑ 8 this week</div></div>
+        <div class="kpi"><div class="kpi-n">91%</div><div class="kpi-l">Client approval rate</div><div class="kpi-delta">+4% vs last month</div></div>
+      </div>
+
+      <div class="dash-3col">
+        <!-- Activity + Clients -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="dash-card">
+            <div class="dc-header"><div class="dc-title">Recent Activity</div><div class="dc-action" onclick="nav('projects')">View all</div></div>
+            <div class="dc-body" style="padding:10px 18px">
+              <div class="activity-row"><div class="act-dot" style="background:var(--sage)"></div><div><div class="act-text">Blueprint generated — "Winter Sunrise to Spring Afternoon"</div><div class="act-time">2 hours ago</div></div></div>
+              <div class="activity-row"><div class="act-dot" style="background:var(--gold)"></div><div><div class="act-text">Client review sent — Sarah M. (Holiday Wreath)</div><div class="act-time">5 hours ago</div></div></div>
+              <div class="activity-row"><div class="act-dot" style="background:var(--bark-l)"></div><div><div class="act-text">Journey preset applied — Warm Morning → Cool Evening</div><div class="act-time">Yesterday</div></div></div>
+              <div class="activity-row"><div class="act-dot" style="background:var(--sage)"></div><div><div class="act-text">Blueprint exported — "Harvest Wreaths, Client Bundle"</div><div class="act-time">2 days ago</div></div></div>
+              <div class="activity-row"><div class="act-dot" style="background:var(--muted2)"></div><div><div class="act-text">Design saved — Soft Botanicals, 4 zones</div><div class="act-time">3 days ago</div></div></div>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="dc-header"><div class="dc-title">Client Pipeline</div><div class="dc-action" onclick="nav('clients')">Manage</div></div>
+            <div class="dc-body" style="padding:10px 18px">
+              <div class="client-row"><div class="cr-av" style="background:#EDE8E0">S</div><div class="cr-name">Sarah Mitchell</div><div class="cr-status active">In Review</div></div>
+              <div class="client-row"><div class="cr-av" style="background:#E6DFCF">A</div><div class="cr-name">Amanda Torres</div><div class="cr-status pending">Drafting</div></div>
+              <div class="client-row"><div class="cr-av" style="background:#EDE8E0">J</div><div class="cr-name">Jennifer Park</div><div class="cr-status active">Active</div></div>
+              <div class="client-row"><div class="cr-av" style="background:#E6DFCF">R</div><div class="cr-name">Rachel Nguyen</div><div class="cr-status active">Active</div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Usage + Plan -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="dash-card">
+            <div class="dc-header"><div class="dc-title">Plan Usage</div></div>
+            <div class="dc-body">
+              <div style="font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--sage-d);background:var(--sage-bg);padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:14px">Studio Plan</div>
+              <div class="usage-item"><div class="usage-row"><span class="usage-label">AI Blueprint runs</span><span class="usage-val">34 / 100</span></div><div class="usage-bar"><div class="usage-fill" style="width:34%"></div></div></div>
+              <div class="usage-item"><div class="usage-row"><span class="usage-label">Saved designs</span><span class="usage-val">7 / 50</span></div><div class="usage-bar"><div class="usage-fill" style="width:14%"></div></div></div>
+              <div class="usage-item"><div class="usage-row"><span class="usage-label">Active clients</span><span class="usage-val">12 / 20</span></div><div class="usage-bar"><div class="usage-fill warn" style="width:60%"></div></div></div>
+              <div class="usage-item"><div class="usage-row"><span class="usage-label">Exports this month</span><span class="usage-val">18 / 50</span></div><div class="usage-bar"><div class="usage-fill" style="width:36%"></div></div></div>
+              <button style="width:100%;margin-top:14px;padding:9px;font-size:11px;font-weight:500;letter-spacing:.04em;cursor:pointer;border:1px solid var(--rule2);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;border-radius:0;transition:all .15s" onmouseover="this.style.borderColor='var(--sage)';this.style.color='var(--sage)'" onmouseout="this.style.borderColor='var(--rule2)';this.style.color='var(--muted)'" onclick="nav('billing')">Upgrade to Atelier →</button>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="dc-header"><div class="dc-title">Upcoming</div></div>
+            <div class="dc-body" style="padding:10px 18px">
+              <div class="activity-row"><div class="act-dot" style="background:var(--gold);flex-shrink:0"></div><div><div class="act-text" style="font-weight:400">Client approval due</div><div class="act-time">Tomorrow · Sarah M.</div></div></div>
+              <div class="activity-row"><div class="act-dot" style="background:var(--sage);flex-shrink:0"></div><div><div class="act-text" style="font-weight:400">Bundle export scheduled</div><div class="act-time">Friday · Harvest series</div></div></div>
+              <div class="activity-row"><div class="act-dot" style="background:var(--muted2);flex-shrink:0"></div><div><div class="act-text" style="font-weight:400">Plan renewal</div><div class="act-time">May 1st · $9.95/mo</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENTS VIEW -->
+  <div id="view-clients" class="view">
+    <div class="topbar" style="position:static">
+      <div class="tb-breadcrumb">Workspace &rsaquo; <span>Clients</span></div>
+      <div class="tb-right">
+        <button class="tb-btn tb-btn-ghost" onclick="toast('Import CSV coming soon.')">Import CSV</button>
+        <button class="tb-btn tb-btn-primary" onclick="toast('Add client form coming soon.')">+ Add client</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:28px">
+      <div style="background:var(--white);border:1px solid var(--rule)">
+        <table class="clients-table">
+          <thead class="ct-head">
+            <tr><th>Client</th><th>Project</th><th>Zones</th><th>Status</th><th>Last updated</th><th></th></tr>
+          </thead>
+          <tbody>
+            <tr class="ct-row"><td><div style="font-size:12px;font-weight:400;color:var(--ink)">Sarah Mitchell</div><div style="font-size:10px;color:var(--muted2)">sarah@example.com</div></td><td>Holiday Wreath 2025</td><td>4</td><td><span class="status-pill sp-review">In Review</span></td><td>2 hours ago</td><td><button class="tb-btn tb-btn-ghost" style="font-size:10px;padding:4px 10px" onclick="toast('Opening Sarah's project…')">Open</button></td></tr>
+            <tr class="ct-row"><td><div style="font-size:12px;font-weight:400;color:var(--ink)">Amanda Torres</div><div style="font-size:10px;color:var(--muted2)">amanda@example.com</div></td><td>Winter Garland</td><td>3</td><td><span class="status-pill sp-draft">Draft</span></td><td>5 hours ago</td><td><button class="tb-btn tb-btn-ghost" style="font-size:10px;padding:4px 10px" onclick="toast('Opening Amanda\'s project…')">Open</button></td></tr>
+            <tr class="ct-row"><td><div style="font-size:12px;font-weight:400;color:var(--ink)">Jennifer Park</div><div style="font-size:10px;color:var(--muted2)">jen@example.com</div></td><td>Harvest Collection</td><td>5</td><td><span class="status-pill sp-active">Active</span></td><td>Yesterday</td><td><button class="tb-btn tb-btn-ghost" style="font-size:10px;padding:4px 10px" onclick="toast('Opening Jen\'s project…')">Open</button></td></tr>
+            <tr class="ct-row"><td><div style="font-size:12px;font-weight:400;color:var(--ink)">Rachel Nguyen</div><div style="font-size:10px;color:var(--muted2)">rachel@example.com</div></td><td>Spring Botanical</td><td>4</td><td><span class="status-pill sp-active">Active</span></td><td>2 days ago</td><td><button class="tb-btn tb-btn-ghost" style="font-size:10px;padding:4px 10px" onclick="toast('Opening Rachel\'s project…')">Open</button></td></tr>
+            <tr class="ct-row"><td><div style="font-size:12px;font-weight:400;color:var(--ink)">Michelle Davis</div><div style="font-size:10px;color:var(--muted2)">michelle@example.com</div></td><td>Coastal Minimal</td><td>3</td><td><span class="status-pill sp-active">Active</span></td><td>4 days ago</td><td><button class="tb-btn tb-btn-ghost" style="font-size:10px;padding:4px 10px" onclick="toast('Opening Michelle\'s project…')">Open</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- BILLING VIEW -->
+  <div id="view-billing" class="view">
+    <div class="topbar" style="position:static">
+      <div class="tb-breadcrumb">Workspace &rsaquo; <span>Billing</span></div>
+      <div class="tb-right">
+        <button class="tb-btn tb-btn-ghost" onclick="toast('Download invoice…')">Download invoices</button>
+        <button class="tb-btn tb-btn-ink" onclick="toast('Opening Stripe portal…')">Manage payment</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:28px">
+      <!-- Current Plan -->
+      <div class="plan-card">
+        <div class="plan-current">
+          <div>
+            <div style="font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(196,212,191,.6);margin-bottom:6px">Current plan</div>
+            <div class="plan-current-name">Studio</div>
+            <div style="font-size:12px;color:rgba(248,245,239,.35);margin-top:4px">Renews May 1, 2026</div>
+          </div>
+          <div style="margin-left:auto;text-align:right">
+            <div class="plan-current-price">$9.95</div>
+            <div class="plan-current-per">/ month</div>
+            <button style="margin-top:10px;padding:8px 18px;font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;border:1px solid rgba(196,212,191,.4);background:transparent;color:rgba(196,212,191,.8);font-family:'DM Sans',sans-serif;transition:all .15s;border-radius:0" onclick="toast('Upgrade flow coming soon.')" onmouseover="this.style.background='rgba(74,103,65,.3)'" onmouseout="this.style.background='transparent'">Upgrade to Atelier</button>
+          </div>
+        </div>
+        <div style="padding:12px 0">
+          <div class="invoice-row"><span class="inv-date">Apr 1, 2026</span><span class="inv-desc">Studio Plan — Monthly</span><span class="inv-amount">$9.95</span><span class="inv-status">Paid</span></div>
+          <div class="invoice-row"><span class="inv-date">Mar 1, 2026</span><span class="inv-desc">Studio Plan — Monthly</span><span class="inv-amount">$9.95</span><span class="inv-status">Paid</span></div>
+          <div class="invoice-row"><span class="inv-date">Feb 1, 2026</span><span class="inv-desc">Studio Plan — Monthly</span><span class="inv-amount">$9.95</span><span class="inv-status">Paid</span></div>
+        </div>
+      </div>
+
+      <!-- Tier Comparison -->
+      <div style="background:var(--white);border:1px solid var(--rule);padding:20px 24px">
+        <div style="font-size:12px;font-weight:500;color:var(--ink);margin-bottom:4px">Plan comparison</div>
+        <div style="font-size:12px;font-weight:300;color:var(--muted);margin-bottom:16px">Upgrade to unlock more of the Evercrafted platform.</div>
+        <table class="tier-table">
+          <thead><tr><th>Feature</th><th>Bloom</th><th>Craft</th><th class="hl">Studio ◎</th><th>Atelier</th></tr></thead>
+          <tbody>
+            <tr><td>Saved designs</td><td>5</td><td>20</td><td class="hl">50</td><td>Unlimited</td></tr>
+            <tr><td>AI blueprint runs / mo</td><td>—</td><td>20</td><td class="hl">100</td><td>Unlimited</td></tr>
+            <tr><td>Zone-based editor</td><td class="cross">—</td><td class="cross">—</td><td class="hl check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Journey presets</td><td class="cross">—</td><td class="cross">—</td><td class="hl check">✓</td><td class="check">✓</td></tr>
+            <tr><td>Client management</td><td>—</td><td>10</td><td class="hl">20</td><td>Unlimited</td></tr>
+            <tr><td>Midjourney render prompts</td><td class="cross">—</td><td class="cross">—</td><td class="hl check">✓</td><td class="check">✓</td></tr>
+            <tr><td>AI Visualizer</td><td class="cross">—</td><td class="cross">—</td><td class="cross hl">—</td><td class="check">✓</td></tr>
+            <tr><td>White-label exports</td><td class="cross">—</td><td class="cross">—</td><td class="cross hl">—</td><td class="check">✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS VIEW -->
+  <div id="view-settings" class="view">
+    <div class="topbar" style="position:static">
+      <div class="tb-breadcrumb">Workspace &rsaquo; <span>Settings</span></div>
+      <div class="tb-right">
+        <button class="tb-btn tb-btn-primary" onclick="toast('Settings saved.')">Save changes</button>
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:28px;max-width:680px">
+      <div class="settings-section">
+        <div class="ss-header"><div class="ss-title">Profile</div><div class="ss-desc">Your name and contact details.</div></div>
+        <div class="ss-body">
+          <div class="form-row">
+            <div class="form-field"><label>First name</label><input class="form-input" value="Bret"></div>
+            <div class="form-field"><label>Last name</label><input class="form-input" value="Baden"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-field"><label>Email</label><input class="form-input" value="bret@evercrafted.com"></div>
+            <div class="form-field"><label>Studio name</label><input class="form-input" value="Baden Design Studio"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="ss-header"><div class="ss-title">Design defaults</div><div class="ss-desc">Pre-populate new designs with your standard settings.</div></div>
+        <div class="ss-body">
+          <div class="form-row">
+            <div class="form-field"><label>Default wreath size</label><select class="form-input"><option>24 inches</option><option>18 inches</option><option>30 inches</option></select></div>
+            <div class="form-field"><label>Default zone count</label><select class="form-input"><option>4 zones</option><option>3 zones</option><option>5 zones</option></select></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settings-section">
+        <div class="ss-header"><div class="ss-title">Notifications</div><div class="ss-desc">Control when you hear from us.</div></div>
+        <div class="ss-body">
+          <div class="toggle-row"><div><div class="toggle-label">Client review reminders</div><div class="toggle-sub">Get notified when a client review is overdue</div></div><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+          <div class="toggle-row"><div><div class="toggle-label">Blueprint ready</div><div class="toggle-sub">Notify when an AI blueprint finishes generating</div></div><div class="toggle" onclick="this.classList.toggle('off')"></div></div>
+          <div class="toggle-row"><div><div class="toggle-label">Weekly summary</div><div class="toggle-sub">A digest of your designs, clients, and usage</div></div><div class="toggle off" onclick="this.classList.toggle('off')"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLACEHOLDER VIEWS -->
+  <div id="view-projects" class="view">
+    <div class="topbar" style="position:static"><div class="tb-breadcrumb">Workspace &rsaquo; <span>Projects</span></div></div>
+    <div style="padding:28px;flex:1;display:flex;align-items:center;justify-content:center">
+      <div style="text-align:center;color:var(--muted)">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink);margin-bottom:8px">Projects coming soon</div>
+        <div style="font-size:13px;font-weight:300;max-width:320px;margin:0 auto">Full project management with client links, revision history, and blueprint archives.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="view-analytics" class="view">
+    <div class="topbar" style="position:static"><div class="tb-breadcrumb">Workspace &rsaquo; <span>Analytics</span></div></div>
+    <div style="padding:28px;flex:1;display:flex;align-items:center;justify-content:center">
+      <div style="text-align:center;color:var(--muted)">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink);margin-bottom:8px">Analytics coming soon</div>
+        <div style="font-size:13px;font-weight:300;max-width:320px;margin:0 auto">Design performance, client approval rates, blueprint quality scores, and seasonal trends.</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const VIEWS = ['dashboard','clients','projects','billing','analytics','settings'];
+const LINKS = document.querySelectorAll('.sb-link');
+
+function nav(id) {
+  VIEWS.forEach(v => {
+    const el = document.getElementById('view-' + v);
+    if (el) el.classList.remove('on');
+  });
+  const target = document.getElementById('view-' + id);
+  if (target) target.classList.add('on');
+
+  LINKS.forEach(l => l.classList.remove('on'));
+  const map = {dashboard:0,studio:1,clients:2,projects:3,billing:4,analytics:5,settings:6};
+  if (map[id] !== undefined) LINKS[map[id]]?.classList.add('on');
+}
+
+function openStudio() {
+  toast('Opening Design Studio app…');
+}
+
+function toast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2400);
+}
+</script>
+</body>
+</html>

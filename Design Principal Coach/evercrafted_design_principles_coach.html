@@ -1,0 +1,431 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&display=swap');
+:root{
+  --ec-green:#4A6741;--ec-green-l:#6B8F67;--ec-green-pale:#EEF2ED;--ec-green-dim:rgba(74,103,65,0.12);
+  --ec-off:#F9F7F4;--ec-paper:#F2EFE9;--ec-ink:#4A4A4A;--ec-faint:#787878;
+  --ec-border:#E8E8E8;--ec-dark-border:#D0D0D0;--ec-warn:#C4922A;--ec-err:#B94040;
+  --ec-serif:'Cormorant Garamond',Georgia,serif;--ec-script:'Dancing Script',cursive;
+  --ec-sans:'Inter',system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+#app{font-family:var(--ec-sans);background:var(--ec-off);min-height:600px;border-radius:12px;overflow:hidden;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:#fff;border-bottom:1px solid var(--ec-border);}
+.brand{font-family:var(--ec-script);font-size:1.35rem;color:var(--ec-green);}
+.app-name{font-size:0.75rem;color:var(--ec-faint);letter-spacing:0.05em;margin-left:10px;}
+.tier-badge{font-size:0.6875rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:#F5EEF4;color:#7A4A85;}
+.tabs{display:flex;gap:6px;padding:14px 24px;background:#fff;border-bottom:1px solid var(--ec-border);flex-wrap:wrap;}
+.tab{padding:7px 18px;border-radius:999px;font-size:0.8125rem;font-weight:500;cursor:pointer;border:1.5px solid var(--ec-dark-border);background:transparent;color:var(--ec-ink);transition:all .18s ease;font-family:var(--ec-sans);}
+.tab:hover{border-color:var(--ec-green);color:var(--ec-green);}
+.tab.active{background:var(--ec-green);color:#fff;border-color:var(--ec-green);}
+.body{display:grid;grid-template-columns:1fr 1.15fr;gap:0;min-height:520px;}
+@media(max-width:680px){.body{grid-template-columns:1fr;}}
+.ref-panel{background:var(--ec-off);border-right:1px solid var(--ec-border);overflow-y:auto;max-height:560px;}
+.ref-header{padding:16px 20px;background:var(--ec-paper);border-bottom:1px solid var(--ec-border);display:flex;align-items:center;gap:10px;}
+.ref-title{font-family:var(--ec-serif);font-size:1.125rem;font-weight:600;color:var(--color-text-primary);}
+.ref-body{padding:16px 20px;display:flex;flex-direction:column;gap:10px;}
+.pcard{padding:12px 14px;border-radius:8px;background:#fff;border-left:3px solid var(--ec-green);}
+.pcard h4{font-family:var(--ec-serif);font-size:1rem;font-weight:600;margin-bottom:4px;color:var(--color-text-primary);}
+.pcard p{font-size:0.8rem;color:var(--ec-ink);line-height:1.6;}
+.pcard.warn{border-left-color:var(--ec-warn);}
+.pcard.info{border-left-color:#4A6785;}
+canvas{display:block;border-radius:8px;}
+.canvas-wrap{background:var(--ec-paper);border-radius:8px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.canvas-label{font-size:0.7rem;color:var(--ec-faint);font-family:monospace;text-align:center;}
+.color-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.combo{border-radius:8px;overflow:hidden;border:1.5px solid transparent;cursor:pointer;transition:border-color .18s;}
+.combo:hover{border-color:var(--ec-green);}
+.swatches{display:flex;height:40px;}
+.swatch{flex:1;}
+.combo-lbl{padding:5px 8px;background:#fff;font-size:0.7rem;font-weight:500;color:var(--ec-ink);}
+.focal-svg-wrap{background:var(--ec-paper);border-radius:8px;padding:12px;display:flex;justify-content:center;}
+.chat-panel{display:flex;flex-direction:column;background:#fff;}
+.chat-header{padding:14px 20px;border-bottom:1px solid var(--ec-border);display:flex;align-items:center;justify-content:space-between;}
+.chat-title{font-family:var(--ec-serif);font-size:1.1rem;font-weight:600;color:var(--color-text-primary);}
+.status{display:flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--ec-green);font-weight:500;}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ec-green);}
+.messages{padding:16px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;min-height:300px;max-height:340px;}
+.msg{display:flex;gap:8px;}
+.msg.user{flex-direction:row-reverse;}
+.avatar{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.msg.coach .avatar{background:var(--ec-green-pale);}
+.msg.user .avatar{background:#1A1A1A;color:#fff;font-size:10px;font-weight:600;}
+.bubble{max-width:85%;padding:10px 13px;border-radius:12px;font-size:0.8125rem;line-height:1.6;}
+.msg.coach .bubble{background:var(--ec-green-pale);color:var(--ec-ink);border-bottom-left-radius:3px;}
+.msg.user .bubble{background:#1A1A1A;color:#fff;border-bottom-right-radius:3px;}
+.loading-bubble{display:flex;align-items:center;gap:8px;padding:10px 13px;background:var(--ec-green-pale);border-radius:12px;border-bottom-left-radius:3px;font-size:0.8125rem;color:var(--ec-green);}
+.spinner{width:14px;height:14px;border:2px solid var(--ec-green-pale);border-top-color:var(--ec-green);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.chat-footer{padding:12px 16px;border-top:1px solid var(--ec-border);}
+.quick-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.qbtn{padding:4px 11px;border-radius:999px;font-size:0.7rem;font-family:var(--ec-sans);cursor:pointer;border:1.5px solid var(--ec-dark-border);background:transparent;color:var(--ec-ink);transition:all .15s;}
+.qbtn:hover{border-color:var(--ec-green);color:var(--ec-green);background:var(--ec-green-pale);}
+.input-row{display:flex;gap:8px;align-items:flex-end;}
+textarea{width:100%;padding:9px 12px;background:#fff;border:1.5px solid var(--ec-border);border-radius:8px;font-family:var(--ec-sans);font-size:0.9rem;color:var(--color-text-primary);outline:none;resize:none;transition:border-color .18s;}
+textarea:focus{border-color:var(--ec-green);box-shadow:0 0 0 3px var(--ec-green-dim);}
+textarea::placeholder{color:#A8A8A8;}
+.send-btn{padding:9px 18px;border-radius:8px;background:var(--ec-green);color:#fff;font-family:var(--ec-sans);font-size:0.8125rem;font-weight:500;border:none;cursor:pointer;transition:all .18s;white-space:nowrap;display:flex;align-items:center;gap:6px;}
+.send-btn:hover:not(:disabled){background:var(--ec-green-l);transform:translateY(-1px);}
+.send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+.divider{display:flex;align-items:center;gap:12px;margin:0 24px;color:#D0D0D0;font-size:1rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--ec-border);}
+.score-section{padding:20px 24px;}
+.score-section h3{font-family:var(--ec-serif);font-size:1.375rem;font-weight:400;margin-bottom:4px;color:var(--color-text-primary);}
+.score-section p{font-size:0.8125rem;color:var(--ec-faint);margin-bottom:14px;}
+.score-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+@media(max-width:600px){.score-grid{grid-template-columns:1fr 1fr;}}
+.scard{background:#fff;border-radius:10px;padding:14px;border:0.5px solid var(--ec-border);}
+.scard-label{font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-faint);margin-bottom:6px;}
+.scard-val{font-family:var(--ec-serif);font-size:1.75rem;font-weight:600;color:var(--ec-green);line-height:1;margin-bottom:6px;}
+.scard-bar{height:3px;background:var(--ec-border);border-radius:999px;overflow:hidden;margin-bottom:5px;}
+.scard-fill{height:100%;border-radius:999px;transition:width .8s ease;}
+.scard-note{font-size:0.6875rem;color:var(--ec-faint);line-height:1.45;}
+.score-input-row{display:flex;gap:10px;align-items:flex-end;}
+.score-btn{padding:9px 20px;border-radius:8px;background:var(--ec-green);color:#fff;font-family:var(--ec-sans);font-size:0.8125rem;font-weight:500;border:none;cursor:pointer;white-space:nowrap;transition:all .18s;}
+.score-btn:hover:not(:disabled){background:var(--ec-green-l);}
+.score-btn:disabled{opacity:.4;cursor:not-allowed;}
+.lock-section{position:relative;margin:0 24px 24px;border-radius:12px;overflow:hidden;}
+.lock-inner{background:#fff;border-radius:12px;padding:24px;border:0.5px solid var(--ec-border);filter:blur(1px);}
+.lock-overlay{position:absolute;inset:0;background:rgba(249,247,244,0.88);border-radius:12px;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(2px);}
+.lock-card{background:#fff;border:1.5px solid var(--ec-dark-border);border-radius:12px;padding:20px 24px;text-align:center;max-width:260px;}
+.lock-card h4{font-family:var(--ec-serif);font-size:1.1rem;margin-bottom:6px;color:var(--color-text-primary);}
+.lock-card p{font-size:0.8rem;color:var(--ec-ink);margin-bottom:14px;line-height:1.5;}
+.upgrade-btn{padding:8px 20px;border-radius:8px;background:transparent;color:#1A1A1A;border:1.5px solid var(--ec-dark-border);font-size:0.8125rem;font-family:var(--ec-sans);cursor:pointer;transition:all .18s;}
+.upgrade-btn:hover{border-color:#1A1A1A;background:var(--ec-off);}
+</style>
+
+<div id="app" role="main">
+  <h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;">Evercrafted Design Principles Coach — an AI-powered tool for learning wreath design balance, rhythm, focal points, and color theory.</h2>
+  <div class="header">
+    <div style="display:flex;align-items:baseline;gap:6px;">
+      <span class="brand">Evercrafted</span>
+      <span class="app-name">Design Principles Coach</span>
+    </div>
+    <span class="tier-badge">Studio</span>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="body">
+    <div class="ref-panel" id="refPanel"></div>
+    <div class="chat-panel">
+      <div class="chat-header">
+        <span class="chat-title">Ask the Coach</span>
+        <span class="status"><span class="dot"></span>AI-Powered</span>
+      </div>
+      <div class="messages" id="messages"></div>
+      <div class="chat-footer">
+        <div class="quick-row" id="quickRow"></div>
+        <div class="input-row">
+          <textarea id="userInput" rows="2" placeholder="Ask about balance, rhythm, focal points, or color…"></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMsg()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Ask
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider" style="margin:16px 24px;">✦</div>
+
+  <div class="score-section">
+    <h3>Design Score Analyzer</h3>
+    <p>Describe your design in plain language — the coach scores it across all four principles.</p>
+    <div class="score-grid" id="scoreGrid">
+      <div class="scard"><div class="scard-label">Balance</div><div class="scard-val" id="sv0">—</div><div class="scard-bar"><div class="scard-fill" id="sf0" style="width:0%;background:var(--ec-green);"></div></div><div class="scard-note" id="sn0">Run a score to see results</div></div>
+      <div class="scard"><div class="scard-label">Rhythm</div><div class="scard-val" id="sv1">—</div><div class="scard-bar"><div class="scard-fill" id="sf1" style="width:0%;background:var(--ec-green);"></div></div><div class="scard-note" id="sn1">Run a score to see results</div></div>
+      <div class="scard"><div class="scard-label">Focal Impact</div><div class="scard-val" id="sv2">—</div><div class="scard-bar"><div class="scard-fill" id="sf2" style="width:0%;background:var(--ec-green);"></div></div><div class="scard-note" id="sn2">Run a score to see results</div></div>
+      <div class="scard"><div class="scard-label">Color Harmony</div><div class="scard-val" id="sv3">—</div><div class="scard-bar"><div class="scard-fill" id="sf3" style="width:0%;background:var(--ec-green);"></div></div><div class="scard-note" id="sn3">Run a score to see results</div></div>
+    </div>
+    <div class="score-input-row">
+      <textarea id="critiqueInput" rows="2" placeholder="e.g. 24-inch grapevine, dominant burgundy roses at 315°, eucalyptus filler, small amber berries…" style="width:100%;padding:9px 12px;background:#fff;border:1.5px solid var(--ec-border);border-radius:8px;font-family:var(--ec-sans);font-size:0.875rem;outline:none;resize:none;transition:border-color .18s;color:var(--color-text-primary);"></textarea>
+      <button class="score-btn" id="scoreBtn" onclick="runScore()">Score It</button>
+    </div>
+  </div>
+
+  <div class="divider" style="margin:8px 24px 16px;">✦</div>
+
+  <div class="lock-section">
+    <div class="lock-inner">
+      <div style="font-family:var(--ec-serif);font-size:1.25rem;font-weight:600;margin-bottom:8px;color:var(--color-text-primary);">Generate Blueprint from Principles</div>
+      <p style="font-size:0.8125rem;color:var(--ec-ink);margin-bottom:16px;">Set your four principle preferences and generate a full WGS genome string with QACS placement coordinates.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:var(--ec-off);border-radius:8px;height:60px;"></div>
+        <div style="background:var(--ec-off);border-radius:8px;height:60px;"></div>
+      </div>
+    </div>
+    <div class="lock-overlay">
+      <div class="lock-card">
+        <div style="font-size:20px;margin-bottom:8px;">🔒</div>
+        <h4>Atelier Feature</h4>
+        <p>Blueprint generation from principles requires Atelier tier. Upgrade to unlock WGS genome output and QACS coordinates.</p>
+        <button class="upgrade-btn">Upgrade to Atelier</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const MODULES = {
+  balance: {
+    icon: '⚖',
+    label: 'Balance',
+    cards: [
+      { title: 'Symmetrical Balance', body: 'Mirror-image distribution across the vertical axis. Place equal-weight clusters at 10° and 170°, and matching fills at 2° and 178°. Feels formal, traditional, timeless.', type: '' },
+      { title: 'Asymmetrical Balance', body: 'Unequal visual weight creating dynamic tension. A large focal cluster at 315° balanced by smaller rhythm clusters spanning 90°–180°. Evercrafted\'s default style.', type: '' },
+      { title: 'Radial Balance', body: 'Golden angle distribution (137.5°). Place each new element at +137.5° from the last — produces a natural, botanical-looking scatter across the full ring.', type: '' },
+      { title: 'Optical Weight Rules', body: 'Dark > light. Large > small. Textured > smooth. Complex > simple. A single dark peony at r_inner can balance three lighter blooms at r_outer.', type: 'info' }
+    ],
+    canvas: true,
+    quick: ['Fix my lopsided 24" wreath','Best placement for asymmetric balance?','What is radial balance in practice?','How do I balance dark vs light blooms?']
+  },
+  rhythm: {
+    icon: '〰',
+    label: 'Rhythm',
+    cards: [
+      { title: 'Repetition', body: 'Use the same floral element at regular intervals. 3 identical clusters at 120° intervals creates a strong, resolved rhythm. Minimum 3 repetitions to register as a pattern.', type: '' },
+      { title: 'Alternation', body: 'A–B–A–B pattern. Alternate a focal flower with a texture element every 45°. Creates movement without chaos. Ideal for garland-style layouts.', type: '' },
+      { title: 'Progression', body: 'Scale or density increases along a direction. Start with 3 stems at 270°, grow to 7 stems by 315°. Creates visual momentum toward a focal point.', type: '' },
+      { title: 'Flow Direction', body: 'All stems should reinforce a single dominant flow — clockwise or counter-clockwise. Conflicting stem directions read as chaos, not texture.', type: 'warn' }
+    ],
+    canvas: false,
+    quick: ['How do I create rhythm on a 18" wreath?','What is an A-B alternation pattern?','How many stem repetitions for good rhythm?','My wreath looks chaotic — how to fix?']
+  },
+  focal: {
+    icon: '◎',
+    label: 'Focal Points',
+    cards: [
+      { title: 'Primary Focal Point', body: 'The single dominant element the eye lands on first. Place between 300°–330° (upper-left of ring). Use your largest, most dramatic bloom at r_work with ±10° spread. Max 1 per design.', type: '' },
+      { title: 'Secondary Focal Points', body: 'Supporting anchors that create rhythm with the primary. Place at 180° and 90° offset from primary. Target 60–70% the visual scale of the primary. Max 2 per design.', type: '' },
+      { title: 'Eye Path', body: 'The invisible line the viewer\'s eye travels: Primary → Secondary → Filler → back to Primary. Design this path deliberately using size, color saturation, and stem direction.', type: '' },
+      { title: 'Focal Competition', body: 'Two equally-sized, equally-saturated blooms placed 90° apart compete instead of leading. Make the primary at least 40% larger or bolder than any secondary.', type: 'warn' }
+    ],
+    canvas: false,
+    focalSvg: true,
+    quick: ['Where exactly should my focal go?','How big should my secondary focal be?','What is an eye path and how do I create one?','Two blooms are competing — how to fix it?']
+  },
+  color: {
+    icon: '🎨',
+    label: 'Color Theory',
+    cards: [
+      { title: '60–30–10 Rule', body: '60% dominant (greenery, base texture), 30% secondary (main florals), 10% accent (pops of contrast or metallic). Apply to stem count, not just visual area.', type: '' },
+      { title: 'Warm / Cool Balance', body: 'Every palette needs both warm and cool tones. Pure warm palettes feel heavy; pure cool palettes feel cold. A 70/30 split reads most naturally to the eye.', type: '' },
+      { title: 'Seasonal Palettes', body: 'Spring: soft pinks + green + ivory. Summer: saturated warm + chartreuse. Fall: burgundy + amber + rust + sage. Winter: deep green + white + pewter + red.', type: '' },
+      { title: 'Color Temperature Flow', body: 'Warm colors advance visually; cool recede. Place warm blooms at focal points (they pop) and cool tones in filler zones (they recede into texture).', type: 'info' }
+    ],
+    canvas: false,
+    colorGrid: true,
+    quick: ['Create a fall palette using 60-30-10','What colors work for a moody winter wreath?','Warm vs cool — which should be my focal?','How many accent stems in a 24" wreath?']
+  }
+};
+
+const COLOR_COMBOS = [
+  { name: 'Warm Autumn', swatches: ['#7D9B78','#C4922A','#8B3A3A','#F2EFE9'] },
+  { name: 'Cool Winter', swatches: ['#4A6785','#A8C0B8','#FFFFFF','#2E2E2E'] },
+  { name: 'Spring Soft', swatches: ['#6B8F67','#E8C4C4','#F5E6D0','#FFF8F0'] },
+  { name: 'Moody Editorial', swatches: ['#2E2E2E','#8B6A4A','#D4C5A9','#1A1A1A'] }
+];
+
+const SYSTEM_PROMPTS = {
+  balance: 'You are the Evercrafted Design Principles Coach — expert in wreath balance. Give specific, actionable advice using polar coordinates (degrees), stem counts, and wreath sizes (12", 18", 24"). Use clock positions or degree angles for all placement references. 2-4 sentences unless detail is needed. Never suggest cherry blossoms, pussy willow, or twig-based blossom florals. Gender-neutral language always.',
+  rhythm: 'You are the Evercrafted Design Principles Coach — expert in wreath rhythm and repetition. Give specific guidance with angular intervals, stem counts, and repetition patterns. Use terms: alternation, progression, flow direction. Be concise and precise with degree angles. Never suggest cherry blossoms, pussy willow, or twig-based blossom florals.',
+  focal: 'You are the Evercrafted Design Principles Coach — expert in focal point design for wreaths. Give specific polar coordinates (degrees), size ratios (e.g. 40% larger), and eye-path guidance. Reference primary vs secondary focal points. Never suggest cherry blossoms, pussy willow, or twig-based blossom florals.',
+  color: 'You are the Evercrafted Design Principles Coach — expert in color theory for floral and wreath design. Apply 60-30-10 rules, warm/cool balance, seasonal palettes. Reference actual floral colors by species where helpful. Be concise and precise. Never suggest cherry blossoms, pussy willow, or twig-based blossom florals.'
+};
+
+let activeModule = 'balance';
+let chatHistory = [];
+
+function renderTabs() {
+  const t = document.getElementById('tabs');
+  t.innerHTML = Object.entries(MODULES).map(([k,m]) =>
+    `<button class="tab${k===activeModule?' active':''}" onclick="switchModule('${k}')">${m.icon} ${m.label}</button>`
+  ).join('');
+}
+
+function renderRef() {
+  const m = MODULES[activeModule];
+  let html = `<div class="ref-header"><span class="ref-title">${m.label} Reference</span></div><div class="ref-body">`;
+  m.cards.forEach(c => {
+    html += `<div class="pcard${c.type?' '+c.type:''}"><h4>${c.title}</h4><p>${c.body}</p></div>`;
+  });
+  if (m.canvas) {
+    html += `<div class="canvas-wrap"><canvas id="polarCanvas" width="176" height="176"></canvas><p class="canvas-label">24" wreath · asymmetric · r_work = 9.5"</p></div>`;
+  }
+  if (m.focalSvg) {
+    html += `<div class="focal-svg-wrap">${focalSVG()}</div>`;
+  }
+  if (m.colorGrid) {
+    html += `<div class="color-grid">` + COLOR_COMBOS.map(c =>
+      `<div class="combo"><div class="swatches">${c.swatches.map(s=>`<div class="swatch" style="background:${s};"></div>`).join('')}</div><div class="combo-lbl">${c.name}</div></div>`
+    ).join('') + `</div>`;
+  }
+  html += `</div>`;
+  document.getElementById('refPanel').innerHTML = html;
+  if (m.canvas) drawPolar();
+}
+
+function focalSVG() {
+  return `<svg width="168" height="168" viewBox="0 0 168 168">
+    <circle cx="84" cy="84" r="64" stroke="#E8E8E8" stroke-width="1" fill="none"/>
+    <circle cx="84" cy="84" r="44" stroke="#F0F0F0" stroke-width="1" fill="none"/>
+    <circle cx="50" cy="36" r="13" fill="#4A6741" opacity="0.9"/>
+    <text x="50" y="40" text-anchor="middle" font-size="8" fill="white" font-family="Inter" font-weight="600">P</text>
+    <circle cx="126" cy="84" r="9" fill="#6B8F67" opacity="0.75"/>
+    <text x="126" y="88" text-anchor="middle" font-size="7" fill="white" font-family="Inter">S1</text>
+    <circle cx="60" cy="138" r="9" fill="#6B8F67" opacity="0.75"/>
+    <text x="60" y="142" text-anchor="middle" font-size="7" fill="white" font-family="Inter">S2</text>
+    <path d="M63 46 Q100 62 117 76" stroke="#C4922A" stroke-width="1.5" fill="none" stroke-dasharray="3 2" marker-end="url(#arr)"/>
+    <path d="M120 93 Q98 124 68 134" stroke="#C4922A" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/>
+    <path d="M55 143 Q30 110 44 44" stroke="#C4922A" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/>
+    <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#C4922A"/></marker></defs>
+    <text x="84" y="162" text-anchor="middle" font-size="7" fill="#A8A8A8" font-family="Inter">P=primary · S=secondary · eye path shown</text>
+  </svg>`;
+}
+
+function drawPolar() {
+  const c = document.getElementById('polarCanvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const cx = 88, cy = 88, r = 70, innerR = 46;
+  ctx.clearRect(0,0,176,176);
+  ctx.strokeStyle='#E8E8E8'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx,cy,innerR,0,Math.PI*2); ctx.stroke();
+  for(let a=0;a<360;a+=45){
+    const rad=(a-90)*Math.PI/180;
+    ctx.beginPath(); ctx.moveTo(cx+innerR*Math.cos(rad),cy+innerR*Math.sin(rad));
+    ctx.lineTo(cx+r*Math.cos(rad),cy+r*Math.sin(rad));
+    ctx.strokeStyle='#F2EFE9'; ctx.stroke();
+  }
+  const clusters=[
+    {angle:315,size:10,label:'P',col:'#4A6741'},
+    {angle:135,size:7,label:'S',col:'#6B8F67'},
+    {angle:75,size:4.5,label:'f',col:'#A8C0B8'},
+    {angle:195,size:4.5,label:'f',col:'#A8C0B8'},
+  ];
+  clusters.forEach(cl=>{
+    const rad=(cl.angle-90)*Math.PI/180;
+    const rw=(innerR+r)/2;
+    const x=cx+rw*Math.cos(rad), y=cy+rw*Math.sin(rad);
+    ctx.beginPath(); ctx.arc(x,y,cl.size,0,Math.PI*2);
+    ctx.fillStyle=cl.col; ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='bold 7px Inter'; ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(cl.label,x,y);
+  });
+}
+
+function renderQuick() {
+  const m = MODULES[activeModule];
+  document.getElementById('quickRow').innerHTML = m.quick.map(q=>
+    `<button class="qbtn" onclick="quickAsk('${q.replace(/'/g,"\\'")}')">›&nbsp;${q}</button>`
+  ).join('');
+}
+
+function welcomeMsg() {
+  const m = MODULES[activeModule];
+  return `Welcome to the ${m.label} module. I'm your wreath design coach — I speak polar coordinates, stem counts, and seasonal palettes. Ask me anything, or tap a quick-prompt below to get started.`;
+}
+
+function switchModule(k) {
+  activeModule = k;
+  chatHistory = [];
+  renderTabs();
+  renderRef();
+  renderQuick();
+  const msgs = document.getElementById('messages');
+  msgs.innerHTML = '';
+  appendMsg('coach', welcomeMsg());
+}
+
+function appendMsg(role, text) {
+  const msgs = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className = `msg ${role}`;
+  d.innerHTML = `<div class="avatar">${role==='coach'?'🌿':'You'}</div><div class="bubble">${text.replace(/\n/g,'<br>')}</div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showLoading() {
+  const msgs = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className = 'msg coach'; d.id = 'loadingMsg';
+  d.innerHTML = `<div class="avatar">🌿</div><div class="loading-bubble"><div class="spinner"></div>Coaching…</div>`;
+  msgs.appendChild(d);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function hideLoading() { const l = document.getElementById('loadingMsg'); if(l) l.remove(); }
+
+async function callClaude(msgs, sys) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ model:'claude-sonnet-4-20250514', max_tokens:1000, system:sys, messages:msgs })
+  });
+  const data = await res.json();
+  return data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
+}
+
+async function sendMsg() {
+  const inp = document.getElementById('userInput');
+  const text = inp.value.trim();
+  if (!text) return;
+  inp.value='';
+  document.getElementById('sendBtn').disabled = true;
+  appendMsg('user', text);
+  chatHistory.push({role:'user',content:text});
+  showLoading();
+  try {
+    const reply = await callClaude(chatHistory, SYSTEM_PROMPTS[activeModule]);
+    hideLoading();
+    appendMsg('coach', reply);
+    chatHistory.push({role:'assistant',content:reply});
+  } catch(e) {
+    hideLoading();
+    appendMsg('coach','Connection hiccup — give it another try.');
+  }
+  document.getElementById('sendBtn').disabled = false;
+}
+
+function quickAsk(text) {
+  document.getElementById('userInput').value = text;
+  sendMsg();
+}
+
+document.getElementById('userInput').addEventListener('keydown', e => {
+  if (e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+});
+
+async function runScore() {
+  const inp = document.getElementById('critiqueInput');
+  const desc = inp.value.trim();
+  if (!desc) return;
+  const btn = document.getElementById('scoreBtn');
+  btn.disabled = true; btn.textContent = 'Scoring…';
+  const sys = `You are an Evercrafted design critic. Return ONLY valid JSON, no preamble, no markdown fences:
+{"balance":{"score":0,"note":""},"rhythm":{"score":0,"note":""},"focal":{"score":0,"note":""},"color":{"score":0,"note":""}}
+Scores 0-100. Notes max 1 sentence. Scores reflect real design critique.`;
+  try {
+    const raw = await callClaude([{role:'user',content:`Score this wreath design: ${desc}`}], sys);
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const data = JSON.parse(clean);
+    const axes = ['balance','rhythm','focal','color'];
+    axes.forEach((k,i) => {
+      const d = data[k]; if(!d) return;
+      const s = Math.round(d.score);
+      document.getElementById('sv'+i).textContent = s;
+      const fill = document.getElementById('sf'+i);
+      fill.style.width = s+'%';
+      fill.style.background = s>=80?'#4A6741':s>=60?'#C4922A':'#B94040';
+      document.getElementById('sn'+i).textContent = d.note || '';
+    });
+  } catch(e) {
+    document.getElementById('sn0').textContent = 'Could not parse — try a more detailed description.';
+  }
+  btn.disabled = false; btn.textContent = 'Score It';
+}
+
+switchModule('balance');
+</script>
