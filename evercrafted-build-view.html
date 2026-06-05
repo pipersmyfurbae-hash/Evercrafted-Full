@@ -147,10 +147,10 @@ function layout(design){
     el.style.zIndex = p.z; el.dataset.z = p.z; el.dataset.rot = p.rot;
     el.style.transform = 'translate(-50%,-50%) scale(.55) rotate(' + p.rot + 'deg)';
     el.title = (p.name || '') + ' · ' + p.role + (p.stemCount > 1 ? ` (from ${p.stemCount} stems)` : '');
-    // crisp-soft true-colour mass: solid body, soft edge (no fog). Defined gouache
-    // colour-block, not a blurry gradient.
+    // FLAT semi-transparent disk with a clean edge — a real circle, not a gradient.
+    // Overlaps blend through alpha into clean colour masses. No blur, no fade.
     el.style.borderRadius = '50%';
-    el.style.background = `radial-gradient(circle, ${rgba(col, isGreen ? 0.80 : 0.92)} 0%, ${rgba(col, isGreen ? 0.62 : 0.74)} 60%, ${rgba(col, 0)} 100%)`;
+    el.style.background = rgba(col, isGreen ? 0.48 : 0.62);
     stage.appendChild(el);
     FLORALS.push(el);
   });
