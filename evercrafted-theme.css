@@ -1,0 +1,70 @@
+/* Evercrafted — canonical theme tokens + base components.
+   Import on any page to adopt the design system (see design-system/MASTER.md).
+   <link rel="stylesheet" href="/evercrafted-theme.css">  */
+
+:root{
+  /* paper neutrals */
+  --white:#FFFFFF; --off-white:#F9F7F4; --paper:#F2EFE9; --warm:#EDE8E0;
+  /* ink */
+  --black:#1A1A1A; --charcoal:#2E2E2E; --ink:#4A4A4A; --muted:#787878; --faint:#A8A8A8;
+  /* sage green (primary) */
+  --green:#4A6741; --green-l:#6B8F67; --green-pale:#EEF2ED; --green-dim:rgba(74,103,65,.10);
+  /* gold (10% accent) */
+  --gold:#9A7A40; --gold-l:#C4A06A; --gold-pale:#F5EFE4; --gold-dim:rgba(154,122,64,.10);
+  /* lines */
+  --border:#E4DFD8; --border-dark:#CCC7BE;
+  /* type */
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',system-ui,sans-serif;
+  --script:'Dancing Script',cursive;
+  /* radius / shadow / motion */
+  --rsm:6px; --rpill:100px;
+  --shadow-sm:0 1px 4px rgba(0,0,0,.06);
+  --shadow-md:0 4px 20px rgba(0,0,0,.08);
+  --shadow-lg:0 12px 48px rgba(0,0,0,.10);
+  --shadow-hero:0 24px 80px rgba(0,0,0,.12);
+  --tr:220ms ease;
+
+  /* aliases — common shorthand used by tool pages, mapped to canonical values
+     so a page that drops its local :root and imports this file stays on-brand */
+  --bg:var(--off-white); --s2:var(--white); --s3:var(--paper);
+  --tx:var(--ink); --mu:var(--muted); --fa:var(--faint);
+  --gp:var(--green-pale); --gd:var(--green-dim); --gl:var(--green-l);
+  --goldp:var(--gold-pale); --goldd:var(--gold-dim); --goldl:var(--gold-l);
+  --dust:var(--gold-l); --dustp:var(--gold-pale);
+  --bd:var(--border); --bdd:var(--border-dark);
+  --off:var(--off-white); --sf:var(--white); --sl:var(--paper);
+  --r:var(--rsm); --rlg:14px; --sh:var(--shadow-md);
+}
+
+/* ── base components ──────────────────────────────────────────────────────── */
+.ec-btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;
+  min-height:44px;padding:12px 26px;border-radius:var(--rpill);border:1.5px solid var(--green);
+  background:var(--green);color:#fff;font-family:var(--sans);font-size:13px;font-weight:600;
+  letter-spacing:.05em;cursor:pointer;text-decoration:none;transition:all var(--tr)}
+.ec-btn:hover{background:#3c5435;border-color:#3c5435;transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.ec-btn:focus-visible{outline:2px solid var(--green);outline-offset:2px}
+.ec-btn-outline{background:transparent;color:var(--green)}
+.ec-btn-outline:hover{background:var(--green-pale);color:var(--green);transform:none;box-shadow:none}
+
+.ec-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rsm);
+  box-shadow:var(--shadow-sm);padding:clamp(1.25rem,3vw,2rem);transition:box-shadow var(--tr),border-color var(--tr)}
+.ec-card:hover{box-shadow:var(--shadow-md);border-color:var(--border-dark)}
+
+.ec-input{width:100%;background:var(--white);border:1px solid var(--border);border-radius:var(--rsm);
+  padding:12px 16px;font-family:var(--sans);font-size:15px;color:var(--ink);outline:none;transition:border-color var(--tr)}
+.ec-input:focus{border-color:var(--green)}
+.ec-label{display:block;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:.4rem}
+
+.ec-chip{display:inline-flex;align-items:center;padding:3px 11px;border-radius:var(--rpill);
+  background:var(--green-pale);color:var(--green);font-family:var(--sans);font-size:11px;font-weight:600}
+.ec-chip-gold{background:var(--gold-pale);color:var(--gold)}
+
+.ec-overline{font-family:var(--sans);font-size:11px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--green)}
+.ec-h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,6vw,4rem);line-height:1.08;color:var(--black)}
+.ec-h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.15;color:var(--black)}
+.ec-lead{font-family:var(--sans);font-weight:300;font-size:1.1rem;line-height:1.6;color:var(--ink);max-width:60ch}
+
+@media(prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation-duration:.01ms!important}}

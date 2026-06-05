@@ -37,7 +37,7 @@
 
   const css = `
   .ec-nav{display:flex;align-items:center;justify-content:space-between;gap:1rem;
-    padding:14px clamp(16px,4vw,48px);background:#fffefb;border-bottom:1px solid #e8e2d8;
+    padding:14px clamp(16px,4vw,48px);background:#F9F7F4;border-bottom:1px solid #E4DFD8;
     font-family:'Jost',system-ui,sans-serif;position:relative;z-index:9000}
   .ec-nav a{text-decoration:none}
   .ec-logo{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.35rem;color:#2c2a26;letter-spacing:.02em}
@@ -48,25 +48,32 @@
   .ec-cta{padding:9px 18px;border-radius:100px;background:#4a6741;color:#fff!important;
     font-size:12px;font-weight:600;letter-spacing:.05em}
   .ec-cta:hover{background:#3c5435}
-  .ec-foot{background:#23211d;color:#cfc8bd;font-family:'Jost',system-ui,sans-serif;
-    padding:clamp(2.5rem,5vw,4rem) clamp(16px,4vw,48px) 1.5rem}
-  .ec-foot-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:2rem;
-    max-width:1100px;margin:0 auto 2rem;padding-bottom:2rem;border-bottom:1px solid #3a372f}
-  @media(max-width:760px){.ec-foot-top{grid-template-columns:1fr 1fr}}
-  @media(max-width:440px){.ec-foot-top{grid-template-columns:1fr}}
-  .ec-foot-brand{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.4rem;color:#fff;margin-bottom:.6rem}
-  .ec-foot-brand .g{color:#8aa37d}
-  .ec-foot-tag{font-size:12.5px;line-height:1.6;color:#9b9489;max-width:280px}
-  .ec-foot-h{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#7d7669;margin-bottom:.9rem}
+  .ec-foot{background:#1A1A1A;color:rgba(255,255,255,.6);font-family:'Jost',system-ui,sans-serif;
+    padding:clamp(2.75rem,5vw,3.5rem) clamp(16px,4vw,48px) 1.75rem}
+  .ec-foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:clamp(1.5rem,3vw,3rem);
+    max-width:1200px;margin:0 auto 2.5rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,.1)}
+  @media(max-width:768px){.ec-foot-top{grid-template-columns:1fr 1fr}}
+  @media(max-width:480px){.ec-foot-top{grid-template-columns:1fr}}
+  .ec-foot-brand{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.4rem;font-weight:400;color:#fff;margin-bottom:.75rem}
+  .ec-foot-brand .g{color:#C4A06A}
+  .ec-foot-tag{font-size:13px;line-height:1.65;color:rgba(255,255,255,.45);max-width:300px}
+  .ec-foot-h{font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:.9rem}
   .ec-foot ul{list-style:none;padding:0;margin:0}
-  .ec-foot li{margin-bottom:.55rem}
-  .ec-foot a{color:#cfc8bd;text-decoration:none;font-size:13px;transition:color .15s}
+  .ec-foot li{margin-bottom:.5rem}
+  .ec-foot a{color:rgba(255,255,255,.55);text-decoration:none;font-size:13px;transition:color .2s ease}
   .ec-foot a:hover{color:#fff}
   .ec-foot-bot{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;
-    max-width:1100px;margin:0 auto;font-size:11.5px;color:#7d7669}
-  .ec-foot-bot a{color:#7d7669;margin-left:1.1rem;text-decoration:none}
-  .ec-foot-bot a:hover{color:#cfc8bd}
+    max-width:1200px;margin:0 auto;font-size:12px;color:rgba(255,255,255,.35)}
+  .ec-foot-bot a{color:rgba(255,255,255,.35);margin-left:1.25rem;text-decoration:none;transition:color .2s ease}
+  .ec-foot-bot a:hover{color:rgba(255,255,255,.6)}
   `;
+  // Guarantee the brand fonts on every page (tool pages may not import them)
+  if (!document.querySelector('link[href*="Cormorant+Garamond"]')) {
+    const f = document.createElement('link');
+    f.rel = 'stylesheet';
+    f.href = 'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Jost:wght@300;400;500;600&display=swap';
+    document.head.appendChild(f);
+  }
   const st = document.createElement('style');
   st.id = 'ec-shared-style'; st.textContent = css;
   document.head.appendChild(st);
