@@ -417,7 +417,9 @@
       sizeFrac = Math.max(0.045, Math.min(0.32, sizeFrac));
       const z = ROLE_Z[role] || 6;
       const wfac = Math.min(2.2, 0.6 + unitCount * 0.18); // more units → wider cluster
-      const isBaseSpine = !full && (role === 'greenery' || role === 'structural');
+      // greenery/structural ALWAYS thread the whole dressed ring as a continuous
+      // base spine — never clumped — for full-round AND partial formulas alike.
+      const isBaseSpine = (role === 'greenery' || role === 'structural');
       const isCluster   = !full && (role === 'focal' || role === 'secondary' || role === 'bridge');
       const baseOrder = isBaseSpine ? baseSeen++ : 0;
 
