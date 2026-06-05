@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Memory-to-Masterpiece Studio — Evercrafted</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Dancing+Script:wght@500;600&family=Inter:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --ec-white: #FFFFFF;
+    --ec-off-white: #F9F7F4;
+    --ec-paper: #F2EFE9;
+    --ec-black: #1A1A1A;
+    --ec-charcoal: #2E2E2E;
+    --ec-ink: #4A4A4A;
+    --ec-green: #4A6741;
+    --ec-green-light: #6B8F67;
+    --ec-green-pale: #EEF2ED;
+    --ec-green-dim: rgba(74,103,65,0.12);
+    --ec-border: #E8E8E8;
+    --ec-border-dark: #D0D0D0;
+    --ec-gold: #B89A5A;
+    --ec-gold-pale: #F5EFE0;
+    --ec-error: #8B3A3A;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--ec-off-white);
+    color: var(--ec-charcoal);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    background: var(--ec-white);
+    border-bottom: 1px solid var(--ec-border);
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left { display: flex; align-items: baseline; gap: 14px; }
+  .wordmark {
+    font-family: 'Dancing Script', cursive;
+    font-size: 26px;
+    color: var(--ec-green);
+    letter-spacing: 0.02em;
+  }
+  .app-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--ec-ink);
+    letter-spacing: 0.06em;
+  }
+  .tier-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    background: var(--ec-black);
+    color: var(--ec-paper);
+  }
+  .header-right { display: flex; align-items: center; gap: 16px; }
+  .tier-switch-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ec-ink);
+    letter-spacing: 0.08em;
+  }
+  .tier-select {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    border: 1px solid var(--ec-border-dark);
+    background: var(--ec-white);
+    color: var(--ec-charcoal);
+    padding: 4px 8px;
+    cursor: pointer;
+  }
+
+  /* ── LAYOUT ── */
+  .app-body {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 40px;
+  }
+
+  .ec-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 36px 0;
+    color: var(--ec-border-dark);
+    font-size: 13px;
+  }
+  .ec-divider::before,
+  .ec-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--ec-border);
+  }
+
+  /* ── PIPELINE STEPPER ── */
+  .pipeline-nav {
+    display: flex;
+    gap: 0;
+    border: 1px solid var(--ec-border);
+    background: var(--ec-white);
+    margin-bottom: 40px;
+  }
+  .pipe-step {
+    flex: 1;
+    padding: 14px 16px;
+    border-right: 1px solid var(--ec-border);
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .pipe-step:last-child { border-right: none; }
+  .pipe-step.active { background: var(--ec-green-pale); }
+  .pipe-step.done .step-num { background: var(--ec-green); color: var(--ec-white); }
+  .pipe-step.locked { opacity: 0.55; cursor: not-allowed; }
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    width: 20px; height: 20px;
+    display: flex; align-items: center; justify-content: center;
+    border: 1px solid var(--ec-border-dark);
+    margin-bottom: 6px;
+    color: var(--ec-ink);
+  }
+  .step-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ec-charcoal);
+    line-height: 1.3;
+  }
+  .step-sublabel {
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    color: var(--ec-ink);
+    margin-top: 2px;
+  }
+  .lock-icon {
+    position: absolute;
+    top: 10px; right: 10px;
+    font-size: 11px;
+    color: var(--ec-border-dark);
+  }
+
+  /* ── PANELS ── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .panel-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--ec-black);
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+  }
+  .panel-sub {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--ec-ink);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  /* ── FORM ELEMENTS ── */
+  label {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ec-ink);
+    display: block;
+    margin-bottom: 8px;
+  }
+  textarea, input, select {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    border: 1px solid var(--ec-border);
+    background: var(--ec-white);
+    color: var(--ec-charcoal);
+    padding: 12px 16px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+    display: block;
+  }
+  textarea:focus, input:focus, select:focus {
+    border-color: var(--ec-green);
+  }
+  textarea { resize: vertical; min-height: 140px; line-height: 1.65; }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .form-group { margin-bottom: 20px; }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--ec-green);
+    color: var(--ec-white);
+    border: none;
+    padding: 14px 32px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: var(--ec-green-light); }
+  .btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  .btn-secondary {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--ec-green);
+    border: 1px solid var(--ec-green);
+    padding: 13px 28px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-secondary:hover { background: var(--ec-green-pale); }
+
+  .btn-row { display: flex; gap: 12px; align-items: center; margin-top: 28px; }
+
+  /* ── AI OUTPUT CARD ── */
+  .ai-card {
+    background: var(--ec-white);
+    border: 1px solid var(--ec-border);
+    padding: 28px 32px;
+    margin-top: 28px;
+  }
+  .ai-card-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ec-green);
+    margin-bottom: 16px;
+  }
+
+  /* ── EMOTION CHIPS ── */
+  .emotion-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .emotion-chip {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    padding: 6px 14px;
+    border: 1px solid var(--ec-border);
+    background: var(--ec-off-white);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .emotion-chip .chip-label { color: var(--ec-charcoal); }
+  .emotion-chip .chip-bar {
+    width: 60px;
+    height: 3px;
+    background: var(--ec-border);
+    position: relative;
+  }
+  .emotion-chip .chip-fill {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    background: var(--ec-green);
+  }
+
+  /* ── GLYPH PILLS ── */
+  .glyph-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .glyph-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 4px 12px;
+    background: var(--ec-green-dim);
+    color: var(--ec-green);
+    text-transform: uppercase;
+  }
+
+  /* ── BLUEPRINT INTENT TABLE ── */
+  .intent-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+    font-size: 13px;
+  }
+  .intent-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--ec-border);
+  }
+  .intent-table td:first-child {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ec-ink);
+    letter-spacing: 0.06em;
+    width: 38%;
+  }
+  .intent-table td:last-child {
+    font-family: 'Inter', sans-serif;
+    color: var(--ec-charcoal);
+    font-weight: 500;
+  }
+
+  /* ── RECIPE TABLE ── */
+  .recipe-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+  .recipe-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ec-ink);
+    padding: 10px 14px;
+    border-bottom: 2px solid var(--ec-border);
+    text-align: left;
+    background: var(--ec-paper);
+  }
+  .recipe-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--ec-border);
+    font-size: 13px;
+  }
+  .recipe-table tr:hover td { background: var(--ec-off-white); }
+  .role-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 3px 8px;
+    letter-spacing: 0.08em;
+  }
+  .role-focal { background: #F5EEF4; color: #7A4A85; }
+  .role-secondary { background: #EEF4F9; color: #4A6785; }
+  .role-filler { background: var(--ec-green-pale); color: var(--ec-green); }
+  .role-greenery { background: #E9F2EC; color: #3D6644; }
+  .role-line { background: var(--ec-paper); color: var(--ec-ink); }
+
+  /* ── BLUEPRINT CANVAS ── */
+  .blueprint-canvas-wrap {
+    background: var(--ec-white);
+    border: 1px solid var(--ec-border);
+    padding: 24px;
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+  }
+  canvas#blueprintCanvas {
+    display: block;
+    border: 1px solid var(--ec-border);
+    background: var(--ec-paper);
+  }
+  .blueprint-meta { flex: 1; }
+  .meta-section { margin-bottom: 24px; }
+  .meta-section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ec-ink);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--ec-border);
+  }
+  .balance-meter {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .quadrant {
+    flex: 1;
+    text-align: center;
+  }
+  .quadrant-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--ec-ink);
+    margin-bottom: 4px;
+  }
+  .quadrant-bar {
+    height: 40px;
+    background: var(--ec-border);
+    position: relative;
+  }
+  .quadrant-fill {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: var(--ec-green-light);
+    transition: height 0.5s ease;
+  }
+
+  /* ── TIER GATE / LOCK OVERLAY ── */
+  .tier-gate-wrap {
+    position: relative;
+  }
+  .tier-gate-overlay {
+    position: absolute;
+    inset: 0;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    background: rgba(249,247,244,0.75);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+  }
+  .tier-gate-overlay.hidden { display: none; }
+  .upgrade-card {
+    background: var(--ec-white);
+    border: 1px solid var(--ec-border);
+    padding: 28px 36px;
+    text-align: center;
+    max-width: 340px;
+  }
+  .upgrade-icon { font-size: 24px; margin-bottom: 12px; }
+  .upgrade-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--ec-black);
+    margin-bottom: 8px;
+  }
+  .upgrade-body {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    color: var(--ec-ink);
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+  .upgrade-cta {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--ec-black);
+    color: var(--ec-off-white);
+    border: none;
+    padding: 12px 28px;
+    cursor: pointer;
+  }
+
+  /* ── MJ PROMPT ── */
+  .prompt-output {
+    background: var(--ec-black);
+    color: #B8D4B5;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    padding: 24px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    border: 1px solid #333;
+    margin-top: 16px;
+    min-height: 80px;
+  }
+  .copy-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 6px 16px;
+    background: transparent;
+    border: 1px solid var(--ec-border-dark);
+    color: var(--ec-ink);
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  .copy-btn:hover { background: var(--ec-paper); }
+
+  /* ── SPINNER ── */
+  .spinner {
+    display: none;
+    width: 18px; height: 18px;
+    border: 2px solid var(--ec-border);
+    border-top-color: var(--ec-green);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  .spinner.active { display: inline-block; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── STATUS MSG ── */
+  .status-msg {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ec-ink);
+    letter-spacing: 0.06em;
+    margin-left: 14px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .status-msg.visible { opacity: 1; }
+
+  /* ── BOTANICAL SVG ACCENT ── */
+  .botanical-accent {
+    position: fixed;
+    bottom: 32px;
+    right: 40px;
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  /* ── STORY BLOCK ── */
+  .story-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1.85;
+    color: var(--ec-charcoal);
+    padding: 20px 0 4px;
+    border-top: 1px solid var(--ec-border);
+  }
+
+  /* ── GENOME STRING ── */
+  .genome-string {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--ec-paper);
+    border: 1px solid var(--ec-border);
+    padding: 14px 18px;
+    letter-spacing: 0.04em;
+    color: var(--ec-charcoal);
+    word-break: break-all;
+    line-height: 1.8;
+    margin-top: 12px;
+  }
+
+  /* ── TWO-COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="header-left">
+    <span class="wordmark">Evercrafted</span>
+    <span class="app-name">Memory-to-Masterpiece Studio</span>
+    <span class="tier-badge" id="tierBadge">Atelier</span>
+  </div>
+  <div class="header-right">
+    <span class="tier-switch-label">Preview Tier:</span>
+    <select class="tier-select" id="tierSelect" onchange="switchTier(this.value)">
+      <option value="bloom">Bloom</option>
+      <option value="craft">Craft</option>
+      <option value="studio">Studio</option>
+      <option value="atelier" selected>Atelier</option>
+    </select>
+  </div>
+</header>
+
+<!-- PIPELINE NAV -->
+<div class="app-body">
+  <nav class="pipeline-nav" id="pipelineNav">
+    <div class="pipe-step active" onclick="goStep(0)" id="step0">
+      <div class="step-num">1</div>
+      <div class="step-label">Memory Input</div>
+      <div class="step-sublabel">Tell the story</div>
+    </div>
+    <div class="pipe-step" onclick="goStep(1)" id="step1">
+      <div class="step-num">2</div>
+      <div class="step-label">Emotion Map</div>
+      <div class="step-sublabel">AI translation</div>
+    </div>
+    <div class="pipe-step" onclick="goStep(2)" id="step2">
+      <div class="step-num">3</div>
+      <div class="step-label">Blueprint</div>
+      <div class="step-sublabel">Floral recipe</div>
+    </div>
+    <div class="pipe-step" onclick="goStep(3)" id="step3">
+      <div class="step-num">4</div>
+      <div class="step-label">Canvas</div>
+      <div class="step-sublabel">Placement preview</div>
+    </div>
+    <div class="pipe-step locked" id="step4">
+      <div class="step-num">5</div>
+      <div class="step-label">MJ Prompt</div>
+      <div class="step-sublabel">Render output</div>
+      <span class="lock-icon">🔒</span>
+    </div>
+    <div class="pipe-step locked" id="step5">
+      <div class="step-num">6</div>
+      <div class="step-label">Build Guide</div>
+      <div class="step-sublabel">PDF export</div>
+      <span class="lock-icon">🔒</span>
+    </div>
+  </nav>
+
+  <!-- ══ PANEL 0: MEMORY INPUT ══ -->
+  <div class="panel active" id="panel0">
+    <h1 class="panel-title">Begin with a Memory</h1>
+    <p class="panel-sub">Describe the person, moment, or feeling at the heart of this wreath. The more specific your language, the more emotionally resonant the design.</p>
+
+    <div class="form-group">
+      <label>Memory or Emotional Intent</label>
+      <textarea id="memoryText" placeholder="My grandmother's garden in late summer — she grew dahlias in every shade of orange and burgundy. The smell of warm soil, her laugh, the way she always tucked a single white flower into the arrangement for 'breathing room.'"></textarea>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0">
+        <label>Occasion</label>
+        <select id="occasion">
+          <option value="">Select occasion</option>
+          <option>Memorial / Remembrance</option>
+          <option>Birthday Celebration</option>
+          <option>Wedding / Anniversary</option>
+          <option>Seasonal Décor</option>
+          <option>Sympathy / Grief</option>
+          <option>New Home / Housewarming</option>
+          <option>Holiday</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label>Wreath Size</label>
+        <select id="wreathSize">
+          <option value="18">18 inch</option>
+          <option value="24" selected>24 inch</option>
+          <option value="30">30 inch</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label>Density</label>
+        <select id="density">
+          <option value="light">Light (35–45 pieces)</option>
+          <option value="medium" selected>Medium (50–65 pieces)</option>
+          <option value="lush">Lush (70–90 pieces)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-row" style="margin-top:20px">
+      <div class="form-group" style="margin-bottom:0">
+        <label>Composition Style</label>
+        <select id="compositionStyle">
+          <option value="full">Full (even coverage)</option>
+          <option value="crescent" selected>Crescent (4–8 o'clock focal arc)</option>
+          <option value="sideCluster">Side Cluster</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label>Install Location</label>
+        <select id="installLocation">
+          <option value="door">Door</option>
+          <option value="indoor">Indoor</option>
+          <option value="outdoor">Outdoor</option>
+        </select>
+      </div>
+      <div class="form-group" style="margin-bottom:0">
+        <label>Budget Range</label>
+        <select id="budgetRange">
+          <option value="low">Under $50</option>
+          <option value="mid" selected>$50–$120</option>
+          <option value="high">$120–$250</option>
+          <option value="luxury">$250+</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-primary" onclick="runStep0()">Translate Memory →</button>
+      <div class="spinner" id="spinner0"></div>
+      <span class="status-msg" id="status0">Analyzing emotional content…</span>
+    </div>
+  </div>
+
+  <!-- ══ PANEL 1: EMOTION MAP ══ -->
+  <div class="panel" id="panel1">
+    <h1 class="panel-title">Emotional Translation</h1>
+    <p class="panel-sub">The AI has parsed the emotional content of the memory and identified primary feelings, symbolic glyphs, and palette guidance.</p>
+
+    <div class="ai-card" id="emotionCard">
+      <div class="ai-card-label">✦ Emotional Profile</div>
+      <div id="emotionChips" class="emotion-grid"></div>
+      <div style="margin-top:22px">
+        <div class="ai-card-label">✦ Design Glyphs</div>
+        <div id="glyphPills" class="glyph-grid"></div>
+      </div>
+      <div id="aiStoryBlock" style="margin-top:24px">
+        <div class="ai-card-label">✦ Design Story</div>
+        <div class="story-text" id="storyText"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep(0)">← Revise Memory</button>
+      <button class="btn-primary" onclick="runStep1()">Generate Blueprint →</button>
+      <div class="spinner" id="spinner1"></div>
+      <span class="status-msg" id="status1">Composing floral recipe…</span>
+    </div>
+  </div>
+
+  <!-- ══ PANEL 2: BLUEPRINT ══ -->
+  <div class="panel" id="panel2">
+    <h1 class="panel-title">Blueprint & Floral Recipe</h1>
+    <p class="panel-sub">Your blueprint intent and stem-by-stem recipe. Every element traces back to the emotional source.</p>
+
+    <div class="two-col">
+      <div>
+        <div class="ai-card">
+          <div class="ai-card-label">✦ Blueprint Intent</div>
+          <table class="intent-table" id="intentTable">
+            <tr><td>Diameter</td><td id="bi-diameter">—</td></tr>
+            <tr><td>Composition</td><td id="bi-composition">—</td></tr>
+            <tr><td>Focal Arc</td><td id="bi-arc">—</td></tr>
+            <tr><td>Density</td><td id="bi-density">—</td></tr>
+            <tr><td>Symmetry</td><td id="bi-symmetry">—</td></tr>
+            <tr><td>Target Pieces</td><td id="bi-pieces">—</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="ai-card">
+          <div class="ai-card-label">✦ Floral Recipe Draft</div>
+          <table class="recipe-table" id="recipeTable">
+            <thead><tr><th>Role</th><th>Selection</th><th>Pieces</th></tr></thead>
+            <tbody id="recipeBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Genome string (tier-gated) -->
+    <div class="tier-gate-wrap" style="margin-top:28px">
+      <div class="ai-card" id="genomeCard">
+        <div class="ai-card-label">✦ WGS Genome String</div>
+        <div class="genome-string" id="genomeString">Loading…</div>
+        <button class="copy-btn" onclick="copyGenome()">Copy Genome</button>
+      </div>
+      <div class="tier-gate-overlay" id="genomeLock">
+        <div class="upgrade-card">
+          <div class="upgrade-icon">🔒</div>
+          <div class="upgrade-title">Atelier Feature</div>
+          <div class="upgrade-body">Genome strings let you encode, share, mutate, and breed wreath designs. Available on the Atelier plan.</div>
+          <button class="upgrade-cta" onclick="simulateUpgrade()">Upgrade to Atelier</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep(1)">← Back</button>
+      <button class="btn-primary" onclick="goStep(3)">View Canvas →</button>
+    </div>
+  </div>
+
+  <!-- ══ PANEL 3: CANVAS ══ -->
+  <div class="panel" id="panel3">
+    <h1 class="panel-title">Blueprint Canvas</h1>
+    <p class="panel-sub">Polar coordinate placement preview. Each element is positioned by role, emotion, and golden-angle distribution.</p>
+
+    <div class="blueprint-canvas-wrap">
+      <canvas id="blueprintCanvas" width="440" height="440"></canvas>
+      <div class="blueprint-meta">
+        <div class="meta-section">
+          <div class="meta-section-title">Optical Balance</div>
+          <div class="balance-meter" id="balanceMeter">
+            <div class="quadrant"><div class="quadrant-label">Q1</div><div class="quadrant-bar"><div class="quadrant-fill" id="q1" style="height:70%"></div></div></div>
+            <div class="quadrant"><div class="quadrant-label">Q2</div><div class="quadrant-bar"><div class="quadrant-fill" id="q2" style="height:55%"></div></div></div>
+            <div class="quadrant"><div class="quadrant-label">Q3</div><div class="quadrant-bar"><div class="quadrant-fill" id="q3" style="height:85%"></div></div></div>
+            <div class="quadrant"><div class="quadrant-label">Q4</div><div class="quadrant-bar"><div class="quadrant-fill" id="q4" style="height:60%"></div></div></div>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ec-green);margin-top:8px" id="balanceStatus">✓ Within bounds</div>
+        </div>
+
+        <div class="meta-section">
+          <div class="meta-section-title">Aesthetic Score</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;color:var(--ec-black)" id="aestheticScore">—</div>
+          <div style="font-family:'Inter',sans-serif;font-size:12px;color:var(--ec-ink);margin-top:4px" id="scoreLabel"></div>
+        </div>
+
+        <div class="meta-section">
+          <div class="meta-section-title">Layer Legend</div>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:4px">
+            <div style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;background:#7A4A85;display:inline-block"></span><span style="font-size:11px;font-family:'Inter',sans-serif;color:var(--ec-ink)">Focal</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;background:#4A6785;display:inline-block"></span><span style="font-size:11px;font-family:'Inter',sans-serif;color:var(--ec-ink)">Secondary</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;background:var(--ec-green-light);display:inline-block"></span><span style="font-size:11px;font-family:'Inter',sans-serif;color:var(--ec-ink)">Filler</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;background:#3D6644;display:inline-block"></span><span style="font-size:11px;font-family:'Inter',sans-serif;color:var(--ec-ink)">Greenery</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MJ Prompt (Studio+ gate) -->
+    <div class="ec-divider">✦</div>
+    <div class="tier-gate-wrap">
+      <div>
+        <h2 style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;margin-bottom:8px">Midjourney Render Prompt</h2>
+        <p style="font-family:'Inter',sans-serif;font-size:13px;color:var(--ec-ink);margin-bottom:0">Production-ready prompt compiled from your blueprint and Style DNA.</p>
+        <div class="prompt-output" id="mjPromptOutput">Generate your blueprint first to see the render prompt.</div>
+        <button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
+      </div>
+      <div class="tier-gate-overlay" id="mjPromptLock">
+        <div class="upgrade-card">
+          <div class="upgrade-icon">🔒</div>
+          <div class="upgrade-title">Studio Feature</div>
+          <div class="upgrade-body">Midjourney render prompts are compiled from your exact blueprint, florals, and style DNA. Available on Studio and Atelier plans.</div>
+          <button class="upgrade-cta" onclick="simulateUpgrade()">Upgrade to Studio</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-secondary" onclick="goStep(2)">← Back</button>
+      <button class="btn-primary" onclick="runStep3()">Generate MJ Prompt →</button>
+      <div class="spinner" id="spinner3"></div>
+    </div>
+  </div>
+
+</div><!-- /app-body -->
+
+<!-- BOTANICAL SVG ACCENT -->
+<svg class="botanical-accent" width="200" height="260" viewBox="0 0 200 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="100" cy="130" rx="90" ry="90" stroke="#4A6741" stroke-width="1.5" fill="none"/>
+  <ellipse cx="100" cy="130" rx="70" ry="70" stroke="#4A6741" stroke-width="0.8" fill="none" stroke-dasharray="4 6"/>
+  <circle cx="100" cy="60" r="18" stroke="#4A6741" stroke-width="1" fill="none"/>
+  <circle cx="152" cy="95" r="12" stroke="#4A6741" stroke-width="1" fill="none"/>
+  <circle cx="148" cy="165" r="14" stroke="#4A6741" stroke-width="1" fill="none"/>
+  <circle cx="100" cy="200" r="10" stroke="#4A6741" stroke-width="1" fill="none"/>
+  <circle cx="52" cy="165" r="12" stroke="#4A6741" stroke-width="1" fill="none"/>
+  <circle cx="48" cy="95" r="16" stroke="#4A6741" stroke-width="1" fill="none"/>
+  <line x1="100" y1="60" x2="100" y2="130" stroke="#4A6741" stroke-width="0.7"/>
+  <line x1="152" y1="95" x2="100" y2="130" stroke="#4A6741" stroke-width="0.7"/>
+  <line x1="148" y1="165" x2="100" y2="130" stroke="#4A6741" stroke-width="0.7"/>
+  <line x1="52" y1="165" x2="100" y2="130" stroke="#4A6741" stroke-width="0.7"/>
+  <line x1="48" y1="95" x2="100" y2="130" stroke="#4A6741" stroke-width="0.7"/>
+</svg>
+
+<script>
+// ── TIER SYSTEM ──
+const TIER_RANK = { bloom:1, craft:2, studio:3, atelier:4 };
+const TIER_COLORS = {
+  bloom: { bg:'#EEF2ED', color:'#4A6741' },
+  craft: { bg:'#EEF4F9', color:'#4A6785' },
+  studio: { bg:'#F5EEF4', color:'#7A4A85' },
+  atelier: { bg:'#1A1A1A', color:'#F2EFE9' }
+};
+let USER_TIER = 'atelier';
+
+function canAccess(required) {
+  return TIER_RANK[USER_TIER] >= TIER_RANK[required];
+}
+
+function switchTier(t) {
+  USER_TIER = t;
+  const badge = document.getElementById('tierBadge');
+  badge.textContent = t.charAt(0).toUpperCase() + t.slice(1);
+  badge.style.background = TIER_COLORS[t].bg;
+  badge.style.color = TIER_COLORS[t].color;
+  applyTierGates();
+}
+
+function applyTierGates() {
+  // Genome: atelier
+  document.getElementById('genomeLock').classList.toggle('hidden', canAccess('atelier'));
+  // MJ Prompt: studio
+  document.getElementById('mjPromptLock').classList.toggle('hidden', canAccess('studio'));
+  // Step 4 (MJ), Step 5 (PDF): studio/atelier
+  const step4 = document.getElementById('step4');
+  const step5 = document.getElementById('step5');
+  if (canAccess('studio')) {
+    step4.classList.remove('locked');
+    step4.onclick = () => goStep(4);
+    step4.querySelector('.lock-icon').style.display = 'none';
+  }
+  if (canAccess('atelier')) {
+    step5.classList.remove('locked');
+    step5.onclick = () => goStep(5);
+    step5.querySelector('.lock-icon').style.display = 'none';
+  }
+}
+
+function simulateUpgrade() {
+  alert('In production, this opens the Stripe upgrade flow. Switching to Atelier for demo.');
+  document.getElementById('tierSelect').value = 'atelier';
+  switchTier('atelier');
+}
+
+// ── PIPELINE NAVIGATION ──
+let currentStep = 0;
+
+function goStep(n) {
+  document.querySelectorAll('.panel').forEach((p,i) => {
+    p.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.pipe-step').forEach((s,i) => {
+    s.classList.remove('active','done');
+    if (i === n) s.classList.add('active');
+    if (i < n) s.classList.add('done');
+  });
+  currentStep = n;
+}
+
+// ── STATE ──
+let appState = {
+  memory: null,
+  emotions: [],
+  glyphs: [],
+  story: '',
+  blueprintIntent: null,
+  floralRecipe: null,
+  genomeString: '',
+  mjPrompt: ''
+};
+
+// ── CLAUDE API ──
+async function callClaude(messages, systemPrompt, maxTokens = 1200) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages
+    })
+  });
+  const data = await res.json();
+  return data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
+}
+
+function showSpinner(id, msgId, msg) {
+  document.getElementById(id).classList.add('active');
+  if (msgId) {
+    const el = document.getElementById(msgId);
+    el.textContent = msg;
+    el.classList.add('visible');
+  }
+}
+function hideSpinner(id, msgId) {
+  document.getElementById(id).classList.remove('active');
+  if (msgId) document.getElementById(msgId).classList.remove('visible');
+}
+
+// ── STEP 0: EMOTION ANALYSIS ──
+async function runStep0() {
+  const text = document.getElementById('memoryText').value.trim();
+  if (!text) { alert('Please enter a memory or emotional intent.'); return; }
+
+  appState.memory = {
+    rawText: text,
+    occasion: document.getElementById('occasion').value,
+    size: document.getElementById('wreathSize').value,
+    density: document.getElementById('density').value,
+    style: document.getElementById('compositionStyle').value,
+    location: document.getElementById('installLocation').value,
+    budget: document.getElementById('budgetRange').value
+  };
+
+  showSpinner('spinner0', 'status0', 'Analyzing emotional content…');
+
+  const systemPrompt = `You are the Memory-to-Masterpiece AI for Evercrafted, an emotional wreath design platform.
+Analyze the user's memory text and extract:
+1. 3-5 primary emotions with intensity (0–1) 
+2. 3-5 design glyphs from: quiet_strength, grief, threshold, circle_of_life, journey, veil, warmth, nostalgia, celebration, rootedness
+3. A brief poetic design story (2–3 sentences, evocative, first-person plural "we")
+
+Respond ONLY with valid JSON, no markdown fences:
+{
+  "emotions": [{"label":"string","intensity":0.0},...],
+  "glyphs": ["string",...],
+  "story": "string"
+}`;
+
+  try {
+    const raw = await callClaude([{ role: 'user', content: text }], systemPrompt, 800);
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    appState.emotions = parsed.emotions || [];
+    appState.glyphs = parsed.glyphs || [];
+    appState.story = parsed.story || '';
+
+    renderEmotions();
+    goStep(1);
+  } catch (e) {
+    console.error(e);
+    // Fallback demo data
+    appState.emotions = [
+      { label: 'nostalgia', intensity: 0.88 },
+      { label: 'warmth', intensity: 0.75 },
+      { label: 'gratitude', intensity: 0.65 },
+      { label: 'peaceful', intensity: 0.50 }
+    ];
+    appState.glyphs = ['nostalgia', 'rootedness', 'warmth', 'circle_of_life'];
+    appState.story = 'We anchor this design in the warmth of memory — late summer light caught in amber dahlias, a breath of white to honor the quiet spaces between moments of joy.';
+    renderEmotions();
+    goStep(1);
+  } finally {
+    hideSpinner('spinner0', 'status0');
+  }
+}
+
+function renderEmotions() {
+  const chips = document.getElementById('emotionChips');
+  chips.innerHTML = appState.emotions.map(e => `
+    <div class="emotion-chip">
+      <span class="chip-label">${e.label}</span>
+      <div class="chip-bar"><div class="chip-fill" style="width:${Math.round(e.intensity * 100)}%"></div></div>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--ec-ink)">${Math.round(e.intensity * 100)}%</span>
+    </div>`).join('');
+
+  const glyphs = document.getElementById('glyphPills');
+  glyphs.innerHTML = appState.glyphs.map(g => `<div class="glyph-pill">${g.replace(/_/g,' ')}</div>`).join('');
+
+  document.getElementById('storyText').textContent = appState.story;
+}
+
+// ── STEP 1: BLUEPRINT GENERATION ──
+async function runStep1() {
+  showSpinner('spinner1', 'status1', 'Composing floral recipe…');
+
+  const mem = appState.memory;
+  const systemPrompt = `You are the Blueprint Composition Engine for Evercrafted. Generate a BlueprintIntent and FloralRecipeDraft for a ${mem.size}-inch ${mem.density} ${mem.style} wreath.
+Emotions: ${JSON.stringify(appState.emotions)}
+Glyphs: ${appState.glyphs.join(', ')}
+Occasion: ${mem.occasion}
+
+Respond ONLY with valid JSON, no markdown fences:
+{
+  "blueprintIntent": {
+    "wreathDiameterIn": ${mem.size},
+    "compositionStyle": "${mem.style}",
+    "focalArcStart": 220,
+    "focalArcEnd": 320,
+    "symmetryMode": "bilateral",
+    "density": "${mem.density}",
+    "targetPieces": {"focal":[8,11],"secondary":[12,16],"filler":[12,18],"greenery":[22,28]}
+  },
+  "floralRecipe": [
+    {"role":"focal","name":"string","pieces":0,"emotionSource":"string"},
+    {"role":"secondary","name":"string","pieces":0,"emotionSource":"string"},
+    {"role":"filler","name":"string","pieces":0,"emotionSource":"string"},
+    {"role":"greenery","name":"string","pieces":0,"emotionSource":"string"}
+  ],
+  "genomeString": "string"
+}
+For the recipe, suggest realistic faux floral names (dahlias, eucalyptus, etc.) matching the emotional palette. Include 2 focal, 2 secondary, 3 filler, 2 greenery entries. genomeString should be a compact design code like: EC-24C-MDM-GRF-WRM-NOS-F:DAHL-S:ROSE-FL:CHAMM-GR:EUCL`;
+
+  try {
+    const raw = await callClaude([{ role: 'user', content: `Emotions: ${appState.story}\nOccasion: ${mem.occasion}` }], systemPrompt, 1200);
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    appState.blueprintIntent = parsed.blueprintIntent;
+    appState.floralRecipe = parsed.floralRecipe;
+    appState.genomeString = parsed.genomeString;
+  } catch (e) {
+    // Fallback
+    appState.blueprintIntent = {
+      wreathDiameterIn: parseInt(mem.size),
+      compositionStyle: mem.style,
+      focalArcStart: 220, focalArcEnd: 320,
+      symmetryMode: 'bilateral',
+      density: mem.density,
+      targetPieces: { focal:[8,11], secondary:[12,16], filler:[12,18], greenery:[22,28] }
+    };
+    appState.floralRecipe = [
+      { role:'focal', name:'Burgundy Dahlia', pieces:9, emotionSource:'nostalgia + warmth' },
+      { role:'focal', name:'Amber Garden Rose', pieces:7, emotionSource:'gratitude' },
+      { role:'secondary', name:'Ivory Spray Rose', pieces:14, emotionSource:'breathing room + peaceful' },
+      { role:'secondary', name:'Dried Pampas Grass', pieces:8, emotionSource:'rootedness' },
+      { role:'filler', name:'Cotton Stem', pieces:12, emotionSource:'softness' },
+      { role:'filler', name:'Dusty Miller', pieces:10, emotionSource:'nostalgia' },
+      { role:'filler', name:'Seeded Eucalyptus', pieces:14, emotionSource:'circle_of_life' },
+      { role:'greenery', name:'Silver Dollar Eucalyptus', pieces:24, emotionSource:'grounding' },
+      { role:'greenery', name:'Italian Ruscus', pieces:18, emotionSource:'threshold' }
+    ];
+    appState.genomeString = 'EC-24C-MDM-NOS-WRM-GRT-F:BDAHL+AROSE-S:IVROSE+PAMPA-FL:CTTN+DUSTY+SEUCL-GR:SDEUCL+RUSC';
+  }
+
+  renderBlueprint();
+  renderCanvas();
+  hideSpinner('spinner1', 'status1');
+  goStep(2);
+}
+
+function renderBlueprint() {
+  const bi = appState.blueprintIntent;
+  document.getElementById('bi-diameter').textContent = `${bi.wreathDiameterIn}"`;
+  document.getElementById('bi-composition').textContent = bi.compositionStyle.charAt(0).toUpperCase() + bi.compositionStyle.slice(1);
+  document.getElementById('bi-arc').textContent = `${bi.focalArcStart}°–${bi.focalArcEnd}° (4–8 o'clock)`;
+  document.getElementById('bi-density').textContent = bi.density.charAt(0).toUpperCase() + bi.density.slice(1);
+  document.getElementById('bi-symmetry').textContent = bi.symmetryMode.replace('_',' ');
+  const tp = bi.targetPieces;
+  document.getElementById('bi-pieces').textContent = `F:${tp.focal[0]}–${tp.focal[1]} S:${tp.secondary[0]}–${tp.secondary[1]} FL:${tp.filler[0]}–${tp.filler[1]} G:${tp.greenery[0]}–${tp.greenery[1]}`;
+
+  const tbody = document.getElementById('recipeBody');
+  tbody.innerHTML = appState.floralRecipe.map(r => `
+    <tr>
+      <td><span class="role-tag role-${r.role}">${r.role}</span></td>
+      <td style="font-family:'Inter',sans-serif;font-size:13px">${r.name}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${r.pieces}</td>
+    </tr>`).join('');
+
+  document.getElementById('genomeString').textContent = appState.genomeString;
+  applyTierGates();
+}
+
+// ── CANVAS RENDER ──
+function renderCanvas() {
+  const canvas = document.getElementById('blueprintCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = 440, H = 440, cx = 220, cy = 220;
+  const outerR = 190, innerR = 80;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#F2EFE9';
+  ctx.fillRect(0, 0, W, H);
+
+  // Wreath ring
+  ctx.beginPath();
+  ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+  ctx.arc(cx, cy, innerR, 0, Math.PI * 2, true);
+  ctx.fillStyle = 'rgba(74,103,65,0.06)';
+  ctx.fill();
+
+  // Ring border
+  ctx.beginPath();
+  ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(74,103,65,0.25)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(74,103,65,0.15)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Golden angle greenery
+  const greenR = (outerR + innerR) / 2 + 12;
+  for (let k = 0; k < 26; k++) {
+    const angle = (k * 137.5 * Math.PI) / 180;
+    const r = greenR + (Math.random() * 20 - 10);
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    drawBloom(ctx, x, y, 7 + Math.random() * 5, '#3D6644', 0.65);
+  }
+
+  // Filler
+  const fillR = greenR - 8;
+  for (let k = 0; k < 14; k++) {
+    const angle = (k * 137.5 * Math.PI) / 180 + 0.4;
+    const r = fillR + (Math.random() * 16 - 8);
+    const x = cx + r * Math.cos(angle);
+    const y = cy + r * Math.sin(angle);
+    drawBloom(ctx, x, y, 8 + Math.random() * 6, '#6B8F67', 0.75);
+  }
+
+  // Secondary (mid-ring)
+  const secAngles = [30, 85, 140, 195, 250, 305, 355, 20].map(d => d * Math.PI / 180);
+  const secColors = ['#4A6785','#4A6785','#4A6785','#4A6785','#4A6785','#4A6785','#4A6785','#4A6785'];
+  secAngles.forEach((a, i) => {
+    const r = (outerR + innerR) / 2 + 5;
+    drawBloom(ctx, cx + r * Math.cos(a), cy + r * Math.sin(a), 11 + Math.random() * 4, secColors[i], 0.8);
+  });
+
+  // Focal cluster (crescent: 220–320°)
+  const focalAngles = [230, 250, 268, 285, 302, 318].map(d => d * Math.PI / 180);
+  focalAngles.forEach((a, i) => {
+    const r = outerR - 22 + (Math.random() * 12 - 6);
+    drawBloom(ctx, cx + r * Math.cos(a), cy + r * Math.sin(a), 16 + Math.random() * 6, '#7A4A85', 0.9);
+  });
+
+  // Center mark
+  ctx.beginPath();
+  ctx.arc(cx, cy, 4, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(74,103,65,0.3)';
+  ctx.fill();
+
+  // Update balance / score
+  const score = 76 + Math.floor(Math.random() * 14);
+  document.getElementById('aestheticScore').textContent = score;
+  document.getElementById('scoreLabel').textContent = score >= 80 ? 'Excellent balance' : 'Good — minor adjustment suggested';
+
+  // Random balance quadrant heights
+  const qs = [65, 72, 82, 68];
+  ['q1','q2','q3','q4'].forEach((id,i) => {
+    document.getElementById(id).style.height = qs[i] + '%';
+  });
+}
+
+function drawBloom(ctx, x, y, r, color, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha;
+  const petals = 5;
+  ctx.beginPath();
+  for (let p = 0; p < petals; p++) {
+    const a = (p / petals) * Math.PI * 2;
+    const px = x + r * 0.9 * Math.cos(a);
+    const py = y + r * 0.9 * Math.sin(a);
+    if (p === 0) ctx.moveTo(px, py);
+    else ctx.lineTo(px, py);
+  }
+  ctx.closePath();
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(x, y, r * 0.35, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.fill();
+  ctx.restore();
+}
+
+// ── STEP 3: MJ PROMPT ──
+async function runStep3() {
+  if (!canAccess('studio')) {
+    applyTierGates();
+    return;
+  }
+
+  showSpinner('spinner3');
+
+  const mem = appState.memory;
+  const recipe = appState.floralRecipe || [];
+  const focalNames = recipe.filter(r => r.role === 'focal').map(r => r.name).join(', ');
+  const greenNames = recipe.filter(r => r.role === 'greenery').map(r => r.name).join(', ');
+
+  const systemPrompt = `You are the Evercrafted Prompt Compiler. Generate a single production-ready Midjourney render prompt for a wreath design.
+Style DNA rules: 24-inch asymmetric form, 3-5 clusters, photorealistic faux florals, warm directional light (upper-left), shallow depth of field, editorial product photography on a neutral linen surface. NO cherry blossoms, NO pussy willow, NO twig-based blossoms.
+Respond with ONLY the raw Midjourney prompt string, no explanation.`;
+
+  const userMsg = `Design: ${mem.style} wreath, ${mem.density} density
+Focal: ${focalNames}
+Greenery: ${greenNames}
+Mood: ${appState.glyphs.join(', ')}
+Story: ${appState.story}`;
+
+  try {
+    const prompt = await callClaude([{ role:'user', content: userMsg }], systemPrompt, 600);
+    appState.mjPrompt = prompt.trim();
+    document.getElementById('mjPromptOutput').textContent = appState.mjPrompt;
+  } catch(e) {
+    appState.mjPrompt = `photorealistic faux floral wreath, ${focalNames}, ${greenNames}, asymmetric crescent composition, 3–5 tight floral clusters, warm amber side light, editorial product photography, neutral linen background, shallow depth of field, 24 inch door wreath, no cherry blossoms --ar 1:1 --stylize 750 --v 6.1`;
+    document.getElementById('mjPromptOutput').textContent = appState.mjPrompt;
+  }
+
+  hideSpinner('spinner3');
+}
+
+function copyPrompt() {
+  if (appState.mjPrompt) {
+    navigator.clipboard.writeText(appState.mjPrompt);
+    event.target.textContent = 'Copied ✓';
+    setTimeout(() => event.target.textContent = 'Copy Prompt', 2000);
+  }
+}
+
+function copyGenome() {
+  if (appState.genomeString) {
+    navigator.clipboard.writeText(appState.genomeString);
+    event.target.textContent = 'Copied ✓';
+    setTimeout(() => event.target.textContent = 'Copy Genome', 2000);
+  }
+}
+
+// ── INIT ──
+applyTierGates();
+</script>
+</body>
+</html>
