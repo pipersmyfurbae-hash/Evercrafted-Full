@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parametric Lab — Design any wreath shape from mood — Evercrafted</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Dancing+Script:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ec-white:#FFFFFF;
+  --ec-off-white:#F9F7F4;
+  --ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A;
+  --ec-charcoal:#2E2E2E;
+  --ec-ink:#4A4A4A;
+  --ec-green:#4A6741;
+  --ec-green-light:#6B8F67;
+  --ec-green-pale:#EEF2ED;
+  --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-border:#E8E8E8;
+  --ec-border-dark:#D0D0D0;
+  --ec-muted:#8A8278;
+  --ec-muted2:#B4AFA8;
+  --ec-bark:#6E6860;
+  --ec-cream2:#F0EBE2;
+  --ec-cream3:#E6DFCF;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--ec-off-white);color:var(--ec-black);overflow-x:hidden;line-height:1.6}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:56px;background:rgba(249,247,244,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--ec-border)}
+.nav-i{max-width:1200px;margin:0 auto;padding:0 32px;height:100%;display:flex;align-items:center;gap:32px}
+.wordmark{font-family:'Dancing Script',cursive;font-size:22px;color:var(--ec-green);line-height:1;text-decoration:none}
+.nav-links{display:flex;gap:24px}
+.nav-links a{font-size:12px;color:var(--ec-muted);text-decoration:none;letter-spacing:.03em;transition:color .15s;cursor:pointer}
+.nav-links a:hover{color:var(--ec-black)}
+.nav-r{margin-left:auto;display:flex;gap:10px;align-items:center}
+.btn-ghost{background:none;border:none;font-size:12px;color:var(--ec-muted);cursor:pointer;letter-spacing:.03em;font-family:'Inter',sans-serif;transition:color .15s;padding:6px 8px}
+.btn-ghost:hover{color:var(--ec-black)}
+.btn-cta{padding:9px 22px;background:var(--ec-green);color:var(--ec-white);border:none;border-radius:0;font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
+.btn-cta:hover{background:#3a5233}
+
+/* ── HERO ── */
+.hero{min-height:100vh;padding-top:56px;background:var(--ec-black);display:grid;grid-template-columns:1fr 1fr;overflow:hidden;position:relative}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 60%, rgba(74,103,65,.22), transparent 55%);pointer-events:none}
+.hero-l{padding:96px 56px 80px 80px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
+.hero-eyebrow{font-size:9px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;color:rgba(74,103,65,.85);margin-bottom:20px;display:flex;align-items:center;gap:12px;opacity:0;transform:translateY(16px);animation:reveal .7s ease forwards .2s}
+.hero-eyebrow::before{content:'';display:block;width:28px;height:1px;background:rgba(74,103,65,.7)}
+.hero-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(46px,5.5vw,76px);font-weight:300;line-height:1.05;letter-spacing:-.03em;color:rgba(249,247,244,.94);margin-bottom:24px;opacity:0;transform:translateY(20px);animation:reveal .8s ease forwards .4s}
+.hero-h1 em{font-style:italic;color:rgba(107,143,103,.9)}
+.hero-h1 .script{font-family:'Dancing Script',cursive;font-weight:500;font-style:normal;color:rgba(107,143,103,.8);font-size:.9em}
+.hero-sub{font-size:16px;font-weight:300;line-height:1.8;color:rgba(249,247,244,.5);max-width:420px;margin-bottom:36px;opacity:0;transform:translateY(16px);animation:reveal .7s ease forwards .6s}
+.hero-btns{display:flex;gap:12px;margin-bottom:48px;opacity:0;transform:translateY(12px);animation:reveal .6s ease forwards .8s}
+.btn-hero-p{padding:14px 32px;background:var(--ec-green);color:var(--ec-white);border:none;border-radius:0;font-size:13px;font-weight:600;letter-spacing:.08em;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
+.btn-hero-p:hover{background:#3a5233}
+.btn-hero-o{padding:14px 24px;background:transparent;color:rgba(249,247,244,.55);border:1px solid rgba(249,247,244,.2);border-radius:0;font-size:13px;letter-spacing:.04em;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.btn-hero-o:hover{color:rgba(249,247,244,.9);border-color:rgba(249,247,244,.4)}
+.hero-proof{display:flex;gap:36px;opacity:0;animation:reveal .6s ease forwards 1s}
+.hp-n{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:rgba(249,247,244,.8);line-height:1}
+.hp-l{font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(249,247,244,.28);margin-top:3px}
+
+/* Hero right — live canvas demo */
+.hero-r{display:flex;align-items:center;justify-content:center;padding:60px 48px;position:relative;z-index:2}
+.demo-panel{background:rgba(249,247,244,.05);border:1px solid rgba(249,247,244,.1);border-radius:12px;overflow:hidden;width:100%;max-width:480px}
+.demo-topbar{height:38px;background:rgba(249,247,244,.05);border-bottom:1px solid rgba(249,247,244,.07);display:flex;align-items:center;padding:0 16px;gap:8px}
+.demo-dot{width:7px;height:7px;border-radius:50%;background:rgba(249,247,244,.12)}
+.demo-title{font-size:11px;font-family:'Dancing Script',cursive;color:rgba(249,247,244,.45);margin-left:4px;letter-spacing:.04em}
+.demo-tag{margin-left:auto;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:rgba(74,103,65,.7);font-weight:600}
+.demo-body{padding:24px;display:flex;flex-direction:column;gap:16px}
+.demo-canvas{background:rgba(249,247,244,.03);border:1px solid rgba(249,247,244,.06);border-radius:6px;display:flex;align-items:center;justify-content:center;height:200px;position:relative}
+canvas#heroCanvas{border-radius:6px}
+.demo-controls{display:flex;flex-direction:column;gap:10px}
+.demo-slider-row{display:flex;align-items:center;gap:10px}
+.demo-label{font-size:10px;color:rgba(249,247,244,.35);width:60px;flex-shrink:0;letter-spacing:.02em}
+.demo-track{flex:1;height:2px;background:rgba(249,247,244,.08);border-radius:1px;position:relative;cursor:pointer}
+.demo-fill{height:100%;border-radius:1px;background:var(--ec-green);width:50%}
+.demo-val{font-size:11px;color:rgba(74,103,65,.8);width:16px;text-align:right;font-family:'Cormorant Garamond',serif}
+.demo-shape-row{display:flex;gap:6px}
+.demo-s{padding:4px 10px;border:1px solid rgba(249,247,244,.1);border-radius:2px;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:rgba(249,247,244,.35);cursor:pointer;transition:all .15s;font-weight:500}
+.demo-s:hover{border-color:rgba(74,103,65,.5);color:rgba(74,103,65,.8)}
+.demo-s.on{background:rgba(74,103,65,.15);border-color:rgba(74,103,65,.4);color:rgba(74,103,65,.9)}
+
+@keyframes reveal{to{opacity:1;transform:translateY(0)}}
+
+/* ── SCROLL REVEAL ── */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .6s ease, transform .6s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ── STATS STRIP ── */
+.stats-strip{background:var(--ec-white);border-bottom:1px solid var(--ec-border);padding:32px 0}
+.stats-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;justify-content:center;gap:64px;align-items:center}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:var(--ec-black);line-height:1}
+.stat-l{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-muted);margin-top:4px}
+.stat-div{width:1px;height:48px;background:var(--ec-border)}
+
+/* ── SELL ── */
+.sell{padding:120px 0;background:var(--ec-off-white)}
+.sell-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:grid;grid-template-columns:1fr 1fr;gap:100px;align-items:start}
+.eyebrow{font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-green);margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.eyebrow::before{content:'';display:block;width:22px;height:1px;background:var(--ec-green)}
+.section-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,3.5vw,48px);font-weight:300;line-height:1.1;letter-spacing:-.025em;color:var(--ec-black);margin-bottom:20px}
+.section-h2 em{font-style:italic;color:var(--ec-bark)}
+.body-copy{font-size:15px;font-weight:300;color:var(--ec-muted);line-height:1.85;margin-bottom:28px}
+.why-box{background:var(--ec-green-pale);border:1px solid rgba(74,103,65,.18);border-radius:4px;padding:18px 22px;margin-bottom:28px}
+.why-label{font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-green);margin-bottom:6px}
+.why-text{font-size:13px;font-weight:300;color:var(--ec-charcoal);line-height:1.7}
+.sell-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.sell-list li{font-size:13px;font-weight:300;color:var(--ec-ink);display:flex;align-items:flex-start;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--ec-border);line-height:1.6}
+.sell-list li::before{content:'—';color:var(--ec-green);font-size:11px;flex-shrink:0;margin-top:2px}
+
+/* ── HOW IT WORKS ── */
+.how{padding:120px 0;background:var(--ec-paper)}
+.how-inner{max-width:1200px;margin:0 auto;padding:0 32px}
+.how-hd{text-align:center;margin-bottom:60px}
+.steps-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--ec-border);border:1px solid var(--ec-border);border-radius:0;overflow:hidden}
+.step{background:var(--ec-white);padding:32px 28px;transition:background .2s}
+.step:hover{background:var(--ec-green-pale)}
+.step-n{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;color:var(--ec-cream3);line-height:1;margin-bottom:16px}
+.step-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:var(--ec-black);margin-bottom:8px;letter-spacing:-.01em}
+.step-desc{font-size:13px;font-weight:300;color:var(--ec-muted);line-height:1.75}
+
+/* ── FEATURES ── */
+.features{padding:120px 0;background:var(--ec-white)}
+.features-inner{max-width:1200px;margin:0 auto;padding:0 32px}
+.features-hd{max-width:560px;margin-bottom:60px}
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--ec-border);border:1px solid var(--ec-border);overflow:hidden;border-radius:0}
+.feat{background:var(--ec-white);padding:32px 28px;transition:background .2s;position:relative}
+.feat:hover{background:var(--ec-green-pale)}
+.feat-ico{width:36px;height:36px;border-radius:4px;background:var(--ec-green-pale);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.feat-ico svg{width:16px;height:16px;stroke:var(--ec-green);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.feat-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--ec-black);margin-bottom:8px;letter-spacing:-.01em}
+.feat-desc{font-size:13px;font-weight:300;color:var(--ec-muted);line-height:1.75}
+
+/* ── TESTIMONIAL ── */
+.quote-sec{padding:100px 0;background:var(--ec-black)}
+.quote-inner{max-width:760px;margin:0 auto;padding:0 32px;text-align:center}
+.q-stars{letter-spacing:5px;color:rgba(74,103,65,.8);font-size:12px;margin-bottom:24px}
+.q-text{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.8vw,32px);font-weight:300;font-style:italic;line-height:1.55;color:rgba(249,247,244,.88);margin-bottom:20px}
+.q-author{font-size:12px;color:rgba(249,247,244,.35)}
+
+/* ── SHAPE SHOWCASE ── */
+.showcase{padding:100px 0;background:var(--ec-off-white)}
+.showcase-inner{max-width:1200px;margin:0 auto;padding:0 32px}
+.showcase-hd{margin-bottom:52px;display:flex;align-items:flex-end;gap:32px}
+.showcase-hd .section-h2{margin-bottom:0}
+.shape-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.sc-card{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:6px;padding:20px 12px;text-align:center;transition:all .2s;cursor:pointer}
+.sc-card:hover{border-color:var(--ec-green-light);box-shadow:0 8px 32px rgba(74,103,65,.1);transform:translateY(-3px)}
+.sc-canvas{width:80px;height:80px;margin:0 auto 12px}
+.sc-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;color:var(--ec-black);margin-bottom:4px}
+.sc-desc{font-size:11px;font-weight:300;color:var(--ec-muted);line-height:1.5}
+
+/* ── PRICING CTA ── */
+.pricing-cta{padding:120px 0;background:var(--ec-paper);text-align:center}
+.pc-inner{max-width:640px;margin:0 auto;padding:0 32px}
+.pc-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,52px);font-weight:300;line-height:1.1;letter-spacing:-.025em;color:var(--ec-black);margin-bottom:16px}
+.pc-h2 em{font-style:italic;color:var(--ec-bark)}
+.pc-sub{font-size:15px;font-weight:300;color:var(--ec-muted);line-height:1.8;margin-bottom:36px}
+.pc-price{font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:300;color:var(--ec-black);line-height:1;margin-bottom:6px}
+.pc-per{font-size:14px;color:var(--ec-muted);font-weight:300}
+.pc-trial{font-size:12px;color:var(--ec-muted2);margin-top:14px}
+.btn-pc{padding:16px 48px;background:var(--ec-green);color:var(--ec-white);border:none;border-radius:0;font-size:14px;font-weight:600;letter-spacing:.08em;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s;margin-top:28px}
+.btn-pc:hover{background:#3a5233;transform:scale(1.02)}
+
+/* ── RELATED ── */
+.related{padding:80px 0;background:var(--ec-white);border-top:1px solid var(--ec-border)}
+.related-inner{max-width:1200px;margin:0 auto;padding:0 32px}
+.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:36px}
+.rel-card{background:var(--ec-paper);border:1px solid var(--ec-border);padding:22px 24px;transition:all .2s;cursor:pointer;text-decoration:none;display:block}
+.rel-card:hover{box-shadow:0 6px 24px rgba(27,25,22,.08);transform:translateY(-2px)}
+.rel-cat{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-muted2);margin-bottom:6px}
+.rel-name{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;color:var(--ec-black);margin-bottom:4px;letter-spacing:-.01em}
+.rel-price{font-size:12px;color:var(--ec-green);font-weight:600;margin-bottom:8px}
+.rel-desc{font-size:12px;font-weight:300;color:var(--ec-muted);line-height:1.6}
+
+/* ── FOOTER ── */
+footer{background:var(--ec-black);padding:64px 0 32px}
+.footer-inner{max-width:1200px;margin:0 auto;padding:0 32px}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:40px;border-bottom:1px solid rgba(249,247,244,.08)}
+.footer-brand{font-family:'Dancing Script',cursive;font-size:24px;color:var(--ec-green-light);margin-bottom:10px}
+.footer-tagline{font-size:12px;font-weight:300;color:rgba(249,247,244,.3);line-height:1.7;max-width:240px}
+.footer-col h4{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(249,247,244,.3);margin-bottom:14px}
+.footer-col a{display:block;font-size:12px;color:rgba(249,247,244,.45);margin-bottom:8px;text-decoration:none;transition:color .15s;cursor:pointer}
+.footer-col a:hover{color:rgba(249,247,244,.8)}
+.footer-bottom{padding-top:28px;display:flex;align-items:center;justify-content:space-between}
+.footer-copy{font-size:11px;color:rgba(249,247,244,.2)}
+
+/* EC DIVIDER */
+.ec-div{text-align:center;color:var(--ec-muted2);font-size:12px;letter-spacing:.3em;padding:6px 0}
+
+/* BOTANICAL SVG */
+.botanical{pointer-events:none;opacity:.12;position:absolute}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .hero-r{display:none}
+  .hero-l{padding:80px 32px 64px}
+  .sell-inner{grid-template-columns:1fr;gap:48px}
+  .steps-wrap{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr}
+  .shape-cards{grid-template-columns:repeat(3,1fr)}
+  .related-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+  .stats-inner{flex-wrap:wrap;gap:32px;justify-content:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-i">
+    <a class="wordmark" href="#">Evercrafted</a>
+    <div class="nav-links">
+      <a href="#">How it works</a>
+      <a href="#">Apps</a>
+      <a href="#">Pricing</a>
+      <a href="#">Marketplace</a>
+    </div>
+    <div class="nav-r">
+      <button class="btn-ghost">Sign in</button>
+      <button class="btn-cta">Start free trial</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-l">
+    <div class="hero-eyebrow">Design & Planning · Evercrafted</div>
+    <h1 class="hero-h1">Shape starts<br>with <em>feeling,</em><br>not geometry.</h1>
+    <p class="hero-sub">Parametric Lab generates crescent, trailing, figure-eight, and loose wreath structures from mood parameters — no drawing, no guessing.</p>
+    <div class="hero-btns">
+      <button class="btn-hero-p">Start free trial</button>
+      <button class="btn-hero-o">See how it works</button>
+    </div>
+    <div class="hero-proof">
+      <div>
+        <div class="hp-n">5</div>
+        <div class="hp-l">Shape families</div>
+      </div>
+      <div>
+        <div class="hp-n">AI</div>
+        <div class="hp-l">Interpretation</div>
+      </div>
+      <div>
+        <div class="hp-n">14d</div>
+        <div class="hp-l">Free trial</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-r">
+    <div class="demo-panel">
+      <div class="demo-topbar">
+        <div class="demo-dot"></div><div class="demo-dot"></div><div class="demo-dot"></div>
+        <span class="demo-title">Parametric Lab</span>
+        <span class="demo-tag">Craft</span>
+      </div>
+      <div class="demo-body">
+        <div class="demo-canvas">
+          <canvas id="heroCanvas" width="380" height="190"></canvas>
+        </div>
+        <div class="demo-shape-row">
+          <div class="demo-s on" onclick="heroShape('round',this)">Round</div>
+          <div class="demo-s" onclick="heroShape('crescent',this)">Crescent</div>
+          <div class="demo-s" onclick="heroShape('trailing',this)">Trailing</div>
+          <div class="demo-s" onclick="heroShape('loose',this)">Loose</div>
+          <div class="demo-s" onclick="heroShape('eight',this)">Fig. 8</div>
+        </div>
+        <div class="demo-controls">
+          <div class="demo-slider-row">
+            <span class="demo-label">Density</span>
+            <div class="demo-track" onclick="demoClick(this,'density')"><div class="demo-fill" id="df-density" style="width:50%"></div></div>
+            <span class="demo-val" id="dv-density">5</span>
+          </div>
+          <div class="demo-slider-row">
+            <span class="demo-label">Structure</span>
+            <div class="demo-track" onclick="demoClick(this,'structure')"><div class="demo-fill" id="df-structure" style="width:60%"></div></div>
+            <span class="demo-val" id="dv-structure">6</span>
+          </div>
+          <div class="demo-slider-row">
+            <span class="demo-label">Asymmetry</span>
+            <div class="demo-track" onclick="demoClick(this,'asym')"><div class="demo-fill" id="df-asym" style="width:30%"></div></div>
+            <span class="demo-val" id="dv-asym">3</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats-strip reveal">
+  <div class="stats-inner">
+    <div>
+      <div class="stat-n">5</div>
+      <div class="stat-l">Shape families</div>
+    </div>
+    <div class="stat-div"></div>
+    <div>
+      <div class="stat-n">∞</div>
+      <div class="stat-l">Parameter combinations</div>
+    </div>
+    <div class="stat-div"></div>
+    <div>
+      <div class="stat-n">AI</div>
+      <div class="stat-l">Blueprint interpretation</div>
+    </div>
+    <div class="stat-div"></div>
+    <div>
+      <div class="stat-n">$9.95</div>
+      <div class="stat-l">Per month</div>
+    </div>
+  </div>
+</section>
+
+<!-- SELL -->
+<section class="sell">
+  <div class="sell-inner">
+    <div class="reveal">
+      <div class="eyebrow">What it does</div>
+      <h2 class="section-h2"><em>Parametric Lab</em> turns mood into structure.</h2>
+      <p class="body-copy">Instead of drawing your wreath shape by hand, Parametric Lab generates it from your choices. Pick a shape family — round, crescent, trailing, loose, or figure-eight — then dial in density, structure, scale, and asymmetry. The tool adjusts the proportions and layout to match how you want it to feel.</p>
+      <div class="why-box">
+        <div class="why-label">Why it matters</div>
+        <div class="why-text">Unusual shapes are hard to plan by hand. Parametric Lab makes crescent, asymmetric, and trailing styles easy to explore without hours of trial and error — and exports directly to Layout Studio.</div>
+      </div>
+      <ul class="sell-list">
+        <li>Five shape families: Round, Crescent, Trailing, Loose, Figure-eight</li>
+        <li>Shape proportions adjust based on your mood parameters</li>
+        <li>Preview the structure before placing any elements</li>
+        <li>AI interprets your intent and returns full element counts + palette</li>
+        <li>Export to Layout Studio to add flowers and details</li>
+      </ul>
+    </div>
+    <!-- Botanical illustration placeholder -->
+    <div class="reveal" style="display:flex;align-items:center;justify-content:center;min-height:360px;background:var(--ec-white);border:1px solid var(--ec-border);border-radius:8px;position:relative;overflow:hidden">
+      <svg viewBox="0 0 360 360" width="360" height="360" style="position:absolute;inset:0;width:100%;height:100%">
+        <!-- large organic wreath ring -->
+        <circle cx="180" cy="180" r="120" fill="none" stroke="#4A6741" stroke-width="22" stroke-dasharray="12,9" opacity=".18"/>
+        <circle cx="180" cy="180" r="80" fill="none" stroke="#4A6741" stroke-width="6" stroke-dasharray="4,12" opacity=".1"/>
+        <!-- leaf shapes -->
+        <ellipse cx="180" cy="60" rx="14" ry="28" fill="#4A6741" opacity=".14" transform="rotate(-10,180,60)"/>
+        <ellipse cx="278" cy="120" rx="12" ry="26" fill="#4A6741" opacity=".12" transform="rotate(50,278,120)"/>
+        <ellipse cx="290" cy="230" rx="12" ry="26" fill="#4A6741" opacity=".12" transform="rotate(110,290,230)"/>
+        <ellipse cx="185" cy="305" rx="12" ry="26" fill="#4A6741" opacity=".11" transform="rotate(180,185,305)"/>
+        <ellipse cx="80" cy="255" rx="12" ry="26" fill="#4A6741" opacity=".12" transform="rotate(240,80,255)"/>
+        <ellipse cx="72" cy="140" rx="12" ry="26" fill="#4A6741" opacity=".12" transform="rotate(300,72,140)"/>
+        <!-- center dot -->
+        <circle cx="180" cy="180" r="6" fill="#4A6741" opacity=".12"/>
+        <!-- coordinate lines -->
+        <line x1="180" y1="55" x2="180" y2="305" stroke="#4A6741" stroke-width=".5" opacity=".06"/>
+        <line x1="55" y1="180" x2="305" y2="180" stroke="#4A6741" stroke-width=".5" opacity=".06"/>
+        <text x="120" y="185" font-family="Cormorant Garamond,serif" font-size="13" fill="#4A6741" opacity=".22" font-style="italic">Parametric</text>
+        <text x="194" y="185" font-family="Cormorant Garamond,serif" font-size="13" fill="#6E6860" opacity=".2" font-style="italic">Lab</text>
+      </svg>
+      <div style="position:relative;text-align:center">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--ec-muted);letter-spacing:.04em">Shape preview</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="how-inner">
+    <div class="how-hd reveal">
+      <div class="eyebrow" style="justify-content:center">How it works</div>
+      <h2 class="section-h2" style="text-align:center;max-width:480px;margin:0 auto">Simple to use from <em>day one.</em></h2>
+    </div>
+    <div class="steps-wrap reveal">
+      <div class="step">
+        <div class="step-n">01</div>
+        <div class="step-title">Choose a shape</div>
+        <div class="step-desc">Pick from five shape families — Round, Crescent, Trailing, Loose, or Figure-eight. Each has its own structural logic.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">02</div>
+        <div class="step-title">Dial in the mood</div>
+        <div class="step-desc">Choose how full or minimal, how formal or relaxed — proportions and density adjust automatically based on your parameters.</div>
+      </div>
+      <div class="step">
+        <div class="step-n">03</div>
+        <div class="step-title">Export your structure</div>
+        <div class="step-desc">Send the shape directly to Layout Studio and start placing flowers and greenery on a perfectly proportioned foundation.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="features-inner">
+    <div class="features-hd reveal">
+      <div class="eyebrow">Features</div>
+      <h2 class="section-h2">Everything <em>Parametric Lab</em> can do.</h2>
+    </div>
+    <div class="feat-grid reveal">
+      <div class="feat">
+        <div class="feat-ico">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+        </div>
+        <div class="feat-title">Five shape families</div>
+        <div class="feat-desc">Go beyond the standard round — crescent, trailing, loose, and figure-eight shapes, made easy. Each has its own compositional rules and proportional logic.</div>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <div class="feat-title">Mood drives proportions</div>
+        <div class="feat-desc">A minimal formal crescent looks entirely different from a lush playful one. Parameters adjust the geometry automatically — density, structure, scale, asymmetry.</div>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">
+          <svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div class="feat-title">AI Blueprint Interpretation</div>
+        <div class="feat-desc">Describe your shape in plain language. The AI engine returns full element counts, emotional tone, palette direction, and composition scores.</div>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">
+          <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </div>
+        <div class="feat-title">Plug into your workflow</div>
+        <div class="feat-desc">Export directly to Layout Studio to continue the design with real floral elements. Your shape parameters travel with the export.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EC DIVIDER -->
+<div class="ec-div" style="padding:20px 0;background:var(--ec-white)">✦ ✦ ✦</div>
+
+<!-- SHAPE SHOWCASE -->
+<section class="showcase">
+  <div class="showcase-inner">
+    <div class="showcase-hd reveal">
+      <div>
+        <div class="eyebrow">Shape families</div>
+        <h2 class="section-h2">Five forms, <em>infinite combinations.</em></h2>
+      </div>
+    </div>
+    <div class="shape-cards reveal">
+      <div class="sc-card">
+        <svg class="sc-canvas" viewBox="0 0 80 80"><circle cx="40" cy="40" r="26" fill="none" stroke="#4A6741" stroke-width="9" stroke-dasharray="8,5" opacity=".65"/></svg>
+        <div class="sc-name">Round</div>
+        <div class="sc-desc">The classic form — adjustable from tight and formal to loose and organic.</div>
+      </div>
+      <div class="sc-card">
+        <svg class="sc-canvas" viewBox="0 0 80 80">
+          <path d="M 56 14 A 28 28 0 1 0 56 66 A 14 14 0 1 1 56 14 Z" fill="none" stroke="#4A6741" stroke-width="6" opacity=".65"/>
+        </svg>
+        <div class="sc-name">Crescent</div>
+        <div class="sc-desc">Elegant and directional — ideal for doorway and archway installations.</div>
+      </div>
+      <div class="sc-card">
+        <svg class="sc-canvas" viewBox="0 0 80 80">
+          <circle cx="32" cy="32" r="20" fill="none" stroke="#4A6741" stroke-width="6" opacity=".65"/>
+          <path d="M 48 48 Q 62 60 70 70" fill="none" stroke="#4A6741" stroke-width="4" stroke-linecap="round" opacity=".45"/>
+        </svg>
+        <div class="sc-name">Trailing</div>
+        <div class="sc-desc">A wreath with a flowing tail — dramatic and naturally asymmetric.</div>
+      </div>
+      <div class="sc-card">
+        <svg class="sc-canvas" viewBox="0 0 80 80">
+          <path d="M40 12 C 18 12 14 68 40 68 C 66 68 62 12 40 12 Z" fill="none" stroke="#4A6741" stroke-width="6" stroke-dasharray="6,4" opacity=".65"/>
+        </svg>
+        <div class="sc-name">Loose</div>
+        <div class="sc-desc">Irregular, organic, imperfect — the shape of gathered flowers rather than a frame.</div>
+      </div>
+      <div class="sc-card">
+        <svg class="sc-canvas" viewBox="0 0 80 80">
+          <circle cx="40" cy="24" r="16" fill="none" stroke="#4A6741" stroke-width="6" opacity=".65"/>
+          <circle cx="40" cy="56" r="16" fill="none" stroke="#4A6741" stroke-width="6" opacity=".65"/>
+        </svg>
+        <div class="sc-name">Figure 8</div>
+        <div class="sc-desc">Two linked forms — layered display potential or dual-season installations.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-sec">
+  <div class="quote-inner reveal">
+    <div class="q-stars">★★★★★</div>
+    <div class="q-text">"I had been trying to make a crescent shape work for months. Parametric Lab gave me the structure in two minutes and I finally understood why mine never looked right."</div>
+    <div class="q-author">Studio designer · Evercrafted Craft tier</div>
+  </div>
+</section>
+
+<!-- PRICING CTA -->
+<section class="pricing-cta">
+  <div class="pc-inner reveal">
+    <h2 class="pc-h2">Try <em>Parametric Lab</em> free for 14 days.</h2>
+    <p class="pc-sub">No credit card needed until your trial ends. Cancel anytime.</p>
+    <div class="pc-price">$9.95</div>
+    <div class="pc-per">per month, billed monthly</div>
+    <button class="btn-pc">Start free trial</button>
+    <div class="pc-trial">14-day free trial · No credit card required</div>
+  </div>
+</section>
+
+<!-- RELATED -->
+<section class="related">
+  <div class="related-inner">
+    <div class="eyebrow reveal">Other tools</div>
+    <h2 class="section-h2 reveal">Apps that work well <em>with Parametric Lab.</em></h2>
+    <div class="related-grid reveal">
+      <a class="rel-card" href="#">
+        <div class="rel-cat">Design & Planning</div>
+        <div class="rel-name">Layout Studio</div>
+        <div class="rel-price">$7.95/mo</div>
+        <div class="rel-desc">Place flowers, greenery, and accents on your shape with precision layout tools.</div>
+      </a>
+      <a class="rel-card" href="#">
+        <div class="rel-cat">Design & Planning</div>
+        <div class="rel-name">Blueprint Engine</div>
+        <div class="rel-price">$9.95/mo</div>
+        <div class="rel-desc">Generate full structured blueprints with element counts, genome strings, and placement guides.</div>
+      </a>
+      <a class="rel-card" href="#">
+        <div class="rel-cat">Included free</div>
+        <div class="rel-name">Design Library</div>
+        <div class="rel-price">Included</div>
+        <div class="rel-desc">Every wreath you design, saved and organised in one place for reference and reuse.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand">Evercrafted</div>
+        <div class="footer-tagline">Design tools for wreath designers who take their craft seriously.</div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a>How it works</a>
+        <a>All apps</a>
+        <a>Marketplace</a>
+        <a>Pricing</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a>Documentation</a>
+        <a>Blog</a>
+        <a>Community</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a>About</a>
+        <a>Privacy</a>
+        <a>Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 Evercrafted. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── HERO CANVAS ──
+let heroCurrentShape = 'round';
+const heroDemoVals = {density:5, structure:6, asym:3};
+
+function heroShape(shape, el){
+  heroCurrentShape = shape;
+  document.querySelectorAll('.demo-s').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');
+  drawHero();
+}
+
+function demoClick(track, param){
+  const rect = track.getBoundingClientRect();
+  // Just cycle values for demo purposes
+  const cur = heroDemoVals[param];
+  heroDemoVals[param] = cur >= 9 ? 1 : cur + 2;
+  const pct = (heroDemoVals[param] / 10) * 100;
+  document.getElementById('df-'+param).style.width = pct + '%';
+  document.getElementById('dv-'+param).textContent = heroDemoVals[param];
+  drawHero();
+}
+
+function drawHero(){
+  const canvas = document.getElementById('heroCanvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const density = heroDemoVals.density;
+  const asym = heroDemoVals.asym;
+  const baseR = 62;
+  const strokeW = 8 + (density/10)*16;
+  const opacity = 0.5 + (density/10)*0.3;
+
+  ctx.save();
+  ctx.translate(W/2, H/2);
+  ctx.strokeStyle = `rgba(107,143,103,${opacity})`;
+  ctx.lineWidth = strokeW;
+  ctx.lineCap = 'round';
+  ctx.shadowColor = 'rgba(74,103,65,0.3)';
+  ctx.shadowBlur = density*4;
+  const ao = (asym-1)*3;
+
+  switch(heroCurrentShape){
+    case 'round':
+      ctx.beginPath();ctx.arc(ao*0.3,0,baseR,0,Math.PI*2);ctx.stroke();break;
+    case 'crescent':
+      ctx.beginPath();ctx.arc(ao*0.5,0,baseR,0.2,Math.PI*2-0.2);ctx.stroke();
+      ctx.strokeStyle='rgba(26,26,26,1)';ctx.lineWidth=strokeW+8;
+      ctx.beginPath();ctx.arc(baseR*0.38+ao,0,baseR*0.72,0,Math.PI*2);ctx.stroke();break;
+    case 'trailing':
+      ctx.strokeStyle=`rgba(107,143,103,${opacity})`;ctx.lineWidth=strokeW;
+      ctx.beginPath();ctx.arc(-baseR*0.1,-baseR*0.1,baseR*0.78,0,Math.PI*2);ctx.stroke();
+      ctx.lineWidth=strokeW*0.5;ctx.strokeStyle=`rgba(107,143,103,${opacity*0.55})`;
+      ctx.beginPath();ctx.moveTo(baseR*0.5,baseR*0.5);ctx.bezierCurveTo(baseR,baseR*0.85,baseR*1.2,baseR,baseR*1.4+ao,baseR*1.35);ctx.stroke();break;
+    case 'loose':{
+      const pts=[];for(let i=0;i<9;i++){const a=(i/9)*Math.PI*2-Math.PI/2;const r=baseR+(Math.random()-0.5)*baseR*0.28*(asym/4);pts.push({x:Math.cos(a)*r+ao*0.4,y:Math.sin(a)*r});}
+      ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(let i=1;i<pts.length;i++){const cp={x:(pts[i-1].x+pts[i].x)/2,y:(pts[i-1].y+pts[i].y)/2};ctx.quadraticCurveTo(pts[i-1].x,pts[i-1].y,cp.x,cp.y);}ctx.closePath();ctx.stroke();break;}
+    case 'eight':
+      ctx.beginPath();ctx.arc(ao*0.3,-baseR*0.52,baseR*0.5,0,Math.PI*2);ctx.stroke();
+      ctx.beginPath();ctx.arc(ao*0.3,baseR*0.52,baseR*0.5,0,Math.PI*2);ctx.stroke();break;
+  }
+  ctx.restore();
+}
+
+// ── SCROLL REVEAL ──
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');}});
+},{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// ── INIT ──
+window.addEventListener('load',()=>{
+  drawHero();
+  // Animate hero canvas continuously
+  let t=0;
+  setInterval(()=>{
+    t++;
+    if(t%40===0){
+      const shapes=['round','crescent','trailing','loose','eight'];
+      const rand = shapes[Math.floor(Math.random()*shapes.length)];
+      document.querySelectorAll('.demo-s').forEach(el=>{
+        el.classList.toggle('on', el.textContent.toLowerCase().includes(rand.replace('-','').replace('eight','8')));
+      });
+      heroCurrentShape = rand;
+      drawHero();
+    }
+  },600);
+});
+</script>
+</body>
+</html>

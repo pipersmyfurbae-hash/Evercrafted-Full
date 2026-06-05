@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing & Cost Calculator — Price Your Wreaths With Confidence | Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Dancing+Script:wght@500;600;700&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:#FFFFFF;--off-white:#F9F7F4;--paper:#F2EFE9;
+  --black:#1A1A1A;--charcoal:#2E2E2E;--ink:#4A4A4A;
+  --green:#4A6741;--green-light:#6B8F67;--green-pale:#EEF2ED;
+  --gray-200:#E8E8E8;--gray-300:#D0D0D0;--gray-400:#A8A8A8;--gray-500:#787878;
+  --craft:#4A6785;--craft-pale:#EEF1F6;
+  --studio-c:#7A4A85;--studio-pale:#F3EEF6;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --script:'Dancing Script',cursive;
+  --mono:'DM Mono',monospace;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+html,body{font-family:var(--sans);background:var(--off-white);color:var(--black);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.reveal,.reveal-left,.reveal-right{opacity:0;transition:opacity .85s var(--ease),transform .85s var(--ease)}
+.reveal{transform:translateY(28px)}.reveal-left{transform:translateX(-24px)}.reveal-right{transform:translateX(24px)}
+.reveal.visible,.reveal-left.visible,.reveal-right.visible{opacity:1;transform:none}
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}
+
+/* NAV */
+.mkt-nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 56px;background:rgba(249,247,244,.92);backdrop-filter:blur(16px);border-bottom:1px solid transparent;transition:border-color .3s}
+.mkt-nav.scrolled{border-color:var(--gray-200)}
+.nav-logo{font-family:var(--script);font-size:1.5rem;font-weight:700;color:var(--green);text-decoration:none}
+.nav-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:32px;list-style:none}
+.nav-center a{font-size:.72rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);text-decoration:none;transition:color .2s}
+.nav-center a:hover{color:var(--craft)}
+.nav-right{display:flex;align-items:center;gap:16px}
+.nav-tier-pill{font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:100px;background:var(--craft-pale);color:var(--craft);border:1px solid rgba(74,103,133,.18)}
+.nav-signin{font-size:.72rem;font-weight:500;color:var(--gray-500);text-decoration:none}
+.nav-signin:hover{color:var(--black)}
+.nav-cta{font-size:.7rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;background:var(--black);color:var(--white);padding:9px 22px;border-radius:2px;text-decoration:none;transition:background .2s}
+.nav-cta:hover{background:var(--craft)}
+
+/* SECTION LABEL */
+.section-label{display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.section-label::before{content:'';width:28px;height:1px;background:var(--craft);flex-shrink:0}
+.section-label span{font-size:.64rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--craft)}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-weight:500;letter-spacing:.08em;text-transform:uppercase;border:none;cursor:pointer;border-radius:2px;transition:all .22s;text-decoration:none;white-space:nowrap}
+.btn-lg{font-size:.72rem;padding:15px 36px}
+.btn-md{font-size:.7rem;padding:12px 28px}
+.btn-dark{background:var(--black);color:var(--white)}
+.btn-dark:hover{background:var(--craft);transform:translateY(-2px);box-shadow:0 8px 24px rgba(74,103,133,.25)}
+.btn-white{background:var(--white);color:var(--black)}
+.btn-white:hover{background:var(--craft-pale);transform:translateY(-2px)}
+.btn-outline-light{background:transparent;color:rgba(255,255,255,.6);border:1.5px solid rgba(255,255,255,.18)}
+.btn-outline-light:hover{color:var(--white);border-color:rgba(255,255,255,.4)}
+.btn svg{transition:transform .22s}
+.btn:hover svg{transform:translateX(4px)}
+
+/* ═══ 1. HERO ═══ */
+.hero{min-height:100vh;padding-top:64px;background:var(--black);display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden}
+.hero-bg-split{position:absolute;top:0;right:0;width:50%;height:100%;background:var(--off-white);clip-path:polygon(8% 0,100% 0,100% 100%,0 100%);z-index:0}
+.hero-left{padding:80px 64px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
+.hero-right{display:flex;align-items:center;justify-content:center;padding:60px 48px;position:relative;z-index:2}
+
+.hero-eyebrow{display:flex;align-items:center;gap:10px;margin-bottom:28px;opacity:0;animation:fadeUp .6s var(--ease) .1s forwards}
+.eyebrow-pill{display:flex;align-items:center;gap:7px;background:rgba(74,103,133,.18);border:1px solid rgba(74,103,133,.3);border-radius:100px;padding:5px 14px 5px 8px}
+.eyebrow-dot{width:7px;height:7px;border-radius:50%;background:rgba(74,103,133,.9);animation:pulse 2.4s ease-in-out infinite}
+.eyebrow-text{font-size:.64rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:rgba(74,103,133,.9)}
+.hero-kicker{font-family:var(--script);font-size:1.5rem;color:rgba(74,103,133,.85);display:block;margin-bottom:8px;font-weight:600;opacity:0;animation:fadeUp .7s var(--ease) .22s forwards}
+.hero-title{font-family:var(--serif);font-size:clamp(2.8rem,4vw,5rem);font-weight:300;line-height:1.04;letter-spacing:-.02em;color:var(--white);opacity:0;animation:fadeUp .85s var(--ease) .34s forwards}
+.hero-title em{font-style:italic;color:rgba(74,103,133,.85)}
+.hero-body{font-size:.95rem;line-height:1.85;color:rgba(255,255,255,.5);font-weight:300;max-width:440px;margin:24px 0 40px;opacity:0;animation:fadeUp .75s var(--ease) .52s forwards}
+.hero-actions{display:flex;align-items:center;gap:20px;opacity:0;animation:fadeUp .75s var(--ease) .64s forwards}
+
+/* Calculator mockup */
+.calc-mockup{background:var(--white);border-radius:4px;width:100%;max-width:440px;box-shadow:0 8px 60px rgba(0,0,0,.35);overflow:hidden;opacity:0;animation:fadeIn .9s ease .5s forwards}
+.cm-topbar{background:var(--off-white);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gray-200)}
+.cm-title-txt{font-family:var(--serif);font-size:.9rem}
+.cm-save-btn{font-size:.6rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:var(--craft);color:var(--white);padding:5px 12px;border-radius:2px;border:none;cursor:pointer}
+.cm-tbl{width:100%;border-collapse:collapse}
+.cm-th{font-size:.56rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);padding:7px 12px;background:var(--paper);border-bottom:1px solid var(--gray-200);text-align:left}
+.cm-td{padding:9px 12px;font-size:.76rem;border-bottom:1px solid var(--gray-200)}
+.cm-name{font-weight:500;color:var(--black)}
+.cm-mono{font-family:var(--mono);font-size:.74rem;color:var(--black)}
+.cm-total-tr td{background:var(--paper);font-family:var(--mono);font-size:.78rem;font-weight:500;border-top:1.5px solid var(--gray-300);padding:9px 12px}
+.cm-total-tr td:first-child{font-family:var(--sans);font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+.cm-summary{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid var(--gray-200)}
+.cm-sc{padding:12px 10px;border-right:1px solid var(--gray-200)}
+.cm-sc:last-child{border-right:none}
+.cm-sc-label{font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);margin-bottom:4px}
+.cm-sc-val{font-family:var(--mono);font-size:1.05rem;font-weight:500;color:var(--black)}
+.cm-sliders{padding:12px 16px;border-top:1px solid var(--gray-200);display:flex;flex-direction:column;gap:8px}
+.cm-slider-row{display:flex;align-items:center;gap:10px}
+.cm-slider-label{font-size:.62rem;font-weight:500;color:var(--ink);width:74px;flex-shrink:0}
+.cm-slider{flex:1;height:4px;background:var(--gray-200);border-radius:2px;appearance:none;outline:none;cursor:pointer}
+.cm-slider::-webkit-slider-thumb{appearance:none;width:14px;height:14px;border-radius:50%;background:var(--craft);cursor:pointer}
+.cm-slider-val{font-family:var(--mono);font-size:.72rem;color:var(--craft);font-weight:500;width:40px;text-align:right}
+.cm-footer{padding:10px 16px;background:var(--off-white);border-top:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between}
+.cm-foot-label{font-size:.62rem;color:var(--gray-400)}
+.cm-foot-price{font-family:var(--mono);font-size:.88rem;font-weight:500;color:var(--craft)}
+
+/* ═══ 2. STORY ═══ */
+.story-section{background:var(--paper);border-top:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);padding:100px 64px}
+.story-inner{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.story-left h2{font-family:var(--serif);font-size:clamp(2.2rem,3.5vw,3.8rem);font-weight:300;line-height:1.1;letter-spacing:-.02em;margin-bottom:24px}
+.story-left h2 em{font-style:italic;color:var(--craft)}
+.story-left p{font-size:.92rem;line-height:1.85;color:var(--ink);font-weight:300;margin-bottom:18px}
+.story-right{display:flex;flex-direction:column;gap:2px}
+.myth-block{background:var(--white);padding:22px 24px;display:flex;gap:14px;align-items:flex-start}
+.myth-block--accent{border-left:2px solid var(--craft)}
+.myth-icon{width:34px;height:34px;border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.95rem;background:var(--craft-pale)}
+.myth-label{font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);margin-bottom:5px}
+.myth-label--accent{color:var(--craft)}
+.myth-text{font-family:var(--serif);font-size:1rem;line-height:1.55;color:var(--black)}
+.myth-text--strike{text-decoration:line-through;color:var(--gray-400)}
+.myth-sub{font-size:.73rem;color:var(--gray-500);margin-top:5px;font-weight:300}
+.myth-sub--accent{color:var(--craft)}
+.myth-arrow{padding:6px 0 6px 50px;font-size:1.1rem;color:var(--gray-300)}
+.numbers-row{background:var(--white);padding:20px 24px;display:flex;align-items:center;gap:0;border-left:2px solid var(--green)}
+.num-cell{flex:1;padding:0 16px;border-right:1px solid var(--gray-200)}
+.num-cell:first-child{padding-left:0}
+.num-cell:last-child{border-right:none}
+.num-val{font-family:var(--mono);font-size:1.4rem;font-weight:500;color:var(--green);margin-bottom:3px}
+.num-label{font-size:.68rem;color:var(--gray-500);line-height:1.4;font-weight:300}
+
+/* ═══ 3. FEATURES ═══ */
+.features-section{max-width:1160px;margin:0 auto;padding:100px 64px}
+.features-header{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:end;margin-bottom:64px}
+.features-header h2{font-family:var(--serif);font-size:clamp(2rem,3vw,3rem);font-weight:300;line-height:1.15}
+.features-header p{font-size:.92rem;line-height:1.8;color:var(--ink);font-weight:300}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.fc{background:var(--white);padding:36px 30px;display:flex;flex-direction:column;gap:14px;position:relative;overflow:hidden;transition:transform .28s var(--ease),box-shadow .28s}
+.fc::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--craft);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease)}
+.fc:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.08);z-index:2}
+.fc:hover::after{transform:scaleX(1)}
+.fc--dark{background:var(--black)}
+.fc--dark::after{background:rgba(255,255,255,.18)}
+.fc--craft{background:var(--craft-pale)}
+.fc-num{font-family:var(--serif);font-size:3.5rem;font-weight:300;line-height:1;display:block;color:var(--gray-200)}
+.fc--dark .fc-num{color:rgba(255,255,255,.05)}
+.fc--craft .fc-num{color:rgba(74,103,133,.07)}
+.fc-icon{width:44px;height:44px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;background:var(--craft-pale)}
+.fc--dark .fc-icon{background:rgba(255,255,255,.07)}
+.fc--craft .fc-icon{background:rgba(74,103,133,.12)}
+.fc-title{font-family:var(--serif);font-size:1.2rem;font-weight:400;color:var(--black);line-height:1.3}
+.fc--dark .fc-title{color:var(--white)}
+.fc-desc{font-size:.82rem;line-height:1.75;color:var(--gray-500);font-weight:300;flex:1}
+.fc--dark .fc-desc{color:rgba(255,255,255,.45)}
+.fc--craft .fc-desc{color:var(--ink)}
+.fc-tag{display:inline-flex;align-items:center;gap:5px;font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:100px;background:var(--craft-pale);color:var(--craft);border:1px solid rgba(74,103,133,.18);width:fit-content}
+.fc--dark .fc-tag{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.1)}
+
+/* ═══ 4. DEMO ═══ */
+.demo-section{background:var(--black);padding:100px 64px;overflow:hidden;position:relative}
+.demo-section::before{content:'';position:absolute;right:-80px;bottom:-80px;width:480px;height:480px;border-radius:50%;border:1px solid rgba(255,255,255,.03);pointer-events:none}
+.demo-inner{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:360px 1fr;gap:72px;align-items:start}
+.demo-left .section-label::before{background:rgba(74,103,133,.6)}
+.demo-left .section-label span{color:rgba(74,103,133,1)}
+.demo-left h2{font-family:var(--serif);font-size:clamp(2rem,3vw,3rem);font-weight:300;line-height:1.15;color:var(--white);margin-bottom:20px}
+.demo-left h2 em{font-style:italic;color:rgba(74,103,133,.85)}
+.demo-left p{font-size:.92rem;line-height:1.82;color:rgba(255,255,255,.45);font-weight:300;margin-bottom:32px}
+.demo-points{display:flex;flex-direction:column;gap:14px}
+.demo-point{display:flex;gap:12px}
+.dp-dot{width:8px;height:8px;border-radius:50%;background:var(--craft);flex-shrink:0;margin-top:5px}
+.dp-title{font-size:.8rem;font-weight:500;color:var(--white);margin-bottom:2px}
+.dp-desc{font-size:.73rem;color:rgba(255,255,255,.38);line-height:1.55}
+
+/* Full calculator mockup */
+.full-calc{background:var(--white);border-radius:4px;overflow:hidden;box-shadow:0 8px 60px rgba(0,0,0,.4)}
+.fcalc-topbar{background:var(--off-white);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gray-200)}
+.fcalc-title{font-family:var(--serif);font-size:.9rem}
+.fcalc-btns{display:flex;gap:8px}
+.fcalc-ghost{font-size:.6rem;font-weight:500;color:var(--gray-500);background:transparent;border:1px solid var(--gray-300);padding:4px 10px;border-radius:2px;cursor:pointer}
+.fcalc-primary{font-size:.6rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:var(--craft);color:var(--white);padding:5px 12px;border-radius:2px;border:none;cursor:pointer}
+.fcalc-tbl{width:100%;border-collapse:collapse}
+.fcalc-th{font-size:.56rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);padding:7px 12px;background:var(--paper);border-bottom:1px solid var(--gray-200);text-align:left}
+.fcalc-td{padding:9px 12px;font-size:.76rem;border-bottom:1px solid var(--gray-200);vertical-align:middle}
+.fcalc-name{font-weight:500;color:var(--black)}
+.fcalc-cat{font-size:.62rem;color:var(--gray-400);margin-top:1px}
+.fcalc-mono{font-family:var(--mono);font-size:.74rem;color:var(--black)}
+.fcalc-total td{background:var(--paper);font-weight:500;border-top:1.5px solid var(--gray-300);padding:9px 12px}
+.fcalc-extras{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--gray-200)}
+.fcalc-extra{padding:10px 14px;border-right:1px solid var(--gray-200)}
+.fcalc-extra:last-child{border-right:none}
+.fcalc-extra-label{font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);margin-bottom:6px}
+.fcalc-extra-row{display:flex;align-items:center;gap:6px}
+.fcalc-field{font-family:var(--mono);font-size:.78rem;border:1px solid var(--gray-300);border-radius:2px;padding:4px 8px;width:70px;color:var(--black);background:var(--white)}
+.fcalc-unit{font-size:.68rem;color:var(--gray-400)}
+.fcalc-result{font-family:var(--mono);font-size:.74rem;color:var(--craft);margin-top:5px}
+.fcalc-markup{padding:10px 14px;border-top:1px solid var(--gray-200)}
+.fcalc-markup-label{font-size:.6rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);margin-bottom:8px}
+.fcalc-markup-row{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.fcalc-markup-name{font-size:.62rem;color:var(--ink);width:52px;flex-shrink:0}
+.fcalc-markup-slider{flex:1;height:4px;background:var(--gray-200);border-radius:2px;appearance:none;outline:none;cursor:pointer}
+.fcalc-markup-slider::-webkit-slider-thumb{appearance:none;width:13px;height:13px;border-radius:50%;background:var(--craft)}
+.fcalc-markup-price{font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--craft);width:52px;text-align:right}
+.fcalc-summary{display:grid;grid-template-columns:repeat(4,1fr);border-top:2px solid var(--gray-300)}
+.fcalc-sc{padding:12px;border-right:1px solid var(--gray-200)}
+.fcalc-sc:last-child{border-right:none}
+.fcalc-sc-label{font-size:.56rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--gray-400);margin-bottom:5px}
+.fcalc-sc-val{font-family:var(--mono);font-size:1rem;font-weight:500;color:var(--black)}
+.fcalc-sc-val.good{color:#4A6741}
+
+/* ═══ 5. FEAR SECTION ═══ */
+.fear-section{background:var(--paper);border-top:1px solid var(--gray-200);border-bottom:1px solid var(--gray-200);padding:100px 64px}
+.fear-inner{max-width:1160px;margin:0 auto}
+.fear-header{text-align:center;margin-bottom:60px}
+.fear-header h2{font-family:var(--serif);font-size:clamp(2rem,2.8vw,2.8rem);font-weight:300;margin-bottom:12px}
+.fear-header p{font-size:.88rem;color:var(--gray-500);font-weight:300;max-width:440px;margin:0 auto}
+.fear-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.fear-card{background:var(--white);padding:32px 28px}
+.fear-card:nth-child(2){background:var(--black)}
+.fear-num{font-family:var(--serif);font-size:2.5rem;font-weight:300;line-height:1;margin-bottom:12px;color:rgba(74,103,133,.12)}
+.fear-card:nth-child(2) .fear-num{color:rgba(255,255,255,.06)}
+.fear-bad{font-size:.78rem;line-height:1.65;color:var(--gray-400);text-decoration:line-through;margin-bottom:12px;font-style:italic}
+.fear-card:nth-child(2) .fear-bad{color:rgba(255,255,255,.2)}
+.fear-arrow{font-size:1.1rem;margin-bottom:10px;color:var(--craft)}
+.fear-good{font-family:var(--serif);font-size:1.03rem;line-height:1.55;color:var(--black)}
+.fear-card:nth-child(2) .fear-good{color:rgba(255,255,255,.82)}
+
+/* ═══ 6. TESTIMONIALS ═══ */
+.testimonials-section{background:var(--white);border-bottom:1px solid var(--gray-200);padding:100px 64px}
+.t-inner{max-width:1160px;margin:0 auto}
+.t-header{text-align:center;margin-bottom:56px}
+.t-header h2{font-family:var(--serif);font-size:clamp(2rem,2.8vw,2.8rem);font-weight:300;margin-bottom:12px}
+.t-header p{font-size:.88rem;color:var(--gray-500);font-weight:300;max-width:400px;margin:0 auto}
+.t-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.tc{padding:28px;display:flex;flex-direction:column;gap:14px;background:var(--off-white);transition:transform .25s var(--ease)}
+.tc:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(0,0,0,.07);z-index:2;background:var(--white)}
+.tc--dark{background:var(--black)}
+.tc--dark:hover{background:var(--black)}
+.t-stars{font-size:.75rem;color:#C4922A}
+.t-quote{font-family:var(--serif);font-size:1.03rem;font-style:italic;line-height:1.65;color:var(--charcoal);flex:1}
+.tc--dark .t-quote{color:rgba(255,255,255,.75)}
+.t-row{display:flex;align-items:center;gap:12px;padding-top:14px;border-top:1px solid var(--gray-200)}
+.tc--dark .t-row{border-color:rgba(255,255,255,.08)}
+.t-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:600;color:var(--white);flex-shrink:0}
+.t-name{font-size:.75rem;font-weight:500;color:var(--black);margin-bottom:2px}
+.tc--dark .t-name{color:var(--white)}
+.t-role{font-size:.65rem;color:var(--gray-400)}
+
+/* ═══ 7. FAQ ═══ */
+.faq-section{padding:100px 64px}
+.faq-inner{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:360px 1fr;gap:80px;align-items:start}
+.faq-left h2{font-family:var(--serif);font-size:clamp(1.8rem,2.5vw,2.6rem);font-weight:300;line-height:1.2;margin-bottom:16px}
+.faq-left p{font-size:.88rem;color:var(--ink);line-height:1.75;font-weight:300;margin-bottom:28px}
+.faq-list{display:flex;flex-direction:column}
+.faq-item{border-bottom:1px solid var(--gray-200)}
+.faq-item:first-child{border-top:1px solid var(--gray-200)}
+.faq-q{width:100%;background:none;border:none;padding:20px 0;display:flex;align-items:center;justify-content:space-between;gap:20px;cursor:pointer;text-align:left;font-family:var(--serif);font-size:1.05rem;font-weight:400;color:var(--black);line-height:1.3;transition:color .2s}
+.faq-q:hover{color:var(--craft)}
+.faq-chevron{width:22px;height:22px;border:1px solid var(--gray-300);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .3s var(--ease),background .2s,border-color .2s}
+.faq-item.open .faq-chevron{transform:rotate(180deg);background:var(--craft);border-color:var(--craft)}
+.faq-item.open .faq-chevron svg path{stroke:white}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .45s var(--ease)}
+.faq-a-inner{padding:0 0 20px;font-size:.88rem;line-height:1.8;color:var(--ink);font-weight:300}
+.faq-item.open .faq-a{max-height:300px}
+
+/* ═══ 8. PRICING ═══ */
+.pricing-section{background:var(--paper);border-top:1px solid var(--gray-200);padding:100px 64px}
+.pricing-inner{max-width:1160px;margin:0 auto}
+.pricing-header{text-align:center;margin-bottom:56px}
+.pricing-header h2{font-family:var(--serif);font-size:clamp(2rem,2.8vw,2.8rem);font-weight:300;margin-bottom:12px}
+.pricing-header p{font-size:.88rem;color:var(--gray-500);font-weight:300;max-width:440px;margin:0 auto;line-height:1.7}
+.pricing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2px}
+.pc{background:var(--white);padding:32px 24px;display:flex;flex-direction:column;position:relative;transition:transform .25s var(--ease)}
+.pc:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.08);z-index:2}
+.pc--locked{opacity:.5;pointer-events:none}
+.pc--feat{background:var(--black);transform:translateY(-8px);box-shadow:0 20px 56px rgba(0,0,0,.18);z-index:3}
+.pc--feat:hover{transform:translateY(-12px)}
+.pc-pop{position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--craft);color:var(--white);font-size:.55rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:5px 14px;border-radius:0 0 4px 4px;white-space:nowrap}
+.pc-lock{position:absolute;top:14px;right:14px;font-size:.62rem;color:var(--gray-400)}
+.pc-name{font-family:var(--script);font-size:1.35rem;font-weight:600;color:var(--craft);margin-bottom:2px}
+.pc--feat .pc-name{color:rgba(74,103,133,.9)}
+.pc-sub{font-size:.62rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gray-400);margin-bottom:22px}
+.pc--feat .pc-sub{color:rgba(255,255,255,.3)}
+.pc-row{display:flex;align-items:baseline;gap:3px;margin-bottom:4px}
+.pc-sym{font-family:var(--serif);font-size:1rem;font-weight:300;color:var(--gray-400)}
+.pc-val{font-family:var(--serif);font-size:2.6rem;font-weight:300;letter-spacing:-.02em;color:var(--black);line-height:1}
+.pc--feat .pc-val{color:var(--white)}
+.pc--feat .pc-sym{color:rgba(255,255,255,.35)}
+.pc-per{font-size:.68rem;color:var(--gray-400);align-self:flex-end;margin-bottom:3px}
+.pc--feat .pc-per{color:rgba(255,255,255,.3)}
+.pc-txn{font-size:.65rem;color:var(--gray-400);margin-bottom:20px}
+.pc--feat .pc-txn{color:rgba(255,255,255,.3)}
+.pc-txn span{color:var(--craft);font-weight:500}
+.pc--feat .pc-txn span{color:rgba(74,103,133,.85)}
+.pc-highlight{display:flex;align-items:center;gap:5px;font-size:.62rem;font-weight:600;color:var(--craft);background:var(--craft-pale);padding:5px 10px;border-radius:100px;border:1px solid rgba(74,103,133,.18);margin-bottom:14px}
+.pc--feat .pc-highlight{color:rgba(74,103,133,.9);background:rgba(74,103,133,.12);border-color:rgba(74,103,133,.25)}
+.pc-hr{height:1px;background:var(--gray-200);margin-bottom:18px}
+.pc--feat .pc-hr{background:rgba(255,255,255,.1)}
+.pc-features{display:flex;flex-direction:column;gap:8px;flex:1;margin-bottom:22px}
+.pcf{display:flex;align-items:flex-start;gap:7px;font-size:.75rem;color:var(--ink);font-weight:300;line-height:1.4}
+.pc--feat .pcf{color:rgba(255,255,255,.55)}
+.pc-ck{color:var(--craft);font-size:.68rem;font-weight:600;flex-shrink:0;margin-top:2px}
+.pc--feat .pc-ck{color:rgba(74,103,133,.9)}
+.pc-no{color:var(--gray-300);font-size:.68rem;flex-shrink:0;margin-top:2px}
+.pc-btn{display:flex;align-items:center;justify-content:center;padding:12px;border-radius:2px;font-family:var(--sans);font-size:.7rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border:1.5px solid var(--gray-300);background:transparent;color:var(--black);transition:all .2s;text-decoration:none}
+.pc-btn:hover{border-color:var(--craft);color:var(--craft)}
+.pc-btn-solid{background:var(--white);color:var(--black);border-color:transparent}
+.pc-btn-solid:hover{background:var(--craft-pale)}
+.pricing-note{text-align:center;margin-top:14px;font-size:.72rem;color:var(--gray-400);display:flex;align-items:center;justify-content:center;gap:8px}
+.pricing-note-dot{width:6px;height:6px;border-radius:50%;background:var(--craft);animation:pulse 2.4s ease-in-out infinite}
+
+/* ═══ 9. CLOSING CTA ═══ */
+.closing-cta{background:var(--craft);padding:96px 64px;position:relative;overflow:hidden}
+.closing-cta::before{content:'';position:absolute;right:-60px;top:-60px;width:500px;height:500px;border-radius:50%;border:1px solid rgba(255,255,255,.07)}
+.cta-inner{max-width:1160px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:48px;position:relative;z-index:2}
+.cta-text h2{font-family:var(--serif);font-size:clamp(2rem,3.5vw,3.2rem);font-weight:300;color:var(--white);line-height:1.15;margin-bottom:12px}
+.cta-text p{font-size:.92rem;color:rgba(255,255,255,.65);font-weight:300;line-height:1.75;max-width:440px}
+.cta-right{display:flex;flex-direction:column;align-items:flex-end;gap:12px;flex-shrink:0}
+.cta-btn-white{display:inline-flex;align-items:center;gap:10px;background:var(--white);color:var(--black);font-family:var(--sans);font-size:.72rem;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:15px 36px;border-radius:2px;text-decoration:none;transition:all .22s}
+.cta-btn-white:hover{background:var(--craft-pale);transform:translateY(-2px)}
+.cta-btn-white svg{transition:transform .22s}
+.cta-btn-white:hover svg{transform:translateX(4px)}
+.cta-note{font-size:.7rem;color:rgba(255,255,255,.45);text-align:right}
+
+/* BOTANICAL DIVIDER */
+.botanical-divider{display:flex;align-items:center;gap:20px;max-width:1160px;margin:0 auto;padding:0 64px}
+.botanical-divider::before,.botanical-divider::after{content:'';flex:1;height:1px;background:var(--gray-200)}
+
+/* FOOTER */
+.mkt-footer{background:var(--black);padding:64px 64px 0}
+.footer-top{max-width:1160px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:56px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,.07)}
+.footer-logo{font-family:var(--script);font-size:1.6rem;color:var(--green-light);display:block;margin-bottom:12px;font-weight:700;text-decoration:none}
+.footer-tagline{font-size:.82rem;color:rgba(255,255,255,.35);line-height:1.7;font-weight:300;max-width:260px;margin-bottom:24px}
+.footer-social{display:flex;gap:8px}
+.footer-social-link{width:32px;height:32px;border:1px solid rgba(255,255,255,.1);border-radius:2px;display:flex;align-items:center;justify-content:center;transition:all .2s;text-decoration:none}
+.footer-social-link:hover{border-color:var(--green-light)}
+.footer-col h4{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:18px;font-weight:500}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:11px}
+.footer-col ul a{font-size:.83rem;color:rgba(255,255,255,.5);text-decoration:none;transition:color .2s;font-weight:300}
+.footer-col ul a:hover{color:var(--green-light)}
+.footer-bottom{max-width:1160px;margin:0 auto;padding:22px 0;display:flex;align-items:center;justify-content:space-between}
+.footer-copy{font-size:.7rem;color:rgba(255,255,255,.2)}
+.footer-script{font-family:var(--script);font-size:.95rem;color:rgba(255,255,255,.12);font-weight:600}
+.footer-legal{display:flex;gap:18px}
+.footer-legal a{font-size:.65rem;color:rgba(255,255,255,.2);text-decoration:none;transition:color .2s}
+.footer-legal a:hover{color:rgba(255,255,255,.5)}
+
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{to{opacity:1}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+
+@media(max-width:1024px){
+  .mkt-nav{padding:0 40px}.nav-center{display:none}
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .hero-bg-split{display:none}
+  .hero-left{background:var(--black);padding:80px 40px 48px}
+  .hero-right{background:var(--off-white);padding:48px 40px}
+  .story-inner,.features-header,.demo-inner,.faq-inner{grid-template-columns:1fr;gap:40px}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .fear-grid{grid-template-columns:1fr}
+  .t-grid{grid-template-columns:1fr}
+  .pricing-grid{grid-template-columns:1fr 1fr}.pc--feat{transform:none}
+  .cta-inner{flex-direction:column;align-items:flex-start}
+  .cta-right{align-items:flex-start}.cta-note{text-align:left}
+  .story-section,.demo-section,.fear-section,.testimonials-section,.faq-section,.pricing-section,.closing-cta,.mkt-footer,.features-section{padding-left:40px;padding-right:40px}
+  .botanical-divider{padding:0 40px}
+  .footer-top{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .mkt-nav{padding:0 24px}
+  .hero-left{padding:72px 24px 40px}.hero-right{padding:40px 24px}
+  .features-grid,.pricing-grid{grid-template-columns:1fr}
+  .hero-actions{flex-direction:column;align-items:flex-start}
+  .story-section,.demo-section,.fear-section,.testimonials-section,.faq-section,.pricing-section,.closing-cta,.mkt-footer,.features-section{padding-left:24px;padding-right:24px}
+  .botanical-divider{padding:0 24px}
+  .footer-top{grid-template-columns:1fr}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="mkt-nav" id="mkt-nav">
+  <a href="index.html" class="nav-logo">Evercrafted</a>
+  <ul class="nav-center">
+    <li><a href="index.html#services">Platform</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Pricing</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <span class="nav-tier-pill">💰 Craft tier · From $39/mo</span>
+    <a href="index.html" class="nav-signin">Sign in</a>
+    <a href="index.html#contact" class="nav-cta">Get Access</a>
+  </div>
+</nav>
+
+<!-- 1. HERO -->
+<section class="hero">
+  <div class="hero-bg-split"></div>
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-pill"><div class="eyebrow-dot"></div><span class="eyebrow-text">Craft tier · From $39/mo</span></div>
+    </div>
+    <span class="hero-kicker">Pricing & Cost Calculator</span>
+    <h1 class="hero-title">Price your wreaths<br>to <em>actually</em> profit.</h1>
+    <p class="hero-body">Add your materials, set your labor rate, factor in overhead — and get a suggested retail price based on real numbers, not gut feeling. Know your margin before you list.</p>
+    <div class="hero-actions">
+      <a href="index.html#contact" class="btn btn-white btn-lg">Get Craft Access <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <a href="#demo" class="btn btn-outline-light btn-lg">See the calculator →</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="calc-mockup">
+      <div class="cm-topbar">
+        <span class="cm-title-txt">Fall Harvest Wreath — Estimate</span>
+        <button class="cm-save-btn">Save estimate</button>
+      </div>
+      <table class="cm-tbl">
+        <thead><tr><th class="cm-th">Material</th><th class="cm-th">Qty</th><th class="cm-th">Unit</th><th class="cm-th">Total</th></tr></thead>
+        <tbody>
+          <tr><td class="cm-td"><span class="cm-name">Dried Hydrangea</span></td><td class="cm-td cm-mono">8</td><td class="cm-td cm-mono">$1.20</td><td class="cm-td cm-mono">$9.60</td></tr>
+          <tr><td class="cm-td"><span class="cm-name">Eucalyptus Bundles</span></td><td class="cm-td cm-mono">3</td><td class="cm-td cm-mono">$2.80</td><td class="cm-td cm-mono">$8.40</td></tr>
+          <tr><td class="cm-td"><span class="cm-name">Velvet Ribbon 2.5"</span></td><td class="cm-td cm-mono">2.5</td><td class="cm-td cm-mono">$3.50</td><td class="cm-td cm-mono">$8.75</td></tr>
+          <tr><td class="cm-td"><span class="cm-name">Grapevine Base 18"</span></td><td class="cm-td cm-mono">1</td><td class="cm-td cm-mono">$6.00</td><td class="cm-td cm-mono">$6.00</td></tr>
+          <tr><td class="cm-td"><span class="cm-name">Dried Thistle</span></td><td class="cm-td cm-mono">5</td><td class="cm-td cm-mono">$0.90</td><td class="cm-td cm-mono">$4.50</td></tr>
+          <tr class="cm-total-tr"><td colspan="3">Materials total</td><td class="cm-mono">$37.25</td></tr>
+        </tbody>
+      </table>
+      <div class="cm-summary">
+        <div class="cm-sc"><div class="cm-sc-label">Materials</div><div class="cm-sc-val">$37.25</div></div>
+        <div class="cm-sc"><div class="cm-sc-label">Labor + OH</div><div class="cm-sc-val">$22.50</div></div>
+        <div class="cm-sc"><div class="cm-sc-label">Total cost</div><div class="cm-sc-val">$59.75</div></div>
+      </div>
+      <div class="cm-sliders">
+        <div class="cm-slider-row"><span class="cm-slider-label">2.5× markup</span><input type="range" class="cm-slider" value="60" disabled><span class="cm-slider-val">$149</span></div>
+        <div class="cm-slider-row"><span class="cm-slider-label">3.0× markup</span><input type="range" class="cm-slider" value="75" disabled><span class="cm-slider-val">$179</span></div>
+      </div>
+      <div class="cm-footer">
+        <span class="cm-foot-label">Suggested retail range</span>
+        <span class="cm-foot-price">$149 – $179</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Divider -->
+<div class="botanical-divider" style="padding-top:48px">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- 2. STORY -->
+<section class="story-section">
+  <div class="story-inner">
+    <div class="story-left reveal-left">
+      <div class="section-label"><span>The pricing problem</span></div>
+      <h2>Most wreath makers are working for<br><em>less than minimum wage</em> and don't know it.</h2>
+      <p>It happens the same way every time. You price a wreath at $65 because it "feels right," or because you saw something similar on Etsy. You don't count labor properly. You forget the overhead. You ignore materials pulled from stock you bought months ago.</p>
+      <p>By the time you add it up honestly, you made $6 an hour. The Pricing Calculator forces an honest accounting — so you can price with confidence, not hope.</p>
+    </div>
+    <div class="story-right reveal-right d2">
+      <div class="myth-block">
+        <div class="myth-icon">❌</div>
+        <div>
+          <div class="myth-label">The old way</div>
+          <div class="myth-text myth-text--strike">"I charge $65 because it matches what others sell for."</div>
+          <div class="myth-sub">Effective rate: $6/hr after honest accounting. No clarity, no margin.</div>
+        </div>
+      </div>
+      <div class="myth-arrow">↓</div>
+      <div class="myth-block myth-block--accent">
+        <div class="myth-icon">✓</div>
+        <div>
+          <div class="myth-label myth-label--accent">With the calculator</div>
+          <div class="myth-text">"Materials: $37. Labor: $22.50 at my rate. Overhead: $8. At 2.5× I price at $149."</div>
+          <div class="myth-sub myth-sub--accent">A number you calculated, not guessed. A margin you can defend.</div>
+        </div>
+      </div>
+      <div class="numbers-row">
+        <div class="num-cell">
+          <div class="num-val">$149</div>
+          <div class="num-label">vs the $65 you would've listed</div>
+        </div>
+        <div class="num-cell">
+          <div class="num-val">59%</div>
+          <div class="num-label">gross margin at 2.5× pricing</div>
+        </div>
+        <div class="num-cell">
+          <div class="num-val">$84</div>
+          <div class="num-label">more per wreath — same work</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. FEATURES -->
+<section class="features-section">
+  <div class="features-header">
+    <div class="reveal">
+      <div class="section-label"><span>What it calculates</span></div>
+      <h2>Every number that goes<br>into a profitable price</h2>
+    </div>
+    <p class="reveal d2">Materials, labor, overhead, markup — all in one honest table. Add line items, set your rates, and get a suggested retail range you can defend to any customer.</p>
+  </div>
+  <div class="features-grid">
+    <div class="fc reveal d1">
+      <span class="fc-num">01</span>
+      <div class="fc-icon">📋</div>
+      <div class="fc-title">Material line items</div>
+      <p class="fc-desc">Add every material with name, quantity used, and unit cost. The calculator auto-totals in real time as you type. No separate spreadsheet needed.</p>
+      <span class="fc-tag">Craft+</span>
+    </div>
+    <div class="fc fc--dark reveal d2">
+      <span class="fc-num">02</span>
+      <div class="fc-icon">⏱️</div>
+      <div class="fc-title">Labor cost</div>
+      <p class="fc-desc">Set your hourly rate and time spent. The calculator multiplies and adds it to your total cost — so paying yourself is never optional or forgotten.</p>
+      <span class="fc-tag">Craft+</span>
+    </div>
+    <div class="fc reveal d3">
+      <span class="fc-num">03</span>
+      <div class="fc-icon">📊</div>
+      <div class="fc-title">Overhead percentage</div>
+      <p class="fc-desc">Set an overhead % for packaging, platform fees, shipping supplies, and studio costs. Everything that costs money but doesn't appear in your materials list.</p>
+      <span class="fc-tag">Craft+</span>
+    </div>
+    <div class="fc fc--craft reveal d1">
+      <span class="fc-num">04</span>
+      <div class="fc-icon">🎚️</div>
+      <div class="fc-title">Markup sliders</div>
+      <p class="fc-desc">See your suggested retail at 2.5× and 3× simultaneously — with live profit margin for each. Drag between them to explore price points and understand the trade-off.</p>
+      <span class="fc-tag">Craft+</span>
+    </div>
+    <div class="fc reveal d2">
+      <span class="fc-num">05</span>
+      <div class="fc-icon">💾</div>
+      <div class="fc-title">Saved estimates</div>
+      <p class="fc-desc">Name and save any calculation as a reusable template. Build a library for your standard designs — and load one in seconds when a customer asks for a custom quote.</p>
+      <span class="fc-tag">Craft+</span>
+    </div>
+    <div class="fc reveal d3">
+      <span class="fc-num">06</span>
+      <div class="fc-icon">🔗</div>
+      <div class="fc-title">Pull from inventory</div>
+      <p class="fc-desc">At Studio tier, pull materials directly from your Inventory Tracker — unit costs auto-populate from your stored data. Estimates always reflect actual costs, never guesses.</p>
+      <span class="fc-tag" style="background:var(--studio-pale);color:var(--studio-c);border-color:rgba(122,74,133,.18)">Studio+</span>
+    </div>
+  </div>
+</section>
+
+<!-- Divider -->
+<div class="botanical-divider">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- 4. DEMO -->
+<section class="demo-section" id="demo">
+  <div class="demo-inner">
+    <div class="demo-left reveal-left">
+      <div class="section-label"><span>Inside the calculator</span></div>
+      <h2>Every input.<br><em>One clear answer.</em></h2>
+      <p>Clean table layout. Every number visible. No hidden formulas. You can trace exactly how each line item flows to your suggested price — and trust the result.</p>
+      <div class="demo-points">
+        <div class="demo-point"><div class="dp-dot"></div><div><div class="dp-title">Real-time totals</div><div class="dp-desc">Every field updates the total cost and suggested price instantly as you type.</div></div></div>
+        <div class="demo-point"><div class="dp-dot"></div><div><div class="dp-title">Color-coded margin</div><div class="dp-desc">Margin shows green (healthy), amber (tight), or red (below minimum wage). Risk impossible to miss.</div></div></div>
+        <div class="demo-point"><div class="dp-dot"></div><div><div class="dp-title">PDF quote export</div><div class="dp-desc">At Studio tier, export any estimate as a professional PDF — for custom orders, wholesale buyers, or your own records.</div></div></div>
+        <div class="demo-point"><div class="dp-dot"></div><div><div class="dp-title">AI pricing advice at Atelier</div><div class="dp-desc">Based on your market and wreath complexity, the AI advisor suggests a price range and explains its reasoning.</div></div></div>
+      </div>
+    </div>
+    <div class="reveal-right d2">
+      <div class="full-calc">
+        <div class="fcalc-topbar">
+          <span class="fcalc-title">Holiday Wreath — Custom Quote</span>
+          <div class="fcalc-btns">
+            <button class="fcalc-ghost">Export PDF</button>
+            <button class="fcalc-primary">Save estimate</button>
+          </div>
+        </div>
+        <table class="fcalc-tbl">
+          <thead><tr><th class="fcalc-th">Material</th><th class="fcalc-th">Qty</th><th class="fcalc-th">Unit cost</th><th class="fcalc-th">Total</th></tr></thead>
+          <tbody>
+            <tr><td class="fcalc-td"><div class="fcalc-name">Fraser Fir Sprigs</div><div class="fcalc-cat">Greenery</div></td><td class="fcalc-td fcalc-mono">12</td><td class="fcalc-td fcalc-mono">$1.50</td><td class="fcalc-td fcalc-mono">$18.00</td></tr>
+            <tr><td class="fcalc-td"><div class="fcalc-name">Velvet Ribbon 4"</div><div class="fcalc-cat">Ribbon</div></td><td class="fcalc-td fcalc-mono">3</td><td class="fcalc-td fcalc-mono">$4.50</td><td class="fcalc-td fcalc-mono">$13.50</td></tr>
+            <tr><td class="fcalc-td"><div class="fcalc-name">Dried Orange Slices</div><div class="fcalc-cat">Accents</div></td><td class="fcalc-td fcalc-mono">6</td><td class="fcalc-td fcalc-mono">$0.80</td><td class="fcalc-td fcalc-mono">$4.80</td></tr>
+            <tr><td class="fcalc-td"><div class="fcalc-name">Magnolia Leaves</div><div class="fcalc-cat">Greenery</div></td><td class="fcalc-td fcalc-mono">10</td><td class="fcalc-td fcalc-mono">$0.90</td><td class="fcalc-td fcalc-mono">$9.00</td></tr>
+            <tr><td class="fcalc-td"><div class="fcalc-name">Pine Cone Picks</div><div class="fcalc-cat">Accents</div></td><td class="fcalc-td fcalc-mono">8</td><td class="fcalc-td fcalc-mono">$0.45</td><td class="fcalc-td fcalc-mono">$3.60</td></tr>
+            <tr><td class="fcalc-td"><div class="fcalc-name">24" Grapevine Base</div><div class="fcalc-cat">Bases</div></td><td class="fcalc-td fcalc-mono">1</td><td class="fcalc-td fcalc-mono">$8.50</td><td class="fcalc-td fcalc-mono">$8.50</td></tr>
+            <tr class="fcalc-total"><td colspan="3" style="font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);font-family:var(--sans)">Materials subtotal</td><td class="fcalc-mono" style="font-weight:500">$57.40</td></tr>
+          </tbody>
+        </table>
+        <div class="fcalc-extras">
+          <div class="fcalc-extra">
+            <div class="fcalc-extra-label">Labor</div>
+            <div class="fcalc-extra-row"><input class="fcalc-field" value="$25" readonly><span class="fcalc-unit">/hr ×</span><input class="fcalc-field" value="1.5 hr" readonly style="width:56px"></div>
+            <div class="fcalc-result">= $37.50</div>
+          </div>
+          <div class="fcalc-extra">
+            <div class="fcalc-extra-label">Overhead</div>
+            <div class="fcalc-extra-row"><input class="fcalc-field" value="12%" readonly><span class="fcalc-unit">of materials</span></div>
+            <div class="fcalc-result">= $6.89</div>
+          </div>
+        </div>
+        <div class="fcalc-markup">
+          <div class="fcalc-markup-label">Markup — Suggested retail</div>
+          <div class="fcalc-markup-row"><span class="fcalc-markup-name">2.5× markup</span><input type="range" class="fcalc-markup-slider" value="55" disabled><span class="fcalc-markup-price">$254</span></div>
+          <div class="fcalc-markup-row"><span class="fcalc-markup-name">3.0× markup</span><input type="range" class="fcalc-markup-slider" value="70" disabled><span class="fcalc-markup-price">$305</span></div>
+        </div>
+        <div class="fcalc-summary">
+          <div class="fcalc-sc"><div class="fcalc-sc-label">Materials</div><div class="fcalc-sc-val">$57.40</div></div>
+          <div class="fcalc-sc"><div class="fcalc-sc-label">Labor + OH</div><div class="fcalc-sc-val">$44.39</div></div>
+          <div class="fcalc-sc"><div class="fcalc-sc-label">Total cost</div><div class="fcalc-sc-val">$101.79</div></div>
+          <div class="fcalc-sc"><div class="fcalc-sc-label">Margin @ 2.5×</div><div class="fcalc-sc-val good">59.9%</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. FEAR SECTION -->
+<section class="fear-section">
+  <div class="fear-inner">
+    <div class="fear-header reveal">
+      <div class="section-label" style="justify-content:center"><span>What holds makers back</span></div>
+      <h2>Every pricing fear, answered</h2>
+      <p>The three things every wreath maker tells themselves before they finally stop underpricing.</p>
+    </div>
+    <div class="fear-grid">
+      <div class="fear-card reveal d1">
+        <div class="fear-num">01</div>
+        <div class="fear-bad">"Nobody will pay that much for a wreath."</div>
+        <div class="fear-arrow">↓</div>
+        <div class="fear-good">The right customer will. You're not pricing for everyone — you're pricing for the person who values handmade quality. The calculator helps you find that number with confidence.</div>
+      </div>
+      <div class="fear-card reveal d2">
+        <div class="fear-num">02</div>
+        <div class="fear-bad">"My competitor charges $60, so I have to also."</div>
+        <div class="fear-arrow">↓</div>
+        <div class="fear-good">Their $60 might be their break-even. Pricing to match someone else's unknown cost structure is how you race to the bottom. Price your work. Let the numbers lead.</div>
+      </div>
+      <div class="fear-card reveal d3">
+        <div class="fear-num">03</div>
+        <div class="fear-bad">"I don't even know if I'm making money."</div>
+        <div class="fear-arrow">↓</div>
+        <div class="fear-good">That's exactly what this solves. Open the calculator. Add your materials. Set your rate. You'll know your margin in under 5 minutes — and you'll never have to wonder again.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="t-inner">
+    <div class="t-header reveal">
+      <div class="section-label" style="justify-content:center"><span>What makers say</span></div>
+      <h2>The first time they saw their real margin.</h2>
+      <p>From the Evercrafted early access community</p>
+    </div>
+    <div class="t-grid">
+      <div class="tc reveal d1">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"I ran my best-selling fall wreath through the calculator and nearly cried. I was making $4.80 an hour. I repriced everything the next day. Same wreaths. Same photos. 40% more revenue that season."</p>
+        <div class="t-row"><div class="t-av" style="background:#9E7B7B">KW</div><div><div class="t-name">Karen W.</div><div class="t-role">Seasonal wreath maker · Etsy top seller</div></div></div>
+      </div>
+      <div class="tc tc--dark reveal d2">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"The markup slider is everything. I can see my margin at $149 vs $179 side by side and choose based on data — not anxiety. I've raised my prices three times since I started using it."</p>
+        <div class="t-row"><div class="t-av" style="background:#7B9E9E">PR</div><div><div class="t-name">Priya R.</div><div class="t-role">Full-time studio owner</div></div></div>
+      </div>
+      <div class="tc reveal d3">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"Custom order quotes used to take me 20 minutes of math and second-guessing. Now I open a saved estimate, update the materials, and have a number in 3 minutes. I quote custom work the same day."</p>
+        <div class="t-row"><div class="t-av" style="background:#7B9E76">SO</div><div><div class="t-name">Samantha O.</div><div class="t-role">Custom wreath designer</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Divider -->
+<div class="botanical-divider" style="padding-top:48px;padding-bottom:0">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- 7. FAQ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="faq-left reveal-left">
+      <div class="section-label"><span>Questions</span></div>
+      <h2>Everything about<br>the calculator</h2>
+      <p>Still have questions? Email hello@evercrafted.com</p>
+      <a href="index.html#contact" class="btn btn-dark btn-md" style="margin-top:8px">Contact us →</a>
+    </div>
+    <div class="faq-list reveal d1">
+      <div class="faq-item open">
+        <button class="faq-q" onclick="toggleFaq(this)">Why 2.5× and 3× specifically?<div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></button>
+        <div class="faq-a"><div class="faq-a-inner">2.5× is the minimum viable markup for a handmade product business to be sustainable. 3× is the professional standard for retail and wholesale viability. The calculator shows both so you can see the range and pick your positioning. A custom slider lets you explore any multiplier between them.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">What should I include in overhead?<div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></button>
+        <div class="faq-a"><div class="faq-a-inner">Overhead covers anything that costs money but doesn't show up as a direct material: packaging, shipping supplies, Etsy or platform fees (typically 6–12%), subscription costs, studio rent, and marketing. A starting overhead % of 10–15% is reasonable for most sellers; higher if you ship a lot or pay significant platform fees on every sale.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">Can I use this for custom order quotes?<div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></button>
+        <div class="faq-a"><div class="faq-a-inner">Absolutely — that's one of the most common use cases. Create a saved estimate as a template for your standard sizes, then clone and adjust the materials for each custom request. At Studio tier you can also export it as a PDF quote to send to a client directly.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How does inventory pull work at Studio tier?<div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></button>
+        <div class="faq-a"><div class="faq-a-inner">When you add a material to your estimate at Studio tier, you can search your Inventory Tracker to pull it directly — unit cost auto-populates from your stored data. Your estimates always reflect what you actually paid. When costs change in your inventory, re-running an estimate picks up the new costs automatically.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">How many estimates can I save?<div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></button>
+        <div class="faq-a"><div class="faq-a-inner">No limit. Save as many named estimates as you like. Most sellers build a library of 10–20 standard estimates for their common designs, then use them as starting points for custom variations or seasonal updates.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8. PRICING -->
+<section class="pricing-section">
+  <div class="pricing-inner">
+    <div class="pricing-header reveal">
+      <div class="section-label" style="justify-content:center"><span>Pricing</span></div>
+      <h2>Profitable pricing starts at Craft</h2>
+      <p>Available from Craft tier upward. Every plan includes unlimited saved estimates and real-time markup calculations.</p>
+    </div>
+    <div class="pricing-grid reveal d1">
+      <div class="pc pc--locked">
+        <div class="pc-lock">🔒</div>
+        <div class="pc-name">Bloom</div><div class="pc-sub">Not included</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">19</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn">+ <span>3%</span> transaction fee</div>
+        <div class="pc-highlight" style="background:var(--gray-200);color:var(--gray-400);border-color:transparent">✕ Calculator not available</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Tutorial Guide</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Seasonal Lookbook</div>
+          <div class="pcf"><span class="pc-no">—</span><span style="color:var(--gray-400)">Pricing Calculator</span></div>
+          <div class="pcf"><span class="pc-no">—</span><span style="color:var(--gray-400)">Inventory Tracker</span></div>
+        </div>
+        <a href="index.html#contact" class="pc-btn" style="pointer-events:none;opacity:.4">Bloom plan</a>
+      </div>
+      <div class="pc pc--feat">
+        <div class="pc-pop">Calculator unlocks here</div>
+        <div class="pc-name">Craft</div><div class="pc-sub">For active sellers</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">39</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn">+ <span>2%</span> transaction fee</div>
+        <div class="pc-highlight">✓ Full calculator access</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Unlimited line items</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Labor + overhead inputs</div>
+          <div class="pcf"><span class="pc-ck">✓</span>2.5× and 3× markup sliders</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Unlimited saved estimates</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Inventory Tracker included</div>
+        </div>
+        <a href="index.html#contact" class="pc-btn pc-btn-solid">Get Craft access</a>
+      </div>
+      <div class="pc">
+        <div class="pc-name">Studio</div><div class="pc-sub">For professionals</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">69</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn">+ <span>1%</span> transaction fee</div>
+        <div class="pc-highlight">✓ + Inventory pull & PDF export</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Everything in Craft</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Pull materials from inventory</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Export estimate as PDF quote</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Blueprint Generator + 8 more apps</div>
+          <div class="pcf"><span class="pc-ck">✓</span>5 user seats</div>
+        </div>
+        <a href="index.html#contact" class="pc-btn">Get Studio access</a>
+      </div>
+      <div class="pc">
+        <div class="pc-name">Atelier</div><div class="pc-sub">For studios</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">129</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn"><span>0%</span> transaction fee</div>
+        <div class="pc-highlight">✓ + AI pricing advisor</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Everything in Studio</div>
+          <div class="pcf"><span class="pc-ck">✓</span>AI pricing advisor</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Market-aware price range</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Unlimited seats</div>
+          <div class="pcf"><span class="pc-ck">✓</span>All 19 apps included</div>
+        </div>
+        <a href="index.html#contact" class="pc-btn">Get Atelier access</a>
+      </div>
+    </div>
+    <div class="pricing-note reveal"><div class="pricing-note-dot"></div><span>No lock-in contracts · Cancel anytime · 14-day free trial on all paid plans</span></div>
+  </div>
+</section>
+
+<!-- 9. CLOSING CTA -->
+<section class="closing-cta">
+  <div class="cta-inner">
+    <div class="cta-text reveal">
+      <h2>Stop guessing.<br>Start pricing with confidence.</h2>
+      <p>The Pricing Calculator is included in every Craft plan — from $39/month. Know your margin before you list a single wreath.</p>
+    </div>
+    <div class="cta-right reveal d2">
+      <a href="index.html#contact" class="cta-btn-white">Get Craft Access <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+      <span class="cta-note">Craft from $39/mo · 14-day trial · No card required</span>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="mkt-footer">
+  <div class="footer-top">
+    <div>
+      <a href="index.html" class="footer-logo">Evercrafted</a>
+      <p class="footer-tagline">The all-in-one platform for professional wreath makers and interior designers.</p>
+      <div class="footer-social">
+        <a href="#" class="footer-social-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="#" class="footer-social-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Platform</h4><ul><li><a href="#">All 19 Apps</a></li><li><a href="#">Craft Tier</a></li><li><a href="#">Studio Tier</a></li><li><a href="#">Pricing</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Resources</h4><ul><li><a href="#">Docs</a></li><li><a href="#">Help Center</a></li><li><a href="#">Status</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Evercrafted. All rights reserved.</p>
+    <p class="footer-script">Made with care ✦</p>
+    <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></div>
+  </div>
+</footer>
+
+<script>
+const nav=document.getElementById('mkt-nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('scrolled',window.scrollY>40),{passive:true});
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target)}})},{threshold:.08,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>io.observe(el));
+function toggleFaq(btn){const item=btn.closest('.faq-item');const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));if(!isOpen)item.classList.add('open')}
+</script>
+</body>
+</html>

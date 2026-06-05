@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Use Parametric Lab — Evercrafted</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Dancing+Script:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ec-white:#FFFFFF;
+  --ec-off-white:#F9F7F4;
+  --ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A;
+  --ec-charcoal:#2E2E2E;
+  --ec-ink:#4A4A4A;
+  --ec-green:#4A6741;
+  --ec-green-light:#6B8F67;
+  --ec-green-pale:#EEF2ED;
+  --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-border:#E8E8E8;
+  --ec-muted:#8A8278;
+  --ec-muted2:#B4AFA8;
+  --ec-bark:#6E6860;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--ec-off-white);color:var(--ec-black);line-height:1.65;overflow-x:hidden}
+
+/* ── TOP BAR ── */
+.topbar{height:52px;background:var(--ec-white);border-bottom:1px solid var(--ec-border);display:flex;align-items:center;padding:0 32px;gap:16px;position:sticky;top:0;z-index:100}
+.wordmark{font-family:'Dancing Script',cursive;font-size:22px;color:var(--ec-green);text-decoration:none;line-height:1}
+.topbar-sep{width:1px;height:18px;background:var(--ec-border)}
+.topbar-label{font-size:12px;color:var(--ec-muted);letter-spacing:.04em}
+.topbar-r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.tb-pill{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 9px;border-radius:2px;background:var(--ec-green-pale);color:var(--ec-green)}
+
+/* ── LAYOUT ── */
+.layout{display:grid;grid-template-columns:240px 1fr;max-width:1120px;margin:0 auto;min-height:calc(100vh - 52px)}
+
+/* ── TOC SIDEBAR ── */
+.toc{padding:32px 0;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;border-right:1px solid var(--ec-border)}
+.toc-label{font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ec-muted2);padding:0 24px 10px}
+.toc-link{display:flex;align-items:center;gap:8px;padding:7px 24px;font-size:12px;color:var(--ec-muted);text-decoration:none;transition:all .15s;border-left:2px solid transparent;cursor:pointer}
+.toc-link:hover{color:var(--ec-black);background:var(--ec-paper)}
+.toc-link.active{color:var(--ec-green);border-left-color:var(--ec-green);background:var(--ec-green-pale);font-weight:500}
+.toc-step{width:16px;height:16px;border-radius:50%;background:var(--ec-border);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--ec-muted);flex-shrink:0;transition:all .15s}
+.toc-link.active .toc-step{background:var(--ec-green);color:var(--ec-white)}
+.toc-divider{height:1px;background:var(--ec-border);margin:10px 0}
+.toc-section-link{display:block;padding:5px 24px 5px 40px;font-size:11px;color:var(--ec-muted);text-decoration:none;transition:color .15s;cursor:pointer}
+.toc-section-link:hover{color:var(--ec-black)}
+.toc-footer{padding:20px 24px 0;margin-top:auto}
+.toc-tip{background:var(--ec-green-pale);border:1px solid rgba(74,103,65,.15);border-radius:4px;padding:12px 14px}
+.toc-tip-label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-green);margin-bottom:4px}
+.toc-tip-text{font-size:11px;font-weight:300;color:var(--ec-charcoal);line-height:1.6}
+
+/* ── MAIN CONTENT ── */
+.content{padding:48px 56px 100px;max-width:760px}
+
+/* GUIDE HEADER */
+.guide-header{margin-bottom:56px;padding-bottom:40px;border-bottom:1px solid var(--ec-border)}
+.guide-eyebrow{font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-green);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.guide-eyebrow::before{content:'';display:block;width:22px;height:1px;background:var(--ec-green)}
+.guide-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,3.5vw,46px);font-weight:300;line-height:1.1;letter-spacing:-.025em;color:var(--ec-black);margin-bottom:14px}
+.guide-h1 em{font-style:italic;color:var(--ec-bark)}
+.guide-intro{font-size:15px;font-weight:300;color:var(--ec-muted);line-height:1.85;max-width:580px;margin-bottom:24px}
+.guide-meta{display:flex;gap:20px;flex-wrap:wrap}
+.gm-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ec-muted)}
+.gm-dot{width:5px;height:5px;border-radius:50%;background:var(--ec-green-pale);border:1px solid var(--ec-green-light)}
+
+/* STEP SECTIONS */
+.step-section{margin-bottom:60px;scroll-margin-top:72px}
+.step-header{display:flex;align-items:flex-start;gap:18px;margin-bottom:24px}
+.step-num{width:38px;height:38px;border-radius:50%;background:var(--ec-green);color:var(--ec-white);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;flex-shrink:0;margin-top:2px}
+.step-hd{flex:1}
+.step-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(22px,2.5vw,30px);font-weight:400;color:var(--ec-black);line-height:1.15;letter-spacing:-.015em;margin-bottom:4px}
+.step-h2 em{font-style:italic;color:var(--ec-bark)}
+.step-sub{font-size:12px;color:var(--ec-muted);letter-spacing:.03em}
+
+/* BODY TEXT */
+p.body{font-size:14px;font-weight:300;color:var(--ec-ink);line-height:1.85;margin-bottom:16px}
+p.body strong{font-weight:600;color:var(--ec-black)}
+
+/* UI CALLOUTS — match exact app labels */
+.ui-ref{display:inline-flex;align-items:center;gap:5px;background:var(--ec-paper);border:1px solid var(--ec-border);border-radius:3px;padding:2px 8px;font-size:11px;font-weight:600;color:var(--ec-charcoal);letter-spacing:.02em;white-space:nowrap}
+.ui-ref.green{background:var(--ec-green-pale);border-color:rgba(74,103,65,.2);color:var(--ec-green)}
+
+/* SHAPE CARDS */
+.shape-guide-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0}
+.sg-card{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:6px;padding:14px 8px;text-align:center;transition:all .18s}
+.sg-card:hover{border-color:var(--ec-green-light);background:var(--ec-green-pale)}
+.sg-svg{width:48px;height:48px;margin:0 auto 8px;display:block}
+.sg-name{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ec-ink);margin-bottom:3px}
+.sg-desc{font-size:10px;font-weight:300;color:var(--ec-muted);line-height:1.5}
+
+/* SLIDER REFERENCE */
+.slider-guide{display:flex;flex-direction:column;gap:12px;margin:20px 0}
+.slg-row{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:6px;padding:14px 18px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start}
+.slg-name{font-size:12px;font-weight:600;color:var(--ec-black);margin-bottom:2px}
+.slg-scale{font-size:10px;color:var(--ec-muted);margin-bottom:6px;letter-spacing:.02em}
+.slg-desc{font-size:12px;font-weight:300;color:var(--ec-ink);line-height:1.65}
+.slg-track{width:100px;height:3px;background:var(--ec-border);border-radius:2px;position:relative;margin-top:10px}
+.slg-fill{height:100%;border-radius:2px;background:var(--ec-green)}
+.slg-val{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--ec-green);text-align:center;line-height:1}
+
+/* CALLOUT BOXES */
+.callout{border-radius:6px;padding:16px 20px;margin:20px 0;display:flex;gap:12px;align-items:flex-start}
+.callout.tip{background:var(--ec-green-pale);border:1px solid rgba(74,103,65,.18)}
+.callout.note{background:var(--ec-paper);border:1px solid var(--ec-border)}
+.callout.warning{background:#FBF5EE;border:1px solid rgba(110,104,96,.2)}
+.callout-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+.callout-body{}
+.callout-label{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:4px}
+.callout.tip .callout-label{color:var(--ec-green)}
+.callout.note .callout-label{color:var(--ec-muted)}
+.callout.warning .callout-label{color:var(--ec-bark)}
+.callout-text{font-size:13px;font-weight:300;line-height:1.7}
+.callout.tip .callout-text{color:var(--ec-charcoal)}
+.callout.note .callout-text{color:var(--ec-ink)}
+.callout.warning .callout-text{color:var(--ec-charcoal)}
+
+/* STEP VISUAL — app mockup strip */
+.app-strip{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:8px;overflow:hidden;margin:20px 0}
+.app-strip-bar{height:34px;background:var(--ec-black);display:flex;align-items:center;padding:0 16px;gap:6px}
+.asb-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.15)}
+.asb-title{font-family:'Dancing Script',cursive;font-size:14px;color:rgba(249,247,244,.5);margin-left:6px;letter-spacing:.04em}
+.asb-tag{margin-left:auto;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:2px 7px;border-radius:2px;background:var(--ec-green-pale);color:var(--ec-green)}
+.app-strip-body{padding:16px 20px}
+
+/* RESULT CARD DEMO */
+.result-demo{background:var(--ec-paper);border:1px solid var(--ec-border);border-radius:6px;padding:16px 20px;margin:20px 0}
+.rd-tag{display:inline-flex;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--ec-green-pale);color:var(--ec-green);padding:3px 9px;border-radius:2px;margin-bottom:8px}
+.rd-formula{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--ec-black);margin-bottom:6px}
+.rd-interp{font-size:13px;font-weight:300;color:var(--ec-ink);line-height:1.75;margin-bottom:16px}
+.rd-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.rd-cell{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:4px;padding:10px 12px}
+.rd-cell-label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-muted);margin-bottom:3px}
+.rd-cell-val{font-size:12px;color:var(--ec-black);font-weight:400}
+.rd-elems{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.rd-elem{border:1px solid var(--ec-border);border-radius:4px;padding:8px;text-align:center;background:var(--ec-white)}
+.rd-elem-n{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ec-black);line-height:1}
+.rd-elem-l{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--ec-muted);margin-top:2px}
+.rd-scores{display:flex;gap:16px;padding-top:10px;border-top:1px solid var(--ec-border)}
+.rd-score{font-size:11px;color:var(--ec-muted)}
+.rd-score strong{color:var(--ec-black)}
+
+/* EXPORT CARDS */
+.export-guide{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}
+.eg-card{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:6px;padding:16px}
+.eg-icon{width:30px;height:30px;border-radius:4px;background:var(--ec-green-pale);display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.eg-icon svg{width:14px;height:14px;stroke:var(--ec-green);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.eg-name{font-size:12px;font-weight:600;color:var(--ec-black);margin-bottom:4px}
+.eg-desc{font-size:11px;font-weight:300;color:var(--ec-muted);line-height:1.6;margin-bottom:8px}
+.eg-tier{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:2px}
+.eg-craft{background:var(--ec-green-pale);color:var(--ec-green)}
+.eg-studio{background:#F5EEF4;color:#7A4A85}
+.eg-locked{opacity:.5}
+
+/* NUMBERED STEPS WITHIN SECTIONS */
+.step-list{counter-reset:sl;display:flex;flex-direction:column;gap:12px;margin:16px 0}
+.step-list li{counter-increment:sl;display:flex;align-items:flex-start;gap:12px;font-size:13px;font-weight:300;color:var(--ec-ink);line-height:1.7;list-style:none}
+.step-list li::before{content:counter(sl);display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--ec-green-dim);border:1px solid rgba(74,103,65,.25);color:var(--ec-green);font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px}
+
+/* HISTORY TABLE DEMO */
+.history-demo{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:6px;overflow:hidden;margin:20px 0}
+.hd-row{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 80px;gap:0;border-bottom:1px solid var(--ec-border)}
+.hd-row:last-child{border-bottom:none}
+.hd-cell{padding:9px 14px;font-size:11px}
+.hd-row.head .hd-cell{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-muted);background:var(--ec-off-white)}
+.hd-pill{display:inline-flex;padding:2px 8px;border-radius:2px;font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.hp-round{background:#eef2f9;color:#4a6785}
+.hp-crescent{background:#f5eef4;color:#7a4a85}
+.hp-trailing{background:#f9f2ee;color:#856341}
+.hd-check{color:var(--ec-green);font-weight:700}
+
+/* DIVIDER */
+.section-div{height:1px;background:var(--ec-border);margin:40px 0;position:relative}
+.section-div::after{content:'✦';position:absolute;left:50%;transform:translateX(-50%) translateY(-50%);background:var(--ec-off-white);padding:0 12px;font-size:10px;color:var(--ec-muted2);letter-spacing:.3em}
+
+/* QUICK REF TABLE */
+.qr-table{width:100%;border-collapse:collapse;margin:20px 0;border:1px solid var(--ec-border);border-radius:6px;overflow:hidden}
+.qr-table th{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-muted);padding:10px 14px;background:var(--ec-off-white);border-bottom:1px solid var(--ec-border);text-align:left}
+.qr-table td{font-size:12px;color:var(--ec-ink);padding:10px 14px;border-bottom:1px solid var(--ec-border);vertical-align:top;font-weight:300;line-height:1.6}
+.qr-table tr:last-child td{border-bottom:none}
+.qr-table tr:hover td{background:var(--ec-paper)}
+
+/* PROGRESS BAR */
+.progress-nav{background:var(--ec-white);border-bottom:1px solid var(--ec-border);padding:10px 32px;display:flex;align-items:center;gap:8px;overflow-x:auto}
+.pn-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ec-muted);white-space:nowrap;cursor:pointer;text-decoration:none;transition:color .15s}
+.pn-item:hover{color:var(--ec-black)}
+.pn-dot{width:18px;height:18px;border-radius:50%;background:var(--ec-border);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--ec-muted);flex-shrink:0;transition:all .15s}
+.pn-arrow{color:var(--ec-border);font-size:10px}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .layout{grid-template-columns:1fr}
+  .toc{display:none}
+  .content{padding:32px 24px 80px}
+  .shape-guide-grid{grid-template-columns:repeat(3,1fr)}
+  .export-guide{grid-template-columns:1fr}
+  .rd-grid{grid-template-columns:1fr}
+  .progress-nav{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a class="wordmark" href="#">Evercrafted</a>
+  <div class="topbar-sep"></div>
+  <span class="topbar-label">Parametric Lab — How-to Guide</span>
+  <div class="topbar-r">
+    <span class="tb-pill">Craft Tier</span>
+  </div>
+</header>
+
+<!-- STEP PROGRESS -->
+<div class="progress-nav">
+  <a class="pn-item" href="#step-1"><div class="pn-dot">1</div>The Basics</a>
+  <span class="pn-arrow">›</span>
+  <a class="pn-item" href="#step-2"><div class="pn-dot">2</div>Shape Family</a>
+  <span class="pn-arrow">›</span>
+  <a class="pn-item" href="#step-3"><div class="pn-dot">3</div>Mood Parameters</a>
+  <span class="pn-arrow">›</span>
+  <a class="pn-item" href="#step-4"><div class="pn-dot">4</div>Shape Preview</a>
+  <span class="pn-arrow">›</span>
+  <a class="pn-item" href="#step-5"><div class="pn-dot">5</div>AI Interpretation</a>
+  <span class="pn-arrow">›</span>
+  <a class="pn-item" href="#step-6"><div class="pn-dot">6</div>Export & Handoff</a>
+  <span class="pn-arrow">›</span>
+  <a class="pn-item" href="#step-7"><div class="pn-dot">7</div>Session History</a>
+  <span class="pn-arrow">›</span>
+  <a class="pn-item" href="#tips"><div class="pn-dot">✦</div>Quick Tips</a>
+</div>
+
+<div class="layout">
+
+  <!-- TOC -->
+  <aside class="toc">
+    <div class="toc-label">Contents</div>
+    <a class="toc-link" href="#step-1" onclick="setActive(this)">
+      <div class="toc-step">1</div>What Parametric Lab Does
+    </a>
+    <a class="toc-link" href="#step-2" onclick="setActive(this)">
+      <div class="toc-step">2</div>Choosing a Shape Family
+    </a>
+    <a class="toc-link" href="#step-3" onclick="setActive(this)">
+      <div class="toc-step">3</div>Setting the Mood Parameters
+    </a>
+    <a class="toc-link" href="#step-4" onclick="setActive(this)">
+      <div class="toc-step">4</div>Reading the Shape Preview
+    </a>
+    <a class="toc-link" href="#step-5" onclick="setActive(this)">
+      <div class="toc-step">5</div>Using AI Interpretation
+    </a>
+    <a class="toc-link" href="#step-6" onclick="setActive(this)">
+      <div class="toc-step">6</div>Exporting Your Shape
+    </a>
+    <a class="toc-link" href="#step-7" onclick="setActive(this)">
+      <div class="toc-step">7</div>Session History
+    </a>
+    <div class="toc-divider"></div>
+    <a class="toc-link" href="#tips" onclick="setActive(this)">
+      <div class="toc-step">✦</div>Quick Reference
+    </a>
+    <div style="padding:16px 24px 0">
+      <div class="toc-tip">
+        <div class="toc-tip-label">Quick tip</div>
+        <div class="toc-tip-text">The canvas updates live — change any slider or shape and the preview redraws immediately.</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="content">
+
+    <!-- HEADER -->
+    <div class="guide-header">
+      <div class="guide-eyebrow">How-to Guide</div>
+      <h1 class="guide-h1">Getting started with<br><em>Parametric Lab</em></h1>
+      <p class="guide-intro">Parametric Lab generates wreath structure shapes from mood and style choices — not from drawing. This guide walks through every panel in the app, what each control does, and how to get from a first shape to an exported blueprint.</p>
+      <div class="guide-meta">
+        <span class="gm-item"><span class="gm-dot"></span>7 steps</span>
+        <span class="gm-item"><span class="gm-dot"></span>Craft tier</span>
+        <span class="gm-item"><span class="gm-dot"></span>~10 min read</span>
+        <span class="gm-item"><span class="gm-dot"></span>No drawing required</span>
+      </div>
+    </div>
+
+    <!-- ── STEP 1 ── -->
+    <section class="step-section" id="step-1">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div class="step-hd">
+          <h2 class="step-h2">What <em>Parametric Lab</em> does</h2>
+          <div class="step-sub">Understanding the tool before you start</div>
+        </div>
+      </div>
+
+      <p class="body">Parametric Lab is a shape generator. You pick a shape family, dial in how it should feel, and the tool draws the structure for you. It doesn't place flowers — that's Layout Studio's job. Parametric Lab handles the shape underneath everything else.</p>
+
+      <p class="body">Think of it as the frame-maker. A round wreath that's dense and formal looks very different from one that's airy and loose. Parametric Lab makes sure the structure matches the design intent before you spend time placing florals on the wrong foundation.</p>
+
+      <div class="callout tip">
+        <div class="callout-icon">◎</div>
+        <div class="callout-body">
+          <div class="callout-label">When to use it</div>
+          <div class="callout-text">Use Parametric Lab at the start of any project where the shape isn't standard. If a client asks for something crescent-shaped, asymmetric, or trailing, start here. If they want a basic round wreath, you can skip straight to the Blueprint Engine or Layout Studio.</div>
+        </div>
+      </div>
+
+      <div class="app-strip">
+        <div class="app-strip-bar">
+          <div class="asb-dot"></div><div class="asb-dot"></div><div class="asb-dot"></div>
+          <span class="asb-title">Evercrafted · Parametric Lab</span>
+          <span class="asb-tag">Craft</span>
+        </div>
+        <div class="app-strip-body">
+          <p style="font-size:12px;font-weight:300;color:var(--ec-muted);line-height:1.7">The app is divided into three work zones: the <span class="ui-ref">Shape Family</span> panel at the top, the <span class="ui-ref">Mood Parameters</span> sliders in the middle, and the <span class="ui-ref">Shape Preview</span> canvas below. Work top to bottom. The AI Interpretation and Export panels sit below the canvas as optional final steps.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-div"></div>
+
+    <!-- ── STEP 2 ── -->
+    <section class="step-section" id="step-2">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div class="step-hd">
+          <h2 class="step-h2">Choosing a <em>shape family</em></h2>
+          <div class="step-sub">Five forms, each with its own structural logic</div>
+        </div>
+      </div>
+
+      <p class="body">The <span class="ui-ref">Shape Family</span> panel shows five shape options. Click one to select it — the canvas updates immediately. The selected shape is highlighted in green with a subtle glow border.</p>
+
+      <div class="shape-guide-grid">
+        <div class="sg-card">
+          <svg class="sg-svg" viewBox="0 0 48 48"><circle cx="24" cy="24" r="16" fill="none" stroke="#4A6741" stroke-width="8" stroke-dasharray="8,5" opacity=".65"/></svg>
+          <div class="sg-name">Round</div>
+          <div class="sg-desc">The default. Adjustable from tight and formal to loose and organic.</div>
+        </div>
+        <div class="sg-card">
+          <svg class="sg-svg" viewBox="0 0 48 48">
+            <path d="M 34 8 A 18 18 0 1 0 34 40 A 10 10 0 1 1 34 8 Z" fill="none" stroke="#4A6741" stroke-width="5" opacity=".65"/>
+          </svg>
+          <div class="sg-name">Crescent</div>
+          <div class="sg-desc">Elegant and directional. Great for doorways and arched spaces.</div>
+        </div>
+        <div class="sg-card">
+          <svg class="sg-svg" viewBox="0 0 48 48">
+            <circle cx="20" cy="20" r="13" fill="none" stroke="#4A6741" stroke-width="5" opacity=".65"/>
+            <path d="M 30 30 Q 40 38 44 44" fill="none" stroke="#4A6741" stroke-width="3.5" stroke-linecap="round" opacity=".45"/>
+          </svg>
+          <div class="sg-name">Trailing</div>
+          <div class="sg-desc">A ring with a flowing tail. Dramatic and naturally asymmetric.</div>
+        </div>
+        <div class="sg-card">
+          <svg class="sg-svg" viewBox="0 0 48 48">
+            <path d="M24 8 C 8 8 8 40 24 40 C 40 40 40 8 24 8 Z" fill="none" stroke="#4A6741" stroke-width="5" stroke-dasharray="6,4" opacity=".65"/>
+          </svg>
+          <div class="sg-name">Loose</div>
+          <div class="sg-desc">Irregular and organic. Looks gathered rather than framed.</div>
+        </div>
+        <div class="sg-card">
+          <svg class="sg-svg" viewBox="0 0 48 48">
+            <circle cx="24" cy="14" r="11" fill="none" stroke="#4A6741" stroke-width="5" opacity=".65"/>
+            <circle cx="24" cy="34" r="11" fill="none" stroke="#4A6741" stroke-width="5" opacity=".65"/>
+          </svg>
+          <div class="sg-name">Figure 8</div>
+          <div class="sg-desc">Two linked rings. Layered display or dual-season builds.</div>
+        </div>
+      </div>
+
+      <div class="callout note">
+        <div class="callout-icon">◌</div>
+        <div class="callout-body">
+          <div class="callout-label">How to choose</div>
+          <div class="callout-text">If the client hasn't specified a shape, start with <strong>Round</strong> as your baseline. Try <strong>Crescent</strong> for formal entryways, <strong>Trailing</strong> when they want something more dramatic or sculptural, <strong>Loose</strong> for garden-party or cottagecore aesthetics, and <strong>Figure 8</strong> for large statement installations or layered displays.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-div"></div>
+
+    <!-- ── STEP 3 ── -->
+    <section class="step-section" id="step-3">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <div class="step-hd">
+          <h2 class="step-h2">Setting the <em>mood parameters</em></h2>
+          <div class="step-sub">Four sliders that drive all proportions</div>
+        </div>
+      </div>
+
+      <p class="body">The <span class="ui-ref">Mood Parameters</span> panel has four sliders. Each one runs 1–10 and shows its current value in green on the right. Drag any slider and the canvas updates immediately — there's no Apply button.</p>
+
+      <div class="slider-guide">
+        <div class="slg-row">
+          <div>
+            <div class="slg-name">Density</div>
+            <div class="slg-scale">1 = Airy &nbsp;·&nbsp; 10 = Lush</div>
+            <div class="slg-desc">Controls how thick and full the shape reads. A high density adds more visual weight to the stroke and increases shadow depth. A low density creates a lighter, more minimal ring. This is the single biggest influence on how a design feels before any florals are added.</div>
+          </div>
+          <div>
+            <div class="slg-track"><div class="slg-fill" style="width:70%"></div></div>
+            <div class="slg-val">7</div>
+          </div>
+        </div>
+        <div class="slg-row">
+          <div>
+            <div class="slg-name">Structure</div>
+            <div class="slg-scale">1 = Relaxed &nbsp;·&nbsp; 10 = Formal</div>
+            <div class="slg-desc">Controls how precise and even the shape feels. A high structure value makes the shape tighter and more geometric — good for formal or minimal designs. A low value makes the shape softer and more garden-like. Also affects the canvas grid guide's tightness.</div>
+          </div>
+          <div>
+            <div class="slg-track"><div class="slg-fill" style="width:50%"></div></div>
+            <div class="slg-val">5</div>
+          </div>
+        </div>
+        <div class="slg-row">
+          <div>
+            <div class="slg-name">Scale</div>
+            <div class="slg-scale">1 = Intimate &nbsp;·&nbsp; 10 = Statement</div>
+            <div class="slg-desc">Controls the overall size of the drawn shape on the canvas. A low value keeps the shape compact — useful for a smaller wreath or a tight base ring. A high value pushes the shape outward for a larger, more commanding structure. This translates to physical size when you export to Layout Studio.</div>
+          </div>
+          <div>
+            <div class="slg-track"><div class="slg-fill" style="width:50%"></div></div>
+            <div class="slg-val">5</div>
+          </div>
+        </div>
+        <div class="slg-row">
+          <div>
+            <div class="slg-name">Asymmetry</div>
+            <div class="slg-scale">1 = Symmetrical &nbsp;·&nbsp; 10 = Organic</div>
+            <div class="slg-desc">Adds subtle irregularity and jitter to the shape path. At 1, the shape is perfectly even. As you increase it, the path develops natural variation — useful for designs that should look hand-foraged rather than manufactured. Works especially well on Loose and Trailing shapes. On Round, it softens the ring slightly.</div>
+          </div>
+          <div>
+            <div class="slg-track"><div class="slg-fill" style="width:30%"></div></div>
+            <div class="slg-val">3</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">◎</div>
+        <div class="callout-body">
+          <div class="callout-label">Tip — client vocabulary translation</div>
+          <div class="callout-text">When a client says <strong>"lush and full"</strong> → Density 7–9. <strong>"Light and airy"</strong> → Density 2–4. <strong>"Clean and modern"</strong> → Structure 8–10, Asymmetry 1–2. <strong>"Natural and gathered"</strong> → Structure 3–5, Asymmetry 6–8. <strong>"Statement piece"</strong> → Scale 8–10.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-div"></div>
+
+    <!-- ── STEP 4 ── -->
+    <section class="step-section" id="step-4">
+      <div class="step-header">
+        <div class="step-num">4</div>
+        <div class="step-hd">
+          <h2 class="step-h2">Reading the <em>shape preview</em></h2>
+          <div class="step-sub">What the canvas is showing you</div>
+        </div>
+      </div>
+
+      <p class="body">The <span class="ui-ref">Shape Preview</span> canvas draws your shape in real time. It's not a finished render — it's a structural guide showing the ring, stroke weight, and proportional layout before any florals are added.</p>
+
+      <p class="body">Three things are always visible on the canvas:</p>
+
+      <ol class="step-list">
+        <li><strong>The structure rings</strong> — faint dashed circles showing the inner, mid, and outer placement zones. These guide where focal, supporting, and filler elements will sit when you move to Layout Studio.</li>
+        <li><strong>The shape path</strong> — the green stroke is your wreath ring. Its weight represents the Density value. Its regularity (or lack of it) represents Asymmetry.</li>
+        <li><strong>The metadata strip</strong> — the label at the top-left reads the current size, shape, density, and structure at a glance (e.g. <span class="ui-ref">24″ · Crescent · Density 7 · Structure 5</span>). The shape name appears bottom-right.</li>
+      </ol>
+
+      <div class="callout note">
+        <div class="callout-icon">◌</div>
+        <div class="callout-body">
+          <div class="callout-label">Regenerate button</div>
+          <div class="callout-text">The <span class="ui-ref">↺ Regenerate</span> button redraws the shape with a new random jitter seed — useful on Loose and Trailing shapes where the organic variation matters. Hit it a few times until the irregular path looks right.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-div"></div>
+
+    <!-- ── STEP 5 ── -->
+    <section class="step-section" id="step-5">
+      <div class="step-header">
+        <div class="step-num">5</div>
+        <div class="step-hd">
+          <h2 class="step-h2">Using <em>AI interpretation</em></h2>
+          <div class="step-sub">Turn a description into a full blueprint spec</div>
+        </div>
+      </div>
+
+      <p class="body">The <span class="ui-ref">AI Blueprint Interpretation</span> panel is optional but powerful. Type a plain-language description of your shape idea and the engine returns a structured design brief — element counts, emotional tone, palette direction, and quality scores.</p>
+
+      <p class="body"><strong>How to use it:</strong></p>
+
+      <ol class="step-list">
+        <li>Type a shape description in the input field. It doesn't have to be technical — plain language works best. Example: <em>"crescent shape, airy and minimal, for a spring entryway"</em></li>
+        <li>Click <span class="ui-ref green">Interpret →</span>. The button grays out while the engine runs (usually 3–6 seconds).</li>
+        <li>The status line below the button shows progress, then confirms the blueprint ID when complete.</li>
+        <li>The result card expands below with the full interpretation.</li>
+      </ol>
+
+      <p class="body" style="margin-top:8px">Here's what a completed result card looks like:</p>
+
+      <div class="result-demo">
+        <div class="rd-tag">Serene · PL-4821</div>
+        <div class="rd-formula">stillness × air</div>
+        <div class="rd-interp">A minimal crescent with soft forward lean and generous negative space. The palette leans pale and cool with deliberate silence zones along the inner curve.</div>
+        <div class="rd-grid">
+          <div class="rd-cell"><div class="rd-cell-label">Emotional Tone</div><div class="rd-cell-val">Quiet formality with natural ease</div></div>
+          <div class="rd-cell"><div class="rd-cell-label">Palette Direction</div><div class="rd-cell-val">Pale sage, cream, ivory</div></div>
+          <div class="rd-cell"><div class="rd-cell-label">Density · Silence Arc</div><div class="rd-cell-val">Airy · 120°</div></div>
+          <div class="rd-cell"><div class="rd-cell-label">Zone Count</div><div class="rd-cell-val">3 zones</div></div>
+        </div>
+        <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-muted);margin-bottom:6px">Element Counts</div>
+        <div class="rd-elems">
+          <div class="rd-elem"><div class="rd-elem-n">3</div><div class="rd-elem-l">Focal</div></div>
+          <div class="rd-elem"><div class="rd-elem-n">7</div><div class="rd-elem-l">Support</div></div>
+          <div class="rd-elem"><div class="rd-elem-n">14</div><div class="rd-elem-l">Filler</div></div>
+          <div class="rd-elem"><div class="rd-elem-n">9</div><div class="rd-elem-l">Greenery</div></div>
+        </div>
+        <div class="rd-scores">
+          <span class="rd-score">Emotion Fit <strong>91%</strong></span>
+          <span class="rd-score">DNA Cohesion <strong>88%</strong></span>
+          <span class="rd-score">Brand Fit <strong>94%</strong></span>
+        </div>
+      </div>
+
+      <p class="body">Reading the result card:</p>
+
+      <table class="qr-table">
+        <thead><tr><th>Field</th><th>What it means</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Quadrant tag</strong></td><td>The emotional category (Serene / Joyful / Dramatic / Earthy / Ethereal). Useful for matching to client mood boards.</td></tr>
+          <tr><td><strong>Blueprint ID</strong></td><td>A unique reference code (e.g. PL-4821). Logged in your Session History so you can refer back to it.</td></tr>
+          <tr><td><strong>Formula</strong></td><td>A short poetic phrase summarising the design intent. Used in Etsy listings and client-facing copy.</td></tr>
+          <tr><td><strong>Element counts</strong></td><td>How many focal, supporting, filler, and greenery stems to plan for. These feed directly into the Blueprint Engine and inventory check.</td></tr>
+          <tr><td><strong>Silence Arc</strong></td><td>How many degrees of the ring should remain sparse or empty. A 120° silence arc means roughly a third of the ring intentionally open.</td></tr>
+          <tr><td><strong>Fit scores</strong></td><td>How well the AI's interpretation matches the emotion parameters, your style DNA, and Evercrafted's quality standards. Aim for all three above 80%.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warning">
+        <div class="callout-icon">◐</div>
+        <div class="callout-body">
+          <div class="callout-label">If the engine can't connect</div>
+          <div class="callout-text">The status line will say <em>"Could not reach the engine."</em> This usually means a network issue. Wait a moment and try again — the input field keeps your description so you don't have to retype it.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-div"></div>
+
+    <!-- ── STEP 6 ── -->
+    <section class="step-section" id="step-6">
+      <div class="step-header">
+        <div class="step-num">6</div>
+        <div class="step-hd">
+          <h2 class="step-h2">Exporting <em>your shape</em></h2>
+          <div class="step-sub">Three ways to take the shape forward</div>
+        </div>
+      </div>
+
+      <p class="body">The <span class="ui-ref">Export & Handoff</span> panel offers three options. Two are available on Craft tier, one requires Studio.</p>
+
+      <div class="export-guide">
+        <div class="eg-card">
+          <div class="eg-icon">
+            <svg viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg>
+          </div>
+          <div class="eg-name">SVG Export</div>
+          <div class="eg-desc">Downloads the shape as a scaleable vector file. Use in any design tool — Illustrator, Procreate, Canva — as a placement guide or print template.</div>
+          <span class="eg-tier eg-craft">Craft+</span>
+        </div>
+        <div class="eg-card">
+          <div class="eg-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+          </div>
+          <div class="eg-name">→ Layout Studio</div>
+          <div class="eg-desc">Sends the shape directly to Layout Studio with all parameters intact. Your Density, Structure, Scale, and Asymmetry values travel with the handoff so the canvas loads ready to use.</div>
+          <span class="eg-tier eg-craft">Craft+</span>
+        </div>
+        <div class="eg-card eg-locked">
+          <div class="eg-icon">
+            <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <div class="eg-name">Blueprint JSON</div>
+          <div class="eg-desc">Full export with WGS genome string, zone placement data, and all blueprint metadata. Used for the marketplace and developer integrations.</div>
+          <span class="eg-tier eg-studio">Studio+</span>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <div class="callout-icon">◎</div>
+        <div class="callout-body">
+          <div class="callout-label">Recommended workflow</div>
+          <div class="callout-text">For most projects, use <strong>→ Layout Studio</strong> directly — it's the fastest path to placing florals. Use <strong>SVG Export</strong> when a client needs a physical template to print, or when you're handing off to someone who doesn't use Evercrafted. The <strong>Blueprint JSON</strong> export is for developers and marketplace sellers building on the platform.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-div"></div>
+
+    <!-- ── STEP 7 ── -->
+    <section class="step-section" id="step-7">
+      <div class="step-header">
+        <div class="step-num">7</div>
+        <div class="step-hd">
+          <h2 class="step-h2">Session <em>History</em></h2>
+          <div class="step-sub">Every shape you generate, tracked automatically</div>
+        </div>
+      </div>
+
+      <p class="body">The <span class="ui-ref">Session History</span> table at the bottom of the page logs every shape you generate during your current session. It records the shape family, density, structure, asymmetry, whether AI interpretation ran, and whether you saved it.</p>
+
+      <div class="history-demo">
+        <div class="hd-row head">
+          <div class="hd-cell">Shape</div>
+          <div class="hd-cell">Density</div>
+          <div class="hd-cell">Structure</div>
+          <div class="hd-cell">Asymmetry</div>
+          <div class="hd-cell">AI Run</div>
+        </div>
+        <div class="hd-row">
+          <div class="hd-cell"><span class="hd-pill hp-crescent">Crescent</span></div>
+          <div class="hd-cell">Airy</div>
+          <div class="hd-cell">5/10</div>
+          <div class="hd-cell">3/10</div>
+          <div class="hd-cell hd-check">✓</div>
+        </div>
+        <div class="hd-row">
+          <div class="hd-cell"><span class="hd-pill hp-round">Round</span></div>
+          <div class="hd-cell">Balanced</div>
+          <div class="hd-cell">7/10</div>
+          <div class="hd-cell">2/10</div>
+          <div class="hd-cell hd-check">✓</div>
+        </div>
+        <div class="hd-row">
+          <div class="hd-cell"><span class="hd-pill hp-trailing">Trailing</span></div>
+          <div class="hd-cell">Lush</div>
+          <div class="hd-cell">4/10</div>
+          <div class="hd-cell">7/10</div>
+          <div class="hd-cell" style="color:var(--ec-muted)">—</div>
+        </div>
+      </div>
+
+      <div class="callout note">
+        <div class="callout-icon">◌</div>
+        <div class="callout-body">
+          <div class="callout-label">Session vs. saved</div>
+          <div class="callout-text">Session History is in-memory and clears when you close the tab. To keep a shape permanently, click <span class="ui-ref">Save Shape</span> on the canvas panel. Saved shapes appear in your Library in the left sidebar and persist across sessions.</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="section-div"></div>
+
+    <!-- ── QUICK REFERENCE ── -->
+    <section class="step-section" id="tips">
+      <div class="step-header">
+        <div class="step-num">✦</div>
+        <div class="step-hd">
+          <h2 class="step-h2">Quick <em>reference</em></h2>
+          <div class="step-sub">Everything at a glance</div>
+        </div>
+      </div>
+
+      <p class="body" style="margin-bottom:20px">Common shape and parameter combinations for typical client requests:</p>
+
+      <table class="qr-table">
+        <thead><tr><th>Client says…</th><th>Shape</th><th>Density</th><th>Structure</th><th>Asymmetry</th></tr></thead>
+        <tbody>
+          <tr><td>"Full and lush for the holidays"</td><td>Round</td><td>8–9</td><td>6–7</td><td>2–3</td></tr>
+          <tr><td>"Light and minimal, modern look"</td><td>Round or Crescent</td><td>2–4</td><td>8–10</td><td>1–2</td></tr>
+          <tr><td>"Natural and gathered, like wildflowers"</td><td>Loose</td><td>5–7</td><td>3–4</td><td>7–9</td></tr>
+          <tr><td>"Dramatic entrance piece"</td><td>Trailing or Crescent</td><td>7–9</td><td>5–7</td><td>3–5</td></tr>
+          <tr><td>"Something unusual, asymmetric"</td><td>Trailing or Loose</td><td>5–7</td><td>4–6</td><td>7–10</td></tr>
+          <tr><td>"Large statement, very structured"</td><td>Round or Figure 8</td><td>7–9</td><td>8–10</td><td>1–3</td></tr>
+          <tr><td>"Romantic and soft"</td><td>Loose or Round</td><td>6–8</td><td>3–5</td><td>4–6</td></tr>
+        </tbody>
+      </table>
+
+      <p class="body" style="margin-top:28px;margin-bottom:16px"><strong>Keyboard and canvas shortcuts:</strong></p>
+
+      <table class="qr-table">
+        <thead><tr><th>Action</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>Redraw shape with new jitter</td><td>Click <span class="ui-ref">↺ Regenerate</span></td></tr>
+          <tr><td>Save current shape to library</td><td>Click <span class="ui-ref">Save Shape</span></td></tr>
+          <tr><td>Download SVG file</td><td>Click <span class="ui-ref">Export SVG</span></td></tr>
+          <tr><td>Open in Layout Studio</td><td>Click <span class="ui-ref">→ Layout Studio</span></td></tr>
+          <tr><td>Run AI interpretation again</td><td>Edit input text and click <span class="ui-ref green">Interpret →</span></td></tr>
+          <tr><td>Clear AI result</td><td>Change the shape or sliders — result stays until you run a new one</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout tip" style="margin-top:28px">
+        <div class="callout-icon">◎</div>
+        <div class="callout-body">
+          <div class="callout-label">The best starting point</div>
+          <div class="callout-text">Select your shape, set Density and Structure to match the general feel, then run AI Interpretation before touching Scale or Asymmetry. The element counts it returns will tell you whether the shape is appropriately sized for your stem budget — then go back and adjust Scale if needed.</div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+</div>
+
+<script>
+function setActive(el){
+  document.querySelectorAll('.toc-link').forEach(a=>a.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// Auto-highlight active TOC section on scroll
+const sections = document.querySelectorAll('.step-section');
+const tocLinks = document.querySelectorAll('.toc-link');
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const id = e.target.id;
+      tocLinks.forEach(l=>{
+        l.classList.toggle('active', l.getAttribute('href')==='#'+id);
+      });
+    }
+  });
+},{threshold:.4, rootMargin:'-52px 0px -40% 0px'});
+sections.forEach(s=>observer.observe(s));
+</script>
+</body>
+</html>
