@@ -8,7 +8,7 @@
     "dev": "nodemon server.js",
     "drift": "node evercrafted-drift-check.js",
     "tag": "node evercrafted-shop-tagger.js",
-    "test": "node engine.test.js"
+    "test": "node engine.test.js && node schema.test.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",

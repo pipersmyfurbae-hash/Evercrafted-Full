@@ -1,0 +1,785 @@
+{
+  "September Garden · Crescent": {
+    "placement": {
+      "unitCount": 26,
+      "arc": {
+        "span": 120,
+        "full": false
+      },
+      "exposed": {
+        "start": 40,
+        "end": 112,
+        "span": 72
+      },
+      "units": [
+        [
+          "structural",
+          133,
+          0.71,
+          0.104
+        ],
+        [
+          "structural",
+          229,
+          0.719,
+          0.104
+        ],
+        [
+          "structural",
+          328,
+          0.684,
+          0.104
+        ],
+        [
+          "greenery",
+          130,
+          0.804,
+          0.085
+        ],
+        [
+          "greenery",
+          151,
+          0.743,
+          0.085
+        ],
+        [
+          "greenery",
+          177,
+          0.772,
+          0.085
+        ],
+        [
+          "greenery",
+          200,
+          0.805,
+          0.085
+        ],
+        [
+          "greenery",
+          225,
+          0.751,
+          0.085
+        ],
+        [
+          "greenery",
+          250,
+          0.779,
+          0.085
+        ],
+        [
+          "greenery",
+          271,
+          0.8,
+          0.085
+        ],
+        [
+          "greenery",
+          300,
+          0.801,
+          0.085
+        ],
+        [
+          "greenery",
+          323,
+          0.829,
+          0.085
+        ],
+        [
+          "greenery",
+          343,
+          0.759,
+          0.085
+        ],
+        [
+          "greenery",
+          367,
+          0.772,
+          0.085
+        ],
+        [
+          "greenery",
+          394,
+          0.814,
+          0.085
+        ],
+        [
+          "secondary",
+          252,
+          0.725,
+          0.135
+        ],
+        [
+          "secondary",
+          260,
+          0.817,
+          0.135
+        ],
+        [
+          "secondary",
+          274,
+          0.717,
+          0.135
+        ],
+        [
+          "focal",
+          242,
+          0.825,
+          0.208
+        ],
+        [
+          "focal",
+          251,
+          0.759,
+          0.208
+        ],
+        [
+          "focal",
+          259,
+          0.773,
+          0.208
+        ],
+        [
+          "focal",
+          264,
+          0.783,
+          0.208
+        ],
+        [
+          "focal",
+          274,
+          0.735,
+          0.208
+        ],
+        [
+          "accent",
+          272,
+          0.871,
+          0.045
+        ],
+        [
+          "accent",
+          267,
+          0.848,
+          0.045
+        ],
+        [
+          "accent",
+          258,
+          0.951,
+          0.045
+        ]
+      ]
+    },
+    "bridge": {
+      "coverage": 55,
+      "centralFrac": 100,
+      "asymScore": 0.4023,
+      "stackTotal": 1.2378,
+      "tightPairs": 7,
+      "checks": [
+        [
+          "Coverage (declared Minimal Modern)",
+          "flag"
+        ],
+        [
+          "Bloom nesting (R2)",
+          "pass"
+        ],
+        [
+          "Same-layer spacing (R6/R7)",
+          "flag"
+        ],
+        [
+          "Asymmetry score (R10)",
+          "pass"
+        ],
+        [
+          "Centroid coherence (R10)",
+          "pass"
+        ],
+        [
+          "Diagonal commitment (R13)",
+          "pass"
+        ],
+        [
+          "Lateral drift (R13)",
+          "flag"
+        ],
+        [
+          "Bloom-layer stacking (R7)",
+          "flag"
+        ],
+        [
+          "Total stacking incl. greenery (R7)",
+          "pass"
+        ],
+        [
+          "Texture density (R15)",
+          "pass"
+        ],
+        [
+          "Texture evenness (R15)",
+          "flag"
+        ],
+        [
+          "Texture alternation (R15)",
+          "pass"
+        ],
+        [
+          "Depth quality (R17)",
+          "flag"
+        ],
+        [
+          "Negative-space counterweight (R18)",
+          "pass"
+        ],
+        [
+          "Hollow midspace (R18)",
+          "pass"
+        ],
+        [
+          "Color balance · warm (R16)",
+          "warn"
+        ],
+        [
+          "Color balance · cool (R16)",
+          "pass"
+        ],
+        [
+          "Color group separation (R16)",
+          "pass"
+        ],
+        [
+          "Focal stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Secondary stems (R5, purchase)",
+          "flag"
+        ],
+        [
+          "Filler stems (R5, purchase)",
+          "flag"
+        ],
+        [
+          "Greenery stems (R5, purchase)",
+          "flag"
+        ]
+      ]
+    }
+  },
+  "September Garden · Garden Scatter": {
+    "placement": {
+      "unitCount": 26,
+      "arc": {
+        "span": 360,
+        "full": true
+      },
+      "exposed": null,
+      "units": [
+        [
+          "structural",
+          208,
+          0.71,
+          0.104
+        ],
+        [
+          "structural",
+          328,
+          0.719,
+          0.104
+        ],
+        [
+          "structural",
+          450,
+          0.684,
+          0.104
+        ],
+        [
+          "greenery",
+          203,
+          0.804,
+          0.085
+        ],
+        [
+          "greenery",
+          230,
+          0.743,
+          0.085
+        ],
+        [
+          "greenery",
+          262,
+          0.772,
+          0.085
+        ],
+        [
+          "greenery",
+          291,
+          0.805,
+          0.085
+        ],
+        [
+          "greenery",
+          322,
+          0.751,
+          0.085
+        ],
+        [
+          "greenery",
+          353,
+          0.779,
+          0.085
+        ],
+        [
+          "greenery",
+          380,
+          0.8,
+          0.085
+        ],
+        [
+          "greenery",
+          415,
+          0.801,
+          0.085
+        ],
+        [
+          "greenery",
+          444,
+          0.829,
+          0.085
+        ],
+        [
+          "greenery",
+          470,
+          0.759,
+          0.085
+        ],
+        [
+          "greenery",
+          500,
+          0.772,
+          0.085
+        ],
+        [
+          "greenery",
+          533,
+          0.814,
+          0.085
+        ],
+        [
+          "secondary",
+          365,
+          0.725,
+          0.135
+        ],
+        [
+          "secondary",
+          358,
+          0.817,
+          0.135
+        ],
+        [
+          "secondary",
+          369,
+          0.717,
+          0.135
+        ],
+        [
+          "focal",
+          193,
+          0.825,
+          0.208
+        ],
+        [
+          "focal",
+          195,
+          0.759,
+          0.208
+        ],
+        [
+          "focal",
+          193,
+          0.773,
+          0.208
+        ],
+        [
+          "focal",
+          180,
+          0.783,
+          0.208
+        ],
+        [
+          "focal",
+          190,
+          0.735,
+          0.208
+        ],
+        [
+          "accent",
+          190,
+          0.871,
+          0.045
+        ],
+        [
+          "accent",
+          184,
+          0.848,
+          0.045
+        ],
+        [
+          "accent",
+          175,
+          0.951,
+          0.045
+        ]
+      ]
+    },
+    "bridge": {
+      "coverage": 57,
+      "centralFrac": 66,
+      "asymScore": null,
+      "stackTotal": 1.0088,
+      "tightPairs": 6,
+      "checks": [
+        [
+          "Coverage",
+          "info"
+        ],
+        [
+          "Bloom nesting (R2)",
+          "pass"
+        ],
+        [
+          "Same-layer spacing (R6/R7)",
+          "flag"
+        ],
+        [
+          "Balance (symmetric)",
+          "warn"
+        ],
+        [
+          "Bloom-layer stacking (R7)",
+          "flag"
+        ],
+        [
+          "Total stacking incl. greenery (R7)",
+          "flag"
+        ],
+        [
+          "Texture density (R15)",
+          "pass"
+        ],
+        [
+          "Texture evenness (R15)",
+          "flag"
+        ],
+        [
+          "Texture alternation (R15)",
+          "flag"
+        ],
+        [
+          "Depth quality (R17)",
+          "flag"
+        ],
+        [
+          "Depth consistency (R17)",
+          "pass"
+        ],
+        [
+          "Hollow midspace (R18)",
+          "pass"
+        ],
+        [
+          "Color balance · warm (R16)",
+          "warn"
+        ],
+        [
+          "Color balance · cool (R16)",
+          "pass"
+        ],
+        [
+          "Color group separation (R16)",
+          "warn"
+        ],
+        [
+          "Focal stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Secondary stems (R5, purchase)",
+          "flag"
+        ],
+        [
+          "Filler stems (R5, purchase)",
+          "flag"
+        ],
+        [
+          "Greenery stems (R5, purchase)",
+          "flag"
+        ]
+      ]
+    }
+  },
+  "All White · Crescent": {
+    "placement": {
+      "unitCount": 24,
+      "arc": {
+        "span": 120,
+        "full": false
+      },
+      "exposed": {
+        "start": 40,
+        "end": 112,
+        "span": 72
+      },
+      "units": [
+        [
+          "structural",
+          145,
+          0.71,
+          0.104
+        ],
+        [
+          "structural",
+          289,
+          0.719,
+          0.104
+        ],
+        [
+          "greenery",
+          133,
+          0.804,
+          0.06
+        ],
+        [
+          "greenery",
+          160,
+          0.743,
+          0.06
+        ],
+        [
+          "greenery",
+          190,
+          0.772,
+          0.06
+        ],
+        [
+          "greenery",
+          218,
+          0.805,
+          0.06
+        ],
+        [
+          "greenery",
+          248,
+          0.751,
+          0.06
+        ],
+        [
+          "greenery",
+          278,
+          0.779,
+          0.06
+        ],
+        [
+          "greenery",
+          304,
+          0.8,
+          0.06
+        ],
+        [
+          "greenery",
+          337,
+          0.801,
+          0.06
+        ],
+        [
+          "greenery",
+          365,
+          0.829,
+          0.06
+        ],
+        [
+          "greenery",
+          390,
+          0.759,
+          0.06
+        ],
+        [
+          "secondary",
+          248,
+          0.725,
+          0.125
+        ],
+        [
+          "secondary",
+          253,
+          0.817,
+          0.125
+        ],
+        [
+          "secondary",
+          263,
+          0.717,
+          0.125
+        ],
+        [
+          "secondary",
+          268,
+          0.719,
+          0.125
+        ],
+        [
+          "secondary",
+          271,
+          0.721,
+          0.125
+        ],
+        [
+          "filler",
+          275,
+          0.701,
+          0.06
+        ],
+        [
+          "filler",
+          269,
+          0.678,
+          0.06
+        ],
+        [
+          "filler",
+          256,
+          0.781,
+          0.06
+        ],
+        [
+          "filler",
+          259,
+          0.687,
+          0.06
+        ],
+        [
+          "focal",
+          246,
+          0.825,
+          0.228
+        ],
+        [
+          "focal",
+          259,
+          0.759,
+          0.228
+        ],
+        [
+          "focal",
+          271,
+          0.773,
+          0.228
+        ]
+      ]
+    },
+    "bridge": {
+      "coverage": 46,
+      "centralFrac": 100,
+      "asymScore": 0.4232,
+      "stackTotal": 1.274,
+      "tightPairs": 7,
+      "checks": [
+        [
+          "Coverage (declared Minimal Modern)",
+          "flag"
+        ],
+        [
+          "Bloom nesting (R2)",
+          "pass"
+        ],
+        [
+          "Same-layer spacing (R6/R7)",
+          "flag"
+        ],
+        [
+          "Asymmetry score (R10)",
+          "pass"
+        ],
+        [
+          "Centroid coherence (R10)",
+          "pass"
+        ],
+        [
+          "Diagonal commitment (R13)",
+          "pass"
+        ],
+        [
+          "Lateral drift (R13)",
+          "flag"
+        ],
+        [
+          "Bloom-layer stacking (R7)",
+          "flag"
+        ],
+        [
+          "Total stacking incl. greenery (R7)",
+          "pass"
+        ],
+        [
+          "Texture density (R15)",
+          "pass"
+        ],
+        [
+          "Texture evenness (R15)",
+          "flag"
+        ],
+        [
+          "Texture alternation (R15)",
+          "pass"
+        ],
+        [
+          "Depth quality (R17)",
+          "flag"
+        ],
+        [
+          "Negative-space counterweight (R18)",
+          "pass"
+        ],
+        [
+          "Hollow midspace (R18)",
+          "pass"
+        ],
+        [
+          "Color balance · warm (R16)",
+          "warn"
+        ],
+        [
+          "Color balance · cool (R16)",
+          "pass"
+        ],
+        [
+          "Color group separation (R16)",
+          "pass"
+        ],
+        [
+          "Accent separation (R16)",
+          "warn"
+        ],
+        [
+          "Focal stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Secondary stems (R5, purchase)",
+          "warn"
+        ],
+        [
+          "Filler stems (R5, purchase)",
+          "flag"
+        ],
+        [
+          "Greenery stems (R5, purchase)",
+          "flag"
+        ]
+      ]
+    }
+  }
+}

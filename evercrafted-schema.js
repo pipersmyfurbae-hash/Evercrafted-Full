@@ -15,6 +15,13 @@
   if (typeof module !== 'undefined' && module.exports) module.exports = factory();
   else root.EC_SCHEMA = factory();
 })(typeof self !== 'undefined' ? self : this, function () {
+  // Convergence: the canonical R1-R18 engine. Imported in Node; in the browser it
+  // resolves to window.EvercraftedEngine if engine.js is loaded, else null (the
+  // validation bridge below is then a no-op). Placement generation stays in this
+  // file; the engine is used to SCORE it with the canon validators.
+  var ENGINE = (typeof require !== 'undefined')
+    ? (function () { try { return require('./engine.js'); } catch (e) { return null; } })()
+    : (typeof window !== 'undefined' && window.EvercraftedEngine) || null;
 
   // ── Controlled vocabulary (every tag must be one of these) ──────────────────
   const VOCAB = {
@@ -676,7 +683,42 @@
     });
   }
 
+  // ── Convergence bridge: score this file's placement with the canon engine ────
+  // Adapts placeSlots() output (units with compass `deg`, fractional `r`, `role`,
+  // `sizeFrac`) into the engine's layout shape and runs the real R1-R18 validators.
+  // Geometry comes from the actual placement; per-role attributes (footprint,
+  // texture, hue, depth) are borrowed from a representative engine SLOT so coverage,
+  // nesting, asymmetry, texture, depth and negative-space all compute on real data.
+  var ROLE_TO_ENGINE_SLOT = { focal: 'peony', secondary: 'hydrangea', greenery: 'eucalyptus',
+                              texture: 'waxFlower', bridge: 'ranunculus', filler: 'berryNavy' };
+  function validatePlacement(placed, opts) {
+    opts = opts || {};
+    if (!ENGINE || !placed || !placed.units) return null;
+    var geom = placed.geometry || {};
+    var D = opts.wreathDiam || geom.diam || 24;
+    var ppi = 480 / D;
+    var rOuter = geom.rOuter || D / 2;
+    var byComp = {};
+    placed.units.forEach(function (u) {
+      var comp = ROLE_TO_ENGINE_SLOT[u.role];           // structural/accent → skipped (validator ignores them)
+      if (!comp) return;
+      (byComp[comp] = byComp[comp] || []).push({
+        angle: u.deg,
+        radius: (u.r || 0.8) * rOuter * ppi,             // fraction-of-outer → px on the engine's 480px canvas
+        size: (u.sizeFrac || 0.1) * D * ppi,             // bloom diameter (in) → px; footprint comes from the SLOT
+      });
+    });
+    var layers = [{ name: 'base', component: 'base', positions: [{ angle: 0, radius: 0, size: 480 }] }];
+    Object.keys(byComp).forEach(function (component) { layers.push({ name: component, component: component, positions: byComp[component] }); });
+    var full = !!(placed.arc && placed.arc.full);
+    var cov = placed.arc ? (full ? 100 : Math.round((placed.arc.span / 360) * 100)) : 60;
+    var declared = opts.declared || (cov <= 35 ? 'minimal' : cov <= 60 ? 'classic' : 'lush');
+    var layout = { meta: { size: D, declared: declared, symmetry: full ? 'full' : 'asym' }, formula: 'Crescent', layers: layers };
+    return ENGINE.computeValidation(layout, {});
+  }
+
   return { EC_CANON: 'v1', VOCAB, EMOTION_VA, normalizeTag, unitSpec, BUDGET, ZS, BU,
+           engine: ENGINE, validatePlacement,
            SLOT_TEMPLATES, FORMULA_ARCS, runSlotFill, recipeToSlots, STEM_DENSITY, PLACE_YIELD, coverageFor,
            ROLE_BAND, ROLE_Z, placeSlots, quadrantFor, emotionToVA, deriveDesignParams, suggestFormula,
            WREATH_SIZES, wreathRadii, toOdd, degToClock, SEASONS, seasonFor, CONSTRUCTION, compileBlueprint };

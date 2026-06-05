@@ -37,21 +37,36 @@ model, so they under-represent the actual intelligence described in the skill.
 
 ## Conflicts (must resolve, not just add)
 
-1. **`quadrantFor()` vs R3.** The canon *explicitly rejects* quadrant balance for
-   asymmetric layouts (it's symmetric-ring thinking; a crescent fails vertical balance
-   by design). Any quadrant logic must be converted to within-arc / centroid form.
-2. **RNG.** sin-hash → **mulberry32** so layouts are portable & reproducible across the
-   skill, the visualizer, and the schema identically.
-3. **`r_work` definition** differs (midline vs `D/2 − baseWidth/2`). Pick the canon's;
-   re-derive `ROLE_BAND` offsets from it.
-4. **Yield factors** (R4) differ — adopt canon per-material yields.
+~~`quadrantFor()` vs R3~~ — **not a conflict** (correction). schema's `quadrantFor(v,a)`
+is the *emotional valence/arousal* quadrant, not a spatial top/bottom/left/right one.
+It never touches placement. Leave it.
+
+~~`r_work` definition~~ — **already matches** (correction). schema's midline
+`(rOuter+rInner)/2` equals the canon `D/2 − baseWidth/2` for the table sizes
+(both = 9.75" at 24"). No change.
+
+Remaining real divergences (both are deliberate *behavior* changes to live product
+output, so they're gated behind `schema.test.js` and left for an explicit pass):
+1. **RNG.** schema's sin-hash vs **mulberry32** — both deterministic; unifying only
+   matters if we want identical seeds across schema and the engine (i.e. full Option A).
+2. **Yield factors** (R4). schema `PLACE_YIELD` (greenery/texture/filler ×2) vs canon
+   (euc/sage ×3, wax/cream ×1.5). Adopting canon changes purchase-stem counts on the
+   product's shopping list — a pricing-relevant change, hence flagged not auto-applied.
 
 ## Phased convergence plan
 
-> **Status:** the engine is now extracted to `engine.js` (pure/headless, UMD, served at
-> `/engine.js`) with a golden-master test (`npm test`) and `roleMap` parameterization —
-> see `docs/skills/engine-README.md`. `schema.js` convergence can now happen against
-> this shared module rather than a second implementation.
+> **Status:**
+> - `engine.js` — extracted, golden-tested, `roleMap`-parameterized, served at `/engine.js`.
+> - `schema.test.js` — **characterization net added** for the previously-untested
+>   placement path (locks `recipeToSlots`→`placeSlots` + the bridge). `npm test` runs both.
+> - **Validation bridge live:** `schema.js` now imports `engine.js` (re-exported as
+>   `EC.engine`) and `EC.validatePlacement(placed)` scores the product's real placement
+>   with the canon R1–R18 validators — Phase-1 "make the IP visible" without changing how
+>   placement is generated. (It already shows schema layouts that the canon would flag,
+>   e.g. coverage/spacing — the signal that drives the rest of convergence.)
+> - Remaining (gated, deliberate): unify RNG, adopt R4 yields, and eventually have
+>   `placeSlots` *delegate* to `engine.generateLayout` once the engine accepts arbitrary
+>   materials (today's `roleMap` maps among the engine's fixed SLOTS only).
 
 **Phase 0 — Align conventions (low risk, no behavior change).**
 Swap `seeded()` → mulberry32; adopt canon `r_work`; adopt R4 yields; delete/convert
