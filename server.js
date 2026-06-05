@@ -437,8 +437,8 @@ Build the palette with four rules at once: 60% dominant (defines it at a glance)
 ═══ POEM (the heart) ═══
 Write the poem FIRST inside your JSON. Then re-read it as someone else's work and ask what emotions the WRITING carries — not what the memory described. A memory of peace often holds longing; joy often holds grief for what passed. From that, extract the structural emotion (heaviest, anchors focal layer), secondary (gives character, mid-ring), and undertone (the quiet one, edge/accent). These three drive floral placement hierarchy. The poem's feeling drives the whole recipe — it is not decoration.
 
-═══ RENDER SETTING ═══
-The wreath need NOT be on a door — place it where it belongs in this memory's world, like an editorial photographer (a canal memory → houseboat window; grandmother's warmth → sunlit foyer or mantle; coastal → weathered shingle or dock). The render prompt must describe the WREATH (a round hanging wreath) built from the named recipe — not a bouquet.
+═══ RENDER SETTING — WREATH IS THE HERO ═══
+The render is a clean product-editorial shot of the WREATH, not a travel scene. The wreath fills most of the frame, hung FLAT against ONE simple plain surface (a weathered door, a quiet wall), casting a soft shadow. Let the memory's world only TINT the surface and light (a coastal memory → a salt-faded door in soft sea light; a warm memory → a cream wall in golden light) — never a full scene. Absolutely NO competing background: no buildings, canals, reflections, crowds, landmarks, or bicycles. The wreath, hung correctly and round, is the entire subject.
 
 CANONICAL VOCAB — use these exact names:
 - movement_archetype (pick 1 or combine 2 with " + "): Still, Drift, Cascade, Spiral, Reach, Collapse, Float, Surge, Suspension, Tangle, Orbit, Fracture, Bloom Expansion, Taper Fade, Echo Pull, Wild Lift
@@ -506,9 +506,9 @@ Return ONLY valid JSON, no markdown, no backticks:
       "emotion_tags": ["1-3 tags this floral carries"]
     }
   ],
-  "render_surface": "concise phrase — the exact thing the wreath hangs on/near, e.g. 'the salt-bleached shingle wall of a Nantucket cottage'",
-  "render_setting": "the chosen setting and why it belongs to this memory — surface, surrounding architecture, light quality, what's visible in soft focus behind it; one detail tying it to the location",
-  "render_prompt": "Full Flux/Midjourney prompt. Open with: A complete round faux botanical wreath, [formula] composition, hanging on [render_surface]. Then NAME the actual florals from ideal_recipe and their clusters/positions and the [movement_archetype] lean. Describe [season] [time of day] light. Palette: the three palette colours by name. Background visible in soft focus, specific to the location. Close with: Premium silk and preserved botanicals, no fresh flowers, round wreath form, open center. Fine art editorial photography, shallow depth of field. --ar 4:5 --style raw --q 2",
+  "render_surface": "ONE simple, plain surface the wreath hangs flat against — e.g. 'a weathered painted door', 'a quiet limewashed wall', 'a soft-grey panelled door'. Keep it plain and uncluttered. NO scenery, no landmarks, no windows-with-a-view, no reflections.",
+  "render_setting": "(for display only, not used in the render) one line on why this setting suits the memory",
+  "render_prompt": "Full image prompt — WREATH-FIRST. The wreath is the hero and fills ~70% of the frame; the background is a quiet whisper, never a scene. Open with: A single round faux botanical wreath, shown straight-on and centred, hung FLAT against [render_surface], pressed to the surface and casting a soft shadow, the open center clearly visible — not floating. Then NAME the actual florals from ideal_recipe, their clusters, and the [movement_archetype] lean, in the palette colours by name. Then ONE short backdrop clause only: a plain uncluttered surface in a soft complementary tone with gentle [time of day] light — and explicitly NO busy scenery, no buildings, no crowds, no landmarks, no bicycles, no water reflections, nothing competing with the wreath. Close with: round wreath form with open center, the wreath filling most of the frame, premium silk and preserved botanicals, no fresh flowers, clean product-editorial photography, shallow depth of field, soft natural shadow. --ar 4:5 --style raw --q 2",
   "map_query": "city + country for map embed (e.g. Benidorm Spain). If no location, use Columbus Ohio"
 }
 
