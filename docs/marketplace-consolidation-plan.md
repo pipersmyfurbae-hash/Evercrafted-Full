@@ -114,3 +114,17 @@ Only **Academy** is production-scaffolded. The other keepers are functional *pro
 4. **Validate demand** with a "build your stack" page (the 3 packs) against the waitlist *before* building all the billing.
 
 *The blueprint is the source of truth; the apps are how a maker turns it into a business.*
+
+---
+
+## 8. Deep-dive corrections + what's now built (this session)
+
+**Grow pack correction.** `Design Principles Coach` is a "Design **Score** Analyzer + generate-from-principles" — its scoring half *overlaps the engine's R10.2 validator we already built* (`EC.validatePlacement` / studio notes). So it's a **core/engine-powered feature, not a standalone Grow SKU**; power it from `engine.js`, don't pay a separate AI for it. That leaves **Grow = Academy alone** (strong enough to anchor). `Parametric Lab` = a genuine *generation mode* (shape-from-mood) but only a demo page (0 inputs) → Pro tier, needs building.
+
+**Built as proof + validation:**
+- **`evercrafted-marketplace.html`** — the "Build your stack" page (light-luxury): core-included band + the 3 packs with their real keepers + Pro tools, a live stack total, and a submit that POSTs to **`/api/pack-interest`** (reuses the `layout_feedback` table, `kind='pack_interest'`). This validates pack demand against the waitlist.
+- **`evercrafted-tier-gate.js`** — vanilla port of Academy's `TierGate.tsx` (`ECGate.require({pack|tier,...})`): blurs the page + upgrade CTA, never hides. The reusable entitlement spine for the Express/HTML stack.
+- **`/api/entitlements`** — returns `{tier, packs}` (demo query override; production reads the authed profile like Academy's scaffold).
+- **`evercrafted-pricing-calculator.html`** — first keeper ported in and **gated behind the `sell` pack** (locked on `bloom`, unlocked with the pack). Proves how any keeper gets sold without a separate Next.js app.
+
+**Pattern proven:** keeper page + one `<script>` + `ECGate.require()` = a sellable, gated app. Port the rest into this shell.

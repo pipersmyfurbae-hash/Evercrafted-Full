@@ -155,6 +155,16 @@ app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'evercrafted-marke
 app.get('/evercrafted-schema.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-schema.js')));
 app.get('/engine.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'engine.js')));
 app.get('/evercrafted-nav.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-nav.js')));
+app.get('/evercrafted-tier-gate.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-tier-gate.js')));
+// Entitlements — which tier + packs the current user has. DEMO: query overrides
+// (?tier=studio&packs=sell). PRODUCTION: read the authed user's profile from Supabase
+// (profiles.tier + an owned-packs table) exactly like Academy's scaffold does.
+app.get('/api/entitlements', (req, res) => {
+  const tier = sanitizeInput(req.query.tier) || 'bloom';
+  const packs = (req.query.packs ? String(req.query.packs).split(',') : [])
+    .map((s) => sanitizeInput(s)).filter(Boolean);
+  res.json({ tier, packs });
+});
 app.get('/evercrafted-theme.css', (_req, res) => res.type('text/css').sendFile(path.join(__dirname, 'evercrafted-theme.css')));
 // Static assets (hero video, posters, images). sendFile sets the mime from the extension.
 app.get('/assets/:file', (req, res, next) => {
@@ -899,6 +909,35 @@ app.post('/api/layout-feedback', async (req, res) => {
     return res.json({ success: true });
   } catch (err) {
     console.error('[/api/layout-feedback]', err.message);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── POST /api/pack-interest ───────────────────────────────────────────────────
+// "Build your stack" demand validation — which add-on packs would a maker pay for.
+// Reuses the durable layout_feedback table (kind='pack_interest') so there's no new
+// migration: packs → genome (JSON), email → reason.
+app.post('/api/pack-interest', async (req, res) => {
+  try {
+    const packs = Array.isArray(req.body.packs)
+      ? req.body.packs.map((p) => sanitizeInput(String(p)).slice(0, 40)).filter(Boolean).slice(0, 12) : [];
+    if (!packs.length) return res.status(400).json({ success: false, error: 'no packs selected' });
+    const email = sanitizeInput(req.body.email).slice(0, 254);
+    const entry = { vote: 'up', kind: 'pack_interest', genome: JSON.stringify(packs),
+                    reason: email, source: sanitizeInput(req.body.source) || 'marketplace' };
+    if (supabase) {
+      const { error } = await supabase.from('layout_feedback').insert(entry);
+      if (error) throw new Error(error.message);
+      console.log(`[/api/pack-interest] (supabase) ${packs.join('+')} ${email}`);
+      return res.json({ success: true });
+    }
+    let list = []; try { list = JSON.parse(fs.readFileSync(FEEDBACK_PATH, 'utf8')); } catch {}
+    list.push({ ...entry, timestamp: new Date().toISOString() });
+    fs.writeFileSync(FEEDBACK_PATH, JSON.stringify(list, null, 2));
+    console.log(`[/api/pack-interest] (file) ${packs.join('+')}`);
+    return res.json({ success: true });
+  } catch (err) {
+    console.error('[/api/pack-interest]', err.message);
     return res.status(500).json({ success: false, error: err.message });
   }
 });
