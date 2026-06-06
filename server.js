@@ -985,6 +985,9 @@ function inventoryRow(b) {
     in_stock:        b.inStock === false ? false : true,
     stock:           Number.isFinite(+b.stock) ? Math.max(0, parseInt(b.stock)) : 0,
     recommended_qty: Number.isFinite(+b.recommendedQty) ? Math.max(1, parseInt(b.recommendedQty)) : 4,
+    category:        sanitizeInput(b.category).slice(0, 80),
+    supplier:        sanitizeInput(b.supplier).slice(0, 120),
+    stock_unit:      sanitizeInput(b.stockUnit).slice(0, 30),
   };
 }
 
@@ -997,6 +1000,7 @@ function rowToClient(r) {
     intensity: r.intensity, colorName: r.color_name, colorHex: r.color_hex,
     bloomSize: r.bloom_size, stemLength: r.stem_length, yield: r.yield, unit: r.unit, assetUrl: r.asset_url, assetPrompt: r.asset_prompt,
     inStock: r.in_stock, stock: r.stock, recommendedQty: r.recommended_qty,
+    category: r.category, supplier: r.supplier, stockUnit: r.stock_unit,
     createdAt: r.created_at,
   };
 }
@@ -1057,6 +1061,13 @@ app.patch('/api/inventory/:id', async (req, res) => {
     const id = req.params.id;
     const patch = {};
     if (req.body.stock !== undefined)   patch.stock = Math.max(0, parseInt(req.body.stock) || 0);
+    if (req.body.recommendedQty !== undefined) patch.recommended_qty = Math.max(0, parseInt(req.body.recommendedQty) || 0);
+    if (typeof req.body.name === 'string' && req.body.name.trim()) patch.name = sanitizeInput(req.body.name).slice(0, 160);
+    if (req.body.price !== undefined) patch.price = sanitizeInput(String(req.body.price)).slice(0, 20);
+    if (typeof req.body.description === 'string') patch.description = sanitizeInput(req.body.description).slice(0, 1000);
+    if (typeof req.body.category === 'string') patch.category = sanitizeInput(req.body.category).slice(0, 80);
+    if (typeof req.body.supplier === 'string') patch.supplier = sanitizeInput(req.body.supplier).slice(0, 120);
+    if (typeof req.body.stockUnit === 'string') patch.stock_unit = sanitizeInput(req.body.stockUnit).slice(0, 30);
     if (req.body.inStock !== undefined) patch.in_stock = !!req.body.inStock;
     if (typeof req.body.assetPrompt === 'string') patch.asset_prompt = req.body.assetPrompt.slice(0, 500);
     // editable tags (validated against the controlled vocabulary)
