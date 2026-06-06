@@ -47,9 +47,26 @@
 
   w.ECGate = {
     rank: rank,
+    // Read the Supabase session token from localStorage (set by the login page),
+    // so the gate resolves REAL entitlements once a user is signed in. No token →
+    // the server falls back to the ?packs= demo override.
+    token: function () {
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (/^sb-.*-auth-token$/.test(k)) {
+            var v = JSON.parse(localStorage.getItem(k));
+            return (v && (v.access_token || (v.currentSession && v.currentSession.access_token))) || '';
+          }
+        }
+      } catch (e) {}
+      return '';
+    },
     // Resolve the current user's entitlements (server reads the authed profile in prod).
     entitlements: function () {
-      return fetch('/api/entitlements' + w.location.search, { credentials: 'same-origin' })
+      var t = this.token();
+      var opts = { credentials: 'same-origin', headers: t ? { Authorization: 'Bearer ' + t } : {} };
+      return fetch('/api/entitlements' + w.location.search, opts)
         .then(function (r) { return r.json(); })
         .catch(function () { return { tier: 'bloom', packs: [] }; });
     },

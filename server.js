@@ -159,11 +159,55 @@ app.get('/evercrafted-tier-gate.js', (_req, res) => res.type('application/javasc
 // Entitlements — which tier + packs the current user has. DEMO: query overrides
 // (?tier=studio&packs=sell). PRODUCTION: read the authed user's profile from Supabase
 // (profiles.tier + an owned-packs table) exactly like Academy's scaffold does.
-app.get('/api/entitlements', (req, res) => {
+app.get('/api/entitlements', async (req, res) => {
+  // Real entitlements when a Supabase session token is present (production):
+  // validate the JWT, then read the user's tier + owned packs. Falls back to the
+  // ?tier=&packs= demo overrides for preview/dev (and when Supabase isn't configured).
+  const authz = req.headers.authorization || '';
+  const token = authz.startsWith('Bearer ') ? authz.slice(7) : '';
+  if (token && supabase) {
+    try {
+      const { data: { user } = {}, error } = await supabase.auth.getUser(token);
+      if (error || !user) throw new Error('invalid session');
+      const [profRes, packRes] = await Promise.all([
+        supabase.from('profiles').select('tier,email').eq('id', user.id).maybeSingle(),
+        supabase.from('owned_packs').select('pack').eq('user_id', user.id),
+      ]);
+      return res.json({
+        authed: true,
+        tier: (profRes.data && profRes.data.tier) || 'bloom',
+        email: (profRes.data && profRes.data.email) || user.email || '',
+        packs: (packRes.data || []).map((r) => r.pack),
+      });
+    } catch (e) {
+      return res.status(401).json({ authed: false, tier: 'bloom', packs: [], error: e.message });
+    }
+  }
   const tier = sanitizeInput(req.query.tier) || 'bloom';
   const packs = (req.query.packs ? String(req.query.packs).split(',') : [])
     .map((s) => sanitizeInput(s)).filter(Boolean);
-  res.json({ tier, packs });
+  res.json({ authed: false, tier, packs });
+});
+
+// POST /api/dev-grant — grant a pack to a user (testing before Stripe is wired).
+// Guarded by ADMIN_TOKEN; the Stripe webhook will write owned_packs the same way.
+app.post('/api/dev-grant', async (req, res) => {
+  if (!process.env.ADMIN_TOKEN || req.headers['x-admin-token'] !== process.env.ADMIN_TOKEN) {
+    return res.status(403).json({ success: false, error: 'forbidden' });
+  }
+  const user_id = sanitizeInput(req.body.user_id);
+  const pack = sanitizeInput(req.body.pack);
+  if (!user_id || !['ops', 'sell', 'grow', 'pro'].includes(pack)) {
+    return res.status(400).json({ success: false, error: 'user_id + valid pack required' });
+  }
+  if (!supabase) return res.status(503).json({ success: false, error: 'supabase not configured' });
+  try {
+    const { error } = await supabase.from('owned_packs').upsert({ user_id, pack, source: 'manual' }, { onConflict: 'user_id,pack' });
+    if (error) throw new Error(error.message);
+    return res.json({ success: true });
+  } catch (e) {
+    return res.status(500).json({ success: false, error: e.message });
+  }
 });
 app.get('/evercrafted-theme.css', (_req, res) => res.type('text/css').sendFile(path.join(__dirname, 'evercrafted-theme.css')));
 // Static assets (hero video, posters, images). sendFile sets the mime from the extension.
