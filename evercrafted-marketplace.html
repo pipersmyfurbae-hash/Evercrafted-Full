@@ -13,7 +13,10 @@ a{color:inherit;text-decoration:none}.serif{font-family:var(--serif)}
 .nav-links{display:flex;align-items:center;gap:clamp(1rem,2.5vw,2rem)}
 .nav-links a{font-size:13px;color:var(--mut)}.nav-cta{padding:9px 20px;border:1px solid var(--gold);border-radius:100px;color:var(--gold-d)!important;font-size:12px;font-weight:500;letter-spacing:.05em}
 /* hero */
-.hero{text-align:center;padding:clamp(3.28rem, 6.3vw, 4.62rem) clamp(20px,5vw,64px) 2.5rem;max-width:820px;margin:0 auto}
+.hero{text-align:center;padding:clamp(3.28rem, 6.3vw, 4.62rem) clamp(20px,5vw,64px) 2.5rem;position:relative;overflow:hidden}
+.hero>.hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.hero>.hero-scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 92% 86% at 50% 45%,rgba(253,252,250,.74),rgba(253,252,250,.93))}
+.hero>.ov,.hero>h1,.hero>.lead{position:relative;z-index:2;max-width:820px;margin-left:auto;margin-right:auto}
 .ov{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);margin-bottom:1.2rem}
 h1{font-family:var(--serif);font-weight:400;font-size:clamp(2.13rem, 4.2vw, 3.04rem);line-height:1.05;letter-spacing:.01em}
 h1 .it{font-style:italic;color:var(--green)}
@@ -71,6 +74,7 @@ h1 .it{font-style:italic;color:var(--green)}
 </nav>
 
 <section class="hero">
+  <video class="hero-vid" autoplay loop muted playsinline><source src="/assets/hero-marketplace.mp4" type="video/mp4"></video><div class="hero-scrim"></div>
   <div class="ov">Build your Evercrafted</div>
   <h1>Start with the studio.<br>Add what your business <span class="it">needs</span>.</h1>
   <p class="lead">Every plan includes the design studio. From there, add the packs that fit how <em>you</em> work — run your stock, sell your pieces, or turn your craft into a second income.</p>

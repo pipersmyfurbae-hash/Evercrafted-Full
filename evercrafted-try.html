@@ -34,7 +34,10 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 .nav-cta:hover{background:#3a5030}
 
 /* HERO */
-.try-hero{padding:3rem 2rem 2rem;text-align:center;max-width:640px;margin:0 auto}
+.try-hero{padding:3rem 2rem 2rem;text-align:center;position:relative;overflow:hidden}
+.try-hero>.hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.try-hero>.hero-scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 92% 88% at 50% 42%,rgba(245,243,239,.76),rgba(245,243,239,.94))}
+.try-hero>.hero-overline,.try-hero>.hero-h1,.try-hero>.hero-lead,.try-hero>.hero-note{position:relative;z-index:2;max-width:640px;margin-left:auto;margin-right:auto}
 .hero-overline{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem}
 .hero-h1{font-family:var(--serif);font-size:clamp(1.8rem, 3.5vw, 2.4rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;margin-bottom:.9rem}
 .hero-h1 em{font-style:italic;color:var(--green)}
@@ -160,6 +163,7 @@ input.qi-text::placeholder{color:var(--fa)}
 
 <div id="intake-view">
   <div class="try-hero">
+    <video class="hero-vid" autoplay loop muted playsinline><source src="/assets/hero-try.mp4" type="video/mp4"></video><div class="hero-scrim"></div>
     <div class="hero-overline">Try Evercrafted</div>
     <h1 class="hero-h1">Share a real memory.<br><em>See what we do with it.</em></h1>
     <p class="hero-lead">Two minutes. No signup. Your words become something you will want to build.</p>
