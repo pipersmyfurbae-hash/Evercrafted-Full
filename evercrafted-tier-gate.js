@@ -35,7 +35,7 @@
       '<p>' + (o.description || '') + (o.pack
         ? ' Add the <strong>' + o.pack + '</strong> pack to unlock it.'
         : ' Upgrade to <strong>' + TIER_LABEL[o.tier] + '</strong> to unlock it.') + '</p>' +
-      '<a href="' + (o.href || '/evercrafted-marketplace.html') + '">' +
+      '<a href="' + (o.href || '/evercrafted-account.html') + '">' +
         (o.pack ? 'Add the ' + o.pack + ' pack' : 'Unlock with ' + TIER_LABEL[o.tier]) + ' →</a>' +
       '<div class="sub">Locked, not hidden — this is exactly what unlocks.</div></div>';
     document.body.appendChild(d);

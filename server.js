@@ -35,6 +35,10 @@ function sanitizeInput(text) {
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+// ── Stripe (optional; only active when STRIPE_SECRET_KEY is set) ──────────────
+let stripe = null;
+try { if (process.env.STRIPE_SECRET_KEY) stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); } catch (e) { console.warn('[stripe] not available:', e.message); }
+
 // ── Supabase (waitlist storage) ─────────────────────────────────────────────
 // Uses the service role key server-side so inserts bypass RLS. If the env vars
 // are not set, /api/waitlist falls back to writing the local waitlist.json file.
@@ -109,7 +113,7 @@ app.use(cors({
     cb(new Error(`CORS: origin ${origin} not allowed`));
   },
 }));
-app.use(express.json({ limit: '12mb' })); // headroom for base64 photo uploads to /api/tag
+app.use(express.json({ limit: '12mb', verify: (req, _r, buf) => { req.rawBody = buf; } })); // rawBody kept for Stripe webhook signature verification; headroom for base64 photo uploads to /api/tag
 
 // ── Request logging ───────────────────────────────────────────────────────────
 app.use((req, res, next) => {
@@ -156,6 +160,7 @@ app.get('/evercrafted-schema.js', (_req, res) => res.type('application/javascrip
 app.get('/engine.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'engine.js')));
 app.get('/evercrafted-nav.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-nav.js')));
 app.get('/evercrafted-tier-gate.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-tier-gate.js')));
+app.get('/evercrafted-auth.js', (_q, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-auth.js')));
 // Entitlements — which tier + packs the current user has. DEMO: query overrides
 // (?tier=studio&packs=sell). PRODUCTION: read the authed user's profile from Supabase
 // (profiles.tier + an owned-packs table) exactly like Academy's scaffold does.
@@ -1007,6 +1012,33 @@ app.post('/api/ai-generate', async (req, res) => {
     console.error('[/api/ai-generate]', err.message);
     return res.status(500).json({ success: false, error: err.message });
   }
+});
+
+// ── POST /api/checkout (Stripe Checkout for a pack; requires signed-in user) ──
+app.post('/api/checkout', async (req, res) => {
+  if (!stripe) return res.status(503).json({ success: false, error: 'billing not configured' });
+  const authz = req.headers.authorization || ''; const token = authz.startsWith('Bearer ') ? authz.slice(7) : '';
+  if (!token || !supabase) return res.status(401).json({ success: false, error: 'sign in first' });
+  try {
+    const { data: { user } = {}, error } = await supabase.auth.getUser(token); if (error || !user) throw new Error('invalid session');
+    const pack = sanitizeInput(req.body.pack);
+    const price = { ops: process.env.STRIPE_PRICE_OPS, sell: process.env.STRIPE_PRICE_SELL, grow: process.env.STRIPE_PRICE_GROW, pro: process.env.STRIPE_PRICE_PRO }[pack];
+    if (!price) return res.status(400).json({ success: false, error: 'unknown or unconfigured pack' });
+    const origin = req.headers.origin || process.env.PUBLIC_URL || '';
+    const session = await stripe.checkout.sessions.create({ mode: 'subscription', line_items: [{ price, quantity: 1 }], customer_email: user.email || undefined, metadata: { user_id: user.id, pack }, subscription_data: { metadata: { user_id: user.id, pack } }, success_url: origin + '/evercrafted-account.html?purchased=' + pack, cancel_url: origin + '/evercrafted-account.html' });
+    return res.json({ success: true, url: session.url });
+  } catch (e) { return res.status(500).json({ success: false, error: e.message }); }
+});
+
+// ── POST /api/stripe/webhook (grant/revoke owned_packs from Stripe events) ──
+app.post('/api/stripe/webhook', async (req, res) => {
+  if (!stripe) return res.status(503).end();
+  let event; try { event = stripe.webhooks.constructEvent(req.rawBody, req.headers['stripe-signature'], process.env.STRIPE_WEBHOOK_SECRET); } catch (e) { return res.status(400).send('bad signature'); }
+  try {
+    if (event.type === 'checkout.session.completed') { const o = event.data.object, uid = o.metadata && o.metadata.user_id, pk = o.metadata && o.metadata.pack; if (uid && pk && supabase) await supabase.from('owned_packs').upsert({ user_id: uid, pack: pk, source: 'stripe' }, { onConflict: 'user_id,pack' }); }
+    else if (event.type === 'customer.subscription.deleted') { const sub = event.data.object, uid = sub.metadata && sub.metadata.user_id, pk = sub.metadata && sub.metadata.pack; if (uid && pk && supabase) await supabase.from('owned_packs').delete().eq('user_id', uid).eq('pack', pk); }
+  } catch (e) { console.error('[stripe webhook]', e.message); }
+  return res.json({ received: true });
 });
 
 // ── Inventory (saved tagged items) ────────────────────────────────────────────

@@ -91,6 +91,7 @@
     nav.innerHTML =
       `<a class="ec-logo" href="${HOME}"><b>Ever</b><span class="g">crafted</span></a>` +
       `<div class="ec-links">${NAV.map(link).join('')}` +
+      `<a href="evercrafted-account.html">Account</a>` +
       `<a class="ec-cta" href="${WAITLIST}">Join waitlist</a></div>`;
     document.body.insertBefore(nav, document.body.firstChild);
   }
