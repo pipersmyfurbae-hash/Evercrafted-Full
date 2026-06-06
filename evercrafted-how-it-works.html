@@ -244,6 +244,9 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 .foot-links{display:flex;gap:1.5rem}
 .foot-links a{color:rgba(255,255,255,.45);text-decoration:none;transition:color var(--tr);font-size:12px}
 .foot-links a:hover{color:rgba(255,255,255,.8)}
+
+.step-section>.step-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.10;z-index:0;pointer-events:none}
+.step-section>.container{position:relative;z-index:1}
 </style>
 </head>
 <body>
@@ -340,7 +343,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 </section>
 
 <!-- ═══════════════ STEP 2 ═══════════════ -->
-<section class="step-section" id="step-2">
+<section class="step-section" id="step-2"><div class="step-bg" style="background-image:url('/assets/gallery-2.png')"></div>
   <div class="container">
     <div class="step-grid flip">
       <div class="reveal">
@@ -481,7 +484,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 </section>
 
 <!-- ═══════════════ STEP 4 ═══════════════ -->
-<section class="step-section" id="step-4">
+<section class="step-section" id="step-4"><div class="step-bg" style="background-image:url('/assets/gallery-5.png')"></div>
   <div class="container">
     <div class="step-grid flip">
       <div class="reveal">
@@ -606,7 +609,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 </section>
 
 <!-- ═══════════════ STEP 6 ═══════════════ -->
-<section class="step-section" id="step-6">
+<section class="step-section" id="step-6"><div class="step-bg" style="background-image:url('/assets/gallery-1.png')"></div>
   <div class="container">
     <div class="step-grid flip">
       <div class="reveal">
