@@ -167,8 +167,10 @@ app.get('/api/entitlements', (req, res) => {
 });
 app.get('/evercrafted-theme.css', (_req, res) => res.type('text/css').sendFile(path.join(__dirname, 'evercrafted-theme.css')));
 // Static assets (hero video, posters, images). sendFile sets the mime from the extension.
-app.get('/assets/:file', (req, res, next) => {
-  const file = path.join(__dirname, 'assets', req.params.file);
+app.get('/assets/*', (req, res, next) => {
+  const rel = req.params[0] || '';
+  if (rel.includes('..')) return next();                 // no path traversal
+  const file = path.join(__dirname, 'assets', rel);
   fs.existsSync(file) ? res.sendFile(file) : next();
 });
 app.get('/:page.html', (req, res, next) => {
