@@ -1014,6 +1014,58 @@ app.post('/api/ai-generate', async (req, res) => {
   }
 });
 
+// ── POST /api/realism ─────────────────────────────────────────────────────────
+// BRC (Blueprint-to-Render Compositor) editorial pass. The deterministic composite
+// is the init image; this proxies a STRUCTURE-PRESERVING instruction edit through
+// Replicate (Flux Kontext Pro), keeping REPLICATE_API_TOKEN server-side. Doctrine:
+// AI may retexture, never recompose — the mask/prompt forbid moving/adding stems.
+// Returns 503 (not an error) until the token is set, so Proof mode works regardless.
+const REPLICATE_API = 'https://api.replicate.com/v1';
+const KONTEXT_MODEL = 'black-forest-labs/flux-kontext-pro';
+const FLUX_DEV_MODEL = 'black-forest-labs/flux-dev';
+const REALISM_MAX_STRENGTH = 0.35; // doctrine clamp on the optional strength path
+app.post('/api/realism', async (req, res) => {
+  const token = process.env.REPLICATE_API_TOKEN;
+  if (!token) return res.status(503).json({ error: 'Realism pass not configured on this server (set REPLICATE_API_TOKEN). Proof mode works without it.' });
+  try {
+    const { image, prompt, mode = 'kontext', strength = 0.3 } = req.body || {};
+    if (!image || typeof image !== 'string' || !image.startsWith('data:image/')) return res.status(400).json({ error: 'Body must include `image` as a data URL' });
+    if (!prompt || typeof prompt !== 'string') return res.status(400).json({ error: 'Body must include `prompt`' });
+
+    let model, input;
+    if (mode === 'flux-dev') {
+      model = FLUX_DEV_MODEL;
+      input = { prompt, image, prompt_strength: Math.min(REALISM_MAX_STRENGTH, Math.max(0.15, Number(strength) || 0.3)), num_inference_steps: 40, guidance: 3, output_format: 'png', disable_safety_checker: false };
+    } else {
+      model = KONTEXT_MODEL;
+      input = { prompt, input_image: image, output_format: 'png', safety_tolerance: 2 };
+    }
+
+    const create = await fetch(`${REPLICATE_API}/models/${model}/predictions`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json', Prefer: 'wait' },
+      body: JSON.stringify({ input }),
+    });
+    let prediction = await create.json();
+    if (!create.ok) return res.status(create.status).json({ error: (prediction && prediction.detail) || 'Replicate request failed' });
+
+    let tries = 0;
+    while (prediction.status && !['succeeded', 'failed', 'canceled'].includes(prediction.status) && tries < 60) {
+      await new Promise((r) => setTimeout(r, 2000));
+      const poll = await fetch(`${REPLICATE_API}/predictions/${prediction.id}`, { headers: { Authorization: `Bearer ${token}` } });
+      prediction = await poll.json();
+      tries++;
+    }
+    if (prediction.status !== 'succeeded') return res.status(502).json({ error: (prediction && prediction.error) || `Prediction ${prediction.status}` });
+
+    const output = Array.isArray(prediction.output) ? prediction.output[0] : prediction.output;
+    return res.status(200).json({ output, id: prediction.id, model });
+  } catch (err) {
+    console.error('[/api/realism]', err.message);
+    return res.status(500).json({ error: err.message || 'Realism pass failed' });
+  }
+});
+
 // ── POST /api/checkout (Stripe Checkout for a pack; requires signed-in user) ──
 app.post('/api/checkout', async (req, res) => {
   if (!stripe) return res.status(503).json({ success: false, error: 'billing not configured' });
