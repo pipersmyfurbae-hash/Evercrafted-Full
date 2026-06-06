@@ -183,6 +183,13 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
 .reveal.vis{opacity:1;transform:none}
 .rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+
+/* full-bleed video hero */
+.hero{position:relative;overflow:hidden}
+.hero .hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.hero .hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .hero-scrim{position:absolute;inset:0;background:radial-gradient(ellipse 96% 88% at 50% 42%,rgba(242,239,233,.72),rgba(242,239,233,.93))}
+.hero .hero-inner{position:relative;z-index:2}
 </style>
 </head>
 <body>
@@ -200,10 +207,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-bg">
-    <div class="hb-ring hb-1"></div>
-    <div class="hb-ring hb-2"></div>
-  </div>
+  <div class="hero-bg"><video class="hero-vid" autoplay loop muted playsinline><source src="/assets/hero-about.mp4" type="video/mp4"></video><div class="hero-scrim"></div><div class="hb-ring hb-1"></div><div class="hb-ring hb-2"></div></div>
   <div class="hero-inner">
     <div class="hero-overline">The maker behind the platform</div>
     <div class="hero-split">
