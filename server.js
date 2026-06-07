@@ -1338,7 +1338,50 @@ async function generateImage(prompt, aspect) {
     throw new Error('openai: no image returned');
   }
 
-  throw new Error('No image provider configured. Set IMAGE_PROVIDER=fal (or openai) and the matching API key.');
+  if (provider === 'midjourney' || provider === 'apiframe') {
+    const url = await apiframeRender(prompt, aspect);
+    return await persistRender(url, null);
+  }
+
+  throw new Error('No image provider configured. Set IMAGE_PROVIDER=fal, openai, or midjourney and the matching API key.');
+}
+
+// Midjourney via APIframe (apiframe.pro) — unofficial MJ relay. Async by nature:
+// /imagine queues a job, then we poll /fetch until it finishes and returns the
+// 4-up grid split into per-quadrant URLs; we take the first quadrant (already a
+// full image, no extra upscale job). Key stays server-side. MJ jobs run ~30–60s,
+// so this can brush Vercel's function timeout — see maxDuration in vercel.json.
+async function apiframeRender(prompt, aspect) {
+  const key = process.env.APIFRAME_API_KEY;
+  if (!key) throw new Error('Midjourney not configured. Set APIFRAME_API_KEY.');
+  const BASE = 'https://api.apiframe.pro';
+  const headers = { Authorization: key, 'Content-Type': 'application/json' };
+  // Keep MJ flags (--style/--v/--stylize…), but drop --ar and set aspect_ratio
+  // explicitly so the two can't fight.
+  const mjPrompt = prompt.replace(/--ar\s+\S+/g, ' ').replace(/\s+/g, ' ').trim();
+  const aspect_ratio = aspect === 'square' ? '1:1' : '3:4';
+  const process_mode = (process.env.APIFRAME_MODE || 'fast').toLowerCase(); // relax | fast | turbo
+
+  const start = await fetch(`${BASE}/imagine`, { method: 'POST', headers, body: JSON.stringify({ prompt: mjPrompt, aspect_ratio, process_mode }) });
+  const startJson = await start.json().catch(() => ({}));
+  if (!start.ok || !startJson.task_id) throw new Error(startJson.error || startJson.message || `APIframe imagine failed (${start.status})`);
+  const taskId = startJson.task_id;
+
+  const DEADLINE = Date.now() + 58000; // stay under a 60s function budget
+  while (Date.now() < DEADLINE) {
+    await new Promise((r) => setTimeout(r, 3000));
+    const poll = await fetch(`${BASE}/fetch`, { method: 'POST', headers, body: JSON.stringify({ task_id: taskId }) });
+    const j = await poll.json().catch(() => ({}));
+    const status = (j.status || '').toLowerCase();
+    if (status === 'finished' || status === 'completed') {
+      const urls = j.image_urls || j.images || [];
+      const url = (Array.isArray(urls) && urls[0]) || j.image_url || j.original_image_url;
+      if (!url) throw new Error('APIframe: job finished but returned no image URL');
+      return url;
+    }
+    if (status === 'failed' || status === 'error') throw new Error(j.error || j.message || 'APIframe job failed');
+  }
+  throw new Error('APIframe: Midjourney job still running past the time budget — try APIFRAME_MODE=turbo, or move this path to a webhook/async flow.');
 }
 
 // POST /api/render — generate a wreath image from a render prompt

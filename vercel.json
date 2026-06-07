@@ -4,7 +4,7 @@
     {
       "src": "server.js",
       "use": "@vercel/node",
-      "config": { "includeFiles": ["evercrafted-shop-data.json", "evercrafted-schema.js"] }
+      "config": { "maxDuration": 60, "includeFiles": ["evercrafted-shop-data.json", "evercrafted-schema.js"] }
     },
     { "src": "*.html", "use": "@vercel/static" },
     { "src": "assets/**", "use": "@vercel/static" },
