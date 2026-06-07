@@ -18,6 +18,7 @@
     { label: 'How it works', href: 'evercrafted-how-it-works.html' },
     { label: 'Pricing',      href: 'evercrafted-pricing.html' },
     { label: 'Add-ons',      href: 'evercrafted-marketplace.html' },
+    { label: 'Memorial',     href: 'evercrafted-memorial.html' },
     { label: 'Try it',       href: 'evercrafted-try.html' },
     { label: 'Waitlist',     href: WAITLIST },
   ];
