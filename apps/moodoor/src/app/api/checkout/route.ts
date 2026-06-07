@@ -29,6 +29,20 @@ const LABEL: Record<Path, string> = {
   kit: "DIY kit",
 };
 
+/**
+ * Resolve the public base URL for Stripe redirect links, in priority order:
+ * explicit env override -> the request's own origin (works on any Vercel domain)
+ * -> Vercel-provided host -> localhost. This means checkout works on a fresh
+ * deployment without having to pre-set NEXT_PUBLIC_SITE_URL.
+ */
+function resolveSiteUrl(req: Request): string {
+  if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
+  const origin = req.headers.get("origin");
+  if (origin) return origin;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return "http://localhost:3000";
+}
+
 export async function POST(req: Request) {
   let body: { slug?: string; path?: Path };
   try {
@@ -74,7 +88,7 @@ export async function POST(req: Request) {
   }
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const site = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const site = resolveSiteUrl(req);
 
   try {
     const session = await stripe.checkout.sessions.create({
