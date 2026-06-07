@@ -1,4 +1,8 @@
-/* AUTO-GENERATED from BRC-3.0 prototype by scripts/build-brc.js — do not edit by hand. */
+/* Generated from the BRC-3.0 prototype by scripts/build-brc.js, then hand-patched.
+   MANUAL PATCH (realism fidelity): the Editorial + Blend-Boost passes now call
+   /api/realism with mode "flux-dev" (low-strength img2img, server-clamped ≤0.35)
+   instead of "kontext", so the realism pass preserves the exact composition
+   (it can no longer drop/rearrange blooms) and only retextures. */
 "use strict";
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -1408,7 +1412,8 @@ function BRCApp() {
             body: JSON.stringify({
               image: proofDataUrl,
               prompt: lock + edPrompt,
-              mode: "kontext"
+              mode: "flux-dev",
+              strength: 0.3
             })
           });
         case 2:
@@ -1494,7 +1499,8 @@ function BRCApp() {
             body: JSON.stringify({
               image: dataUrl,
               prompt: (edResult.lock || "") + BOOST_PROMPT,
-              mode: "kontext"
+              mode: "flux-dev",
+              strength: 0.22
             })
           });
         case 6:
