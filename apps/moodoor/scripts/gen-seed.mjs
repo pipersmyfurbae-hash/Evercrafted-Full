@@ -119,11 +119,13 @@ function buildBlueprint(emotions, formula, intensity, poemEmotions) {
   return { formula, slots, totalStems, arcConfig };
 }
 
+export { FORMULA_ARCS, ZS, buildBlueprint };
+
 // ── 8 curated seed entries ─────────────────────────────────────────────────────
 // Crescent appears 3x (entries 3, 4, 8) so a balanced query exercises the cap.
 const HEROES = ["/seed/wreath-a.png", "/seed/wreath-b.png", "/seed/wreath-c.png"];
 
-const WREATHS = [
+export const WREATHS = [
   {
     slug: "late-autumn-remembrance", title: "Late Autumn Remembrance",
     story: "For the garden that is gone and the hands that tended it. Muted plums and slate, weighted low, the way grief settles.",
@@ -207,7 +209,7 @@ function sqlJson(obj) {
 
 // Slim the embedded item down to what the storefront/SVG needs (keeps the stored
 // blueprint compact while preserving color/role for rendering).
-function slimBlueprint(bp) {
+export function slimBlueprint(bp) {
   return {
     formula: bp.formula,
     slots: bp.slots.map((s) => ({
@@ -252,4 +254,7 @@ insert into public.library (
   published, in_stock
 ) values`;
 
-process.stdout.write(header + "\n" + rows.join(",\n") + "\non conflict (slug) do nothing;\n");
+// Only emit SQL when run directly (so other scripts can import the data/helpers).
+if (process.argv[1] && process.argv[1].endsWith("gen-seed.mjs")) {
+  process.stdout.write(header + "\n" + rows.join(",\n") + "\non conflict (slug) do nothing;\n");
+}
