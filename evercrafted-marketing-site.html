@@ -188,10 +188,11 @@ h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.89rem, 3.5vw, 2.51
   <div class="ov">Early access</div>
   <h2>Be first when we launch.</h2>
   <p class="sub">Join the waitlist for early access, founding pricing, and a direct hand in what we build first.</p>
-  <form class="wl-form" onsubmit="event.preventDefault();this.querySelector('.wl-btn').textContent='You\'re on the list ✓'">
-    <input class="wl-input" type="email" placeholder="Your email address" required>
+  <form class="wl-form" id="wl-form">
+    <input class="wl-input" id="wl-email" type="email" placeholder="Your email address" required>
     <button class="wl-btn" type="submit">Join waitlist →</button>
   </form>
+  <div id="wl-msg" style="margin-top:.9rem;font-size:13px;min-height:1.1em"></div>
   <div class="wl-stats"><div class="s"><b>340+</b>On the waitlist</div><div class="s"><b>Q3 2025</b>Target launch</div><div class="s"><b>30%</b>Founding discount</div></div>
 </section>
 
@@ -205,5 +206,13 @@ h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.89rem, 3.5vw, 2.51
 (function(){var w=[].slice.call(document.querySelectorAll('#rotator .rw'));if(!w.length)return;var i=0;setInterval(function(){var n=(i+1)%w.length;w.forEach(function(e,j){e.classList.remove('active','up');if(j===n)e.classList.add('active');else if(j<n)e.classList.add('up');});i=n;},2200);})();
 (function(){var t=[].slice.call(document.querySelectorAll('.tab-trig')),p=[].slice.call(document.querySelectorAll('.tab-panel'));function go(v){t.forEach(function(b){b.classList.toggle('active',b.dataset.tab===v)});p.forEach(function(pn){pn.classList.toggle('active',pn.dataset.panel===v)});}t.forEach(function(b){b.addEventListener('click',function(){go(b.dataset.tab)})});})();
 (function(){var c=[].slice.call(document.querySelectorAll('#tright .tcard')),d=[].slice.call(document.querySelectorAll('#tdots .tdot'));if(!c.length)return;var a=0,timer;function show(i){c.forEach(function(e,j){e.classList.toggle('on',j===i)});d.forEach(function(e,j){e.classList.toggle('on',j===i)});a=i;}d.forEach(function(e,j){e.addEventListener('click',function(){show(j);clearInterval(timer);timer=setInterval(function(){show((a+1)%c.length)},6000);})});timer=setInterval(function(){show((a+1)%c.length)},6000);})();
+/* Waitlist capture — POST to /api/waitlist (Supabase-backed; same origin in prod). */
+(function(){var f=document.getElementById('wl-form');if(!f)return;var btn=f.querySelector('.wl-btn'),em=document.getElementById('wl-email'),msg=document.getElementById('wl-msg');
+f.addEventListener('submit',function(e){e.preventDefault();var email=(em.value||'').trim();if(!email)return;btn.disabled=true;var orig=btn.textContent;btn.textContent='Joining…';msg.textContent='';
+fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:'home'})})
+.then(function(r){return r.json().catch(function(){return{};})})
+.then(function(j){if(j&&j.success){btn.textContent="You're on the list ✓";em.value='';msg.style.color='var(--green)';msg.textContent="Thank you — we'll be in touch before launch.";}else{throw new Error((j&&j.error)||'failed');}})
+.catch(function(){btn.disabled=false;btn.textContent=orig;msg.style.color='#a8434a';msg.textContent='Something went wrong — please try again.';});
+});})();
 </script>
 </body></html>
