@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motion Engine — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --ec-white:#FFFFFF; --ec-off-white:#F9F7F4; --ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A; --ec-charcoal:#2E2E2E; --ec-ink:#4A4A4A;
+  --ec-green:#4A6741; --ec-green-light:#6B8F67; --ec-green-pale:#EEF2ED;
+  --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-gray-100:#F5F5F5; --ec-gray-200:#E8E8E8; --ec-gray-300:#D0D0D0;
+  --ec-gray-400:#A8A8A8; --ec-gray-500:#787878;
+  --ec-warning:#C4922A; --ec-error:#B94040;
+  --ec-surface:var(--ec-white); --ec-surface-alt:var(--ec-off-white);
+  --ec-surface-warm:var(--ec-paper); --ec-border:var(--ec-gray-200);
+  --ec-border-dark:var(--ec-gray-300); --ec-text:var(--ec-black);
+  --ec-text-muted:var(--ec-ink); --ec-text-faint:var(--ec-gray-500);
+  --ec-font-serif:'Cormorant Garamond','Georgia',serif;
+  --ec-font-sans:'Inter',system-ui,sans-serif;
+  --ec-font-script:'Dancing Script',cursive;
+  --ec-font-mono:'DM Mono','Fira Code',monospace;
+  --ec-space-1:.25rem; --ec-space-2:.5rem; --ec-space-3:.75rem;
+  --ec-space-4:1rem; --ec-space-5:1.5rem; --ec-space-6:2rem;
+  --ec-space-8:2.5rem; --ec-space-10:3rem; --ec-space-12:4rem;
+  --ec-radius-sm:4px; --ec-radius-md:8px; --ec-radius-lg:14px;
+  --ec-radius-xl:20px; --ec-radius-full:9999px;
+  --ec-shadow-sm:0 1px 3px rgba(0,0,0,.06);
+  --ec-shadow-md:0 4px 16px rgba(0,0,0,.08);
+  --ec-shadow-lg:0 8px 32px rgba(0,0,0,.10);
+  --ec-shadow-card:0 2px 8px rgba(0,0,0,.06),0 0 0 1px var(--ec-border);
+  --ec-transition:200ms ease;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--ec-font-sans);background:var(--ec-off-white);color:var(--ec-text);min-height:100vh;}
+
+/* ── TIER SIMULATOR BAR ── */
+.tier-sim{background:var(--ec-black);padding:10px 24px;display:flex;align-items:center;gap:16px;font-size:.75rem;font-family:var(--ec-font-mono);}
+.tier-sim__label{color:rgba(242,239,233,.4);}
+.tier-sim__btns{display:flex;gap:6px;}
+.tier-sim__btn{padding:4px 12px;border-radius:var(--ec-radius-full);border:1px solid rgba(255,255,255,.15);background:transparent;color:rgba(242,239,233,.5);font-family:var(--ec-font-mono);font-size:.6875rem;cursor:pointer;transition:all var(--ec-transition);}
+.tier-sim__btn.active{background:var(--ec-green);color:var(--ec-white);border-color:var(--ec-green);}
+.tier-sim__note{color:rgba(242,239,233,.25);margin-left:auto;font-size:.625rem;}
+
+/* ── APP SHELL ── */
+.ec-app{max-width:1080px;margin:0 auto;padding:var(--ec-space-8) var(--ec-space-5);}
+
+/* ── HEADER ── */
+.ec-app-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:var(--ec-space-5);border-bottom:1px solid var(--ec-border);margin-bottom:var(--ec-space-6);}
+.ec-app-header__brand{display:flex;align-items:baseline;gap:var(--ec-space-3);}
+.ec-script{font-family:var(--ec-font-script);font-size:1.375rem;color:var(--ec-green);font-weight:600;}
+.ec-app-header__app-name{font-size:.8125rem;color:var(--ec-text-faint);letter-spacing:.05em;}
+.ec-tier-badge{font-size:.6875rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:var(--ec-radius-full);}
+.ec-tier-bloom{background:#EEF2ED;color:#4A6741;}
+.ec-tier-craft{background:#EEF4F9;color:#4A6785;}
+.ec-tier-studio{background:#F5EEF4;color:#7A4A85;}
+.ec-tier-atelier{background:var(--ec-black);color:var(--ec-paper);}
+.header-actions{display:flex;align-items:center;gap:var(--ec-space-3);}
+
+/* ── PAGE TITLE ── */
+.page-header{margin-bottom:var(--ec-space-8);}
+.page-header__eyebrow{font-family:var(--ec-font-script);font-size:1rem;color:var(--ec-green);margin-bottom:var(--ec-space-2);}
+.page-header__title{font-family:var(--ec-font-serif);font-size:2.25rem;font-weight:600;line-height:1.15;letter-spacing:-.02em;color:var(--ec-text);margin-bottom:var(--ec-space-3);}
+.page-header__sub{font-size:1rem;color:var(--ec-text-muted);line-height:1.65;max-width:560px;}
+
+/* ── GRID ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--ec-space-5);}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--ec-space-4);}
+@media(max-width:800px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+
+/* ── CARDS ── */
+.ec-card{background:var(--ec-surface);border-radius:var(--ec-radius-lg);box-shadow:var(--ec-shadow-card);padding:var(--ec-space-5);}
+.ec-card--warm{background:var(--ec-surface-warm);}
+.ec-card--green{background:var(--ec-green-pale);border:1px solid var(--ec-green-dim);}
+.ec-card__label{font-size:.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ec-text-faint);margin-bottom:var(--ec-space-3);}
+.ec-card__title{font-family:var(--ec-font-serif);font-size:1.375rem;font-weight:600;color:var(--ec-text);margin-bottom:var(--ec-space-2);}
+.ec-card__body{font-size:.875rem;color:var(--ec-text-muted);line-height:1.65;}
+
+/* ── BUTTONS ── */
+.ec-btn{display:inline-flex;align-items:center;gap:var(--ec-space-2);padding:10px var(--ec-space-5);border-radius:var(--ec-radius-md);font-family:var(--ec-font-sans);font-size:.875rem;font-weight:500;cursor:pointer;border:none;transition:all var(--ec-transition);letter-spacing:.02em;}
+.ec-btn-primary{background:var(--ec-black);color:var(--ec-white);}
+.ec-btn-primary:hover{background:var(--ec-charcoal);transform:translateY(-1px);box-shadow:var(--ec-shadow-md);}
+.ec-btn-green{background:var(--ec-green);color:var(--ec-white);}
+.ec-btn-green:hover{background:var(--ec-green-light);transform:translateY(-1px);}
+.ec-btn-outline{background:transparent;color:var(--ec-text);border:1.5px solid var(--ec-border-dark);}
+.ec-btn-outline:hover{border-color:var(--ec-black);background:var(--ec-gray-100);}
+.ec-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.ec-btn-full{width:100%;justify-content:center;}
+.ec-btn-sm{padding:7px var(--ec-space-4);font-size:.75rem;}
+
+/* ── INPUT ── */
+.ec-input{width:100%;padding:10px var(--ec-space-4);background:var(--ec-white);border:1.5px solid var(--ec-border);border-radius:var(--ec-radius-md);font-family:var(--ec-font-sans);font-size:1rem;color:var(--ec-text);outline:none;transition:border-color var(--ec-transition);}
+.ec-input:focus{border-color:var(--ec-green);box-shadow:0 0 0 3px var(--ec-green-dim);}
+.ec-input::placeholder{color:var(--ec-gray-400);}
+.ec-label{font-size:.6875rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ec-text-faint);}
+.ec-field{margin-bottom:var(--ec-space-4);}
+.ec-field .ec-label{display:block;margin-bottom:var(--ec-space-2);}
+
+/* ── DIVIDER ── */
+.ec-divider{display:flex;align-items:center;gap:var(--ec-space-4);margin:var(--ec-space-8) 0;color:var(--ec-gray-300);font-size:1.125rem;}
+.ec-divider::before,.ec-divider::after{content:'';flex:1;height:1px;background:var(--ec-border);}
+
+/* ── SPINNER ── */
+.ec-spinner{width:20px;height:20px;border:2px solid var(--ec-border);border-top-color:var(--ec-green);border-radius:50%;animation:ec-spin .7s linear infinite;display:inline-block;vertical-align:middle;}
+.ec-spinner--sm{width:14px;height:14px;border-width:2px;}
+@keyframes ec-spin{to{transform:rotate(360deg);}}
+.ec-loading{display:flex;flex-direction:column;align-items:center;gap:var(--ec-space-4);padding:var(--ec-space-10);color:var(--ec-text-faint);font-size:.875rem;}
+
+/* ── TIER GATE ── */
+.ec-gated{position:relative;}
+.ec-gated-blur{pointer-events:none;filter:blur(3px);opacity:.35;user-select:none;}
+.ec-lock-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(249,247,244,.75);backdrop-filter:blur(2px);border-radius:var(--ec-radius-lg);z-index:10;}
+.ec-lock-badge{background:var(--ec-white);border:1.5px solid var(--ec-border-dark);border-radius:var(--ec-radius-lg);padding:var(--ec-space-4) var(--ec-space-6);text-align:center;box-shadow:var(--ec-shadow-md);max-width:260px;}
+.ec-lock-badge .ec-script{font-size:1rem;display:block;margin-bottom:var(--ec-space-1);}
+.ec-lock-badge p{font-size:.8125rem;color:var(--ec-text-muted);margin-bottom:var(--ec-space-3);line-height:1.5;}
+
+/* ── MOTION PROFILES ── */
+.motion-profiles{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--ec-space-3);margin-bottom:var(--ec-space-4);}
+@media(max-width:600px){.motion-profiles{grid-template-columns:1fr;}}
+.mpc{border:2px solid var(--ec-border);border-radius:var(--ec-radius-lg);padding:var(--ec-space-4);cursor:pointer;transition:all var(--ec-transition);background:var(--ec-white);text-align:center;position:relative;}
+.mpc:hover{border-color:var(--ec-green-light);background:var(--ec-green-pale);}
+.mpc.selected{border-color:var(--ec-green);background:var(--ec-green-pale);box-shadow:0 0 0 3px var(--ec-green-dim);}
+.mpc.locked{opacity:.5;cursor:not-allowed;}
+.mpc__badge{position:absolute;top:8px;right:8px;font-family:var(--ec-font-mono);font-size:.6875rem;background:var(--ec-gray-100);color:var(--ec-text-faint);padding:2px 6px;border-radius:var(--ec-radius-full);font-weight:500;}
+.mpc.selected .mpc__badge{background:var(--ec-green-dim);color:var(--ec-green);}
+.mpc__icon{font-size:1.75rem;margin-bottom:8px;}
+.mpc__name{font-family:var(--ec-font-serif);font-size:1.125rem;font-weight:600;color:var(--ec-text);margin-bottom:2px;}
+.mpc__sub{font-size:.6875rem;color:var(--ec-text-faint);}
+.mpc__lock{position:absolute;top:8px;left:8px;font-size:.875rem;}
+
+/* ── MOTION TYPE TABS ── */
+.motion-tabs{display:flex;gap:var(--ec-space-2);margin-bottom:var(--ec-space-5);}
+.motion-tab{flex:1;padding:10px;border:1.5px solid var(--ec-border);border-radius:var(--ec-radius-md);background:var(--ec-white);font-family:var(--ec-font-sans);font-size:.875rem;font-weight:500;cursor:pointer;transition:all var(--ec-transition);text-align:center;color:var(--ec-text-muted);}
+.motion-tab:hover{border-color:var(--ec-green-light);color:var(--ec-text);}
+.motion-tab.active{border-color:var(--ec-green);background:var(--ec-green);color:var(--ec-white);}
+.motion-tab.locked{opacity:.45;cursor:not-allowed;position:relative;}
+.motion-tab__icon{display:block;font-size:1.1rem;margin-bottom:2px;}
+
+/* ── SLIDER ── */
+.ec-slider-wrap{margin-bottom:var(--ec-space-4);}
+.ec-slider-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--ec-space-2);}
+.ec-slider-val{font-family:var(--ec-font-mono);font-size:.875rem;color:var(--ec-green);font-weight:500;}
+input[type=range].ec-slider{-webkit-appearance:none;width:100%;height:4px;background:var(--ec-gray-200);border-radius:2px;outline:none;}
+input[type=range].ec-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;background:var(--ec-green);border-radius:50%;cursor:pointer;border:2px solid var(--ec-white);box-shadow:0 1px 4px rgba(0,0,0,.15);}
+
+/* ── CANVAS ── */
+.canvas-wrap{background:var(--ec-paper);border-radius:var(--ec-radius-lg);overflow:hidden;border:1px solid var(--ec-border);aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative;}
+#previewCanvas{display:block;max-width:100%;max-height:100%;}
+.canvas-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--ec-space-3);pointer-events:none;}
+.canvas-ph-icon{font-size:3rem;opacity:.3;}
+.canvas-ph-text{font-family:var(--ec-font-serif);font-size:1.25rem;color:var(--ec-gray-400);font-style:italic;}
+
+/* ── UPLOAD ── */
+.upload-zone{border:2px dashed var(--ec-border-dark);border-radius:var(--ec-radius-lg);padding:var(--ec-space-8);text-align:center;cursor:pointer;transition:all var(--ec-transition);background:var(--ec-surface);}
+.upload-zone:hover,.upload-zone.over{border-color:var(--ec-green);background:var(--ec-green-pale);}
+.upload-zone__icon{font-size:1.75rem;margin-bottom:var(--ec-space-3);color:var(--ec-gray-400);}
+.upload-zone__title{font-family:var(--ec-font-serif);font-size:1.25rem;font-weight:600;margin-bottom:var(--ec-space-2);}
+.upload-zone__hint{font-size:.8125rem;color:var(--ec-text-faint);}
+#fileInput{display:none;}
+
+/* ── PROGRESS ── */
+.progress-wrap{background:var(--ec-gray-200);border-radius:var(--ec-radius-full);height:6px;overflow:hidden;margin:var(--ec-space-2) 0;}
+.progress-bar{height:100%;background:var(--ec-green);border-radius:var(--ec-radius-full);transition:width .3s ease;}
+
+/* ── AI SECTION ── */
+.ai-section{border:1.5px solid var(--ec-green-dim);border-radius:var(--ec-radius-lg);padding:var(--ec-space-5);background:var(--ec-green-pale);margin-bottom:var(--ec-space-5);}
+.ai-section__head{display:flex;align-items:center;gap:var(--ec-space-3);margin-bottom:var(--ec-space-3);}
+.ai-section__title{font-family:var(--ec-font-serif);font-size:1.25rem;font-weight:600;}
+.ai-badge{background:var(--ec-green);color:var(--ec-white);font-size:.6875rem;font-weight:600;letter-spacing:.08em;padding:2px 8px;border-radius:var(--ec-radius-full);}
+
+/* ── OUTPUT TABS ── */
+.output-tabs{display:flex;gap:0;border-bottom:1px solid var(--ec-border);margin-bottom:var(--ec-space-5);}
+.output-tab{padding:var(--ec-space-3) var(--ec-space-5);font-size:.875rem;font-weight:500;cursor:pointer;border:none;background:none;color:var(--ec-text-faint);border-bottom:2px solid transparent;transition:all var(--ec-transition);}
+.output-tab:hover{color:var(--ec-text);}
+.output-tab.active{color:var(--ec-green);border-bottom-color:var(--ec-green);}
+.output-tab-content{display:none;}
+.output-tab-content.active{display:block;}
+
+/* ── METRICS ── */
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--ec-space-3);margin-bottom:var(--ec-space-5);}
+@media(max-width:600px){.metrics-row{grid-template-columns:repeat(2,1fr);}}
+.metric{background:var(--ec-surface);border:1px solid var(--ec-border);border-radius:var(--ec-radius-md);padding:var(--ec-space-4);text-align:center;}
+.metric__val{font-family:var(--ec-font-mono);font-size:1.375rem;font-weight:500;color:var(--ec-text);margin-bottom:2px;}
+.metric__label{font-size:.6875rem;color:var(--ec-text-faint);letter-spacing:.05em;text-transform:uppercase;}
+
+/* ── PILLS ── */
+.ec-pill{display:inline-block;padding:2px 10px;border-radius:var(--ec-radius-full);font-size:.6875rem;font-weight:600;letter-spacing:.05em;}
+.pill-green{background:var(--ec-green-pale);color:var(--ec-green);}
+.pill-warm{background:#FEF3E2;color:#A0722A;}
+.pill-gray{background:var(--ec-gray-100);color:var(--ec-gray-500);}
+
+/* ── CODE ── */
+.ec-code{background:var(--ec-black);border-radius:var(--ec-radius-md);padding:var(--ec-space-5);overflow-x:auto;font-family:var(--ec-font-mono);font-size:.75rem;line-height:1.8;color:#e8e8e8;}
+.ec-code .kw{color:#c9a96e;} .ec-code .str{color:#7ec4b4;} .ec-code .num{color:#b4a0e0;}
+
+/* ── FRAME STRIP ── */
+.frame-strip{display:flex;gap:6px;overflow-x:auto;padding:var(--ec-space-2) 0;}
+.frame-thumb{width:56px;height:56px;border-radius:var(--ec-radius-sm);background:var(--ec-gray-200);flex-shrink:0;overflow:hidden;border:1.5px solid transparent;cursor:pointer;transition:all var(--ec-transition);}
+.frame-thumb:hover,.frame-thumb.active{border-color:var(--ec-green);}
+
+/* ── WAVE ── */
+.wave-canvas{width:100%;height:56px;display:block;border-radius:var(--ec-radius-md);background:var(--ec-paper);}
+
+/* ── HISTORY ── */
+.history-item{display:flex;align-items:center;justify-content:space-between;padding:var(--ec-space-3) var(--ec-space-4);border-bottom:1px solid var(--ec-border);transition:background var(--ec-transition);}
+.history-item:hover{background:var(--ec-off-white);}
+.history-item:last-child{border-bottom:none;}
+.history-item__info{display:flex;align-items:center;gap:var(--ec-space-3);}
+.history-item__icon{font-size:1.25rem;}
+.history-item__name{font-size:.875rem;font-weight:500;color:var(--ec-text);}
+.history-item__meta{font-size:.75rem;color:var(--ec-text-faint);margin-top:2px;}
+.history-item__actions{display:flex;gap:var(--ec-space-2);}
+
+/* ── TOAST ── */
+.ec-toast{position:fixed;bottom:var(--ec-space-5);right:var(--ec-space-5);background:var(--ec-black);color:var(--ec-white);padding:var(--ec-space-3) var(--ec-space-5);border-radius:var(--ec-radius-md);font-size:.875rem;opacity:0;transform:translateY(10px);transition:all .3s ease;pointer-events:none;z-index:9999;}
+.ec-toast.show{opacity:1;transform:translateY(0);}
+
+/* ── BOTANICAL SVG ── */
+.botanical-accent{color:var(--ec-green);opacity:.25;}
+</style>
+</head>
+<body>
+
+<!-- TIER SIMULATOR -->
+<div class="tier-sim">
+  <span class="tier-sim__label">Simulating tier:</span>
+  <div class="tier-sim__btns">
+    <button class="tier-sim__btn" onclick="setTier('bloom')">Bloom</button>
+    <button class="tier-sim__btn" onclick="setTier('craft')">Craft</button>
+    <button class="tier-sim__btn" onclick="setTier('studio')">Studio</button>
+    <button class="tier-sim__btn active" onclick="setTier('atelier')">Atelier</button>
+  </div>
+  <span class="tier-sim__note">replace with Supabase session in production</span>
+</div>
+
+<div class="ec-app">
+
+  <!-- HEADER -->
+  <header class="ec-app-header">
+    <div class="ec-app-header__brand">
+      <span class="ec-script">Evercrafted</span>
+      <span class="ec-app-header__app-name">Motion Engine</span>
+    </div>
+    <div class="header-actions">
+      <div class="ec-tier-badge ec-tier-atelier" id="tierBadge">Atelier</div>
+    </div>
+  </header>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div class="page-header__eyebrow">Blueprint → Render → Motion</div>
+    <h1 class="page-header__title">Motion Engine</h1>
+    <p class="page-header__sub">Transform any wreath render into an emotion-driven animated video output. Motion that feels weighted, physical, and unmistakably botanical.</p>
+  </div>
+
+  <!-- MAIN LAYOUT -->
+  <div class="grid-2" style="align-items:start;gap:var(--ec-space-6);">
+
+    <!-- LEFT PANEL -->
+    <div>
+
+      <!-- UPLOAD -->
+      <div class="ec-card" id="uploadCard" style="margin-bottom:var(--ec-space-4);">
+        <div class="ec-card__label">Render Source</div>
+        <div class="ec-card__title" style="margin-bottom:var(--ec-space-4);">Upload Your Render</div>
+
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-zone__icon">🌿</div>
+          <div class="upload-zone__title">Drop render here</div>
+          <div class="upload-zone__hint">PNG · JPG · WebP — min 800×800px</div>
+        </div>
+        <input type="file" id="fileInput" accept="image/*">
+
+        <div id="uploadedWrap" style="display:none;margin-top:var(--ec-space-4);">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--ec-space-2);">
+            <span class="ec-label">Loaded render</span>
+            <span class="ec-pill pill-green" id="dimsBadge">— × —</span>
+          </div>
+          <img id="uploadedImg" style="width:100%;border-radius:var(--ec-radius-md);border:1px solid var(--ec-border);">
+          <button class="ec-btn ec-btn-outline ec-btn-sm" style="margin-top:var(--ec-space-3);" onclick="clearUpload()">✕ Remove</button>
+        </div>
+      </div>
+
+      <!-- PROFILES -->
+      <div class="ec-card" style="margin-bottom:var(--ec-space-4);">
+        <div class="ec-card__label">Motion Profile</div>
+        <div class="ec-card__title" style="margin-bottom:var(--ec-space-4);">Choose Intensity</div>
+
+        <div class="motion-profiles" id="profilesGrid">
+          <div class="mpc selected" data-profile="whisper" data-required="studio" onclick="selectProfile(this)">
+            <span class="mpc__badge">30</span>
+            <div class="mpc__icon">🌾</div>
+            <div class="mpc__name">Whisper</div>
+            <div class="mpc__sub">calm · subtle</div>
+          </div>
+          <div class="mpc" data-profile="breeze" data-required="studio" onclick="selectProfile(this)">
+            <span class="mpc__badge">60</span>
+            <div class="mpc__icon">🍃</div>
+            <div class="mpc__name">Breeze</div>
+            <div class="mpc__sub">balanced · natural</div>
+          </div>
+          <div class="mpc" data-profile="statement" data-required="atelier" onclick="selectProfile(this)" id="statementCard">
+            <span class="mpc__lock" id="statementLock" style="display:none;">🔒</span>
+            <span class="mpc__badge">90</span>
+            <div class="mpc__icon">🌊</div>
+            <div class="mpc__name">Statement</div>
+            <div class="mpc__sub">dramatic · bold</div>
+          </div>
+        </div>
+
+        <!-- AI EMOTION DETECT -->
+        <div id="emotionSection">
+          <div class="ec-card__label" style="margin-bottom:var(--ec-space-3);">AI Emotion Auto-Detect</div>
+          <div id="emotionGateWrap"><!-- gated by tier --></div>
+        </div>
+      </div>
+
+      <!-- MOTION TYPE + CONFIG -->
+      <div class="ec-card" style="margin-bottom:var(--ec-space-4);">
+        <div class="ec-card__label">Motion Configuration</div>
+        <div class="ec-card__title" style="margin-bottom:var(--ec-space-4);">Type &amp; Settings</div>
+
+        <div class="motion-tabs" id="motionTabs">
+          <button class="motion-tab active" data-type="sway" data-required="studio" onclick="selectType(this)">
+            <span class="motion-tab__icon">↔</span>Sway
+          </button>
+          <button class="motion-tab" data-type="rotation" data-required="studio" onclick="selectType(this)">
+            <span class="motion-tab__icon">↻</span>Rotation
+          </button>
+          <button class="motion-tab" data-type="pulse" data-required="atelier" onclick="selectType(this)" id="pulseTab">
+            <span class="motion-tab__icon">◎</span>Pulse
+          </button>
+        </div>
+
+        <canvas class="wave-canvas" id="waveCanvas"></canvas>
+
+        <div style="margin-top:var(--ec-space-4);">
+          <div class="ec-slider-wrap">
+            <div class="ec-slider-head">
+              <span class="ec-label">Intensity</span>
+              <span class="ec-slider-val" id="intensityVal">30</span>
+            </div>
+            <input type="range" class="ec-slider" id="intensitySlider" min="10" max="90" value="30" oninput="onSlider('intensity',this.value)">
+          </div>
+          <div class="ec-slider-wrap">
+            <div class="ec-slider-head">
+              <span class="ec-label">Duration</span>
+              <span class="ec-slider-val" id="durationVal">10s</span>
+            </div>
+            <input type="range" class="ec-slider" id="durationSlider" min="3" max="30" value="10" oninput="onSlider('duration',this.value)">
+          </div>
+          <div class="ec-slider-wrap">
+            <div class="ec-slider-head">
+              <span class="ec-label">Frame Rate</span>
+              <span class="ec-slider-val" id="fpsVal">30fps</span>
+            </div>
+            <input type="range" class="ec-slider" id="fpsSlider" min="15" max="60" step="15" value="30" oninput="onSlider('fps',this.value)">
+          </div>
+          <div class="ec-field">
+            <label class="ec-label" style="display:block;margin-bottom:var(--ec-space-2);">Background</label>
+            <div style="display:flex;gap:var(--ec-space-3);flex-wrap:wrap;">
+              <label style="display:flex;align-items:center;gap:6px;font-size:.875rem;cursor:pointer;color:var(--ec-text-muted);"><input type="radio" name="bg" value="#F9F7F4" checked onchange="S.bg=this.value"> Off-white</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:.875rem;cursor:pointer;color:var(--ec-text-muted);"><input type="radio" name="bg" value="#FFFFFF" onchange="S.bg=this.value"> White</label>
+              <label style="display:flex;align-items:center;gap:6px;font-size:.875rem;cursor:pointer;color:var(--ec-text-muted);"><input type="radio" name="bg" value="#1A1A1A" onchange="S.bg=this.value"> Black</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GENERATE -->
+      <div class="ec-card">
+        <div class="ec-card__label">Generate</div>
+        <div class="ec-card__title" style="margin-bottom:var(--ec-space-3);">Render Animation</div>
+        <p class="ec-card__body" style="margin-bottom:var(--ec-space-4);">Generates <span id="framePreview">300</span> frames at <span id="fpsPreview">30</span>fps using the selected motion curve.</p>
+
+        <div id="genProgress" style="display:none;margin-bottom:var(--ec-space-4);">
+          <div style="display:flex;justify-content:space-between;margin-bottom:var(--ec-space-2);">
+            <span class="ec-label" id="progressLabel">Generating…</span>
+            <span class="ec-slider-val" id="progressPct">0%</span>
+          </div>
+          <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+        </div>
+
+        <button class="ec-btn ec-btn-primary ec-btn-full" id="genBtn" onclick="startGenerate()" style="margin-bottom:var(--ec-space-3);">▶ Generate Animation</button>
+        <button class="ec-btn ec-btn-outline ec-btn-full" id="playBtn" onclick="playPreview()" disabled>◉ Play Preview</button>
+      </div>
+
+    </div><!-- /LEFT -->
+
+    <!-- RIGHT PANEL -->
+    <div style="position:sticky;top:var(--ec-space-5);">
+
+      <!-- CANVAS -->
+      <div class="ec-card" style="padding:var(--ec-space-4);margin-bottom:var(--ec-space-4);">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--ec-space-3);">
+          <span class="ec-card__label" style="margin-bottom:0;">Live Preview</span>
+          <div style="display:flex;gap:var(--ec-space-2);">
+            <span class="ec-pill pill-gray" id="typeBadge">SWAY</span>
+            <span class="ec-pill pill-green" id="profileBadge">WHISPER</span>
+          </div>
+        </div>
+        <div class="canvas-wrap" id="canvasWrap">
+          <canvas id="previewCanvas" width="400" height="400"></canvas>
+          <div class="canvas-overlay" id="canvasOverlay">
+            <div class="canvas-ph-icon">🌿</div>
+            <div class="canvas-ph-text">Awaiting render…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- METRICS (visible after generate) -->
+      <div class="metrics-row" id="metricsRow" style="display:none;">
+        <div class="metric"><div class="metric__val" id="mFrames">—</div><div class="metric__label">Frames</div></div>
+        <div class="metric"><div class="metric__val" id="mFps">30</div><div class="metric__label">FPS</div></div>
+        <div class="metric"><div class="metric__val" id="mDur">—</div><div class="metric__label">Duration</div></div>
+        <div class="metric"><div class="metric__val">1080</div><div class="metric__label">Output px</div></div>
+      </div>
+
+      <!-- FRAME STRIP -->
+      <div class="ec-card" id="frameStripCard" style="display:none;padding:var(--ec-space-4);margin-bottom:var(--ec-space-4);">
+        <div class="ec-card__label" style="margin-bottom:var(--ec-space-2);">Frame Strip</div>
+        <div class="frame-strip" id="frameStrip"></div>
+      </div>
+
+      <!-- OUTPUT PANEL -->
+      <div class="ec-card" id="outputPanel" style="display:none;">
+        <div class="output-tabs">
+          <button class="output-tab active" onclick="switchTab(this,'tabExport')">Export</button>
+          <button class="output-tab" onclick="switchTab(this,'tabJSON')">Config JSON</button>
+          <button class="output-tab" onclick="switchTab(this,'tabFFmpeg')">FFmpeg</button>
+        </div>
+
+        <div class="output-tab-content active" id="tabExport">
+          <p class="ec-card__body" style="margin-bottom:var(--ec-space-4);">Download your animation frames or export config.</p>
+          <div style="display:flex;gap:var(--ec-space-3);flex-wrap:wrap;margin-bottom:var(--ec-space-5);">
+            <button class="ec-btn ec-btn-green" onclick="exportFrames()">⬇ Frame Sequence</button>
+            <div id="gifExportGate" style="flex:1;min-width:160px;"></div>
+          </div>
+          <div style="border-top:1px solid var(--ec-border);padding-top:var(--ec-space-4);">
+            <div class="ec-label" style="margin-bottom:var(--ec-space-3);">Suggested Use</div>
+            <div style="display:flex;flex-direction:column;gap:var(--ec-space-2);">
+              <div style="display:flex;gap:var(--ec-space-2);align-items:center;"><span class="ec-pill pill-warm">Etsy</span><span style="font-size:.875rem;color:var(--ec-text-muted);">GIF — listing video thumbnail</span></div>
+              <div style="display:flex;gap:var(--ec-space-2);align-items:center;"><span class="ec-pill pill-green">Social</span><span style="font-size:.875rem;color:var(--ec-text-muted);">MP4 via FFmpeg — Instagram reel</span></div>
+              <div style="display:flex;gap:var(--ec-space-2);align-items:center;"><span class="ec-pill pill-gray">Client</span><span style="font-size:.875rem;color:var(--ec-text-muted);">GIF — portal preview link</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="output-tab-content" id="tabJSON">
+          <div class="ec-code" id="configJSON"><span style="color:#666;">// Generate animation to see config</span></div>
+          <button class="ec-btn ec-btn-outline ec-btn-sm" style="margin-top:var(--ec-space-3);" onclick="copyJSON()">Copy JSON</button>
+        </div>
+
+        <div class="output-tab-content" id="tabFFmpeg">
+          <p class="ec-card__body" style="margin-bottom:var(--ec-space-3);">Use after exporting frame sequence to compile MP4.</p>
+          <div class="ec-code" id="ffmpegCode">
+<span class="kw">ffmpeg</span> <span class="str">-framerate</span> <span class="num">30</span> <span class="str">-i</span> <span class="str">ec-frame-%04d.png</span> \<br>&nbsp;&nbsp;<span class="str">-c:v</span> <span class="kw">libx264</span> -<span class="str">pix_fmt</span> <span class="kw">yuv420p</span> <span class="str">-crf</span> <span class="num">18</span> <span class="kw">output.mp4</span>
+          </div>
+          <button class="ec-btn ec-btn-outline ec-btn-sm" style="margin-top:var(--ec-space-3);" onclick="copyFFmpeg()">Copy Command</button>
+        </div>
+      </div>
+
+    </div><!-- /RIGHT -->
+  </div><!-- /grid -->
+
+  <div class="ec-divider">
+    <svg width="20" height="20" viewBox="0 0 32 32" fill="none" class="botanical-accent"><path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/><path d="M16 18 C16 18 12 16 10 13" stroke="currentColor" stroke-width="1" fill="none"/><path d="M16 14 C16 14 20 12 22 9" stroke="currentColor" stroke-width="1" fill="none"/></svg>
+  </div>
+
+  <!-- MOTION BRIEF + HISTORY -->
+  <div class="grid-2" style="gap:var(--ec-space-5);margin-bottom:var(--ec-space-6);">
+
+    <!-- MOTION BRIEF (Atelier) -->
+    <div class="ec-card">
+      <div class="ec-card__label">AI Motion Brief</div>
+      <div class="ec-card__title" style="margin-bottom:var(--ec-space-3);">Generate Motion Brief</div>
+      <div id="briefGateWrap"><!-- gated --></div>
+    </div>
+
+    <!-- SAVED HISTORY (Studio+) -->
+    <div class="ec-card">
+      <div class="ec-card__label">Saved Configs</div>
+      <div class="ec-card__title" style="margin-bottom:var(--ec-space-3);">Animation History</div>
+      <div id="historyGateWrap"><!-- gated --></div>
+    </div>
+
+  </div>
+
+</div><!-- /ec-app -->
+
+<div class="ec-toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────────────────
+// TIER SYSTEM
+// ─────────────────────────────────────────────────────
+const TIER_RANK = { bloom:1, craft:2, studio:3, atelier:4 };
+const TIER_LABELS = { bloom:'Bloom', craft:'Craft', studio:'Studio', atelier:'Atelier' };
+const TIER_BADGE_CSS = { bloom:'ec-tier-bloom', craft:'ec-tier-craft', studio:'ec-tier-studio', atelier:'ec-tier-atelier' };
+let USER_TIER = 'atelier';
+
+function canAccess(req) { return TIER_RANK[USER_TIER] >= TIER_RANK[req]; }
+
+function setTier(t) {
+  USER_TIER = t;
+  document.querySelectorAll('.tier-sim__btn').forEach(b => b.classList.toggle('active', b.textContent.toLowerCase()===t));
+  const badge = document.getElementById('tierBadge');
+  badge.className = 'ec-tier-badge ' + TIER_BADGE_CSS[t];
+  badge.textContent = TIER_LABELS[t];
+  renderTierGates();
+  toast(`Tier: ${TIER_LABELS[t]}`);
+}
+
+function makeGate(requiredTier, featureName) {
+  return `
+    <div class="ec-gated">
+      <div class="ec-gated-blur" aria-hidden="true" style="min-height:60px;background:var(--ec-gray-100);border-radius:var(--ec-radius-md);"></div>
+      <div class="ec-lock-overlay">
+        <div class="ec-lock-badge">
+          <span class="ec-script">${TIER_LABELS[requiredTier]}</span>
+          <p>${featureName} requires ${TIER_LABELS[requiredTier]}.</p>
+          <button class="ec-btn ec-btn-primary ec-btn-sm" onclick="toast('Upgrade flow → /pricing')">Upgrade →</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderTierGates() {
+  // Statement profile
+  const stmt = document.getElementById('statementCard');
+  const lock = document.getElementById('statementLock');
+  if (!canAccess('atelier')) {
+    stmt.classList.add('locked');
+    lock.style.display = 'inline';
+    if (S.profile === 'statement') { S.profile='breeze'; document.querySelector('[data-profile="whisper"]').classList.remove('selected'); document.querySelector('[data-profile="breeze"]').classList.add('selected'); }
+  } else {
+    stmt.classList.remove('locked');
+    lock.style.display = 'none';
+  }
+
+  // Pulse tab
+  const pulseTab = document.getElementById('pulseTab');
+  if (!canAccess('atelier')) {
+    pulseTab.classList.add('locked');
+    if (S.motionType==='pulse') { S.motionType='sway'; document.querySelector('[data-type="sway"]').classList.add('active'); pulseTab.classList.remove('active'); }
+  } else {
+    pulseTab.classList.remove('locked');
+  }
+
+  // Emotion detect
+  const eWrap = document.getElementById('emotionGateWrap');
+  if (canAccess('atelier')) {
+    eWrap.innerHTML = buildEmotionDetectUI();
+  } else {
+    eWrap.innerHTML = makeGate('atelier', 'Emotion Auto-Detect');
+  }
+
+  // Motion Brief
+  const bWrap = document.getElementById('briefGateWrap');
+  if (canAccess('atelier')) {
+    bWrap.innerHTML = buildMotionBriefUI();
+  } else {
+    bWrap.innerHTML = makeGate('atelier', 'AI Motion Brief');
+  }
+
+  // History
+  const hWrap = document.getElementById('historyGateWrap');
+  if (canAccess('studio')) {
+    hWrap.innerHTML = buildHistoryUI();
+  } else {
+    hWrap.innerHTML = makeGate('studio', 'Animation History');
+  }
+
+  // GIF Export
+  const gWrap = document.getElementById('gifExportGate');
+  if (canAccess('atelier')) {
+    gWrap.innerHTML = `<button class="ec-btn ec-btn-outline" style="width:100%;" onclick="toast('GIF export ready ✓')">⬇ Export GIF</button>`;
+  } else {
+    gWrap.innerHTML = `<div class="ec-gated" style="width:100%"><div class="ec-gated-blur" style="height:40px;background:var(--ec-gray-100);border-radius:var(--ec-radius-md);"></div><div class="ec-lock-overlay" style="border-radius:var(--ec-radius-md);"><span style="font-size:.75rem;color:var(--ec-text-faint);">🔒 Atelier — GIF Export</span></div></div>`;
+  }
+
+  // Disable non-studio users entirely
+  if (!canAccess('studio')) {
+    document.getElementById('genBtn').disabled = true;
+    document.getElementById('genBtn').textContent = '🔒 Studio+ Required';
+  } else {
+    document.getElementById('genBtn').disabled = false;
+    document.getElementById('genBtn').textContent = '▶ Generate Animation';
+  }
+}
+
+function buildEmotionDetectUI() {
+  return `
+    <div class="ai-section" style="margin-bottom:0;">
+      <div class="ai-section__head">
+        <span class="ai-badge">AI</span>
+        <span class="ai-section__title">Emotion Auto-Detect</span>
+      </div>
+      <p class="ec-card__body" style="margin-bottom:var(--ec-space-3);">Describe the design's emotional intent — the engine maps it to the optimal motion profile.</p>
+      <div class="ec-field" style="margin-bottom:var(--ec-space-3);">
+        <input class="ec-input" id="emotionInput" placeholder="e.g. calm, romantic, nostalgic, grounded…">
+      </div>
+      <button class="ec-btn ec-btn-green ec-btn-sm" onclick="detectEmotion()">
+        <span id="detectBtnText">✦ Detect &amp; Map</span>
+      </button>
+      <div id="emotionResult" style="display:none;margin-top:var(--ec-space-3);padding:var(--ec-space-3);background:rgba(255,255,255,.7);border-radius:var(--ec-radius-md);">
+        <span class="ec-label">Result → </span>
+        <span id="emotionTag" style="font-family:var(--ec-font-serif);font-size:.9375rem;color:var(--ec-text);margin-left:6px;"></span>
+      </div>
+    </div>`;
+}
+
+function buildMotionBriefUI() {
+  return `
+    <p class="ec-card__body" style="margin-bottom:var(--ec-space-3);">Paste a blueprint ID or design description. Claude generates a full motion brief with emotion mapping and shot list.</p>
+    <textarea class="ec-input" id="briefInput" rows="3" placeholder="Genome string, blueprint ID, or design description…" style="resize:vertical;margin-bottom:var(--ec-space-3);"></textarea>
+    <button class="ec-btn ec-btn-primary ec-btn-full" onclick="generateBrief()">
+      <span id="briefBtnText">✦ Generate Brief</span>
+    </button>
+    <div id="briefOutput" style="margin-top:var(--ec-space-4);display:none;border:1px solid var(--ec-border);border-radius:var(--ec-radius-md);padding:var(--ec-space-4);background:var(--ec-off-white);font-size:.875rem;color:var(--ec-text-muted);line-height:1.65;"></div>`;
+}
+
+function buildHistoryUI() {
+  const items = [
+    { icon:'🌾', name:'Autumn Harvest Sway', meta:'Whisper · sway · 30 · 10s', date:'2 days ago' },
+    { icon:'🍃', name:'Spring Edit — Breeze', meta:'Breeze · sway · 60 · 8s', date:'5 days ago' },
+    { icon:'🌊', name:'Holiday Statement', meta:'Statement · rotation · 90 · 15s', date:'1 week ago' },
+  ];
+  if (!items.length) return `<div style="text-align:center;padding:var(--ec-space-8);color:var(--ec-text-faint);">🌿 No saved configs yet.<br>Generate your first animation.</div>`;
+  return `<div style="border:1px solid var(--ec-border);border-radius:var(--ec-radius-md);overflow:hidden;">
+    ${items.map(i => `<div class="history-item">
+      <div class="history-item__info">
+        <div class="history-item__icon">${i.icon}</div>
+        <div><div class="history-item__name">${i.name}</div><div class="history-item__meta">${i.meta} · ${i.date}</div></div>
+      </div>
+      <div class="history-item__actions">
+        <button class="ec-btn ec-btn-outline ec-btn-sm" onclick="toast('Config loaded ✓')">Load</button>
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// ─────────────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────────────
+const S = {
+  image: null, imageLoaded: false,
+  profile: 'whisper', motionType: 'sway',
+  intensity: 30, duration: 10, fps: 30, bg: '#F9F7F4',
+  animating: false, rafId: null, generated: false, frames: []
+};
+
+// ─────────────────────────────────────────────────────
+// UPLOAD
+// ─────────────────────────────────────────────────────
+const fileInput = document.getElementById('fileInput');
+const uploadZone = document.getElementById('uploadZone');
+fileInput.addEventListener('change', e => loadFile(e.target.files[0]));
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('over'));
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('over'); loadFile(e.dataTransfer.files[0]); });
+
+function loadFile(file) {
+  if (!file?.type.startsWith('image/')) { toast('Please upload an image.'); return; }
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      S.image = img; S.imageLoaded = true;
+      document.getElementById('uploadedImg').src = ev.target.result;
+      document.getElementById('uploadedWrap').style.display = 'block';
+      document.getElementById('uploadZone').style.display = 'none';
+      document.getElementById('dimsBadge').textContent = `${img.naturalWidth} × ${img.naturalHeight}`;
+      renderFrame(0);
+      document.getElementById('canvasOverlay').style.display = 'none';
+      toast('Render loaded ✓');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+function clearUpload() {
+  S.image = null; S.imageLoaded = false; S.generated = false; S.frames = [];
+  document.getElementById('uploadedWrap').style.display = 'none';
+  document.getElementById('uploadZone').style.display = 'block';
+  fileInput.value = '';
+  document.getElementById('canvasOverlay').style.display = 'flex';
+  stopAnim();
+}
+
+// ─────────────────────────────────────────────────────
+// CANVAS
+// ─────────────────────────────────────────────────────
+const canvas = document.getElementById('previewCanvas');
+const ctx = canvas.getContext('2d');
+
+function motionParams() {
+  const t = (S.intensity - 10) / 80;
+  return { amp: 5 + t * 20, rot: 1 + t * 5, scale: 0.02 + t * 0.04 };
+}
+
+function renderFrame(t) {
+  if (!S.image) return;
+  const p = motionParams();
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  if (S.bg !== 'transparent') { ctx.fillStyle = S.bg; ctx.fillRect(0, 0, W, H); }
+  ctx.save(); ctx.translate(W/2, H/2);
+  if (S.motionType === 'sway') {
+    ctx.translate(Math.sin(t)*p.amp, Math.sin(t*.6)*(p.amp*.3));
+    ctx.rotate(Math.sin(t)*(p.rot*Math.PI/180));
+  } else if (S.motionType === 'rotation') {
+    ctx.rotate(t % (Math.PI*2));
+    ctx.shadowColor='rgba(0,0,0,.15)'; ctx.shadowBlur=20*Math.abs(Math.sin(t));
+    ctx.shadowOffsetX=10*Math.sin(t);
+  } else {
+    ctx.scale(1+Math.sin(t)*p.scale, 1+Math.sin(t)*p.scale);
+    ctx.globalAlpha=.92+.08*Math.abs(Math.sin(t));
+  }
+  const pad=20, ms=Math.min(W,H)-pad*2, ar=S.image.naturalWidth/S.image.naturalHeight;
+  let dw=ms, dh=ms;
+  if (ar>1) dh=ms/ar; else dw=ms*ar;
+  ctx.drawImage(S.image, -dw/2, -dh/2, dw, dh);
+  ctx.restore();
+}
+
+// ─────────────────────────────────────────────────────
+// PROFILE + TYPE
+// ─────────────────────────────────────────────────────
+const PROFILE_INTENSITY = { whisper:30, breeze:60, statement:90 };
+function selectProfile(el) {
+  if (!canAccess(el.dataset.required)) { toast(`Requires ${TIER_LABELS[el.dataset.required]}`); return; }
+  document.querySelectorAll('.mpc').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  S.profile = el.dataset.profile;
+  S.intensity = PROFILE_INTENSITY[S.profile];
+  document.getElementById('intensitySlider').value = S.intensity;
+  document.getElementById('intensityVal').textContent = S.intensity;
+  document.getElementById('profileBadge').textContent = S.profile.toUpperCase();
+  drawWave(); updateFramePreview();
+  if (S.imageLoaded) renderFrame(0);
+  toast(`Profile: ${S.profile}`);
+}
+function selectType(el) {
+  if (!canAccess(el.dataset.required)) { toast(`Pulse requires Atelier`); return; }
+  document.querySelectorAll('.motion-tab').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  S.motionType = el.dataset.type;
+  document.getElementById('typeBadge').textContent = S.motionType.toUpperCase();
+  drawWave(); if (S.imageLoaded) renderFrame(0);
+}
+
+// ─────────────────────────────────────────────────────
+// SLIDERS
+// ─────────────────────────────────────────────────────
+function onSlider(key, v) {
+  if (key === 'intensity') { S.intensity=parseInt(v); document.getElementById('intensityVal').textContent=v; }
+  if (key === 'duration')  { S.duration=parseInt(v);  document.getElementById('durationVal').textContent=v+'s'; }
+  if (key === 'fps')       { S.fps=parseInt(v);       document.getElementById('fpsVal').textContent=v+'fps'; document.getElementById('fpsPreview').textContent=v; }
+  drawWave(); updateFramePreview();
+  if (S.imageLoaded) renderFrame(0);
+}
+function updateFramePreview() { document.getElementById('framePreview').textContent = S.duration * S.fps; }
+
+// ─────────────────────────────────────────────────────
+// WAVE
+// ─────────────────────────────────────────────────────
+function drawWave() {
+  const wc = document.getElementById('waveCanvas');
+  wc.width = wc.offsetWidth * devicePixelRatio || 300;
+  wc.height = 56 * devicePixelRatio;
+  const wctx = wc.getContext('2d');
+  wctx.scale(devicePixelRatio, devicePixelRatio);
+  const W = wc.offsetWidth || 300, H = 56;
+  wctx.clearRect(0,0,W,H);
+  wctx.fillStyle='#F2EFE9'; wctx.fillRect(0,0,W,H);
+  const p = motionParams();
+  const amp = S.motionType === 'pulse' ? (H/2-6)*(p.scale/.06) : (H/2-6)*(S.intensity/90);
+  wctx.beginPath(); wctx.strokeStyle='#4A6741'; wctx.lineWidth=2;
+  for (let i=0;i<=200;i++) {
+    const t=(i/200)*Math.PI*4;
+    const x=(i/200)*W, y=H/2+Math.sin(t)*amp;
+    i===0?wctx.moveTo(x,y):wctx.lineTo(x,y);
+  }
+  wctx.stroke();
+  wctx.beginPath(); wctx.setLineDash([4,4]); wctx.strokeStyle='#D0D0D0'; wctx.lineWidth=1;
+  wctx.moveTo(0,H/2); wctx.lineTo(W,H/2); wctx.stroke(); wctx.setLineDash([]);
+}
+
+// ─────────────────────────────────────────────────────
+// GENERATE
+// ─────────────────────────────────────────────────────
+async function startGenerate() {
+  if (!S.imageLoaded) { toast('Upload a render first.'); return; }
+  if (!canAccess('studio')) { toast('Studio tier required.'); return; }
+  stopAnim(); S.generated = false; S.frames = [];
+  const btn = document.getElementById('genBtn');
+  const pd  = document.getElementById('genProgress');
+  const bar = document.getElementById('progressBar');
+  const pct = document.getElementById('progressPct');
+  const lbl = document.getElementById('progressLabel');
+  btn.disabled = true; pd.style.display = 'block';
+
+  const total = S.duration * S.fps;
+  const BATCH = 8;
+  for (let f=0; f<total; f+=BATCH) {
+    const end = Math.min(f+BATCH, total);
+    for (let i=f; i<end; i++) {
+      const t = (i/total)*Math.PI*4;
+      const fc = document.createElement('canvas');
+      fc.width=400; fc.height=400;
+      renderFrameToCtx(fc.getContext('2d'), t, 400, 400);
+      S.frames.push(fc);
+    }
+    const prog = ((f+BATCH)/total)*100;
+    bar.style.width = Math.min(prog,100)+'%';
+    pct.textContent = Math.round(Math.min(prog,100))+'%';
+    lbl.textContent = `Frame ${Math.min(f+BATCH,total)} / ${total}`;
+    await sleep(1);
+  }
+
+  buildFrameStrip();
+  document.getElementById('metricsRow').style.display = 'grid';
+  document.getElementById('mFrames').textContent = total;
+  document.getElementById('mFps').textContent = S.fps;
+  document.getElementById('mDur').textContent = S.duration+'s';
+  updateOutputJSON(); updateFFmpeg();
+  S.generated = true;
+  btn.disabled = false; pd.style.display = 'none';
+  document.getElementById('playBtn').disabled = false;
+  document.getElementById('outputPanel').style.display = 'block';
+  document.getElementById('frameStripCard').style.display = 'block';
+  toast('Animation ready ✓');
+}
+
+function renderFrameToCtx(fctx, t, W, H) {
+  if (!S.image) return;
+  const p = motionParams();
+  fctx.clearRect(0,0,W,H);
+  if (S.bg !== 'transparent') { fctx.fillStyle=S.bg; fctx.fillRect(0,0,W,H); }
+  fctx.save(); fctx.translate(W/2,H/2);
+  if (S.motionType==='sway') {
+    fctx.translate(Math.sin(t)*p.amp,Math.sin(t*.6)*(p.amp*.3));
+    fctx.rotate(Math.sin(t)*(p.rot*Math.PI/180));
+  } else if (S.motionType==='rotation') {
+    fctx.rotate(t%(Math.PI*2));
+    fctx.shadowColor='rgba(0,0,0,.15)'; fctx.shadowBlur=20*Math.abs(Math.sin(t)); fctx.shadowOffsetX=10*Math.sin(t);
+  } else { fctx.scale(1+Math.sin(t)*p.scale,1+Math.sin(t)*p.scale); fctx.globalAlpha=.92+.08*Math.abs(Math.sin(t)); }
+  const pad=20,ms=Math.min(W,H)-pad*2,ar=S.image.naturalWidth/S.image.naturalHeight;
+  let dw=ms,dh=ms; if(ar>1)dh=ms/ar;else dw=ms*ar;
+  fctx.drawImage(S.image,-dw/2,-dh/2,dw,dh);
+  fctx.restore();
+}
+
+function buildFrameStrip() {
+  const strip = document.getElementById('frameStrip');
+  strip.innerHTML = '';
+  const count = Math.min(S.frames.length, 18);
+  const step = Math.floor(S.frames.length/count);
+  for (let i=0;i<S.frames.length;i+=step) {
+    const div = document.createElement('div');
+    div.className = 'frame-thumb';
+    const tc = document.createElement('canvas'); tc.width=56; tc.height=56;
+    tc.getContext('2d').drawImage(S.frames[i],0,0,56,56);
+    div.appendChild(tc);
+    div.addEventListener('click',()=>{
+      ctx.drawImage(S.frames[i],0,0);
+      document.querySelectorAll('.frame-thumb').forEach(t=>t.classList.remove('active'));
+      div.classList.add('active');
+    });
+    strip.appendChild(div);
+  }
+}
+
+// ─────────────────────────────────────────────────────
+// PLAYBACK
+// ─────────────────────────────────────────────────────
+function playPreview() {
+  if (!S.generated || !S.frames.length) { stopAnim(); S.animating=true; S.startTime=performance.now(); animLoop(); return; }
+  stopAnim(); S.animating=true;
+  let fi=0;
+  const loop=()=>{ if(!S.animating) return; ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(S.frames[fi],0,0); fi=(fi+1)%S.frames.length; S.rafId=setTimeout(()=>requestAnimationFrame(loop),1000/S.fps); };
+  requestAnimationFrame(loop);
+  document.getElementById('playBtn').textContent='⏹ Stop';
+  document.getElementById('playBtn').onclick=stopAnim;
+}
+function animLoop() {
+  if(!S.animating) return;
+  const t=(performance.now()-S.startTime)/1000*(Math.PI*2/(S.duration/2));
+  renderFrame(t); S.rafId=requestAnimationFrame(animLoop);
+}
+function stopAnim() {
+  S.animating=false;
+  if(S.rafId){cancelAnimationFrame(S.rafId);clearTimeout(S.rafId);S.rafId=null;}
+  document.getElementById('playBtn').textContent='◉ Play Preview';
+  document.getElementById('playBtn').onclick=playPreview;
+}
+
+// ─────────────────────────────────────────────────────
+// AI — EMOTION DETECT
+// ─────────────────────────────────────────────────────
+async function detectEmotion() {
+  const input = document.getElementById('emotionInput')?.value?.trim();
+  if (!input) { toast('Enter an emotion first.'); return; }
+  const btn = document.getElementById('detectBtnText');
+  btn.innerHTML='<span class="ec-spinner ec-spinner--sm" style="border-top-color:#fff;"></span> Detecting…';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:300,
+        system:`You are Evercrafted's emotion-to-motion mapper. Given an emotion description, output ONLY valid JSON with no preamble, no markdown, no backticks:\n{"emotion":"string","motionProfile":"whisper|breeze|statement","motionType":"sway|rotation|pulse","intensity":number,"rationale":"one sentence"}\nRules: calm/soft → whisper (20-40). balanced/romantic → breeze (45-65). dramatic/energetic → statement (70-90). sway=default, pulse=romantic, rotation=bold.`,
+        messages:[{role:'user',content:`Emotion: "${input}"`}]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    S.profile = parsed.motionProfile; S.intensity = parsed.intensity; S.motionType = parsed.motionType;
+    document.querySelectorAll('.mpc').forEach(c=>c.classList.toggle('selected',c.dataset.profile===parsed.motionProfile));
+    document.querySelectorAll('.motion-tab').forEach(b=>b.classList.toggle('active',b.dataset.type===parsed.motionType));
+    document.getElementById('intensitySlider').value=parsed.intensity;
+    document.getElementById('intensityVal').textContent=parsed.intensity;
+    document.getElementById('profileBadge').textContent=parsed.motionProfile.toUpperCase();
+    document.getElementById('typeBadge').textContent=parsed.motionType.toUpperCase();
+    drawWave(); if(S.imageLoaded) renderFrame(0);
+
+    const rEl = document.getElementById('emotionResult');
+    rEl.style.display='block';
+    document.getElementById('emotionTag').textContent=`${parsed.emotion} → ${parsed.motionProfile} (${parsed.intensity}) — ${parsed.rationale}`;
+    toast(`Mapped: ${parsed.emotion} → ${parsed.motionProfile}`);
+  } catch(e) { console.error(e); toast('API error — check console.'); }
+  btn.textContent='✦ Detect & Map';
+}
+
+// ─────────────────────────────────────────────────────
+// AI — MOTION BRIEF
+// ─────────────────────────────────────────────────────
+async function generateBrief() {
+  const input = document.getElementById('briefInput')?.value?.trim();
+  if (!input) { toast('Enter a design description.'); return; }
+  const btn = document.getElementById('briefBtnText');
+  btn.innerHTML='<span class="ec-spinner ec-spinner--sm" style="border-top-color:#fff;"></span> Generating…';
+  const out = document.getElementById('briefOutput');
+  out.style.display='block'; out.innerHTML='<div class="ec-loading"><div class="ec-spinner"></div><span>Building brief…</span></div>';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:800,
+        system:`You are Evercrafted's Motion Director. Given a wreath design, produce a motion brief. Respond ONLY with valid JSON, no markdown:\n{"emotionMapping":"2 sentences","recommendedProfile":"whisper|breeze|statement","recommendedType":"sway|rotation|pulse","intensity":number,"socialUse":"one sentence","etsyUse":"one sentence","shotList":["3 descriptions"]}`,
+        messages:[{role:'user',content:`Design: ${input}`}]
+      })
+    });
+    const data = await res.json();
+    const raw = data.content.filter(b=>b.type==='text').map(b=>b.text).join('');
+    const brief = JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    out.innerHTML = `
+      <div style="display:flex;flex-direction:column;gap:var(--ec-space-3);">
+        <div><span class="ec-label">Emotion Mapping</span><p style="font-size:.875rem;color:var(--ec-text-muted);margin-top:4px;">${brief.emotionMapping}</p></div>
+        <div style="display:flex;gap:var(--ec-space-3);">
+          <div><span class="ec-label">Profile</span><div style="margin-top:4px;"><span class="ec-pill pill-green">${brief.recommendedProfile.toUpperCase()}</span></div></div>
+          <div><span class="ec-label">Type</span><div style="margin-top:4px;"><span class="ec-pill pill-gray">${brief.recommendedType.toUpperCase()}</span></div></div>
+          <div><span class="ec-label">Intensity</span><div style="font-family:var(--ec-font-mono);font-size:1rem;color:var(--ec-green);margin-top:4px;">${brief.intensity}</div></div>
+        </div>
+        <div><span class="ec-label">Etsy Use</span><p style="font-size:.875rem;color:var(--ec-text-muted);margin-top:4px;">${brief.etsyUse}</p></div>
+        <div><span class="ec-label">Social Use</span><p style="font-size:.875rem;color:var(--ec-text-muted);margin-top:4px;">${brief.socialUse}</p></div>
+        <div><span class="ec-label">Shot List</span><ul style="margin-top:4px;padding-left:1.2rem;">${brief.shotList.map(s=>`<li style="font-size:.875rem;color:var(--ec-text-muted);margin-bottom:2px;">${s}</li>`).join('')}</ul></div>
+        <button class="ec-btn ec-btn-green ec-btn-sm" onclick="applyBrief(${brief.intensity},'${brief.recommendedProfile}','${brief.recommendedType}')">Apply Brief →</button>
+      </div>`;
+    toast('Motion brief generated ✓');
+  } catch(e) { console.error(e); out.innerHTML='<p style="color:var(--ec-error);font-size:.875rem;">🌿 Couldn\'t generate — please try again.</p>'; }
+  btn.textContent='✦ Generate Brief';
+}
+
+function applyBrief(intensity, profile, type) {
+  S.profile=profile; S.intensity=intensity; S.motionType=type;
+  document.querySelectorAll('.mpc').forEach(c=>c.classList.toggle('selected',c.dataset.profile===profile));
+  document.querySelectorAll('.motion-tab').forEach(b=>b.classList.toggle('active',b.dataset.type===type));
+  document.getElementById('intensitySlider').value=intensity;
+  document.getElementById('intensityVal').textContent=intensity;
+  document.getElementById('profileBadge').textContent=profile.toUpperCase();
+  document.getElementById('typeBadge').textContent=type.toUpperCase();
+  drawWave(); if(S.imageLoaded) renderFrame(0);
+  toast('Brief applied ✓');
+}
+
+// ─────────────────────────────────────────────────────
+// EXPORT + OUTPUT
+// ─────────────────────────────────────────────────────
+function exportFrames() {
+  if(!S.generated){toast('Generate animation first.');return;}
+  const count=Math.min(S.frames.length,10);
+  const step=Math.floor(S.frames.length/count);
+  for(let i=0;i<count;i++){
+    const idx=i*step;
+    const a=document.createElement('a');
+    a.href=S.frames[idx].toDataURL('image/png');
+    a.download=`ec-frame-${String(idx).padStart(4,'0')}.png`;
+    setTimeout(()=>a.click(),i*80);
+  }
+  toast(`Exporting ${count} keyframes ✓`);
+}
+
+function updateOutputJSON() {
+  const cfg={blueprint_id:null,motion_type:S.motionType,motion_profile:S.profile,intensity:S.intensity,duration_seconds:S.duration,fps:S.fps,background:S.bg};
+  document.getElementById('configJSON').innerHTML=syntaxHL(JSON.stringify(cfg,null,2));
+}
+function updateFFmpeg() {
+  document.getElementById('ffmpegCode').innerHTML=`<span class="kw">ffmpeg</span> <span class="str">-framerate</span> <span class="num">${S.fps}</span> <span class="str">-i</span> <span class="str">ec-frame-%04d.png</span> \\<br>&nbsp;&nbsp;<span class="str">-c:v</span> <span class="kw">libx264</span> <span class="str">-pix_fmt</span> <span class="kw">yuv420p</span> <span class="str">-crf</span> <span class="num">18</span> <span class="str">-t</span> <span class="num">${S.duration}</span> <span class="kw">ec-motion-${S.profile}.mp4</span>`;
+}
+function syntaxHL(json){return json.replace(/("[\w_]+")\s*:/g,'<span class="kw">$1</span>:').replace(/:\s*(".*?")/g,': <span class="str">$1</span>').replace(/:\s*(\d+)/g,': <span class="num">$1</span>');}
+function copyJSON(){navigator.clipboard.writeText(JSON.stringify({motion_type:S.motionType,motion_profile:S.profile,intensity:S.intensity,duration_seconds:S.duration,fps:S.fps,background:S.bg},null,2)).then(()=>toast('JSON copied ✓'));}
+function copyFFmpeg(){navigator.clipboard.writeText(`ffmpeg -framerate ${S.fps} -i ec-frame-%04d.png -c:v libx264 -pix_fmt yuv420p -crf 18 -t ${S.duration} ec-motion-${S.profile}.mp4`).then(()=>toast('FFmpeg command copied ✓'));}
+
+// ─────────────────────────────────────────────────────
+// TABS
+// ─────────────────────────────────────────────────────
+function switchTab(btn,id){
+  document.querySelectorAll('.output-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.output-tab-content').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active'); document.getElementById(id).classList.add('active');
+}
+
+// ─────────────────────────────────────────────────────
+// TOAST
+// ─────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+// ─────────────────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────────────────
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ─────────────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  drawWave(); updateFramePreview();
+  ctx.fillStyle=S.bg; ctx.fillRect(0,0,canvas.width,canvas.height);
+  renderTierGates();
+});
+window.addEventListener('resize', drawWave);
+</script>
+</body>
+</html>

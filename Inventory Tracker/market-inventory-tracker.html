@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory & Materials Tracker — Know Exactly What You Have | Evercrafted</title>
+<meta name="description" content="Track every stem, spool, and supply across all your wreath projects. Low stock alerts, category filters, and auto-deduct when a blueprint completes. Built for working wreath makers.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Dancing+Script:wght@500;600;700&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --white:#FFFFFF; --off-white:#F9F7F4; --paper:#F2EFE9; --parchment:#EAE4DA;
+  --black:#1A1A1A; --charcoal:#2E2E2E; --ink:#4A4A4A;
+  --green:#4A6741; --green-light:#6B8F67; --green-pale:#EEF2ED; --green-dim:rgba(74,103,65,0.10);
+  --gray-200:#E8E8E8; --gray-300:#D0D0D0; --gray-400:#A8A8A8; --gray-500:#787878;
+  --bloom:#4A6741; --bloom-pale:#EEF2ED;
+  --craft:#4A6785; --craft-pale:#EEF1F6; --craft-mid:rgba(74,103,133,0.12);
+  --studio-c:#7A4A85; --studio-pale:#F3EEF6;
+  --atelier-c:#1A1A1A; --atelier-pale:#F0EDE8;
+  /* Stock status */
+  --stock-ok:#4A6741;    --stock-ok-bg:#EEF2ED;
+  --stock-low:#C4922A;   --stock-low-bg:#FEF3E2;
+  --stock-crit:#C0392B;  --stock-crit-bg:#FDECEA;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --script:'Dancing Script',cursive;
+  --mono:'DM Mono',monospace;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+html,body { font-family:var(--sans); background:var(--off-white); color:var(--black); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+/* ── SCROLL REVEAL ── */
+.reveal,.reveal-left,.reveal-right { opacity:0; transition:opacity 0.85s var(--ease),transform 0.85s var(--ease); }
+.reveal { transform:translateY(28px); } .reveal-left { transform:translateX(-24px); } .reveal-right { transform:translateX(24px); }
+.reveal.visible,.reveal-left.visible,.reveal-right.visible { opacity:1; transform:none; }
+.d1{transition-delay:.08s} .d2{transition-delay:.16s} .d3{transition-delay:.24s} .d4{transition-delay:.32s} .d5{transition-delay:.40s}
+
+/* ── NAV ── */
+.mkt-nav { position:fixed; top:0; left:0; right:0; z-index:100; height:64px; display:flex; align-items:center; justify-content:space-between; padding:0 56px; background:rgba(249,247,244,0.92); backdrop-filter:blur(16px); border-bottom:1px solid transparent; transition:border-color 0.3s; }
+.mkt-nav.scrolled { border-color:var(--gray-200); }
+.nav-logo { font-family:var(--script); font-size:1.5rem; font-weight:700; color:var(--green); text-decoration:none; }
+.nav-center { position:absolute; left:50%; transform:translateX(-50%); display:flex; gap:32px; list-style:none; }
+.nav-center a { font-size:0.72rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink); text-decoration:none; transition:color 0.2s; }
+.nav-center a:hover { color:var(--craft); }
+.nav-right { display:flex; align-items:center; gap:16px; }
+.nav-tier-pill { font-size:0.58rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:4px 10px; border-radius:100px; background:var(--craft-pale); color:var(--craft); border:1px solid rgba(74,103,133,0.18); }
+.nav-signin { font-size:0.72rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-500); text-decoration:none; }
+.nav-signin:hover { color:var(--black); }
+.nav-cta { font-size:0.7rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; background:var(--black); color:var(--white); padding:9px 22px; border-radius:2px; text-decoration:none; transition:background 0.2s; }
+.nav-cta:hover { background:var(--craft); }
+
+/* ── SECTION LABEL ── */
+.section-label { display:flex; align-items:center; gap:14px; margin-bottom:22px; }
+.section-label::before { content:''; width:28px; height:1px; background:var(--craft); flex-shrink:0; }
+.section-label span { font-size:0.64rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--craft); }
+
+/* ── BUTTONS ── */
+.btn { display:inline-flex; align-items:center; gap:8px; font-family:var(--sans); font-weight:500; letter-spacing:0.08em; text-transform:uppercase; border:none; cursor:pointer; border-radius:2px; transition:all 0.22s; text-decoration:none; white-space:nowrap; }
+.btn-lg { font-size:0.72rem; padding:15px 36px; }
+.btn-md { font-size:0.70rem; padding:12px 28px; }
+.btn-dark { background:var(--black); color:var(--white); }
+.btn-dark:hover { background:var(--craft); transform:translateY(-2px); box-shadow:0 8px 24px rgba(74,103,133,0.25); }
+.btn-craft { background:var(--craft); color:var(--white); }
+.btn-craft:hover { background:#3A5270; transform:translateY(-2px); }
+.btn-outline { background:transparent; color:var(--black); border:1.5px solid var(--gray-300); }
+.btn-outline:hover { border-color:var(--black); }
+.btn svg { transition:transform 0.22s; }
+.btn:hover svg { transform:translateX(4px); }
+
+/* ═══════════════════════════════
+   1. HERO — split panel
+═══════════════════════════════ */
+.hero { min-height:100vh; padding-top:64px; display:grid; grid-template-columns:1fr 1fr; background:var(--white); position:relative; overflow:hidden; }
+.hero-left { padding:80px 64px 80px; display:flex; flex-direction:column; justify-content:center; background:var(--white); }
+.hero-right { background:var(--black); display:flex; align-items:center; justify-content:center; padding:60px 48px; position:relative; overflow:hidden; }
+.hero-right::before { content:''; position:absolute; left:-100px; top:-100px; width:400px; height:400px; border-radius:50%; border:1px solid rgba(255,255,255,0.03); }
+.hero-right::after { content:''; position:absolute; right:-60px; bottom:-60px; width:280px; height:280px; border-radius:50%; border:1px solid rgba(255,255,255,0.04); }
+
+.hero-eyebrow { display:flex; align-items:center; gap:10px; margin-bottom:28px; opacity:0; animation:fadeUp 0.6s var(--ease) 0.1s forwards; }
+.eyebrow-pill { display:flex; align-items:center; gap:7px; background:var(--craft-pale); border:1px solid rgba(74,103,133,0.22); border-radius:100px; padding:5px 14px 5px 8px; }
+.eyebrow-dot { width:7px; height:7px; border-radius:50%; background:var(--craft); }
+.eyebrow-text { font-size:0.64rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--craft); }
+.hero-kicker { font-family:var(--script); font-size:1.5rem; color:var(--craft); display:block; margin-bottom:8px; font-weight:600; opacity:0; animation:fadeUp 0.7s var(--ease) 0.22s forwards; }
+.hero-title { font-family:var(--serif); font-size:clamp(2.8rem,4vw,5rem); font-weight:300; line-height:1.04; letter-spacing:-0.02em; color:var(--black); opacity:0; animation:fadeUp 0.85s var(--ease) 0.34s forwards; }
+.hero-title em { font-style:italic; color:var(--craft); }
+.hero-body { font-size:0.95rem; line-height:1.85; color:var(--ink); font-weight:300; max-width:440px; margin:24px 0 40px; opacity:0; animation:fadeUp 0.75s var(--ease) 0.52s forwards; }
+.hero-actions { display:flex; align-items:center; gap:20px; opacity:0; animation:fadeUp 0.75s var(--ease) 0.64s forwards; }
+
+/* Stock status legend */
+.hero-legend { display:flex; gap:16px; margin-top:44px; padding-top:28px; border-top:1px solid var(--gray-200); opacity:0; animation:fadeUp 0.7s ease 0.8s forwards; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:0.68rem; color:var(--gray-500); font-weight:400; }
+.legend-dot { width:8px; height:8px; border-radius:50%; }
+
+/* ── INVENTORY TABLE MOCKUP ── */
+.inv-mockup { background:var(--white); border-radius:4px; width:100%; max-width:460px; box-shadow:0 8px 60px rgba(0,0,0,0.3); overflow:hidden; opacity:0; animation:fadeIn 0.9s ease 0.5s forwards; position:relative; z-index:2; }
+.inv-topbar { background:var(--off-white); border-bottom:1px solid var(--gray-200); padding:10px 14px; display:flex; align-items:center; justify-content:space-between; }
+.inv-title { font-family:var(--serif); font-size:0.9rem; font-weight:400; color:var(--black); }
+.inv-add-btn { font-size:0.6rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; background:var(--craft); color:var(--white); padding:5px 12px; border-radius:2px; border:none; cursor:pointer; }
+.inv-filters { padding:8px 14px; display:flex; gap:6px; border-bottom:1px solid var(--gray-200); overflow-x:auto; }
+.inv-filter-chip { font-size:0.58rem; font-weight:500; padding:3px 10px; border-radius:100px; border:1px solid var(--gray-300); background:transparent; color:var(--gray-500); cursor:pointer; white-space:nowrap; }
+.inv-filter-chip.active { background:var(--craft); color:var(--white); border-color:var(--craft); }
+.inv-table-head { display:grid; grid-template-columns:2fr 1fr 1fr 80px; gap:0; padding:7px 14px; background:var(--paper); border-bottom:1px solid var(--gray-200); }
+.inv-th { font-size:0.58rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--gray-400); }
+.inv-rows { display:flex; flex-direction:column; }
+.inv-row { display:grid; grid-template-columns:2fr 1fr 1fr 80px; gap:0; padding:10px 14px; border-bottom:1px solid var(--gray-200); align-items:center; transition:background 0.15s; }
+.inv-row:hover { background:var(--off-white); }
+.inv-row:last-child { border-bottom:none; }
+.inv-row.crit { background:rgba(192,57,43,0.03); }
+.inv-row.low  { background:rgba(196,146,42,0.03); }
+.inv-item-name { font-size:0.78rem; font-weight:500; color:var(--black); margin-bottom:1px; }
+.inv-item-cat  { font-size:0.62rem; color:var(--gray-400); }
+.inv-qty { font-family:var(--mono); font-size:0.8rem; font-weight:500; color:var(--black); }
+.inv-unit { font-size:0.62rem; color:var(--gray-400); }
+.inv-threshold { font-family:var(--mono); font-size:0.72rem; color:var(--gray-400); }
+.inv-status { display:inline-flex; align-items:center; gap:4px; font-size:0.58rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; padding:3px 8px; border-radius:100px; }
+.inv-status.ok   { background:var(--stock-ok-bg);   color:var(--stock-ok); }
+.inv-status.low  { background:var(--stock-low-bg);  color:var(--stock-low); }
+.inv-status.crit { background:var(--stock-crit-bg); color:var(--stock-crit); }
+.inv-footer { padding:9px 14px; background:var(--off-white); display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--gray-200); }
+.inv-foot-txt  { font-size:0.62rem; color:var(--gray-400); }
+.inv-foot-alert { font-size:0.62rem; font-weight:500; color:var(--stock-low); display:flex; align-items:center; gap:5px; }
+.inv-foot-alert::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--stock-low); animation:pulse 2s ease-in-out infinite; }
+
+/* ═══════════════════════════════
+   2. STORY
+═══════════════════════════════ */
+.story-section { background:var(--paper); border-top:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); padding:100px 64px; }
+.story-inner { max-width:1160px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.story-left h2 { font-family:var(--serif); font-size:clamp(2.2rem,3.5vw,3.8rem); font-weight:300; line-height:1.1; letter-spacing:-0.02em; margin-bottom:24px; }
+.story-left h2 em { font-style:italic; color:var(--craft); }
+.story-left p { font-size:0.92rem; line-height:1.85; color:var(--ink); font-weight:300; margin-bottom:18px; }
+.story-right { display:flex; flex-direction:column; gap:0; }
+.stat-row { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+.stat-cell { background:var(--white); padding:28px 24px; }
+.stat-cell:first-child { border-bottom:2px solid var(--craft); }
+.stat-num { font-family:var(--serif); font-size:3rem; font-weight:300; line-height:1; letter-spacing:-0.03em; color:var(--black); margin-bottom:6px; }
+.stat-label { font-size:0.72rem; color:var(--gray-500); line-height:1.5; font-weight:300; }
+.stat-cell--dark { background:var(--black); }
+.stat-cell--dark .stat-num { color:var(--white); }
+.stat-cell--dark .stat-label { color:rgba(255,255,255,0.4); }
+.story-pullquote { background:var(--white); padding:28px 24px; border-left:2px solid var(--craft); margin-top:2px; }
+.story-pullquote p { font-family:var(--serif); font-size:1.1rem; font-style:italic; line-height:1.7; color:var(--charcoal); }
+
+/* ═══════════════════════════════
+   3. FEATURES
+═══════════════════════════════ */
+.features-section { max-width:1160px; margin:0 auto; padding:100px 64px; }
+.features-header { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:end; margin-bottom:64px; }
+.features-header h2 { font-family:var(--serif); font-size:clamp(2rem,3vw,3rem); font-weight:300; line-height:1.15; }
+.features-header p { font-size:0.92rem; line-height:1.8; color:var(--ink); font-weight:300; }
+.features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.fc { background:var(--white); padding:36px 30px; display:flex; flex-direction:column; gap:14px; position:relative; overflow:hidden; transition:transform 0.28s var(--ease),box-shadow 0.28s; }
+.fc::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--craft); transform:scaleX(0); transform-origin:left; transition:transform 0.3s var(--ease); }
+.fc:hover { transform:translateY(-4px); box-shadow:0 16px 48px rgba(0,0,0,0.08); z-index:2; }
+.fc:hover::after { transform:scaleX(1); }
+.fc--dark { background:var(--black); }
+.fc--dark::after { background:rgba(255,255,255,0.2); }
+.fc--craft { background:var(--craft-pale); }
+.fc--craft::after { background:var(--craft); }
+.fc-num { font-family:var(--serif); font-size:3.5rem; font-weight:300; line-height:1; display:block; color:var(--gray-200); }
+.fc--dark .fc-num { color:rgba(255,255,255,0.05); }
+.fc--craft .fc-num { color:rgba(74,103,133,0.08); }
+.fc-icon { width:44px; height:44px; border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; background:var(--craft-pale); }
+.fc--dark .fc-icon { background:rgba(255,255,255,0.07); }
+.fc--craft .fc-icon { background:rgba(74,103,133,0.12); }
+.fc-title { font-family:var(--serif); font-size:1.2rem; font-weight:400; color:var(--black); line-height:1.3; }
+.fc--dark .fc-title { color:var(--white); }
+.fc-desc { font-size:0.82rem; line-height:1.75; color:var(--gray-500); font-weight:300; flex:1; }
+.fc--dark .fc-desc { color:rgba(255,255,255,0.45); }
+.fc--craft .fc-desc { color:var(--ink); }
+.fc-tag { display:inline-flex; align-items:center; gap:5px; font-size:0.58rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:3px 9px; border-radius:100px; background:var(--craft-pale); color:var(--craft); border:1px solid rgba(74,103,133,0.18); width:fit-content; }
+.fc--dark .fc-tag { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.5); border-color:rgba(255,255,255,0.1); }
+
+/* ═══════════════════════════════
+   4. DEMO — FULL TABLE MOCKUP
+═══════════════════════════════ */
+.demo-section { background:var(--black); padding:100px 64px; overflow:hidden; }
+.demo-inner { max-width:1160px; margin:0 auto; display:grid; grid-template-columns:380px 1fr; gap:72px; align-items:start; }
+.demo-left .section-label::before { background:rgba(74,103,133,0.7); }
+.demo-left .section-label span { color:rgba(74,103,133,1); }
+.demo-left h2 { font-family:var(--serif); font-size:clamp(2rem,3vw,3rem); font-weight:300; line-height:1.15; color:var(--white); margin-bottom:20px; }
+.demo-left h2 em { font-style:italic; color:rgba(74,103,133,0.9); }
+.demo-left p { font-size:0.92rem; line-height:1.82; color:rgba(255,255,255,0.45); font-weight:300; margin-bottom:32px; }
+.demo-points { display:flex; flex-direction:column; gap:14px; }
+.demo-point { display:flex; align-items:flex-start; gap:12px; }
+.demo-point-dot { width:8px; height:8px; border-radius:50%; background:var(--craft); flex-shrink:0; margin-top:5px; }
+.demo-point-title { font-size:0.8rem; font-weight:500; color:var(--white); margin-bottom:2px; }
+.demo-point-desc { font-size:0.73rem; color:rgba(255,255,255,0.38); line-height:1.55; }
+
+/* Full table mockup */
+.full-mockup { background:var(--white); border-radius:4px; overflow:hidden; box-shadow:0 8px 60px rgba(0,0,0,0.4); }
+.fm-topbar { background:var(--off-white); padding:10px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-200); }
+.fm-title { font-family:var(--serif); font-size:0.9rem; }
+.fm-meta { font-size:0.62rem; color:var(--gray-400); display:flex; align-items:center; gap:8px; }
+.fm-alert-badge { font-size:0.58rem; font-weight:600; background:var(--stock-low-bg); color:var(--stock-low); padding:3px 8px; border-radius:100px; }
+.fm-add { font-size:0.6rem; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; background:var(--craft); color:var(--white); padding:5px 12px; border-radius:2px; border:none; cursor:pointer; }
+.fm-filters { padding:8px 16px; display:flex; gap:6px; border-bottom:1px solid var(--gray-200); }
+.fm-chip { font-size:0.58rem; font-weight:500; padding:3px 10px; border-radius:100px; border:1px solid var(--gray-300); background:transparent; color:var(--gray-500); cursor:pointer; }
+.fm-chip.active { background:var(--craft); color:var(--white); border-color:var(--craft); }
+.fm-thead { display:grid; grid-template-columns:2fr 0.7fr 0.8fr 0.8fr 90px; padding:7px 16px; background:var(--paper); border-bottom:1px solid var(--gray-200); gap:8px; }
+.fm-th { font-size:0.56rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--gray-400); }
+.fm-body { display:flex; flex-direction:column; }
+.fm-row { display:grid; grid-template-columns:2fr 0.7fr 0.8fr 0.8fr 90px; padding:10px 16px; border-bottom:1px solid var(--gray-200); align-items:center; gap:8px; transition:background 0.15s; cursor:default; }
+.fm-row:hover { background:var(--off-white); }
+.fm-row.crit { background:rgba(192,57,43,0.025); }
+.fm-row.low  { background:rgba(196,146,42,0.025); }
+.fm-row:last-child { border-bottom:none; }
+.fm-name { font-size:0.78rem; font-weight:500; color:var(--black); }
+.fm-cat  { font-size:0.62rem; color:var(--gray-400); margin-top:2px; }
+.fm-qty  { font-family:var(--mono); font-size:0.8rem; color:var(--black); }
+.fm-unit { font-size:0.62rem; color:var(--gray-400); }
+.fm-reorder { font-family:var(--mono); font-size:0.72rem; color:var(--gray-400); }
+.fm-status { display:inline-flex; align-items:center; gap:4px; font-size:0.58rem; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; padding:3px 9px; border-radius:100px; }
+.fm-status.ok   { background:var(--stock-ok-bg);   color:var(--stock-ok); }
+.fm-status.low  { background:var(--stock-low-bg);  color:var(--stock-low); }
+.fm-status.crit { background:var(--stock-crit-bg); color:var(--stock-crit); }
+.fm-footer { padding:10px 16px; background:var(--off-white); border-top:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; }
+.fm-foot-left { font-size:0.62rem; color:var(--gray-400); }
+.fm-foot-right { font-size:0.62rem; font-weight:500; color:var(--stock-crit); display:flex; align-items:center; gap:5px; }
+.fm-foot-right::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--stock-crit); animation:pulse 1.8s ease-in-out infinite; }
+
+/* ═══════════════════════════════
+   5. WORKFLOW
+═══════════════════════════════ */
+.workflow-section { max-width:1160px; margin:0 auto; padding:100px 64px; }
+.workflow-header { text-align:center; margin-bottom:60px; }
+.workflow-header h2 { font-family:var(--serif); font-size:clamp(2rem,2.8vw,2.8rem); font-weight:300; margin-bottom:12px; }
+.workflow-header p { font-size:0.88rem; color:var(--gray-500); font-weight:300; max-width:440px; margin:0 auto; line-height:1.7; }
+.workflow-steps { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; }
+.workflow-steps::before { content:''; position:absolute; top:28px; left:calc(12.5%); right:calc(12.5%); height:1px; background:var(--gray-200); z-index:0; }
+.ws { display:flex; flex-direction:column; align-items:center; text-align:center; padding:0 20px; position:relative; z-index:1; }
+.ws-num { width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--serif); font-size:1.4rem; font-weight:300; background:var(--white); border:1.5px solid var(--gray-200); color:var(--black); margin-bottom:20px; transition:all 0.3s; position:relative; }
+.ws:hover .ws-num { background:var(--craft); color:var(--white); border-color:var(--craft); transform:scale(1.1); }
+.ws-title { font-family:var(--serif); font-size:1.05rem; font-weight:400; color:var(--black); margin-bottom:8px; }
+.ws-desc { font-size:0.78rem; color:var(--gray-500); line-height:1.65; font-weight:300; }
+
+/* ═══════════════════════════════
+   6. TESTIMONIALS
+═══════════════════════════════ */
+.testimonials-section { background:var(--white); border-top:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); padding:100px 64px; }
+.t-inner { max-width:1160px; margin:0 auto; }
+.t-header { text-align:center; margin-bottom:56px; }
+.t-header h2 { font-family:var(--serif); font-size:clamp(2rem,2.8vw,2.8rem); font-weight:300; margin-bottom:12px; }
+.t-header p { font-size:0.88rem; color:var(--gray-500); font-weight:300; max-width:400px; margin:0 auto; }
+.t-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.tc { padding:28px; display:flex; flex-direction:column; gap:14px; background:var(--off-white); transition:transform 0.25s var(--ease); }
+.tc:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,0.07); z-index:2; background:var(--white); }
+.tc--dark { background:var(--black); }
+.tc--dark:hover { background:var(--black); }
+.t-stars { font-size:0.75rem; color:#C4922A; letter-spacing:0.05em; }
+.t-quote { font-family:var(--serif); font-size:1.03rem; font-style:italic; line-height:1.65; color:var(--charcoal); flex:1; }
+.tc--dark .t-quote { color:rgba(255,255,255,0.75); }
+.t-author-row { display:flex; align-items:center; gap:12px; padding-top:14px; border-top:1px solid var(--gray-200); }
+.tc--dark .t-author-row { border-color:rgba(255,255,255,0.08); }
+.t-av { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:600; color:var(--white); flex-shrink:0; }
+.t-name { font-size:0.75rem; font-weight:500; color:var(--black); margin-bottom:2px; }
+.tc--dark .t-name { color:var(--white); }
+.t-role { font-size:0.65rem; color:var(--gray-400); }
+
+/* ═══════════════════════════════
+   7. FAQ
+═══════════════════════════════ */
+.faq-section { padding:100px 64px; }
+.faq-inner { max-width:1160px; margin:0 auto; display:grid; grid-template-columns:360px 1fr; gap:80px; align-items:start; }
+.faq-left h2 { font-family:var(--serif); font-size:clamp(1.8rem,2.5vw,2.6rem); font-weight:300; line-height:1.2; margin-bottom:16px; }
+.faq-left p { font-size:0.88rem; color:var(--ink); line-height:1.75; font-weight:300; margin-bottom:28px; }
+.faq-list { display:flex; flex-direction:column; }
+.faq-item { border-bottom:1px solid var(--gray-200); }
+.faq-item:first-child { border-top:1px solid var(--gray-200); }
+.faq-q { width:100%; background:none; border:none; padding:20px 0; display:flex; align-items:center; justify-content:space-between; gap:20px; cursor:pointer; text-align:left; font-family:var(--serif); font-size:1.05rem; font-weight:400; color:var(--black); line-height:1.3; transition:color 0.2s; }
+.faq-q:hover { color:var(--craft); }
+.faq-chevron { width:22px; height:22px; border:1px solid var(--gray-300); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform 0.3s var(--ease),background 0.2s,border-color 0.2s; }
+.faq-item.open .faq-chevron { transform:rotate(180deg); background:var(--craft); border-color:var(--craft); }
+.faq-item.open .faq-chevron svg path { stroke:white; }
+.faq-a { max-height:0; overflow:hidden; transition:max-height 0.45s var(--ease); }
+.faq-a-inner { padding:0 0 20px; font-size:0.88rem; line-height:1.8; color:var(--ink); font-weight:300; }
+.faq-item.open .faq-a { max-height:300px; }
+
+/* ═══════════════════════════════
+   8. PRICING
+═══════════════════════════════ */
+.pricing-section { background:var(--paper); border-top:1px solid var(--gray-200); padding:100px 64px; }
+.pricing-inner { max-width:1160px; margin:0 auto; }
+.pricing-header { text-align:center; margin-bottom:56px; }
+.pricing-header h2 { font-family:var(--serif); font-size:clamp(2rem,2.8vw,2.8rem); font-weight:300; margin-bottom:12px; }
+.pricing-header p { font-size:0.88rem; color:var(--gray-500); font-weight:300; max-width:440px; margin:0 auto; line-height:1.7; }
+.pricing-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+.pc { background:var(--white); padding:32px 24px; display:flex; flex-direction:column; position:relative; transition:transform 0.25s var(--ease); }
+.pc:hover { transform:translateY(-4px); box-shadow:0 14px 40px rgba(0,0,0,0.08); z-index:2; }
+.pc--locked { opacity:0.55; pointer-events:none; }
+.pc--feat { background:var(--black); transform:translateY(-8px); box-shadow:0 20px 56px rgba(0,0,0,0.18); z-index:3; }
+.pc--feat:hover { transform:translateY(-12px); }
+.pc-pop { position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:var(--craft); color:var(--white); font-size:0.55rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; padding:5px 14px; border-radius:0 0 4px 4px; white-space:nowrap; }
+.pc-lock { position:absolute; top:14px; right:14px; font-size:0.62rem; color:var(--gray-400); }
+.pc-name { font-family:var(--script); font-size:1.35rem; font-weight:600; color:var(--craft); margin-bottom:2px; }
+.pc--feat .pc-name { color:rgba(74,103,133,0.9); }
+.pc-sub { font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-400); margin-bottom:22px; }
+.pc--feat .pc-sub { color:rgba(255,255,255,0.3); }
+.pc-row { display:flex; align-items:baseline; gap:3px; margin-bottom:4px; }
+.pc-sym { font-family:var(--serif); font-size:1rem; font-weight:300; color:var(--gray-400); margin-top:5px; }
+.pc-val { font-family:var(--serif); font-size:2.6rem; font-weight:300; letter-spacing:-0.02em; color:var(--black); line-height:1; }
+.pc--feat .pc-val { color:var(--white); } .pc--feat .pc-sym { color:rgba(255,255,255,0.35); }
+.pc-per { font-size:0.68rem; color:var(--gray-400); align-self:flex-end; margin-bottom:3px; }
+.pc--feat .pc-per { color:rgba(255,255,255,0.3); }
+.pc-txn { font-size:0.65rem; color:var(--gray-400); margin-bottom:20px; }
+.pc--feat .pc-txn { color:rgba(255,255,255,0.3); }
+.pc-txn span { color:var(--craft); font-weight:500; }
+.pc--feat .pc-txn span { color:rgba(74,103,133,0.9); }
+.pc-highlight { display:flex; align-items:center; gap:5px; font-size:0.62rem; font-weight:600; color:var(--craft); background:var(--craft-pale); padding:5px 10px; border-radius:100px; border:1px solid rgba(74,103,133,0.18); margin-bottom:14px; }
+.pc--feat .pc-highlight { color:rgba(74,103,133,0.9); background:rgba(74,103,133,0.12); border-color:rgba(74,103,133,0.25); }
+.pc-hr { height:1px; background:var(--gray-200); margin-bottom:18px; }
+.pc--feat .pc-hr { background:rgba(255,255,255,0.1); }
+.pc-features { display:flex; flex-direction:column; gap:8px; flex:1; margin-bottom:22px; }
+.pcf { display:flex; align-items:flex-start; gap:7px; font-size:0.75rem; color:var(--ink); font-weight:300; line-height:1.4; }
+.pc--feat .pcf { color:rgba(255,255,255,0.55); }
+.pc-ck { color:var(--craft); font-size:0.68rem; font-weight:600; flex-shrink:0; margin-top:2px; }
+.pc--feat .pc-ck { color:rgba(74,103,133,0.9); }
+.pc-no { color:var(--gray-300); font-size:0.68rem; flex-shrink:0; margin-top:2px; }
+.pc-btn { display:flex; align-items:center; justify-content:center; padding:12px; border-radius:2px; font-family:var(--sans); font-size:0.7rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; border:1.5px solid var(--gray-300); background:transparent; color:var(--black); transition:all 0.2s; text-decoration:none; }
+.pc-btn:hover { border-color:var(--craft); color:var(--craft); }
+.pc-btn-solid { background:var(--white); color:var(--black); border-color:transparent; }
+.pc-btn-solid:hover { background:var(--craft-pale); }
+.pricing-note { text-align:center; margin-top:14px; font-size:0.72rem; color:var(--gray-400); display:flex; align-items:center; justify-content:center; gap:8px; }
+.pricing-note-dot { width:6px; height:6px; border-radius:50%; background:var(--craft); animation:pulse 2.4s ease-in-out infinite; }
+
+/* ═══════════════════════════════
+   9. CLOSING CTA
+═══════════════════════════════ */
+.closing-cta { background:var(--craft); padding:96px 64px; position:relative; overflow:hidden; }
+.closing-cta::before { content:''; position:absolute; right:-60px; top:-60px; width:500px; height:500px; border-radius:50%; border:1px solid rgba(255,255,255,0.07); }
+.closing-cta::after  { content:''; position:absolute; right:60px; top:40px; width:280px; height:280px; border-radius:50%; border:1px solid rgba(255,255,255,0.05); }
+.cta-inner { max-width:1160px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:48px; position:relative; z-index:2; }
+.cta-text h2 { font-family:var(--serif); font-size:clamp(2rem,3.5vw,3.2rem); font-weight:300; color:var(--white); line-height:1.15; margin-bottom:12px; }
+.cta-text p { font-size:0.92rem; color:rgba(255,255,255,0.65); font-weight:300; line-height:1.75; max-width:440px; }
+.cta-right { display:flex; flex-direction:column; align-items:flex-end; gap:12px; flex-shrink:0; }
+.cta-btn-white { display:inline-flex; align-items:center; gap:10px; background:var(--white); color:var(--black); font-family:var(--sans); font-size:0.72rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; padding:15px 36px; border-radius:2px; text-decoration:none; transition:all 0.22s; border:none; cursor:pointer; }
+.cta-btn-white:hover { background:var(--craft-pale); transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.15); }
+.cta-btn-white svg { transition:transform 0.22s; }
+.cta-btn-white:hover svg { transform:translateX(4px); }
+.cta-note { font-size:0.7rem; color:rgba(255,255,255,0.45); text-align:right; }
+
+/* ── BOTANICAL DIVIDER ── */
+.botanical-divider { display:flex; align-items:center; gap:20px; max-width:1160px; margin:0 auto; padding:0 64px; color:var(--gray-300); }
+.botanical-divider::before,.botanical-divider::after { content:''; flex:1; height:1px; background:var(--gray-200); }
+
+/* ── FOOTER ── */
+.mkt-footer { background:var(--black); padding:64px 64px 0; }
+.footer-top { max-width:1160px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:56px; padding-bottom:48px; border-bottom:1px solid rgba(255,255,255,0.07); }
+.footer-logo { font-family:var(--script); font-size:1.6rem; color:var(--green-light); display:block; margin-bottom:12px; font-weight:700; text-decoration:none; }
+.footer-tagline { font-size:0.82rem; color:rgba(255,255,255,0.35); line-height:1.7; font-weight:300; max-width:260px; margin-bottom:24px; }
+.footer-social { display:flex; gap:8px; }
+.footer-social-link { width:32px; height:32px; border:1px solid rgba(255,255,255,0.1); border-radius:2px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; text-decoration:none; }
+.footer-social-link:hover { border-color:var(--green-light); }
+.footer-col h4 { font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.25); margin-bottom:18px; font-weight:500; }
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:11px; }
+.footer-col ul a { font-size:0.83rem; color:rgba(255,255,255,0.5); text-decoration:none; transition:color 0.2s; font-weight:300; }
+.footer-col ul a:hover { color:var(--green-light); }
+.footer-bottom { max-width:1160px; margin:0 auto; padding:22px 0; display:flex; align-items:center; justify-content:space-between; }
+.footer-copy { font-size:0.7rem; color:rgba(255,255,255,0.2); }
+.footer-script { font-family:var(--script); font-size:0.95rem; color:rgba(255,255,255,0.12); font-weight:600; }
+.footer-legal { display:flex; gap:18px; }
+.footer-legal a { font-size:0.65rem; color:rgba(255,255,255,0.2); text-decoration:none; transition:color 0.2s; }
+.footer-legal a:hover { color:rgba(255,255,255,0.5); }
+
+/* ── KEYFRAMES ── */
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { to { opacity:1; } }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+
+/* ── RESPONSIVE ── */
+@media (max-width:1024px) {
+  .mkt-nav { padding:0 40px; } .nav-center { display:none; }
+  .hero { grid-template-columns:1fr; min-height:auto; }
+  .hero-right { padding:48px 40px; }
+  .hero-left { padding:80px 40px 48px; }
+  .story-inner,.features-header,.demo-inner,.faq-inner { grid-template-columns:1fr; gap:40px; }
+  .features-grid { grid-template-columns:1fr 1fr; }
+  .workflow-steps { grid-template-columns:1fr 1fr; gap:40px; }
+  .workflow-steps::before { display:none; }
+  .t-grid { grid-template-columns:1fr; }
+  .pricing-grid { grid-template-columns:1fr 1fr; } .pc--feat { transform:none; }
+  .cta-inner { flex-direction:column; align-items:flex-start; }
+  .cta-right { align-items:flex-start; }
+  .cta-note { text-align:left; }
+  .story-section,.demo-section,.testimonials-section,.faq-section,.pricing-section,.closing-cta,.mkt-footer,
+  .features-section,.workflow-section { padding-left:40px; padding-right:40px; }
+  .botanical-divider { padding:0 40px; }
+  .footer-top { grid-template-columns:1fr 1fr; }
+}
+@media (max-width:640px) {
+  .mkt-nav { padding:0 24px; }
+  .hero-left { padding:72px 24px 40px; }
+  .hero-right { padding:40px 24px; }
+  .features-grid,.pricing-grid { grid-template-columns:1fr; }
+  .workflow-steps { grid-template-columns:1fr; }
+  .hero-actions { flex-direction:column; align-items:flex-start; }
+  .story-section,.demo-section,.testimonials-section,.faq-section,.pricing-section,.closing-cta,.mkt-footer,
+  .features-section,.workflow-section { padding-left:24px; padding-right:24px; }
+  .botanical-divider { padding:0 24px; }
+  .footer-top { grid-template-columns:1fr; }
+  .footer-bottom { flex-direction:column; gap:10px; text-align:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="mkt-nav" id="mkt-nav">
+  <a href="index.html" class="nav-logo">Evercrafted</a>
+  <ul class="nav-center">
+    <li><a href="index.html#services">Platform</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Pricing</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <span class="nav-tier-pill">📦 Craft tier · From $39/mo</span>
+    <a href="index.html" class="nav-signin">Sign in</a>
+    <a href="index.html#contact" class="nav-cta">Get Access</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+  1. HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-pill">
+        <div class="eyebrow-dot"></div>
+        <span class="eyebrow-text">Craft tier · From $39/mo</span>
+      </div>
+    </div>
+    <span class="hero-kicker">Inventory & Materials Tracker</span>
+    <h1 class="hero-title">Know <em>exactly</em><br>what you have —<br>before you need it.</h1>
+    <p class="hero-body">Track every stem, spool, and supply across all your wreath projects. Low-stock alerts before you run out. Category filters so nothing gets buried. Built for makers who actually make things.</p>
+    <div class="hero-actions">
+      <a href="index.html#contact" class="btn btn-dark btn-lg">
+        Get Craft Access
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#demo" class="btn btn-outline btn-lg">See it in action</a>
+    </div>
+    <div class="hero-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--stock-ok)"></div>In stock</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--stock-low)"></div>Low stock</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--stock-crit)"></div>Critical</div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="inv-mockup">
+      <div class="inv-topbar">
+        <span class="inv-title">Inventory</span>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:0.62rem;color:var(--stock-low);font-weight:500">⚠ 3 low stock</span>
+          <button class="inv-add-btn">+ Add item</button>
+        </div>
+      </div>
+      <div class="inv-filters">
+        <div class="inv-filter-chip active">All</div>
+        <div class="inv-filter-chip">Florals</div>
+        <div class="inv-filter-chip">Greenery</div>
+        <div class="inv-filter-chip">Ribbon</div>
+        <div class="inv-filter-chip">Bases</div>
+        <div class="inv-filter-chip">Accents</div>
+      </div>
+      <div class="inv-table-head">
+        <div class="inv-th">Item</div>
+        <div class="inv-th">Qty</div>
+        <div class="inv-th">Reorder at</div>
+        <div class="inv-th">Status</div>
+      </div>
+      <div class="inv-rows">
+        <div class="inv-row">
+          <div><div class="inv-item-name">Dried Hydrangea Stems</div><div class="inv-item-cat">Florals</div></div>
+          <div><div class="inv-qty">48</div><div class="inv-unit">stems</div></div>
+          <div><div class="inv-threshold">20</div></div>
+          <div><span class="inv-status ok">● In stock</span></div>
+        </div>
+        <div class="inv-row low">
+          <div><div class="inv-item-name">Eucalyptus Sprigs</div><div class="inv-item-cat">Greenery</div></div>
+          <div><div class="inv-qty">12</div><div class="inv-unit">bundles</div></div>
+          <div><div class="inv-threshold">15</div></div>
+          <div><span class="inv-status low">▲ Low</span></div>
+        </div>
+        <div class="inv-row crit">
+          <div><div class="inv-item-name">Wired Velvet Ribbon</div><div class="inv-item-cat">Ribbon</div></div>
+          <div><div class="inv-qty">3</div><div class="inv-unit">spools</div></div>
+          <div><div class="inv-threshold">10</div></div>
+          <div><span class="inv-status crit">✕ Critical</span></div>
+        </div>
+        <div class="inv-row">
+          <div><div class="inv-item-name">Grapevine Wreath Base</div><div class="inv-item-cat">Bases</div></div>
+          <div><div class="inv-qty">22</div><div class="inv-unit">units</div></div>
+          <div><div class="inv-threshold">5</div></div>
+          <div><span class="inv-status ok">● In stock</span></div>
+        </div>
+        <div class="inv-row low">
+          <div><div class="inv-item-name">Dried Thistle</div><div class="inv-item-cat">Accents</div></div>
+          <div><div class="inv-qty">8</div><div class="inv-unit">stems</div></div>
+          <div><div class="inv-threshold">12</div></div>
+          <div><span class="inv-status low">▲ Low</span></div>
+        </div>
+      </div>
+      <div class="inv-footer">
+        <span class="inv-foot-txt">34 items tracked</span>
+        <span class="inv-foot-alert">Velvet Ribbon — critical</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Botanical divider -->
+<div class="botanical-divider" style="padding-top:48px">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- ══════════════════════════════════════
+  2. STORY
+══════════════════════════════════════ -->
+<section class="story-section">
+  <div class="story-inner">
+    <div class="story-left reveal-left">
+      <div class="section-label"><span>The real cost of guessing</span></div>
+      <h2>Every mid-project supply run<br>is a <em>design decision</em> you didn't want to make.</h2>
+      <p>You're halfway through a wreath. The eucalyptus is gone. You knew it was running low — you just didn't know how low. Now you're substituting materials, improvising, or leaving the project unfinished until an order arrives.</p>
+      <p>The Inventory Tracker ends that. It's a single, honest view of what you have, what you're running low on, and what needs ordering — before it becomes a problem on the workbench.</p>
+    </div>
+    <div class="story-right reveal-right d2">
+      <div class="stat-row">
+        <div class="stat-cell">
+          <div class="stat-num">6+</div>
+          <div class="stat-label">Supply categories — Florals, Greenery, Ribbon, Bases, Accents, Tools. Every material type has a home.</div>
+        </div>
+        <div class="stat-cell stat-cell--dark">
+          <div class="stat-num">3</div>
+          <div class="stat-label">Stock status levels — In stock, Low, and Critical — color-coded so problems are impossible to miss.</div>
+        </div>
+        <div class="stat-cell" style="grid-column:1/-1">
+          <div class="stat-num">∞</div>
+          <div class="stat-label">Items tracked. No per-item limits at any tier. Add as many materials as your studio requires.</div>
+        </div>
+      </div>
+      <div class="story-pullquote">
+        <p>"I used to order supplies by memory. Now I look at my tracker every Monday morning and I know exactly what to order before the week starts. I haven't done an emergency craft store run in three months."</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  3. FEATURES
+══════════════════════════════════════ -->
+<section class="features-section">
+  <div class="features-header">
+    <div class="reveal">
+      <div class="section-label"><span>What it does</span></div>
+      <h2>Every feature your<br>studio actually needs</h2>
+    </div>
+    <p class="reveal d2">Built specifically for wreath and floral makers — not adapted from a generic inventory app. Every field, every filter, and every alert is designed around how you actually work.</p>
+  </div>
+  <div class="features-grid">
+    <div class="fc reveal d1">
+      <span class="fc-num">01</span>
+      <div class="fc-icon">📋</div>
+      <div class="fc-title">Full item management</div>
+      <p class="fc-desc">Add, edit, and delete inventory items with name, category, quantity, unit, and reorder threshold. Everything you need, nothing you don't.</p>
+      <span class="fc-tag">Craft+</span>
+    </div>
+    <div class="fc fc--craft reveal d2">
+      <span class="fc-num">02</span>
+      <div class="fc-icon">🔴</div>
+      <div class="fc-title">Low-stock alerts</div>
+      <p class="fc-desc">Set a reorder threshold per item. When stock drops below it, the row turns amber. Drop to critical and it turns red. You'll never miss a supply problem again.</p>
+      <span class="fc-tag">Craft+</span>
+    </div>
+    <div class="fc reveal d3">
+      <span class="fc-num">03</span>
+      <div class="fc-icon">🏷️</div>
+      <div class="fc-title">Category filters</div>
+      <p class="fc-desc">Filter your inventory by Greenery, Florals, Accents, Bases, Tools, or Ribbon. Find exactly what you're looking for without scrolling through everything.</p>
+      <span class="fc-tag">Craft+</span>
+    </div>
+    <div class="fc fc--dark reveal d1">
+      <span class="fc-num">04</span>
+      <div class="fc-icon">⚡</div>
+      <div class="fc-title">Quick-add from a project</div>
+      <p class="fc-desc">When you're building a Blueprint, add its full materials list to your inventory in one click. No re-typing. The tracker stays in sync with what you're actually building.</p>
+      <span class="fc-tag">Craft+</span>
+    </div>
+    <div class="fc reveal d2">
+      <span class="fc-num">05</span>
+      <div class="fc-icon">📊</div>
+      <div class="fc-title">Usage history per item</div>
+      <p class="fc-desc">At Studio tier, see which blueprints and projects each material has been used in — so you can plan purchases based on real usage patterns, not gut feel.</p>
+      <span class="fc-tag" style="background:var(--studio-pale);color:var(--studio-c);border-color:rgba(122,74,133,0.18)">Studio+</span>
+    </div>
+    <div class="fc reveal d3">
+      <span class="fc-num">06</span>
+      <div class="fc-icon">🤖</div>
+      <div class="fc-title">AI reorder suggestions</div>
+      <p class="fc-desc">At Atelier tier, AI spots trends in your usage data and suggests when and what to reorder — factoring in upcoming seasonal demand so you're never caught short.</p>
+      <span class="fc-tag" style="background:var(--atelier-pale);color:var(--atelier-c);border-color:rgba(26,26,26,0.15)">Atelier</span>
+    </div>
+  </div>
+</section>
+
+<!-- Botanical divider -->
+<div class="botanical-divider">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- ══════════════════════════════════════
+  4. DEMO — FULL EXPANDED TABLE
+══════════════════════════════════════ -->
+<section class="demo-section" id="demo">
+  <div class="demo-inner">
+    <div class="demo-left reveal-left">
+      <div class="section-label"><span>Inside the tracker</span></div>
+      <h2>Your whole studio,<br><em>one honest table</em></h2>
+      <p>A clean, sortable table with inline editing. No cluttered forms. No hidden menus. Every item, every category, every status — visible at a glance.</p>
+      <div class="demo-points">
+        <div class="demo-point">
+          <div class="demo-point-dot"></div>
+          <div>
+            <div class="demo-point-title">Inline editing</div>
+            <div class="demo-point-desc">Click any cell to edit quantity directly in the table. No modal, no page reload.</div>
+          </div>
+        </div>
+        <div class="demo-point">
+          <div class="demo-point-dot"></div>
+          <div>
+            <div class="demo-point-title">Colour-coded at a glance</div>
+            <div class="demo-point-desc">Green, amber, red. Critical items are impossible to ignore, by design.</div>
+          </div>
+        </div>
+        <div class="demo-point">
+          <div class="demo-point-dot"></div>
+          <div>
+            <div class="demo-point-title">Filter to what matters</div>
+            <div class="demo-point-desc">Click a category chip to instantly filter. Planning a ribbon-focused order? One click.</div>
+          </div>
+        </div>
+        <div class="demo-point">
+          <div class="demo-point-dot"></div>
+          <div>
+            <div class="demo-point-title">Add panel slides in</div>
+            <div class="demo-point-desc">New item form slides in from the right — no page navigation, no losing your scroll position.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="reveal-right d2">
+      <div class="full-mockup">
+        <div class="fm-topbar">
+          <span class="fm-title">Inventory — All Categories</span>
+          <div class="fm-meta">
+            <span class="fm-alert-badge">⚠ 2 critical · 3 low</span>
+            <button class="fm-add">+ Add item</button>
+          </div>
+        </div>
+        <div class="fm-filters">
+          <div class="fm-chip active">All (34)</div>
+          <div class="fm-chip">Florals (12)</div>
+          <div class="fm-chip">Greenery (8)</div>
+          <div class="fm-chip">Ribbon (4)</div>
+          <div class="fm-chip">Bases (5)</div>
+          <div class="fm-chip">Accents (5)</div>
+        </div>
+        <div class="fm-thead">
+          <div class="fm-th">Item / Category</div>
+          <div class="fm-th">Qty</div>
+          <div class="fm-th">Reorder at</div>
+          <div class="fm-th">Unit</div>
+          <div class="fm-th">Status</div>
+        </div>
+        <div class="fm-body">
+          <div class="fm-row crit">
+            <div><div class="fm-name">Wired Velvet Ribbon</div><div class="fm-cat">Ribbon</div></div>
+            <div class="fm-qty">3</div>
+            <div class="fm-reorder">10</div>
+            <div class="fm-unit">spools</div>
+            <div><span class="fm-status crit">✕ Critical</span></div>
+          </div>
+          <div class="fm-row crit">
+            <div><div class="fm-name">16" Foam Wreath Ring</div><div class="fm-cat">Bases</div></div>
+            <div class="fm-qty">2</div>
+            <div class="fm-reorder">6</div>
+            <div class="fm-unit">units</div>
+            <div><span class="fm-status crit">✕ Critical</span></div>
+          </div>
+          <div class="fm-row low">
+            <div><div class="fm-name">Eucalyptus Sprigs</div><div class="fm-cat">Greenery</div></div>
+            <div class="fm-qty">12</div>
+            <div class="fm-reorder">15</div>
+            <div class="fm-unit">bundles</div>
+            <div><span class="fm-status low">▲ Low</span></div>
+          </div>
+          <div class="fm-row low">
+            <div><div class="fm-name">Dried Thistle</div><div class="fm-cat">Accents</div></div>
+            <div class="fm-qty">8</div>
+            <div class="fm-reorder">12</div>
+            <div class="fm-unit">stems</div>
+            <div><span class="fm-status low">▲ Low</span></div>
+          </div>
+          <div class="fm-row low">
+            <div><div class="fm-name">Paddle Wire</div><div class="fm-cat">Tools</div></div>
+            <div class="fm-qty">4</div>
+            <div class="fm-reorder">8</div>
+            <div class="fm-unit">rolls</div>
+            <div><span class="fm-status low">▲ Low</span></div>
+          </div>
+          <div class="fm-row">
+            <div><div class="fm-name">Dried Hydrangea Stems</div><div class="fm-cat">Florals</div></div>
+            <div class="fm-qty">48</div>
+            <div class="fm-reorder">20</div>
+            <div class="fm-unit">stems</div>
+            <div><span class="fm-status ok">● In stock</span></div>
+          </div>
+          <div class="fm-row">
+            <div><div class="fm-name">Grapevine Wreath Base 18"</div><div class="fm-cat">Bases</div></div>
+            <div class="fm-qty">22</div>
+            <div class="fm-reorder">5</div>
+            <div class="fm-unit">units</div>
+            <div><span class="fm-status ok">● In stock</span></div>
+          </div>
+        </div>
+        <div class="fm-footer">
+          <span class="fm-foot-left">34 items · Updated just now</span>
+          <span class="fm-foot-right">2 critical items need ordering</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  5. WORKFLOW
+══════════════════════════════════════ -->
+<section class="workflow-section">
+  <div class="workflow-header reveal">
+    <div class="section-label" style="justify-content:center"><span>How it fits your day</span></div>
+    <h2>From Monday review to Thursday build</h2>
+    <p>A simple weekly ritual that keeps your studio stocked and your projects on track.</p>
+  </div>
+  <div class="workflow-steps">
+    <div class="ws reveal d1">
+      <div class="ws-num">1</div>
+      <div class="ws-title">Monday morning review</div>
+      <p class="ws-desc">Open your tracker. Scan for amber and red. Know in 60 seconds what needs ordering before the week starts.</p>
+    </div>
+    <div class="ws reveal d2">
+      <div class="ws-num">2</div>
+      <div class="ws-title">Order what's low</div>
+      <p class="ws-desc">Filter to Low + Critical. Add to your wholesale cart. Check off items as you order. Stock levels update when they arrive.</p>
+    </div>
+    <div class="ws reveal d3">
+      <div class="ws-num">3</div>
+      <div class="ws-title">Build your blueprint</div>
+      <p class="ws-desc">When you generate a Blueprint, its materials list syncs to your tracker in one click. No double-entry, no guessing if you have enough.</p>
+    </div>
+    <div class="ws reveal d4">
+      <div class="ws-num">4</div>
+      <div class="ws-title">Deduct on completion</div>
+      <p class="ws-desc">At Studio tier, marking a blueprint complete automatically deducts its materials from your inventory. Your counts stay accurate without extra effort.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  6. TESTIMONIALS
+══════════════════════════════════════ -->
+<section class="testimonials-section">
+  <div class="t-inner">
+    <div class="t-header reveal">
+      <div class="section-label" style="justify-content:center"><span>What makers say</span></div>
+      <h2>No more emergency supply runs.</h2>
+      <p>From the Evercrafted early access community</p>
+    </div>
+    <div class="t-grid">
+      <div class="tc reveal d1">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"I used to order supplies by memory. Now I check my tracker every Monday and know exactly what to order before the week starts. I haven't done a panic craft store run in three months."</p>
+        <div class="t-author-row">
+          <div class="t-av" style="background:#7B9E76">ML</div>
+          <div><div class="t-name">Maria L.</div><div class="t-role">Full-time wreath artist · Etsy seller</div></div>
+        </div>
+      </div>
+      <div class="tc tc--dark reveal d2">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"The critical stock alert is everything. I had velvet ribbon hit critical two weeks before Christmas. The old me would have found out on December 22nd. This time I saw it in October and ordered in time."</p>
+        <div class="t-author-row">
+          <div class="t-av" style="background:#9E7B9E">DK</div>
+          <div><div class="t-name">Denise K.</div><div class="t-role">Holiday wreath specialist · Studio owner</div></div>
+        </div>
+      </div>
+      <div class="tc reveal d3">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"The quick-add from blueprint feature sold me. I design a wreath, click one button, and my inventory is updated with everything I need. It's so simple I use it every single time now."</p>
+        <div class="t-author-row">
+          <div class="t-av" style="background:#9E9A7B">TR</div>
+          <div><div class="t-name">Tanya R.</div><div class="t-role">Craft studio instructor</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Botanical divider -->
+<div class="botanical-divider" style="padding-top:48px;padding-bottom:0">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- ══════════════════════════════════════
+  7. FAQ
+══════════════════════════════════════ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="faq-left reveal-left">
+      <div class="section-label"><span>Questions</span></div>
+      <h2>Everything about<br>the tracker</h2>
+      <p>Anything else? Email hello@evercrafted.com — we reply within 24 hours.</p>
+      <a href="index.html#contact" class="btn btn-dark btn-md" style="margin-top:8px">Contact us →</a>
+    </div>
+    <div class="faq-list reveal d1">
+      <div class="faq-item open">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is there a limit to how many items I can track?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">No limit at any tier. Track 10 items or 10,000 — the tracker handles it. We don't believe in per-item pricing for a tool that's supposed to make your life easier.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Can I import my existing inventory from a spreadsheet?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">CSV import is on the roadmap for Q1 2026. For now, items are added manually or via the quick-add from Blueprint feature. If you have a large existing spreadsheet, reach out and we'll help you get it migrated.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What's the difference between the Craft and Studio inventory features?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">At Craft tier you get full item management, alerts, category filters, and quick-add. At Studio tier you also get usage history per item (see which blueprints used what) and auto-deduct when a blueprint is marked complete. At Atelier, you get AI reorder suggestions based on seasonal demand patterns.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How does auto-deduct work?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">At Studio tier, when you mark a Blueprint as "Complete," the system checks each material in the blueprint's materials list and subtracts the used quantity from your inventory. You can review the deduction before it applies. If a material in the blueprint isn't in your tracker, it flags it rather than silently ignoring it.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Can multiple team members update the same inventory?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Yes — Craft includes 2 user seats, Studio includes 5, and Atelier is unlimited. Any team member with access can update quantities, add items, and review alerts. Changes are logged so you can see who updated what and when.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  8. PRICING
+══════════════════════════════════════ -->
+<section class="pricing-section">
+  <div class="pricing-inner">
+    <div class="pricing-header reveal">
+      <div class="section-label" style="justify-content:center"><span>Pricing</span></div>
+      <h2>Inventory tracking starts at Craft</h2>
+      <p>Available at Craft tier and above. Bloom subscribers can upgrade at any time — your data transfers instantly.</p>
+    </div>
+    <div class="pricing-grid reveal d1">
+
+      <div class="pc pc--locked">
+        <div class="pc-lock">🔒</div>
+        <div class="pc-name">Bloom</div>
+        <div class="pc-sub">Not included</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">19</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn">+ <span>3%</span> transaction fee</div>
+        <div class="pc-highlight" style="background:var(--gray-200);color:var(--gray-400);border-color:transparent">✕ Inventory not available</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Tutorial Guide</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Seasonal Lookbook</div>
+          <div class="pcf"><span class="pc-no">—</span><span style="color:var(--gray-400)">Inventory Tracker</span></div>
+          <div class="pcf"><span class="pc-no">—</span><span style="color:var(--gray-400)">Pricing Calculator</span></div>
+        </div>
+        <a href="index.html#contact" class="pc-btn" style="pointer-events:none;opacity:0.4">Bloom plan</a>
+      </div>
+
+      <div class="pc pc--feat">
+        <div class="pc-pop">Inventory unlocks here</div>
+        <div class="pc-name">Craft</div>
+        <div class="pc-sub">For active sellers</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">39</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn">+ <span>2%</span> transaction fee</div>
+        <div class="pc-highlight">✓ Full inventory access</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Unlimited items</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Low-stock alerts</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Category filters</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Quick-add from blueprint</div>
+          <div class="pcf"><span class="pc-ck">✓</span>2 user seats</div>
+        </div>
+        <a href="index.html#contact" class="pc-btn pc-btn-solid">Get Craft access</a>
+      </div>
+
+      <div class="pc">
+        <div class="pc-name">Studio</div>
+        <div class="pc-sub">For professionals</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">69</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn">+ <span>1%</span> transaction fee</div>
+        <div class="pc-highlight">✓ + Usage history & auto-deduct</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Everything in Craft</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Usage history per item</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Auto-deduct on blueprint complete</div>
+          <div class="pcf"><span class="pc-ck">✓</span>5 user seats</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Blueprint Generator + 8 more apps</div>
+        </div>
+        <a href="index.html#contact" class="pc-btn">Get Studio access</a>
+      </div>
+
+      <div class="pc">
+        <div class="pc-name">Atelier</div>
+        <div class="pc-sub">For studios</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">129</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn"><span>0%</span> transaction fee</div>
+        <div class="pc-highlight">✓ + AI reorder suggestions</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Everything in Studio</div>
+          <div class="pcf"><span class="pc-ck">✓</span>AI reorder suggestions</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Seasonal demand forecast</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Unlimited user seats</div>
+          <div class="pcf"><span class="pc-ck">✓</span>All 19 apps included</div>
+        </div>
+        <a href="index.html#contact" class="pc-btn">Get Atelier access</a>
+      </div>
+
+    </div>
+    <div class="pricing-note reveal">
+      <div class="pricing-note-dot"></div>
+      <span>No lock-in contracts · Cancel or change plan anytime · 14-day free trial on all paid plans</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  9. CLOSING CTA
+══════════════════════════════════════ -->
+<section class="closing-cta">
+  <div class="cta-inner">
+    <div class="cta-text reveal">
+      <h2>Stop ordering supplies<br>from memory.</h2>
+      <p>The Inventory Tracker is included in every Craft plan — from $39/month. Know exactly what you have before it becomes a problem.</p>
+    </div>
+    <div class="cta-right reveal d2">
+      <a href="index.html#contact" class="cta-btn-white">
+        Get Craft Access
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <span class="cta-note">Craft from $39/mo · 14-day trial · No card required</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="mkt-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="footer-logo">Evercrafted</a>
+      <p class="footer-tagline">The all-in-one platform for professional wreath makers and interior designers.</p>
+      <div class="footer-social">
+        <a href="#" class="footer-social-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="#" class="footer-social-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Platform</h4><ul><li><a href="#">All 19 Apps</a></li><li><a href="#">Craft Tier</a></li><li><a href="#">Studio Tier</a></li><li><a href="#">Pricing</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Resources</h4><ul><li><a href="#">Docs</a></li><li><a href="#">Help Center</a></li><li><a href="#">Status</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Evercrafted. All rights reserved.</p>
+    <p class="footer-script">Made with care ✦</p>
+    <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></div>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('mkt-nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => io.observe(el));
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

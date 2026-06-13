@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Marketing Shell (Template)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Dancing+Script:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!--
+╔══════════════════════════════════════════════════════════════╗
+║  EVERCRAFTED MARKETING SHELL — SHARED TEMPLATE              ║
+║                                                              ║
+║  HOW TO USE:                                                 ║
+║  1. Copy this file → rename to market-[app-name].html       ║
+║  2. Update <title> and <meta> description                    ║
+║  3. Replace APP_* variables in the <script> block           ║
+║  4. Replace the <!-- APP CONTENT --> section                 ║
+║  5. The nav, footer, styles, and components stay identical  ║
+╚══════════════════════════════════════════════════════════════╝
+-->
+
+<style>
+/* ═══════════════════════════════════════════════════════════
+   DESIGN TOKENS — identical across all 19 marketing pages
+═══════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Core */
+  --white:        #FFFFFF;
+  --off-white:    #F9F7F4;
+  --paper:        #F2EFE9;
+  --parchment:    #EAE4DA;
+  --black:        #1A1A1A;
+  --charcoal:     #2E2E2E;
+  --ink:          #4A4A4A;
+  /* Brand green */
+  --green:        #4A6741;
+  --green-light:  #6B8F67;
+  --green-pale:   #EEF2ED;
+  --green-dim:    rgba(74,103,65,0.10);
+  /* Neutrals */
+  --gray-200:     #E8E8E8;
+  --gray-300:     #D0D0D0;
+  --gray-400:     #A8A8A8;
+  --gray-500:     #787878;
+  /* Tier colours */
+  --bloom:        #4A6741;
+  --bloom-pale:   #EEF2ED;
+  --craft-c:      #4A6785;
+  --craft-pale:   #EEF1F6;
+  --studio-c:     #7A4A85;
+  --studio-pale:  #F3EEF6;
+  --atelier-c:    #1A1A1A;
+  --atelier-pale: #F0EDE8;
+  /* Typography */
+  --serif:  'Cormorant Garamond', Georgia, serif;
+  --sans:   'Inter', system-ui, sans-serif;
+  --script: 'Dancing Script', cursive;
+  /* Motion */
+  --ease:   cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html, body {
+  font-family: var(--sans);
+  background: var(--off-white);
+  color: var(--black);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SCROLL REVEAL
+═══════════════════════════════════════════════════════════ */
+.reveal, .reveal-left, .reveal-right {
+  opacity: 0;
+  transition: opacity 0.85s var(--ease), transform 0.85s var(--ease);
+}
+.reveal       { transform: translateY(28px); }
+.reveal-left  { transform: translateX(-24px); }
+.reveal-right { transform: translateX(24px); }
+.reveal.visible, .reveal-left.visible, .reveal-right.visible {
+  opacity: 1; transform: none;
+}
+.d1 { transition-delay: 0.08s; }
+.d2 { transition-delay: 0.16s; }
+.d3 { transition-delay: 0.24s; }
+.d4 { transition-delay: 0.32s; }
+.d5 { transition-delay: 0.40s; }
+
+/* ═══════════════════════════════════════════════════════════
+   NAV — SHARED ACROSS ALL PAGES
+═══════════════════════════════════════════════════════════ */
+.mkt-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 56px;
+  background: rgba(249,247,244,0.90);
+  backdrop-filter: blur(16px) saturate(1.3);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, background 0.3s;
+}
+.mkt-nav.scrolled { border-color: var(--gray-200); }
+
+.nav-logo {
+  font-family: var(--script);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--green);
+  text-decoration: none;
+  line-height: 1;
+}
+
+.nav-center {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+.nav-center a {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-center a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0; right: 0;
+  height: 1px;
+  background: var(--green);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease);
+}
+.nav-center a:hover { color: var(--green); }
+.nav-center a:hover::after { transform: scaleX(1); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.nav-signin {
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-signin:hover { color: var(--black); }
+.nav-cta {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--black);
+  color: var(--white);
+  padding: 9px 22px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+.nav-cta:hover { background: var(--green); transform: translateY(-1px); }
+
+/* Tier badge in nav (set per page) */
+.nav-tier-pill {
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REUSABLE SECTION LABEL
+═══════════════════════════════════════════════════════════ */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.section-label::before {
+  content: '';
+  width: 28px; height: 1px;
+  background: var(--green);
+  flex-shrink: 0;
+}
+.section-label span {
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   REUSABLE BUTTONS
+═══════════════════════════════════════════════════════════ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sans);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border: none;
+  cursor: pointer;
+  border-radius: 2px;
+  transition: all 0.22s;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-lg  { font-size: 0.72rem; padding: 15px 36px; }
+.btn-md  { font-size: 0.70rem; padding: 12px 28px; }
+.btn-sm  { font-size: 0.65rem; padding: 9px 20px; }
+.btn-dark { background: var(--black); color: var(--white); }
+.btn-dark:hover { background: var(--green); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74,103,65,0.25); }
+.btn-green { background: var(--green); color: var(--white); }
+.btn-green:hover { background: var(--green-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74,103,65,0.25); }
+.btn-outline { background: transparent; color: var(--black); border: 1.5px solid var(--gray-300); }
+.btn-outline:hover { border-color: var(--black); }
+.btn-ghost { background: transparent; color: var(--ink); }
+.btn-ghost:hover { color: var(--green); }
+.btn svg { transition: transform 0.22s; }
+.btn:hover svg { transform: translateX(4px); }
+
+/* ═══════════════════════════════════════════════════════════
+   REUSABLE FEATURE CARD
+═══════════════════════════════════════════════════════════ */
+.feature-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 3px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform 0.28s var(--ease), box-shadow 0.28s;
+  position: relative;
+  overflow: hidden;
+}
+.feature-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--ease);
+}
+.feature-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.08); z-index: 2; }
+.feature-card:hover::after { transform: scaleX(1); }
+.feature-card--green-bar::after { background: var(--green); }
+.feature-card--craft-bar::after { background: var(--craft-c); }
+.feature-card--studio-bar::after { background: var(--studio-c); }
+.feature-card--atelier-bar::after { background: var(--atelier-c); }
+
+.feature-icon {
+  width: 44px; height: 44px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+.fi-bloom   { background: var(--bloom-pale); }
+.fi-craft   { background: var(--craft-pale); }
+.fi-studio  { background: var(--studio-pale); }
+.fi-atelier { background: var(--atelier-pale); }
+
+.feature-title {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--black);
+  line-height: 1.25;
+}
+.feature-desc {
+  font-size: 0.83rem;
+  line-height: 1.75;
+  color: var(--gray-500);
+  font-weight: 300;
+  flex: 1;
+}
+.feature-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+  width: fit-content;
+}
+.fp-bloom   { background: var(--bloom-pale);   color: var(--bloom);    border: 1px solid rgba(74,103,65,0.18); }
+.fp-craft   { background: var(--craft-pale);   color: var(--craft-c);  border: 1px solid rgba(74,103,133,0.18); }
+.fp-studio  { background: var(--studio-pale);  color: var(--studio-c); border: 1px solid rgba(122,74,133,0.18); }
+.fp-atelier { background: var(--atelier-pale); color: var(--atelier-c);border: 1px solid rgba(26,26,26,0.18); }
+
+/* Dark / green feature card variants */
+.feature-card--dark { background: var(--black); border-color: transparent; }
+.feature-card--dark .feature-title { color: var(--white); }
+.feature-card--dark .feature-desc  { color: rgba(255,255,255,0.45); }
+.feature-card--dark .feature-icon  { background: rgba(255,255,255,0.07); }
+.feature-card--green { background: var(--green); border-color: transparent; }
+.feature-card--green .feature-title { color: var(--white); }
+.feature-card--green .feature-desc  { color: rgba(255,255,255,0.65); }
+.feature-card--green .feature-icon  { background: rgba(255,255,255,0.12); }
+
+/* ═══════════════════════════════════════════════════════════
+   REUSABLE TESTIMONIAL CARD
+═══════════════════════════════════════════════════════════ */
+.testimonial-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 3px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform 0.25s var(--ease);
+}
+.testimonial-card:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(0,0,0,0.07); }
+.testimonial-card--dark { background: var(--black); border-color: transparent; }
+.t-stars { font-size: 0.75rem; color: #C4922A; letter-spacing: 0.05em; }
+.t-quote {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.65;
+  color: var(--charcoal);
+  flex: 1;
+}
+.testimonial-card--dark .t-quote { color: rgba(255,255,255,0.75); }
+.t-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gray-200);
+}
+.testimonial-card--dark .t-author { border-color: rgba(255,255,255,0.08); }
+.t-avatar {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--white);
+  flex-shrink: 0;
+}
+.t-name { font-size: 0.75rem; font-weight: 500; color: var(--black); margin-bottom: 2px; }
+.testimonial-card--dark .t-name { color: var(--white); }
+.t-role { font-size: 0.65rem; color: var(--gray-400); }
+.testimonial-card--dark .t-role { color: rgba(255,255,255,0.35); }
+
+/* ═══════════════════════════════════════════════════════════
+   REUSABLE FAQ ACCORDION
+═══════════════════════════════════════════════════════════ */
+.faq-list { display: flex; flex-direction: column; }
+.faq-item { border-bottom: 1px solid var(--gray-200); }
+.faq-item:first-child { border-top: 1px solid var(--gray-200); }
+.faq-q {
+  width: 100%;
+  background: none; border: none;
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 400;
+  color: var(--black);
+  line-height: 1.3;
+  transition: color 0.2s;
+}
+.faq-q:hover { color: var(--green); }
+.faq-chevron {
+  width: 22px; height: 22px;
+  border: 1px solid var(--gray-300);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.3s var(--ease), background 0.2s, border-color 0.2s;
+}
+.faq-item.open .faq-chevron { transform: rotate(180deg); background: var(--green); border-color: var(--green); }
+.faq-item.open .faq-chevron svg path { stroke: white; }
+.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.45s var(--ease); }
+.faq-a-inner { padding: 0 0 20px; font-size: 0.88rem; line-height: 1.8; color: var(--ink); font-weight: 300; }
+.faq-item.open .faq-a { max-height: 400px; }
+
+/* ═══════════════════════════════════════════════════════════
+   REUSABLE PRICING CARD
+═══════════════════════════════════════════════════════════ */
+.pricing-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 3px;
+  padding: 32px 28px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform 0.25s var(--ease);
+}
+.pricing-card:hover { transform: translateY(-4px); box-shadow: 0 14px 40px rgba(0,0,0,0.08); }
+.pricing-card--featured { background: var(--black); border-color: transparent; transform: translateY(-8px); box-shadow: 0 20px 56px rgba(0,0,0,0.18); }
+.pricing-card--featured:hover { transform: translateY(-12px); }
+.pricing-popular-tag {
+  position: absolute; top: -1px; left: 50%; transform: translateX(-50%);
+  background: var(--green); color: var(--white);
+  font-size: 0.56rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 0 0 4px 4px;
+}
+.pricing-tier-script { font-family: var(--script); font-size: 1.4rem; font-weight: 600; color: var(--green); margin-bottom: 2px; }
+.pricing-card--featured .pricing-tier-script { color: var(--green-light); }
+.pricing-tier-sub { font-size: 0.65rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gray-400); margin-bottom: 24px; }
+.pricing-card--featured .pricing-tier-sub { color: rgba(255,255,255,0.3); }
+.pricing-price-row { display: flex; align-items: baseline; gap: 3px; margin-bottom: 4px; }
+.price-sym { font-family: var(--serif); font-size: 1rem; font-weight: 300; color: var(--gray-400); margin-top: 6px; }
+.price-val { font-family: var(--serif); font-size: 2.8rem; font-weight: 300; letter-spacing: -0.02em; color: var(--black); line-height: 1; }
+.pricing-card--featured .price-val { color: var(--white); }
+.pricing-card--featured .price-sym { color: rgba(255,255,255,0.35); }
+.price-per { font-size: 0.7rem; color: var(--gray-400); align-self: flex-end; margin-bottom: 4px; }
+.pricing-card--featured .price-per { color: rgba(255,255,255,0.3); }
+.pricing-txn { font-size: 0.68rem; color: var(--gray-400); margin-bottom: 24px; }
+.pricing-card--featured .pricing-txn { color: rgba(255,255,255,0.3); }
+.txn-hi { color: var(--green); font-weight: 500; }
+.pricing-card--featured .txn-hi { color: var(--green-light); }
+.pricing-hr { height: 1px; background: var(--gray-200); margin-bottom: 20px; }
+.pricing-card--featured .pricing-hr { background: rgba(255,255,255,0.1); }
+.pricing-features-list { display: flex; flex-direction: column; gap: 9px; flex: 1; margin-bottom: 24px; }
+.pf-item { display: flex; align-items: flex-start; gap: 8px; font-size: 0.78rem; color: var(--ink); font-weight: 300; line-height: 1.4; }
+.pricing-card--featured .pf-item { color: rgba(255,255,255,0.6); }
+.pf-check { color: var(--green); font-size: 0.7rem; font-weight: 600; flex-shrink: 0; margin-top: 2px; }
+.pricing-card--featured .pf-check { color: var(--green-light); }
+
+/* ═══════════════════════════════════════════════════════════
+   REUSABLE BOTANICAL DIVIDER
+═══════════════════════════════════════════════════════════ */
+.botanical-divider {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 64px;
+  color: var(--gray-300);
+}
+.botanical-divider::before,
+.botanical-divider::after { content: ''; flex: 1; height: 1px; background: var(--gray-200); }
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER — SHARED ACROSS ALL PAGES
+═══════════════════════════════════════════════════════════ */
+.mkt-footer {
+  background: var(--black);
+  padding: 64px 64px 0;
+}
+.footer-top {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 56px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.footer-logo { font-family: var(--script); font-size: 1.6rem; color: var(--green-light); display: block; margin-bottom: 12px; font-weight: 700; text-decoration: none; }
+.footer-tagline { font-size: 0.82rem; color: rgba(255,255,255,0.35); line-height: 1.7; font-weight: 300; max-width: 260px; margin-bottom: 24px; }
+.footer-social { display: flex; gap: 8px; }
+.footer-social-link { width: 32px; height: 32px; border: 1px solid rgba(255,255,255,0.1); border-radius: 2px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; text-decoration: none; }
+.footer-social-link:hover { border-color: var(--green-light); background: rgba(107,143,103,0.12); }
+.footer-col h4 { font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255,255,255,0.25); margin-bottom: 18px; font-weight: 500; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 11px; }
+.footer-col ul a { font-size: 0.83rem; color: rgba(255,255,255,0.5); text-decoration: none; transition: color 0.2s; font-weight: 300; }
+.footer-col ul a:hover { color: var(--green-light); }
+.footer-bottom {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 22px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-copy { font-size: 0.7rem; color: rgba(255,255,255,0.2); }
+.footer-script { font-family: var(--script); font-size: 0.95rem; color: rgba(255,255,255,0.12); font-weight: 600; }
+.footer-legal { display: flex; gap: 18px; }
+.footer-legal a { font-size: 0.65rem; color: rgba(255,255,255,0.2); text-decoration: none; transition: color 0.2s; }
+.footer-legal a:hover { color: rgba(255,255,255,0.5); }
+
+/* ═══════════════════════════════════════════════════════════
+   RESPONSIVE SHELL
+═══════════════════════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .mkt-nav { padding: 0 40px; }
+  .nav-center { display: none; }
+  .mkt-footer, .botanical-divider { padding-left: 40px; padding-right: 40px; }
+  .footer-top { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .footer-brand { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .mkt-nav { padding: 0 24px; }
+  .nav-center { display: none; }
+  .mkt-footer { padding: 48px 24px 0; }
+  .footer-top { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+  .botanical-divider { padding: 0 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+  SHARED NAV — copy verbatim, only change
+  .nav-tier-pill class per page
+═══════════════════════════════════════ -->
+<nav class="mkt-nav" id="mkt-nav">
+  <a href="index.html" class="nav-logo">Evercrafted</a>
+
+  <ul class="nav-center">
+    <li><a href="index.html#services">Platform</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Pricing</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+
+  <div class="nav-right">
+    <!-- Change this pill class per page: fp-bloom / fp-craft / fp-studio / fp-atelier -->
+    <span class="nav-tier-pill fp-bloom">Bloom</span>
+    <a href="index.html#contact" class="nav-signin">Sign in</a>
+    <a href="index.html#contact" class="nav-cta">Get Access</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════
+  ↓↓↓ APP CONTENT GOES HERE ↓↓↓
+  Replace everything between these comments
+  with the specific app's marketing content.
+═══════════════════════════════════════ -->
+
+<div style="padding: 120px 64px; text-align: center; min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;">
+  <span style="font-family: var(--script); font-size: 1.4rem; color: var(--green);">Shell template</span>
+  <h1 style="font-family: var(--serif); font-size: 3rem; font-weight: 300; color: var(--black);">Replace this with app content</h1>
+  <p style="font-size: 0.9rem; color: var(--gray-500); max-width: 400px; line-height: 1.7;">Copy this file, rename it, update the nav tier pill, and replace this section with the app's marketing page content.</p>
+</div>
+
+<!-- ↑↑↑ END APP CONTENT ↑↑↑ -->
+
+<!-- ═══════════════════════════════════════
+  SHARED FOOTER — copy verbatim
+═══════════════════════════════════════ -->
+<footer class="mkt-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="footer-logo">Evercrafted</a>
+      <p class="footer-tagline">The all-in-one platform for professional wreath makers and interior designers.</p>
+      <div class="footer-social">
+        <a href="#" class="footer-social-link" aria-label="Instagram">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" class="footer-social-link" aria-label="Pinterest">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"><path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.77 1.23-5.22 1.23-5.22s-.31-.63-.31-1.57c0-1.47.85-2.57 1.91-2.57.9 0 1.34.68 1.34 1.49 0 .91-.58 2.27-.88 3.53-.25 1.05.52 1.91 1.55 1.91 1.86 0 3.12-2.4 3.12-5.23 0-2.16-1.46-3.77-4.09-3.77-2.98 0-4.83 2.22-4.83 4.7 0 .85.25 1.45.64 1.91.17.2.2.28.13.52-.05.17-.15.58-.2.74-.07.24-.27.32-.49.23-1.36-.55-1.99-2.04-1.99-3.71 0-2.76 2.33-6.1 6.97-6.1 3.73 0 6.2 2.71 6.2 5.63 0 3.86-2.14 6.75-5.29 6.75-1.06 0-2.06-.57-2.4-1.22l-.67 2.57c-.24.93-.89 2.1-1.33 2.81.97.3 2 .46 3.06.46 5.52 0 10-4.48 10-10S17.52 2 12 2z"/></svg>
+        </a>
+        <a href="#" class="footer-social-link" aria-label="Email">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Platform</h4>
+      <ul>
+        <li><a href="#">All 19 Apps</a></li>
+        <li><a href="#">Bloom Tier</a></li>
+        <li><a href="#">Craft Tier</a></li>
+        <li><a href="#">Studio Tier</a></li>
+        <li><a href="#">Atelier Tier</a></li>
+        <li><a href="#">Pricing</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <ul>
+        <li><a href="#">Wreath Design Guide</a></li>
+        <li><a href="#">Seasonal Lookbook</a></li>
+        <li><a href="#">Maker Community</a></li>
+        <li><a href="#">Help & Docs</a></li>
+        <li><a href="#">Status</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Evercrafted. All rights reserved.</p>
+    <p class="footer-script">Made with care ✦</p>
+    <div class="footer-legal">
+      <a href="#">Privacy</a>
+      <a href="#">Terms</a>
+      <a href="#">Cookies</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════
+   SHARED JS — copy verbatim into every page
+═══════════════════════════════════════ */
+
+// Nav scroll border
+const nav = document.getElementById('mkt-nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => io.observe(el));
+
+// FAQ accordion
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

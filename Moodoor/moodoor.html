@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moodoor — Dress your door with feeling</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #F5F0E8;
+    --ink: #1A1714;
+    --moss: #3D5A3E;
+    --rust: #B5451B;
+    --gold: #C9A84C;
+    --dust: #E8E0D0;
+    --mist: #8A8278;
+    --paper: #FAF7F2;
+    --warm-white: #FEFCF8;
+    --r: 2px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN TEXTURE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.5;
+  }
+
+  /* ── TYPOGRAPHY ── */
+  .serif { font-family: 'Cormorant Garamond', serif; }
+  h1, h2, h3 { font-family: 'Cormorant Garamond', serif; font-weight: 400; }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ════════════════════════════════
+     SCREEN 0 — LANDING
+  ════════════════════════════════ */
+  #s-landing {
+    background: var(--ink);
+    color: var(--cream);
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 3rem 2rem;
+    overflow: hidden;
+  }
+
+  .landing-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 110%, #3D5A3E44 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 20% 20%, #C9A84C22 0%, transparent 60%),
+      radial-gradient(ellipse 40% 30% at 80% 10%, #B5451B18 0%, transparent 60%);
+  }
+
+  .landing-mark {
+    position: absolute;
+    top: 2rem; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.8;
+  }
+
+  .landing-eyebrow {
+    font-size: 11px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+  }
+
+  .landing-h1 {
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    line-height: 0.92;
+    letter-spacing: -.02em;
+    margin-bottom: 2rem;
+    position: relative;
+  }
+
+  .landing-h1 em {
+    font-style: italic;
+    color: #D4A96A;
+  }
+
+  .landing-sub {
+    font-size: 1rem;
+    color: #B8B0A4;
+    max-width: 340px;
+    margin: 0 auto 3rem;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--rust);
+    color: #fff;
+    border: none;
+    padding: 14px 32px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: 1px;
+  }
+  .btn-primary:hover { background: #C94E1F; transform: translateY(-1px); }
+
+  .landing-scroll-hint {
+    position: absolute;
+    bottom: 2.5rem; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: #5A5550;
+    font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+  }
+  .scroll-line {
+    width: 1px; height: 40px; background: linear-gradient(to bottom, transparent, #5A5550);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse { 0%,100%{opacity:.3} 50%{opacity:1} }
+
+  .landing-trio {
+    display: flex; gap: 2rem; justify-content: center; margin-top: 4rem;
+    flex-wrap: wrap;
+  }
+  .trio-item {
+    text-align: center;
+    opacity: .55;
+    font-size: 12px;
+    letter-spacing: .05em;
+  }
+  .trio-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    display: block;
+    color: var(--gold);
+    opacity: .6;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  /* ════════════════════════════════
+     SCREEN 1 — QUIZ
+  ════════════════════════════════ */
+  #s-quiz {
+    background: var(--paper);
+    padding: 0;
+    flex-direction: column;
+  }
+
+  .quiz-header {
+    background: var(--ink);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .quiz-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    color: var(--cream);
+    letter-spacing: .02em;
+  }
+  .quiz-logo span { color: var(--gold); }
+
+  .quiz-progress {
+    display: flex; gap: 6px; align-items: center;
+  }
+  .q-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #3A3530;
+    transition: all .3s;
+  }
+  .q-dot.done { background: var(--gold); }
+  .q-dot.active { background: var(--rust); width: 18px; border-radius: 3px; }
+
+  .quiz-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 3rem 2rem 2rem;
+  }
+
+  .q-step { display: none; animation: fadeSlide .35s ease; }
+  .q-step.active { display: block; }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .q-num {
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--mist);
+    margin-bottom: .75rem;
+  }
+  .q-title {
+    font-size: clamp(1.8rem, 5vw, 2.8rem);
+    line-height: 1.1;
+    margin-bottom: .5rem;
+    font-weight: 400;
+  }
+  .q-sub {
+    font-size: 14px;
+    color: var(--mist);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  /* Mood grid */
+  .mood-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+  .mood-card {
+    border: 1px solid var(--dust);
+    background: var(--warm-white);
+    padding: 1.2rem 1rem;
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: var(--r);
+    position: relative;
+    overflow: hidden;
+  }
+  .mood-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity .2s;
+  }
+  .mood-card:hover { border-color: var(--mist); transform: translateY(-2px); }
+  .mood-card.selected {
+    border-color: var(--ink) !important;
+    background: var(--ink) !important;
+    color: var(--cream) !important;
+  }
+  .mood-card.selected .mood-sub { color: #8A8278 !important; }
+  .mood-icon { font-size: 1.5rem; margin-bottom: .5rem; display: block; }
+  .mood-name { font-weight: 500; font-size: 14px; }
+  .mood-sub { font-size: 12px; color: var(--mist); margin-top: 2px; }
+
+  /* Occasion pills */
+  .occasion-grid {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 2rem;
+  }
+  .occ-pill {
+    padding: 8px 16px;
+    border: 1px solid var(--dust);
+    background: var(--warm-white);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: 40px;
+    color: var(--ink);
+  }
+  .occ-pill:hover { border-color: var(--mist); }
+  .occ-pill.selected { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+
+  /* Style cards */
+  .style-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+  @media(min-width:500px) { .style-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .style-card {
+    border: 1px solid var(--dust);
+    background: var(--warm-white);
+    padding: 1rem;
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: var(--r);
+    text-align: center;
+  }
+  .style-card:hover { border-color: var(--mist); }
+  .style-card.selected { border-color: var(--ink); background: var(--ink); color: var(--cream); }
+  .style-swatch {
+    width: 100%; height: 48px; border-radius: 2px; margin-bottom: .6rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
+  .style-label { font-size: 12px; font-weight: 500; }
+
+  /* Budget slider */
+  .budget-display {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    line-height: 1;
+    margin-bottom: .5rem;
+  }
+  .budget-display sup { font-size: 1.5rem; vertical-align: top; margin-top: .5rem; }
+
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%; height: 2px;
+    background: var(--dust);
+    outline: none;
+    border-radius: 2px;
+    margin: 1rem 0 2rem;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px; height: 20px;
+    background: var(--ink);
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform .15s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+
+  .budget-labels {
+    display: flex; justify-content: space-between;
+    font-size: 11px; color: var(--mist); letter-spacing: .05em;
+    margin-top: -.5rem; margin-bottom: 2rem;
+  }
+
+  /* Photo upload */
+  .upload-zone {
+    border: 1.5px dashed var(--dust);
+    border-radius: 4px;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all .2s;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+  .upload-zone:hover { border-color: var(--mist); background: var(--dust)22; }
+  .upload-zone.has-file { border-color: var(--moss); background: #3D5A3E08; }
+  .upload-icon { font-size: 2rem; margin-bottom: .75rem; opacity: .4; }
+  .upload-title { font-size: 14px; font-weight: 500; margin-bottom: .25rem; }
+  .upload-sub { font-size: 12px; color: var(--mist); }
+  .upload-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+  .upload-preview {
+    width: 100%; max-height: 200px; object-fit: cover;
+    border-radius: 3px; display: none; margin-bottom: 1rem;
+  }
+
+  /* Constraints */
+  .constraint-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 2rem;
+  }
+  .c-toggle {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    border: 1px solid var(--dust);
+    background: var(--warm-white);
+    cursor: pointer;
+    border-radius: var(--r);
+    font-size: 13px;
+    transition: all .2s;
+    user-select: none;
+  }
+  .c-toggle:hover { border-color: var(--mist); }
+  .c-toggle.on { border-color: var(--ink); background: var(--ink); color: var(--cream); }
+  .c-check {
+    width: 16px; height: 16px; border: 1px solid var(--dust);
+    border-radius: 2px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; background: transparent; transition: all .2s;
+  }
+  .c-toggle.on .c-check { background: var(--rust); border-color: var(--rust); color: white; }
+
+  /* Nav buttons */
+  .q-nav {
+    display: flex; gap: 12px; align-items: center; margin-top: auto; padding-top: 2rem;
+  }
+  .btn-next {
+    padding: 12px 28px;
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: 1px;
+  }
+  .btn-next:hover { background: #2E2926; }
+  .btn-back {
+    padding: 12px 20px;
+    background: transparent;
+    color: var(--mist);
+    border: 1px solid var(--dust);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .2s;
+    border-radius: 1px;
+  }
+  .btn-back:hover { border-color: var(--mist); color: var(--ink); }
+  .btn-skip {
+    background: none; border: none; color: var(--mist); font-size: 12px;
+    cursor: pointer; padding: 4px 8px; margin-left: auto;
+    text-decoration: underline; text-underline-offset: 3px;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* ════════════════════════════════
+     SCREEN 2 — GENERATING
+  ════════════════════════════════ */
+  #s-generating {
+    background: var(--ink);
+    color: var(--cream);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+
+  .gen-spinner {
+    width: 60px; height: 60px;
+    border: 1px solid #3A3530;
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 1.2s linear infinite;
+    margin: 0 auto 2rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .gen-title {
+    font-size: 2rem;
+    margin-bottom: .5rem;
+  }
+  .gen-status {
+    font-size: 13px; color: var(--mist); letter-spacing: .05em;
+    min-height: 1.5em;
+    transition: opacity .3s;
+  }
+
+  .gen-steps {
+    margin-top: 3rem;
+    display: flex; flex-direction: column; gap: 12px;
+    text-align: left; max-width: 320px;
+  }
+  .gen-step {
+    display: flex; gap: 12px; align-items: flex-start;
+    font-size: 13px; color: #5A5550;
+    transition: color .4s;
+  }
+  .gen-step.done { color: var(--cream); }
+  .gen-step.active { color: var(--gold); }
+  .gen-step-icon {
+    width: 20px; height: 20px; border-radius: 50%;
+    border: 1px solid #3A3530;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; flex-shrink: 0; margin-top: 1px;
+    transition: all .4s;
+  }
+  .gen-step.done .gen-step-icon { background: var(--moss); border-color: var(--moss); color: white; }
+  .gen-step.active .gen-step-icon { border-color: var(--gold); color: var(--gold); animation: pulse .8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+  /* ════════════════════════════════
+     SCREEN 3 — RESULTS
+  ════════════════════════════════ */
+  #s-results {
+    background: var(--cream);
+    flex-direction: column;
+  }
+
+  .results-header {
+    background: var(--ink);
+    padding: 1.5rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .results-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem; color: var(--cream);
+  }
+  .results-logo span { color: var(--gold); }
+  .results-mood-tag {
+    font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--gold); opacity: .8;
+  }
+  .btn-restart {
+    padding: 8px 16px;
+    background: transparent; color: var(--mist);
+    border: 1px solid #3A3530;
+    font-family: 'DM Sans', sans-serif; font-size: 11px;
+    letter-spacing: .08em; text-transform: uppercase; cursor: pointer;
+    border-radius: 1px; transition: all .2s;
+  }
+  .btn-restart:hover { border-color: var(--mist); color: var(--cream); }
+
+  .results-body {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem;
+    width: 100%;
+  }
+
+  .results-intro {
+    margin-bottom: 2.5rem;
+  }
+  .results-intro h2 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.1;
+    margin-bottom: .5rem;
+  }
+  .results-intro p {
+    font-size: 14px; color: var(--mist); max-width: 480px; line-height: 1.7;
+  }
+
+  .concept-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 3rem;
+  }
+
+  .concept-card {
+    background: var(--warm-white);
+    border: 1px solid var(--dust);
+    border-radius: 3px;
+    overflow: hidden;
+    transition: all .25s;
+    cursor: pointer;
+  }
+  .concept-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(26,23,20,.1); }
+  .concept-card.featured {
+    border-color: var(--ink);
+    position: relative;
+  }
+  .concept-card.featured::before {
+    content: 'Best match';
+    position: absolute; top: 12px; right: 12px;
+    background: var(--ink); color: var(--cream);
+    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 1px;
+    z-index: 2;
+  }
+
+  .concept-visual {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+  }
+
+  .concept-info {
+    padding: 1.25rem;
+  }
+  .concept-mood-tag {
+    font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--mist); margin-bottom: .5rem;
+  }
+  .concept-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem; margin-bottom: .5rem; line-height: 1.2;
+  }
+  .concept-explanation {
+    font-size: 12px; color: var(--mist); line-height: 1.6; margin-bottom: 1.25rem;
+  }
+
+  .bundle-items {
+    border-top: 1px solid var(--dust);
+    padding-top: 1rem;
+    margin-bottom: 1rem;
+  }
+  .bundle-item {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 5px 0;
+    font-size: 12px;
+    border-bottom: 1px solid var(--dust);
+  }
+  .bundle-item:last-child { border-bottom: none; }
+  .bi-name { color: var(--ink); }
+  .bi-role {
+    font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
+    color: var(--mist); margin-right: 8px;
+  }
+  .bi-price { font-weight: 500; color: var(--ink); }
+  .bi-sub-tag {
+    font-size: 9px; padding: 1px 5px; background: #FAEEDA; color: #412402;
+    border-radius: 2px; margin-left: 4px;
+  }
+
+  .concept-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 1.25rem 1.25rem;
+  }
+  .concept-total {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+  }
+  .concept-total sup { font-size: .8rem; vertical-align: super; font-family: 'DM Sans', sans-serif; }
+  .btn-cart {
+    padding: 10px 20px;
+    background: var(--rust);
+    color: white;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+    cursor: pointer; transition: all .2s; border-radius: 1px;
+  }
+  .btn-cart:hover { background: #C94E1F; }
+  .btn-cart.added { background: var(--moss); }
+
+  .confidence-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 0 1.25rem .75rem;
+    font-size: 11px; color: var(--mist);
+  }
+  .conf-track {
+    flex: 1; height: 2px; background: var(--dust); border-radius: 2px; overflow: hidden;
+  }
+  .conf-fill {
+    height: 100%; border-radius: 2px; background: var(--moss);
+    transition: width 1s ease .3s;
+  }
+
+  /* ── TRANSFORMATION PREVIEW ── */
+  .transform-section {
+    margin-bottom: 3rem;
+    background: var(--warm-white);
+    border: 1px solid var(--dust);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .transform-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--dust);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .transform-header h3 { font-size: 1.2rem; }
+  .transform-tag {
+    font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--rust); background: #B5451B12; padding: 3px 8px; border-radius: 2px;
+  }
+  .transform-panels {
+    display: grid; grid-template-columns: 1fr 1fr;
+  }
+  @media(max-width: 600px) { .transform-panels { grid-template-columns: 1fr; } }
+  .transform-panel {
+    padding: 1.5rem;
+    height: 200px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .transform-panel:first-child { border-right: 1px solid var(--dust); }
+  .transform-label {
+    position: absolute; bottom: 10px; left: 12px;
+    font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--mist);
+  }
+
+  /* ── EMPTY PHOTO STATE ── */
+  .no-photo-note {
+    padding: 1.5rem;
+    font-size: 13px; color: var(--mist); text-align: center;
+    border-bottom: 1px solid var(--dust);
+    line-height: 1.7;
+  }
+
+  /* ── CART TOAST ── */
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+    background: var(--ink); color: var(--cream);
+    padding: 14px 24px; border-radius: 2px;
+    font-size: 13px; letter-spacing: .03em;
+    transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+    z-index: 100;
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── BUDGET TIERS ── */
+  .budget-tiers {
+    display: flex; gap: 6px; margin-bottom: 1rem; flex-wrap: wrap;
+  }
+  .b-tier {
+    padding: 5px 12px; border: 1px solid var(--dust);
+    font-size: 12px; cursor: pointer; border-radius: 20px;
+    background: var(--warm-white); transition: all .15s;
+    color: var(--ink);
+  }
+  .b-tier:hover { border-color: var(--mist); }
+  .b-tier.on { background: var(--ink); color: var(--cream); border-color: var(--ink); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════
+     SCREEN 0 — LANDING
+══════════════════════════════════ -->
+<section class="screen active" id="s-landing">
+  <div class="landing-bg"></div>
+  <div class="landing-mark">Moodoor</div>
+
+  <div style="position:relative;z-index:1;width:100%;max-width:600px">
+    <div class="landing-eyebrow">Emotional home decor</div>
+    <h1 class="landing-h1 serif">
+      Your door,<br><em>your feeling</em>
+    </h1>
+    <p class="landing-sub">
+      Describe how you want your home to feel.
+      We'll curate a shoppable wreath and entryway
+      transformation — instantly.
+    </p>
+    <button class="btn-primary" onclick="startQuiz()">
+      Begin your mood ↗
+    </button>
+  </div>
+
+  <div class="landing-trio">
+    <div class="trio-item">
+      <span class="trio-num serif">3</span>
+      minutes to your look
+    </div>
+    <div class="trio-item">
+      <span class="trio-num serif">16</span>
+      curated mood profiles
+    </div>
+    <div class="trio-item">
+      <span class="trio-num serif">∞</span>
+      ways to feel at home
+    </div>
+  </div>
+
+  <div class="landing-scroll-hint">
+    <div class="scroll-line"></div>
+    scroll
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SCREEN 1 — QUIZ
+══════════════════════════════════ -->
+<section class="screen" id="s-quiz">
+  <header class="quiz-header">
+    <div class="quiz-logo serif">Mood<span>oor</span></div>
+    <div class="quiz-progress" id="progress-dots"></div>
+  </header>
+
+  <div class="quiz-body">
+
+    <!-- Step 0: Mood -->
+    <div class="q-step active" id="qs-0">
+      <div class="q-num">Step 1 of 5</div>
+      <h2 class="q-title serif">How do you want your<br>door to <em>feel?</em></h2>
+      <p class="q-sub">Pick the emotion that speaks to you right now.</p>
+      <div class="mood-grid" id="mood-grid"></div>
+      <div class="q-nav">
+        <button class="btn-next" onclick="nextStep()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 1: Occasion -->
+    <div class="q-step" id="qs-1">
+      <div class="q-num">Step 2 of 5</div>
+      <h2 class="q-title serif">What's the <em>occasion?</em></h2>
+      <p class="q-sub">Helps us tune the vibe. Skip if none applies.</p>
+      <div class="occasion-grid" id="occ-grid"></div>
+      <div class="q-nav">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-next" onclick="nextStep()">Continue →</button>
+        <button class="btn-skip" onclick="skipStep()">Skip</button>
+      </div>
+    </div>
+
+    <!-- Step 2: Style -->
+    <div class="q-step" id="qs-2">
+      <div class="q-num">Step 3 of 5</div>
+      <h2 class="q-title serif">Your aesthetic <em>direction</em></h2>
+      <p class="q-sub">Choose one that resonates.</p>
+      <div class="style-grid" id="style-grid"></div>
+      <div class="q-nav">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-next" onclick="nextStep()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Budget -->
+    <div class="q-step" id="qs-3">
+      <div class="q-num">Step 4 of 5</div>
+      <h2 class="q-title serif">Your <em>budget</em></h2>
+      <p class="q-sub">We'll build the best bundle that fits.</p>
+      <div class="budget-tiers" id="budget-tiers"></div>
+      <div class="budget-display serif" id="budget-display"><sup>$</sup><span id="budget-val">120</span></div>
+      <input type="range" id="budget-range" min="40" max="350" value="120" step="5"
+        oninput="updateBudget(this.value)">
+      <div class="budget-labels"><span>$40</span><span>$350</span></div>
+      <div class="q-nav">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-next" onclick="nextStep()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Photo + constraints -->
+    <div class="q-step" id="qs-4">
+      <div class="q-num">Step 5 of 5</div>
+      <h2 class="q-title serif">Any <em>specifics?</em></h2>
+      <p class="q-sub">Optional but helps us personalise further.</p>
+
+      <div class="upload-zone" id="upload-zone">
+        <img id="upload-preview" class="upload-preview" alt="preview">
+        <div id="upload-inner">
+          <div class="upload-icon">📷</div>
+          <div class="upload-title">Upload your entryway</div>
+          <div class="upload-sub">Photo of your door or stoop — optional</div>
+        </div>
+        <input type="file" accept="image/*" id="photo-input" onchange="handlePhoto(this)">
+      </div>
+
+      <div class="constraint-grid" id="constraint-grid"></div>
+
+      <div class="q-nav">
+        <button class="btn-back" onclick="prevStep()">← Back</button>
+        <button class="btn-next" onclick="generateResults()">Find my look →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SCREEN 2 — GENERATING
+══════════════════════════════════ -->
+<section class="screen" id="s-generating">
+  <div class="gen-spinner"></div>
+  <h2 class="gen-title serif">Crafting your look</h2>
+  <p class="gen-status" id="gen-status">Reading your mood...</p>
+
+  <div class="gen-steps">
+    <div class="gen-step active" id="gstep-0">
+      <div class="gen-step-icon">1</div>
+      <div>
+        <div style="font-weight:500;margin-bottom:2px">Extracting emotion brief</div>
+        <div style="font-size:12px">Mapping your inputs to our taxonomy</div>
+      </div>
+    </div>
+    <div class="gen-step" id="gstep-1">
+      <div class="gen-step-icon">2</div>
+      <div>
+        <div style="font-weight:500;margin-bottom:2px">Retrieving candidates</div>
+        <div style="font-size:12px">Searching 280+ curated SKUs</div>
+      </div>
+    </div>
+    <div class="gen-step" id="gstep-2">
+      <div class="gen-step-icon">3</div>
+      <div>
+        <div style="font-weight:500;margin-bottom:2px">Composing bundles</div>
+        <div style="font-size:12px">Building 5-role purchasable sets</div>
+      </div>
+    </div>
+    <div class="gen-step" id="gstep-3">
+      <div class="gen-step-icon">4</div>
+      <div>
+        <div style="font-weight:500;margin-bottom:2px">Validating inventory</div>
+        <div style="font-size:12px">Checking availability + substitutions</div>
+      </div>
+    </div>
+    <div class="gen-step" id="gstep-4">
+      <div class="gen-step-icon">5</div>
+      <div>
+        <div style="font-weight:500;margin-bottom:2px">Generating concepts</div>
+        <div style="font-size:12px">Ranking + writing your explanation</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     SCREEN 3 — RESULTS
+══════════════════════════════════ -->
+<section class="screen" id="s-results">
+  <header class="results-header">
+    <div class="results-logo serif">Mood<span>oor</span></div>
+    <div class="results-mood-tag" id="results-mood-tag"></div>
+    <button class="btn-restart" onclick="restartQuiz()">Start over</button>
+  </header>
+
+  <div class="results-body">
+    <div class="results-intro">
+      <h2 class="serif" id="results-heading"></h2>
+      <p id="results-sub"></p>
+    </div>
+
+    <!-- Photo transformation (shown if photo uploaded) -->
+    <div class="transform-section" id="transform-section" style="display:none">
+      <div class="transform-header">
+        <h3 class="serif">Your door, transformed</h3>
+        <span class="transform-tag">AI preview</span>
+      </div>
+      <div class="transform-panels">
+        <div class="transform-panel" id="before-panel" style="background:#F0EBE3;">
+          <span>🚪</span>
+          <span class="transform-label">Before</span>
+        </div>
+        <div class="transform-panel" id="after-panel" style="background:#3D5A3E18;">
+          <span id="after-emoji">🌿</span>
+          <span class="transform-label">After — AI concept</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Concept cards -->
+    <div class="concept-grid" id="concept-grid"></div>
+
+    <div style="text-align:center;padding-bottom:3rem">
+      <p style="font-size:13px;color:var(--mist);margin-bottom:1rem">Not quite right?</p>
+      <button class="btn-back" onclick="restartQuiz()" style="margin-right:8px">Adjust preferences</button>
+      <button class="btn-next" onclick="regenerate()">Regenerate →</button>
+    </div>
+  </div>
+</section>
+
+<!-- Toast -->
+<div class="toast" id="toast">Added to cart ✓</div>
+
+<script>
+/* ─── DATA ─── */
+const MOODS = [
+  { id:'serene',   icon:'🌿', name:'Serene',     sub:'Still · peaceful',    cluster:'calm',     colors:['#E1F5EE','#9FE1CB'] },
+  { id:'grounded', icon:'🌾', name:'Grounded',   sub:'Earthy · rooted',     cluster:'calm',     colors:['#EAF3DE','#C0DD97'] },
+  { id:'joyful',   icon:'🌻', name:'Joyful',     sub:'Bright · warm',       cluster:'joyful',   colors:['#FAEEDA','#FAC775'] },
+  { id:'playful',  icon:'🍊', name:'Playful',    sub:'Bold · spirited',     cluster:'joyful',   colors:['#FAECE7','#F5C4B3'] },
+  { id:'romantic', icon:'🌹', name:'Romantic',   sub:'Tender · glowing',    cluster:'romantic', colors:['#FBEAF0','#F4C0D1'] },
+  { id:'harvest',  icon:'🍂', name:'Harvest',    sub:'Amber · abundant',    cluster:'seasonal', colors:['#FAF0DC','#EFC97A'] },
+  { id:'holiday',  icon:'🌲', name:'Holiday',    sub:'Rich · layered',      cluster:'seasonal', colors:['#E4F0E4','#9FCA9F'] },
+  { id:'spring',   icon:'🌷', name:'Spring',     sub:'Fresh · emerging',    cluster:'seasonal', colors:['#FDE8F5','#F5B8DE'] },
+  { id:'nested',   icon:'🏡', name:'New home',   sub:'Hopeful · fresh',     cluster:'moment',   colors:['#EAF3DE','#C0DD97'] },
+  { id:'hosting',  icon:'🕯️', name:'Hosting',    sub:'Welcoming · ready',   cluster:'moment',   colors:['#FAEEDA','#FAC775'] },
+];
+
+const OCCASIONS = [
+  'Everyday refresh','House warming','Birthday celebration','Holiday gathering',
+  'Anniversary','Baby arrival','Seasonal update','Hosting guests','Moving in',
+];
+
+const STYLES = [
+  { id:'natural',   label:'Natural', bg:'#D4C9B0', emoji:'🌿' },
+  { id:'modern',    label:'Modern',  bg:'#C8C8C8', emoji:'◼' },
+  { id:'festive',   label:'Festive', bg:'#D4845A', emoji:'🎀' },
+  { id:'romantic',  label:'Romantic',bg:'#E8B4C8', emoji:'🌸' },
+  { id:'rustic',    label:'Rustic',  bg:'#B89068', emoji:'🍂' },
+  { id:'minimal',   label:'Minimal', bg:'#E8E4DC', emoji:'·' },
+];
+
+const CONSTRAINTS = [
+  { id:'low_maintenance', label:'Low maintenance' },
+  { id:'rental_safe',     label:'Rental-friendly' },
+  { id:'allergy_check',   label:'Check for allergens' },
+  { id:'outdoor_rated',   label:'Must be outdoor-rated' },
+  { id:'no_scent',        label:'No strong scent' },
+  { id:'giftable',        label:'Make it giftable' },
+];
+
+const BUDGET_TIERS = [
+  { label:'Under $75',  val:65 },
+  { label:'$75–$150',   val:120 },
+  { label:'$150–$250',  val:195 },
+  { label:'$250+',      val:300 },
+];
+
+/* Bundle catalog — keyed by mood cluster */
+const BUNDLES = {
+  calm: [
+    { role:'anchor',    sku:'WR-EUCAL-L',   name:'Dried eucalyptus wreath (L)',  price:68, required:true  },
+    { role:'base_layer',sku:'MAT-JUTE-N',   name:'Natural jute door mat',         price:34, required:true  },
+    { role:'accent',    sku:'STEM-COTTON-W', name:'Cotton stem bundle (white)',    price:22, required:true  },
+    { role:'botanical', sku:'PLANT-AIR-3PK',name:'Air plant trio',                price:18, required:false },
+    { role:'glow',      sku:'LANTERN-CONC', name:'Concrete pillar lantern',       price:45, required:false },
+  ],
+  joyful: [
+    { role:'anchor',    sku:'WR-SUNFL-L',   name:'Sunflower + greenery wreath',   price:72, required:true  },
+    { role:'base_layer',sku:'MAT-STRIPE-C', name:'Bold stripe cotton mat',        price:38, required:true  },
+    { role:'accent',    sku:'STEM-CITRUS-A',name:'Citrus stem assortment',        price:26, required:true  },
+    { role:'botanical', sku:'PLNT-HERB-3PK',name:'Herb planter trio',             price:24, required:false },
+    { role:'glow',      sku:'LANTERN-YELL', name:'Yellow glass lantern',          price:42, required:false },
+  ],
+  romantic: [
+    { role:'anchor',    sku:'WR-ROSE-DRY',  name:'Dried rose + pampas wreath',   price:78, required:true  },
+    { role:'base_layer',sku:'MAT-VELVET-R', name:'Blush velvet mat',             price:44, required:true  },
+    { role:'accent',    sku:'RBON-BLUSH-2M',name:'Blush satin ribbon (2m)',      price:14, required:true  },
+    { role:'botanical', sku:'STEM-LAVN-B',  name:'Dried lavender bundle',        price:20, required:false },
+    { role:'glow',      sku:'TAPER-CREAM-6',name:'Cream taper candle set ×6',    price:28, required:false },
+  ],
+  seasonal: [
+    { role:'anchor',    sku:'WR-WHEAT-L',   name:'Wheat + berry wreath (L)',      price:64, required:true  },
+    { role:'base_layer',sku:'MAT-PLAID-A',  name:'Autumn plaid door mat',         price:36, required:true  },
+    { role:'accent',    sku:'STEM-CORN-A',  name:'Corn husk stem bundle',         price:18, required:true  },
+    { role:'botanical', sku:'PMPKN-MINI-3', name:'Mini pumpkin planter set',      price:32, required:false },
+    { role:'glow',      sku:'LANTERN-AMB',  name:'Amber glass lantern',           price:48, required:false },
+  ],
+  moment: [
+    { role:'anchor',    sku:'WR-BLOOM-WW',  name:'Mixed bloom welcome wreath',    price:74, required:true  },
+    { role:'base_layer',sku:'MAT-WOVEN-N',  name:'Hand-woven natural mat',        price:40, required:true  },
+    { role:'accent',    sku:'STEMS-MIXED-S',name:'Seasonal stem assortment',      price:28, required:true  },
+    { role:'botanical', sku:'PLNT-SOLO-1',  name:'Statement potted plant',        price:36, required:false },
+    { role:'glow',      sku:'CANDLE-CEDAR', name:'Cedar + sage pillar candle',    price:32, required:false },
+  ],
+};
+
+/* ─── STATE ─── */
+let state = {
+  step: 0,
+  mood: null,
+  occasion: null,
+  style: null,
+  budget: 120,
+  constraints: [],
+  hasPhoto: false,
+};
+
+/* ─── INIT ─── */
+function init() {
+  buildMoodGrid();
+  buildOccasionGrid();
+  buildStyleGrid();
+  buildConstraintGrid();
+  buildBudgetTiers();
+  buildProgressDots();
+}
+
+function buildProgressDots() {
+  const el = document.getElementById('progress-dots');
+  el.innerHTML = [0,1,2,3,4].map(i =>
+    `<div class="q-dot ${i===0?'active':''}" id="dot-${i}"></div>`
+  ).join('');
+}
+
+function buildMoodGrid() {
+  document.getElementById('mood-grid').innerHTML = MOODS.map(m =>
+    `<div class="mood-card" id="mc-${m.id}" onclick="selectMood('${m.id}')">
+      <span class="mood-icon">${m.icon}</span>
+      <div class="mood-name">${m.name}</div>
+      <div class="mood-sub">${m.sub}</div>
+    </div>`
+  ).join('');
+}
+
+function buildOccasionGrid() {
+  document.getElementById('occ-grid').innerHTML = OCCASIONS.map(o =>
+    `<div class="occ-pill" id="op-${o.replace(/\s+/g,'-')}" onclick="selectOccasion('${o}')">${o}</div>`
+  ).join('');
+}
+
+function buildStyleGrid() {
+  document.getElementById('style-grid').innerHTML = STYLES.map(s =>
+    `<div class="style-card" id="sc-${s.id}" onclick="selectStyle('${s.id}')">
+      <div class="style-swatch" style="background:${s.bg}">${s.emoji}</div>
+      <div class="style-label">${s.label}</div>
+    </div>`
+  ).join('');
+}
+
+function buildConstraintGrid() {
+  document.getElementById('constraint-grid').innerHTML = CONSTRAINTS.map(c =>
+    `<div class="c-toggle" id="ct-${c.id}" onclick="toggleConstraint('${c.id}')">
+      <div class="c-check" id="cc-${c.id}"></div>
+      ${c.label}
+    </div>`
+  ).join('');
+}
+
+function buildBudgetTiers() {
+  document.getElementById('budget-tiers').innerHTML = BUDGET_TIERS.map(t =>
+    `<div class="b-tier" id="bt-${t.val}" onclick="setTier(${t.val})">${t.label}</div>`
+  ).join('');
+  document.getElementById('bt-120').classList.add('on');
+}
+
+/* ─── SELECTIONS ─── */
+function selectMood(id) {
+  state.mood = id;
+  document.querySelectorAll('.mood-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('mc-'+id).classList.add('selected');
+}
+
+function selectOccasion(o) {
+  state.occasion = o;
+  document.querySelectorAll('.occ-pill').forEach(el => el.classList.remove('selected'));
+  document.getElementById('op-'+o.replace(/\s+/g,'-')).classList.add('selected');
+}
+
+function selectStyle(id) {
+  state.style = id;
+  document.querySelectorAll('.style-card').forEach(el => el.classList.remove('selected'));
+  document.getElementById('sc-'+id).classList.add('selected');
+}
+
+function toggleConstraint(id) {
+  const el = document.getElementById('ct-'+id);
+  const check = document.getElementById('cc-'+id);
+  if (state.constraints.includes(id)) {
+    state.constraints = state.constraints.filter(c => c !== id);
+    el.classList.remove('on');
+    check.textContent = '';
+  } else {
+    state.constraints.push(id);
+    el.classList.add('on');
+    check.textContent = '✓';
+  }
+}
+
+function updateBudget(v) {
+  state.budget = +v;
+  document.getElementById('budget-val').textContent = v;
+  document.querySelectorAll('.b-tier').forEach(el => el.classList.remove('on'));
+  const tier = BUDGET_TIERS.find(t => Math.abs(t.val - v) < 40);
+  if (tier) document.getElementById('bt-'+tier.val)?.classList.add('on');
+}
+
+function setTier(v) {
+  state.budget = v;
+  document.getElementById('budget-range').value = v;
+  document.getElementById('budget-val').textContent = v;
+  document.querySelectorAll('.b-tier').forEach(el => el.classList.remove('on'));
+  document.getElementById('bt-'+v).classList.add('on');
+}
+
+function handlePhoto(input) {
+  if (!input.files || !input.files[0]) return;
+  state.hasPhoto = true;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const preview = document.getElementById('upload-preview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+    document.getElementById('upload-inner').style.display = 'none';
+    document.getElementById('upload-zone').classList.add('has-file');
+  };
+  reader.readAsDataURL(input.files[0]);
+}
+
+/* ─── NAVIGATION ─── */
+function startQuiz() {
+  showScreen('s-quiz');
+}
+
+function nextStep() {
+  if (state.step < 4) {
+    state.step++;
+    updateQuizUI();
+  }
+}
+function prevStep() {
+  if (state.step > 0) {
+    state.step--;
+    updateQuizUI();
+  }
+}
+function skipStep() {
+  state.step++;
+  updateQuizUI();
+}
+
+function updateQuizUI() {
+  document.querySelectorAll('.q-step').forEach((el, i) => {
+    el.classList.toggle('active', i === state.step);
+  });
+  document.querySelectorAll('.q-dot').forEach((el, i) => {
+    el.classList.remove('active','done');
+    if (i < state.step) el.classList.add('done');
+    if (i === state.step) el.classList.add('active');
+  });
+}
+
+function restartQuiz() {
+  state = { step:0, mood:null, occasion:null, style:null, budget:120, constraints:[], hasPhoto:false };
+  document.querySelectorAll('.mood-card,.occ-pill,.style-card,.c-toggle').forEach(el=>el.classList.remove('selected','on'));
+  document.querySelectorAll('.c-check').forEach(el=>el.textContent='');
+  document.getElementById('budget-val').textContent = '120';
+  document.getElementById('budget-range').value = 120;
+  document.querySelectorAll('.b-tier').forEach(el=>el.classList.remove('on'));
+  document.getElementById('bt-120').classList.add('on');
+  const preview = document.getElementById('upload-preview');
+  preview.style.display = 'none';
+  document.getElementById('upload-inner').style.display = 'block';
+  document.getElementById('upload-zone').classList.remove('has-file');
+  state.step = 0;
+  updateQuizUI();
+  showScreen('s-quiz');
+}
+
+/* ─── GENERATION ─── */
+function generateResults() {
+  if (!state.mood) { selectMood(MOODS[0].id); }
+  showScreen('s-generating');
+  runGenerationAnimation();
+}
+
+function runGenerationAnimation() {
+  const steps = ['gstep-0','gstep-1','gstep-2','gstep-3','gstep-4'];
+  const msgs  = [
+    'Reading your mood…',
+    'Searching the catalog…',
+    'Building your bundles…',
+    'Checking inventory…',
+    'Writing your story…',
+  ];
+  let i = 0;
+  const tick = () => {
+    if (i > 0) {
+      document.getElementById(steps[i-1]).classList.remove('active');
+      document.getElementById(steps[i-1]).classList.add('done');
+      document.getElementById(steps[i-1]).querySelector('.gen-step-icon').textContent = '✓';
+    }
+    if (i < steps.length) {
+      document.getElementById(steps[i]).classList.add('active');
+      document.getElementById('gen-status').textContent = msgs[i];
+      i++;
+      setTimeout(tick, 600);
+    } else {
+      setTimeout(() => showResults(), 400);
+    }
+  };
+  tick();
+}
+
+/* ─── RESULTS ─── */
+function getMoodData() {
+  const m = state.mood ? MOODS.find(x => x.id === state.mood) : MOODS[0];
+  return m;
+}
+
+function getCluster() {
+  const m = getMoodData();
+  return m ? m.cluster : 'calm';
+}
+
+function buildConcepts() {
+  const cluster = getCluster();
+  const moodData = getMoodData();
+  const baseItems = BUNDLES[cluster] || BUNDLES.calm;
+
+  // Filter by budget & constraints
+  const maxBudget = state.budget;
+  const noAllergy = state.constraints.includes('allergy_check');
+  const lowMaint  = state.constraints.includes('low_maintenance');
+
+  // Build 3 concept variants
+  return [
+    buildConcept(baseItems, 'Best match', 1.0, cluster, moodData, maxBudget),
+    buildConcept(baseItems, 'Pared back', 0.82, cluster, moodData, maxBudget * 0.75),
+    buildConcept(baseItems, 'Full look',  0.76, cluster, moodData, maxBudget * 1.15),
+  ].filter(Boolean);
+}
+
+function buildConcept(items, variant, conf, cluster, moodData, budget) {
+  // Build items up to budget
+  let total = 0;
+  const selected = [];
+  for (const item of items) {
+    if (total + item.price <= budget || item.required) {
+      selected.push({...item, substituted: Math.random() < 0.2});
+      total += item.price;
+      if (total > budget * 1.1) break;
+    }
+  }
+  const finalItems = selected.filter(i => i.required || total <= budget || i.price < 30);
+  const subtotal = finalItems.reduce((s,i) => s + i.price, 0);
+
+  const titles = {
+    calm:     ['Still threshold','Soft arrival','The quiet welcome'],
+    joyful:   ['Bright arrival','Sunlit welcome','The joyful door'],
+    romantic: ['Warmth before words','The tender threshold','First blush'],
+    seasonal: ['Harvest threshold','Amber welcome','The autumn door'],
+    moment:   ['New chapter door','The open welcome','Fresh beginning'],
+  };
+  const explanations = {
+    calm:     'Eucalyptus and natural textures carry your intention: a door that breathes before you even open it.',
+    joyful:   'Warm citrus tones and full seasonal blooms — energy that greets every arrival with a smile.',
+    romantic:'Dried rose and pampas, softened by candlelight. The kind of door you want to come home to.',
+    seasonal: 'Amber wheat and autumn botanicals in step with the season — abundant without trying too hard.',
+    moment:   'A door that announces a beginning. Fresh, open, alive with possibility.',
+  };
+
+  const namePool = titles[cluster] || titles.calm;
+  const name = namePool[Math.floor(Math.random() * namePool.length)];
+  const explanation = explanations[cluster] || explanations.calm;
+
+  return {
+    id: Math.random().toString(36).slice(2),
+    variant,
+    title: name,
+    mood: moodData ? moodData.name : 'Serene',
+    cluster,
+    explanation,
+    confidence: conf,
+    items: finalItems,
+    subtotal,
+    purchasable: finalItems.filter(i=>i.required).length >= 3,
+  };
+}
+
+function showResults() {
+  const moodData = getMoodData();
+  const concepts = buildConcepts();
+
+  // Header
+  document.getElementById('results-mood-tag').textContent =
+    (moodData ? moodData.name : 'Curated') + ' · ' + (state.occasion || 'Everyday');
+
+  const greetings = {
+    calm:     'A door that<br><em>breathes</em>',
+    joyful:   'A door that<br><em>delights</em>',
+    romantic: 'A door that<br><em>glows</em>',
+    seasonal: 'A door that<br><em>celebrates the season</em>',
+    moment:   'A door that<br><em>marks the moment</em>',
+  };
+  document.getElementById('results-heading').innerHTML =
+    greetings[getCluster()] || greetings.calm;
+  document.getElementById('results-sub').textContent =
+    'Three curated concepts, each purchasable from your cart. Hover any item to swap it out.';
+
+  // Photo transform
+  const ts = document.getElementById('transform-section');
+  if (state.hasPhoto) {
+    ts.style.display = 'block';
+    const emojis = { calm:'🌿🪴', joyful:'🌻🎀', romantic:'🌹🕯️', seasonal:'🍂🎃', moment:'🌸🏡' };
+    document.getElementById('after-emoji').textContent = emojis[getCluster()] || '🌿';
+  } else {
+    ts.style.display = 'none';
+  }
+
+  // Cards
+  const grid = document.getElementById('concept-grid');
+  grid.innerHTML = concepts.map((c, idx) => buildConceptCard(c, idx===0)).join('');
+
+  showScreen('s-results');
+}
+
+function buildConceptCard(c, featured) {
+  const visuals = {
+    calm:     { bg:'#E8F0EC', emoji:'🌿🪴🌾' },
+    joyful:   { bg:'#FDF0DC', emoji:'🌻🍋🌼' },
+    romantic: { bg:'#F5E8EE', emoji:'🌹🕯️🌸' },
+    seasonal: { bg:'#F2E8D8', emoji:'🍂🌾🎃' },
+    moment:   { bg:'#E8F0E8', emoji:'🏡🌷🪴' },
+  };
+  const v = visuals[c.cluster] || visuals.calm;
+  const pct = Math.round(c.confidence * 100);
+
+  const itemsHTML = c.items.slice(0,4).map(i => `
+    <div class="bundle-item">
+      <span>
+        <span class="bi-role">${i.role.replace('_',' ')}</span>
+        <span class="bi-name">${i.name}</span>
+        ${i.substituted ? '<span class="bi-sub-tag">alt</span>' : ''}
+      </span>
+      <span class="bi-price">$${i.price}</span>
+    </div>`).join('');
+
+  return `
+  <div class="concept-card ${featured ? 'featured' : ''}">
+    <div class="concept-visual" style="background:${v.bg};font-size:3rem">
+      ${v.emoji}
+    </div>
+    <div class="concept-info">
+      <div class="concept-mood-tag">${c.mood} · ${c.variant}</div>
+      <div class="concept-title serif">${c.title}</div>
+      <div class="concept-explanation">${c.explanation}</div>
+      <div class="bundle-items">${itemsHTML}</div>
+    </div>
+    <div class="confidence-bar">
+      <span>Match</span>
+      <div class="conf-track"><div class="conf-fill" style="width:${pct}%"></div></div>
+      <span>${pct}%</span>
+    </div>
+    <div class="concept-footer">
+      <div class="concept-total serif"><sup>$</sup>${c.subtotal}</div>
+      <button class="btn-cart" id="cart-${c.id}" onclick="addToCart('${c.id}','${c.title}')">
+        Add to cart
+      </button>
+    </div>
+  </div>`;
+}
+
+function addToCart(id, title) {
+  const btn = document.getElementById('cart-'+id);
+  if (!btn) return;
+  btn.textContent = 'Added ✓';
+  btn.classList.add('added');
+  showToast(`"${title}" added to your cart`);
+  setTimeout(() => {
+    btn.textContent = 'In cart';
+  }, 2000);
+}
+
+function regenerate() {
+  showScreen('s-generating');
+  // reset gen steps
+  ['gstep-0','gstep-1','gstep-2','gstep-3','gstep-4'].forEach((id,i)=>{
+    const el = document.getElementById(id);
+    el.classList.remove('done','active');
+    el.querySelector('.gen-step-icon').textContent = i+1;
+  });
+  runGenerationAnimation();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+init();
+</script>
+</body>
+</html>

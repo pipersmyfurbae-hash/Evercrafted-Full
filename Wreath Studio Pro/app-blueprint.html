@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Blueprint Generator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white:       #FFFFFF;
+  --off-white:   #F9F7F4;
+  --paper:       #F2EFE9;
+  --black:       #1A1A1A;
+  --charcoal:    #2E2E2E;
+  --ink:         #4A4A4A;
+  --green:       #4A6741;
+  --green-light: #6B8F67;
+  --green-pale:  #EEF2ED;
+  --green-dim:   rgba(74,103,65,0.10);
+  --gray-100:    #F5F5F5;
+  --gray-200:    #E8E8E8;
+  --gray-300:    #D0D0D0;
+  --gray-400:    #A8A8A8;
+  --gray-500:    #787878;
+  --studio-c:    #7A4A85;
+  --studio-pale: #F3EEF6;
+  --atelier-c:   #1A1A1A;
+  --atelier-pale:#F0EDE8;
+  --focal-color: #4A6741;
+  --filler-color:#7A9E76;
+  --accent-color:#C4922A;
+  --serif:       'Cormorant Garamond', Georgia, serif;
+  --sans:        'Inter', system-ui, sans-serif;
+  --script:      'Dancing Script', cursive;
+  --mono:        'DM Mono', 'Fira Code', monospace;
+  --sidebar-w:   232px;
+  --topbar-h:    52px;
+  --ease:        cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html, body { height: 100%; overflow: hidden; font-family: var(--sans); color: var(--black); -webkit-font-smoothing: antialiased; }
+
+/* ══ SHELL ══ */
+.shell { display: grid; grid-template-columns: var(--sidebar-w) 1fr; grid-template-rows: var(--topbar-h) 1fr; height: 100vh; }
+
+/* ── Sidebar ── */
+.sidebar { grid-column:1; grid-row:1/3; background:var(--white); border-right:1px solid var(--gray-200); display:flex; flex-direction:column; overflow:hidden; z-index:10; }
+.sidebar-brand { height:var(--topbar-h); display:flex; align-items:center; padding:0 18px; border-bottom:1px solid var(--gray-200); flex-shrink:0; gap:10px; text-decoration:none; }
+.sidebar-brand-logo { font-family:var(--script); font-size:1.3rem; color:var(--green); font-weight:700; line-height:1; }
+.sidebar-brand-sep { width:1px; height:14px; background:var(--gray-200); }
+.sidebar-brand-sub { font-size:0.62rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--gray-400); }
+.sidebar-nav { flex:1; overflow-y:auto; padding:12px 0 20px; scrollbar-width:thin; scrollbar-color:var(--gray-200) transparent; }
+.sidebar-nav::-webkit-scrollbar { width:4px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:4px; }
+.nav-group { margin-bottom:4px; }
+.nav-group-label { display:flex; align-items:center; gap:8px; padding:10px 18px 6px; }
+.nav-tier-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.dot-bloom { background:#4A6741; } .dot-craft { background:#4A6785; } .dot-studio { background:#7A4A85; } .dot-atelier { background:#1A1A1A; }
+.nav-group-name { font-size:0.6rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--gray-400); }
+.nav-group-price { margin-left:auto; font-size:0.58rem; color:var(--gray-300); }
+.nav-item { display:flex; align-items:center; gap:10px; padding:8px 18px; text-decoration:none; border-left:2px solid transparent; transition:background 0.15s; cursor:pointer; }
+.nav-item:hover { background:var(--gray-100); }
+.nav-item.active { background:var(--green-pale); border-left-color:var(--green); }
+.nav-item.active .nav-item-name { color:var(--green); font-weight:500; }
+.nav-item-icon { font-size:0.95rem; opacity:0.7; flex-shrink:0; width:18px; text-align:center; }
+.nav-item.active .nav-item-icon { opacity:1; }
+.nav-item-name { font-size:0.78rem; color:var(--ink); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.nav-item-badge { font-size:0.52rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:2px 6px; border-radius:100px; flex-shrink:0; }
+.badge-ai  { background:var(--atelier-pale); color:var(--atelier-c); border:1px solid rgba(26,26,26,0.12); }
+.badge-new { background:var(--green-pale); color:var(--green); border:1px solid rgba(74,103,65,0.15); }
+.sidebar-footer { flex-shrink:0; border-top:1px solid var(--gray-200); padding:12px 14px; display:flex; flex-direction:column; gap:2px; }
+.sidebar-user { display:flex; align-items:center; gap:10px; padding:8px; border-radius:6px; cursor:pointer; transition:background 0.15s; }
+.sidebar-user:hover { background:var(--gray-100); }
+.user-avatar { width:28px; height:28px; border-radius:50%; background:var(--green-pale); border:1px solid rgba(74,103,65,0.2); display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:600; color:var(--green); flex-shrink:0; }
+.user-info { flex:1; min-width:0; }
+.user-name { font-size:0.75rem; font-weight:500; color:var(--black); }
+.user-tier { font-size:0.6rem; color:var(--gray-400); }
+.user-chevron { color:var(--gray-300); font-size:0.7rem; }
+.sidebar-help { display:flex; align-items:center; gap:8px; padding:7px 8px; border-radius:6px; cursor:pointer; transition:background 0.15s; text-decoration:none; }
+.sidebar-help:hover { background:var(--gray-100); }
+.sidebar-help span { font-size:0.72rem; color:var(--gray-500); }
+
+/* ── Topbar ── */
+.topbar { grid-column:2; grid-row:1; height:var(--topbar-h); background:var(--white); border-bottom:1px solid var(--gray-200); display:flex; align-items:center; padding:0 24px; gap:0; z-index:9; }
+.topbar-breadcrumb { display:flex; align-items:center; gap:6px; flex:1; }
+.breadcrumb-home { font-size:0.72rem; color:var(--gray-400); text-decoration:none; transition:color 0.15s; }
+.breadcrumb-home:hover { color:var(--green); }
+.breadcrumb-sep { font-size:0.65rem; color:var(--gray-300); }
+.breadcrumb-current { font-size:0.72rem; font-weight:500; color:var(--black); }
+.topbar-right { display:flex; align-items:center; gap:8px; }
+.topbar-tier-badge { display:inline-flex; align-items:center; gap:5px; font-size:0.6rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:4px 10px; border-radius:100px; }
+.tb-studio { background:var(--studio-pale); color:var(--studio-c); border:1px solid rgba(122,74,133,0.15); }
+.topbar-divider { width:1px; height:18px; background:var(--gray-200); margin:0 4px; }
+.topbar-icon-btn { width:30px; height:30px; border-radius:6px; border:none; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background 0.15s; color:var(--gray-400); }
+.topbar-icon-btn:hover { background:var(--gray-100); color:var(--black); }
+.topbar-upgrade { display:inline-flex; align-items:center; gap:6px; background:var(--black); color:var(--white); font-size:0.62rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:6px 14px; border-radius:4px; cursor:pointer; border:none; font-family:var(--sans); transition:background 0.2s; }
+.topbar-upgrade:hover { background:var(--green); }
+
+/* ══ MAIN CONTENT ══ */
+.app-main { grid-column:2; grid-row:2; overflow-y:auto; overflow-x:hidden; background:var(--off-white); display:flex; flex-direction:column; }
+.app-main::-webkit-scrollbar { width:6px; }
+.app-main::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:4px; }
+
+/* Page header */
+.page-header { background:var(--white); border-bottom:1px solid var(--gray-200); padding:20px 28px 18px; display:flex; align-items:flex-start; justify-content:space-between; gap:24px; flex-shrink:0; }
+.page-header-kicker { font-family:var(--script); font-size:0.95rem; color:var(--green); font-weight:600; display:block; margin-bottom:2px; }
+.page-header-title { font-family:var(--serif); font-size:1.5rem; font-weight:400; color:var(--black); line-height:1.2; margin-bottom:4px; }
+.page-header-desc { font-size:0.78rem; color:var(--gray-500); font-weight:300; line-height:1.5; }
+.page-header-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; padding-top:4px; }
+
+/* ══ APP LAYOUT: two-panel ══ */
+.app-body { display:grid; grid-template-columns:320px 1fr; flex:1; overflow:hidden; min-height:0; }
+
+/* ── Controls Panel ── */
+.controls-panel { background:var(--white); border-right:1px solid var(--gray-200); overflow-y:auto; padding:0; display:flex; flex-direction:column; }
+.controls-panel::-webkit-scrollbar { width:4px; }
+.controls-panel::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:4px; }
+
+.controls-section { padding:20px 20px 0; }
+.controls-section + .controls-section { border-top:1px solid var(--gray-200); padding-top:18px; }
+.controls-section:last-child { padding-bottom:20px; }
+
+.ctrl-heading {
+  font-size:0.62rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--gray-400); margin-bottom:14px; display:flex; align-items:center; gap:8px;
+}
+.ctrl-heading::after { content:''; flex:1; height:1px; background:var(--gray-200); }
+
+/* Size selector */
+.size-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:14px; }
+.size-btn {
+  border:1.5px solid var(--gray-200); background:var(--white); border-radius:4px;
+  padding:10px 4px; text-align:center; cursor:pointer; transition:all 0.18s;
+  display:flex; flex-direction:column; gap:3px; align-items:center;
+}
+.size-btn:hover { border-color:var(--gray-400); }
+.size-btn.active { border-color:var(--green); background:var(--green-pale); }
+.size-btn-label { font-size:0.68rem; font-weight:500; color:var(--black); }
+.size-btn.active .size-btn-label { color:var(--green); }
+.size-btn-dim { font-family:var(--mono); font-size:0.6rem; color:var(--gray-400); }
+
+/* Custom size input */
+.custom-size-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+
+/* Base toggle */
+.base-toggle { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.base-btn {
+  border:1.5px solid var(--gray-200); background:var(--white); border-radius:4px;
+  padding:12px; cursor:pointer; transition:all 0.18s;
+  display:flex; flex-direction:column; gap:4px;
+}
+.base-btn:hover { border-color:var(--gray-400); }
+.base-btn.active { border-color:var(--green); background:var(--green-pale); }
+.base-btn-icon { font-size:1.3rem; }
+.base-btn-name { font-size:0.72rem; font-weight:500; color:var(--black); }
+.base-btn.active .base-btn-name { color:var(--green); }
+.base-btn-desc { font-size:0.62rem; color:var(--gray-400); line-height:1.3; }
+
+/* Element counters */
+.element-rows { display:flex; flex-direction:column; gap:10px; }
+.element-row { display:flex; align-items:center; gap:10px; }
+.element-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.element-label { font-size:0.75rem; color:var(--ink); flex:1; font-weight:400; }
+.element-label small { display:block; font-size:0.62rem; color:var(--gray-400); font-weight:300; margin-top:1px; }
+.counter { display:flex; align-items:center; gap:0; border:1.5px solid var(--gray-200); border-radius:4px; overflow:hidden; flex-shrink:0; }
+.counter-btn { width:28px; height:28px; border:none; background:var(--gray-100); cursor:pointer; font-size:1rem; line-height:1; color:var(--ink); transition:background 0.15s; display:flex; align-items:center; justify-content:center; }
+.counter-btn:hover { background:var(--gray-200); }
+.counter-val { width:32px; text-align:center; font-family:var(--mono); font-size:0.8rem; font-weight:500; color:var(--black); border-left:1px solid var(--gray-200); border-right:1px solid var(--gray-200); line-height:28px; }
+
+/* Placement style */
+.placement-options { display:flex; flex-direction:column; gap:6px; }
+.placement-opt { display:flex; align-items:flex-start; gap:10px; cursor:pointer; }
+.placement-opt input[type="radio"] { margin-top:2px; accent-color:var(--green); flex-shrink:0; }
+.placement-opt-text { }
+.placement-opt-name { font-size:0.75rem; font-weight:500; color:var(--black); }
+.placement-opt-desc { font-size:0.65rem; color:var(--gray-400); line-height:1.4; }
+
+/* Generate button */
+.generate-btn {
+  margin:16px 20px; background:var(--black); color:var(--white);
+  border:none; border-radius:4px; padding:13px; font-family:var(--sans);
+  font-size:0.75rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase;
+  cursor:pointer; transition:all 0.22s; display:flex; align-items:center; justify-content:center;
+  gap:8px; width:calc(100% - 40px);
+}
+.generate-btn:hover { background:var(--green); transform:translateY(-1px); box-shadow:0 6px 20px rgba(74,103,65,0.25); }
+.generate-btn svg { transition:transform 0.22s; }
+.generate-btn:hover svg { transform:rotate(90deg); }
+
+/* Saved blueprints mini-list */
+.saved-list { display:flex; flex-direction:column; gap:0; }
+.saved-item { display:flex; align-items:center; gap:10px; padding:10px 0; border-bottom:1px solid var(--gray-200); cursor:pointer; transition:background 0.15s; }
+.saved-item:last-child { border-bottom:none; }
+.saved-item:hover .saved-name { color:var(--green); }
+.saved-dot { width:6px; height:6px; border-radius:50%; background:var(--green); flex-shrink:0; }
+.saved-info { flex:1; }
+.saved-name { font-size:0.75rem; font-weight:500; color:var(--black); transition:color 0.15s; }
+.saved-meta { font-size:0.62rem; color:var(--gray-400); margin-top:2px; }
+.saved-load { font-size:0.62rem; color:var(--gray-400); border:1px solid var(--gray-200); border-radius:3px; padding:3px 7px; transition:all 0.15s; cursor:pointer; background:none; font-family:var(--sans); }
+.saved-load:hover { border-color:var(--green); color:var(--green); }
+
+/* ── Preview Panel ── */
+.preview-panel { overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:20px; }
+.preview-panel::-webkit-scrollbar { width:6px; }
+.preview-panel::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:4px; }
+
+/* Blueprint name row */
+.blueprint-name-row { display:flex; align-items:center; gap:12px; }
+.blueprint-name-input {
+  flex:1; font-family:var(--serif); font-size:1.2rem; font-weight:400;
+  border:none; border-bottom:1.5px solid var(--gray-200); background:transparent;
+  padding:4px 0; color:var(--black); outline:none; transition:border-color 0.2s;
+}
+.blueprint-name-input:focus { border-color:var(--green); }
+.blueprint-name-input::placeholder { color:var(--gray-300); }
+.save-btn { display:flex; align-items:center; gap:6px; background:transparent; border:1.5px solid var(--gray-200); border-radius:4px; padding:7px 14px; font-family:var(--sans); font-size:0.7rem; font-weight:500; color:var(--gray-500); cursor:pointer; transition:all 0.18s; white-space:nowrap; }
+.save-btn:hover { border-color:var(--green); color:var(--green); }
+.print-btn { display:flex; align-items:center; gap:6px; background:var(--black); border:none; border-radius:4px; padding:7px 14px; font-family:var(--sans); font-size:0.7rem; font-weight:500; color:var(--white); cursor:pointer; transition:background 0.18s; white-space:nowrap; }
+.print-btn:hover { background:var(--green); }
+
+/* Blueprint card */
+.blueprint-card { background:var(--white); border:1px solid var(--gray-200); border-radius:6px; overflow:hidden; }
+.blueprint-card-header { padding:14px 20px; border-bottom:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; }
+.blueprint-card-title { font-family:var(--serif); font-size:1rem; font-weight:400; color:var(--black); }
+.blueprint-card-meta { font-size:0.68rem; color:var(--gray-400); }
+.blueprint-card-body { padding:20px; }
+
+/* SVG diagram container */
+.diagram-wrap { display:flex; justify-content:center; margin-bottom:8px; }
+#blueprint-svg { max-width:100%; }
+
+/* Legend */
+.diagram-legend { display:flex; justify-content:center; gap:20px; flex-wrap:wrap; }
+.legend-item { display:flex; align-items:center; gap:6px; font-size:0.65rem; color:var(--gray-500); }
+.legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+
+/* Placement table */
+.placement-table-wrap { overflow-x:auto; }
+.placement-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+.placement-table thead th { padding:9px 14px; text-align:left; font-size:0.6rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--gray-400); border-bottom:1px solid var(--gray-200); white-space:nowrap; }
+.placement-table tbody td { padding:9px 14px; border-bottom:1px solid var(--gray-200); vertical-align:middle; }
+.placement-table tbody tr:last-child td { border-bottom:none; }
+.placement-table tbody tr:hover td { background:var(--off-white); }
+.cell-mono { font-family:var(--mono); font-size:0.75rem; color:var(--ink); }
+.cell-type { display:flex; align-items:center; gap:7px; }
+.type-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.type-label { font-weight:400; color:var(--black); }
+
+/* Stats row */
+.blueprint-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--gray-200); border-top:1px solid var(--gray-200); }
+.stat-cell { background:var(--white); padding:14px 16px; }
+.stat-val { font-family:var(--serif); font-size:1.4rem; font-weight:300; color:var(--black); line-height:1; margin-bottom:3px; }
+.stat-lbl { font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-400); }
+
+/* ── AI LOCK SECTION ── */
+.ai-section { position:relative; }
+.ai-lock-overlay {
+  position:absolute; inset:0; z-index:20;
+  background:rgba(249,247,244,0.9);
+  backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center;
+  border-radius:6px;
+}
+.ai-lock-card { background:var(--white); border:1px solid var(--gray-200); border-radius:8px; padding:28px 32px; text-align:center; box-shadow:0 4px 24px rgba(0,0,0,0.08); max-width:320px; }
+.ai-lock-icon { font-size:1.8rem; margin-bottom:12px; }
+.ai-lock-script { font-family:var(--script); font-size:1.2rem; color:var(--green); font-weight:600; display:block; margin-bottom:6px; }
+.ai-lock-title { font-family:var(--serif); font-size:1.1rem; font-weight:400; color:var(--black); margin-bottom:8px; }
+.ai-lock-desc { font-size:0.78rem; color:var(--ink); line-height:1.6; font-weight:300; margin-bottom:20px; }
+.ai-lock-btn { display:inline-flex; align-items:center; gap:8px; background:var(--black); color:var(--white); border:none; border-radius:4px; padding:11px 24px; font-family:var(--sans); font-size:0.72rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; }
+.ai-lock-btn:hover { background:var(--green); }
+
+/* AI input (visible but blurred behind lock) */
+.ai-inner { padding:20px; display:flex; flex-direction:column; gap:12px; min-height:180px; }
+.ai-textarea { width:100%; border:1.5px solid var(--gray-200); border-radius:4px; padding:11px 14px; font-family:var(--sans); font-size:0.85rem; color:var(--black); outline:none; resize:none; min-height:80px; font-weight:300; line-height:1.6; }
+.ai-textarea::placeholder { color:var(--gray-300); }
+.ai-actions { display:flex; gap:8px; }
+
+/* Toast */
+.toast { position:fixed; bottom:24px; right:24px; background:var(--black); color:var(--white); font-size:0.75rem; font-weight:500; padding:11px 18px; border-radius:4px; display:none; align-items:center; gap:8px; z-index:999; animation:toastIn 0.3s var(--ease) forwards; }
+.toast.show { display:flex; }
+@keyframes toastIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* Generate spinner animation on button */
+@keyframes spin { to { transform:rotate(360deg); } }
+.spinning { animation:spin 1s linear infinite; }
+
+/* ── RESPONSIVE ── */
+@media (max-width:900px) {
+  :root { --sidebar-w:0px; }
+  .sidebar { display:none; }
+  .shell { grid-template-columns:1fr; }
+  .topbar { grid-column:1; }
+  .app-body { grid-template-columns:1fr; }
+  .controls-panel { border-right:none; border-bottom:1px solid var(--gray-200); overflow-y:visible; max-height:none; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-brand">
+      <span class="sidebar-brand-logo">Evercrafted</span>
+      <div class="sidebar-brand-sep"></div>
+      <span class="sidebar-brand-sub">Studio</span>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-group-label"><div class="nav-tier-dot dot-bloom"></div><span class="nav-group-name">Bloom</span><span class="nav-group-price">$19/mo</span></div>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🌸</span><span class="nav-item-name">Tutorial Guide</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🍂</span><span class="nav-item-name">Seasonal Lookbook</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label"><div class="nav-tier-dot dot-craft"></div><span class="nav-group-name">Craft</span><span class="nav-group-price">$39/mo</span></div>
+        <a class="nav-item" href="#"><span class="nav-item-icon">📦</span><span class="nav-item-name">Inventory Tracker</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">💰</span><span class="nav-item-name">Pricing Calculator</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🧾</span><span class="nav-item-name">Order Manager</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label"><div class="nav-tier-dot dot-studio"></div><span class="nav-group-name">Studio</span><span class="nav-group-price">$69/mo</span></div>
+        <a class="nav-item active" href="#"><span class="nav-item-icon">🌿</span><span class="nav-item-name">Blueprint Generator</span><span class="nav-item-badge badge-new">Flagship</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🎨</span><span class="nav-item-name">Collection Builder</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🤝</span><span class="nav-item-name">Client Portal</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🏠</span><span class="nav-item-name">Room Visualizer</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🛍️</span><span class="nav-item-name">Storefront</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">📋</span><span class="nav-item-name">Build Instructions</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">📅</span><span class="nav-item-name">Booking & Invoicing</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">📊</span><span class="nav-item-name">Analytics</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🏷️</span><span class="nav-item-name">Etsy Listing Builder</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label"><div class="nav-tier-dot dot-atelier"></div><span class="nav-group-name">Atelier</span><span class="nav-group-price">$129/mo</span></div>
+        <a class="nav-item" href="#"><span class="nav-item-icon">✨</span><span class="nav-item-name">AI Visualizer</span><span class="nav-item-badge badge-ai">AI</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🪄</span><span class="nav-item-name">AI Stylist</span><span class="nav-item-badge badge-ai">AI</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🧠</span><span class="nav-item-name">AI Blueprint</span><span class="nav-item-badge badge-ai">AI</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">💡</span><span class="nav-item-name">AI Pricing Advisor</span><span class="nav-item-badge badge-ai">AI</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🔗</span><span class="nav-item-name">Supplier Intelligence</span><span class="nav-item-badge badge-ai">AI</span></a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">SR</div>
+        <div class="user-info"><div class="user-name">Sarah R.</div><div class="user-tier">Studio Plan · 3 of 5 seats</div></div>
+        <span class="user-chevron">⌄</span>
+      </div>
+      <a href="#" class="sidebar-help">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>Help & documentation</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ══ TOPBAR ══ -->
+  <header class="topbar">
+    <div class="topbar-breadcrumb">
+      <a href="index.html" class="breadcrumb-home">Apps</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-sep">Studio</span>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">Blueprint Generator</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-tier-badge tb-studio">Studio</span>
+      <div class="topbar-divider"></div>
+      <button class="topbar-icon-btn" title="Notifications">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="topbar-icon-btn" title="Settings">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+      <div class="topbar-divider"></div>
+      <button class="topbar-upgrade">↑ Upgrade to Atelier</button>
+    </div>
+  </header>
+
+  <!-- ══ APP MAIN ══ -->
+  <main class="app-main">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <span class="page-header-kicker">Studio · Flagship app</span>
+        <h1 class="page-header-title">Wreath Blueprint Generator</h1>
+        <p class="page-header-desc">Generate precise polar-coordinate placement blueprints. Input your wreath parameters and get a fully structured layout with (r, θ) positions for every stem.</p>
+      </div>
+      <div class="page-header-actions">
+        <button class="print-btn" onclick="window.print()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Print / Export
+        </button>
+      </div>
+    </div>
+
+    <!-- Two-panel body -->
+    <div class="app-body">
+
+      <!-- ── LEFT: Controls ── -->
+      <div class="controls-panel">
+
+        <!-- Wreath Size -->
+        <div class="controls-section">
+          <div class="ctrl-heading">Wreath size</div>
+          <div class="size-grid" id="size-grid">
+            <div class="size-btn" onclick="selectSize(this,'small',10)">
+              <span class="size-btn-label">Small</span>
+              <span class="size-btn-dim">10"</span>
+            </div>
+            <div class="size-btn active" onclick="selectSize(this,'medium',16)">
+              <span class="size-btn-label">Medium</span>
+              <span class="size-btn-dim">16"</span>
+            </div>
+            <div class="size-btn" onclick="selectSize(this,'large',24)">
+              <span class="size-btn-label">Large</span>
+              <span class="size-btn-dim">24"</span>
+            </div>
+            <div class="size-btn" onclick="selectSize(this,'custom',0)" id="custom-size-btn">
+              <span class="size-btn-label">Custom</span>
+              <span class="size-btn-dim" id="custom-dim-label">—"</span>
+            </div>
+          </div>
+          <div class="custom-size-row" id="custom-size-row" style="display:none; margin-bottom:14px;">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <label style="font-size:0.62rem;color:var(--gray-400);letter-spacing:0.08em;text-transform:uppercase;">Diameter (inches)</label>
+              <input type="number" id="custom-diameter" min="6" max="48" value="20" style="border:1.5px solid var(--gray-200);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:0.82rem;outline:none;transition:border-color 0.2s;" oninput="updateCustomDim()" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--gray-200)'">
+            </div>
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <label style="font-size:0.62rem;color:var(--gray-400);letter-spacing:0.08em;text-transform:uppercase;">Depth (inches)</label>
+              <input type="number" id="custom-depth" min="2" max="12" value="4" style="border:1.5px solid var(--gray-200);border-radius:4px;padding:8px 10px;font-family:var(--mono);font-size:0.82rem;outline:none;transition:border-color 0.2s;" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--gray-200)'">
+            </div>
+          </div>
+        </div>
+
+        <!-- Base Type -->
+        <div class="controls-section">
+          <div class="ctrl-heading">Base type</div>
+          <div class="base-toggle">
+            <div class="base-btn active" onclick="selectBase(this,'grapevine')" id="base-grapevine">
+              <div class="base-btn-icon">🪵</div>
+              <div class="base-btn-name">Grapevine</div>
+              <div class="base-btn-desc">Natural, textured — ideal for dried & mixed elements</div>
+            </div>
+            <div class="base-btn" onclick="selectBase(this,'pine')" id="base-pine">
+              <div class="base-btn-icon">🌲</div>
+              <div class="base-btn-name">Pine / Wire</div>
+              <div class="base-btn-desc">Dense, uniform — ideal for full florals & ribbon</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Elements -->
+        <div class="controls-section">
+          <div class="ctrl-heading">Elements</div>
+          <div class="element-rows">
+            <div class="element-row">
+              <div class="element-dot" style="background:var(--focal-color)"></div>
+              <div class="element-label">
+                Focal flowers
+                <small>Large blooms — placed first, anchor the design</small>
+              </div>
+              <div class="counter">
+                <button class="counter-btn" onclick="changeCount('focal',-1)">−</button>
+                <div class="counter-val" id="focal-count">3</div>
+                <button class="counter-btn" onclick="changeCount('focal',1)">+</button>
+              </div>
+            </div>
+            <div class="element-row">
+              <div class="element-dot" style="background:var(--filler-color)"></div>
+              <div class="element-label">
+                Filler / greenery
+                <small>Secondary stems — fill gaps, create depth</small>
+              </div>
+              <div class="counter">
+                <button class="counter-btn" onclick="changeCount('filler',-1)">−</button>
+                <div class="counter-val" id="filler-count">8</div>
+                <button class="counter-btn" onclick="changeCount('filler',1)">+</button>
+              </div>
+            </div>
+            <div class="element-row">
+              <div class="element-dot" style="background:var(--accent-color)"></div>
+              <div class="element-label">
+                Accent elements
+                <small>Berries, ribbon, picks — added last</small>
+              </div>
+              <div class="counter">
+                <button class="counter-btn" onclick="changeCount('accent',-1)">−</button>
+                <div class="counter-val" id="accent-count">5</div>
+                <button class="counter-btn" onclick="changeCount('accent',1)">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Placement Algorithm -->
+        <div class="controls-section">
+          <div class="ctrl-heading">Placement algorithm</div>
+          <div class="placement-options">
+            <label class="placement-opt">
+              <input type="radio" name="placement" value="golden" checked onchange="state.placement=this.value">
+              <div class="placement-opt-text">
+                <div class="placement-opt-name">Golden angle spiral</div>
+                <div class="placement-opt-desc">137.5° increments — maximally even distribution, natural-looking</div>
+              </div>
+            </label>
+            <label class="placement-opt">
+              <input type="radio" name="placement" value="radial" onchange="state.placement=this.value">
+              <div class="placement-opt-text">
+                <div class="placement-opt-name">Uniform radial</div>
+                <div class="placement-opt-desc">Equal angular spacing — geometric, symmetrical, formal</div>
+              </div>
+            </label>
+            <label class="placement-opt">
+              <input type="radio" name="placement" value="cluster" onchange="state.placement=this.value">
+              <div class="placement-opt-text">
+                <div class="placement-opt-name">Cluster grouping</div>
+                <div class="placement-opt-desc">3-element clusters at cardinal points — traditional style</div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Generate -->
+        <button class="generate-btn" onclick="generateBlueprint()">
+          <svg id="gen-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          Generate Blueprint
+        </button>
+
+        <!-- Saved blueprints -->
+        <div class="controls-section">
+          <div class="ctrl-heading">Saved blueprints</div>
+          <div class="saved-list" id="saved-list">
+            <div class="saved-item" onclick="loadSaved('Autumn Harvest')">
+              <div class="saved-dot"></div>
+              <div class="saved-info">
+                <div class="saved-name">Autumn Harvest Wreath</div>
+                <div class="saved-meta">24" · Grapevine · 3F / 8G / 5A</div>
+              </div>
+              <button class="saved-load">Load</button>
+            </div>
+            <div class="saved-item" onclick="loadSaved('Spring Garden')">
+              <div class="saved-dot"></div>
+              <div class="saved-info">
+                <div class="saved-name">Spring Garden Mix</div>
+                <div class="saved-meta">16" · Pine · 5F / 10G / 4A</div>
+              </div>
+              <button class="saved-load">Load</button>
+            </div>
+            <div class="saved-item" onclick="loadSaved('Holiday Classic')">
+              <div class="saved-dot"></div>
+              <div class="saved-info">
+                <div class="saved-name">Holiday Classic</div>
+                <div class="saved-meta">20" · Pine · 4F / 12G / 8A</div>
+              </div>
+              <button class="saved-load">Load</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /controls-panel -->
+
+      <!-- ── RIGHT: Preview ── -->
+      <div class="preview-panel">
+
+        <!-- Name + actions -->
+        <div class="blueprint-name-row">
+          <input class="blueprint-name-input" id="blueprint-name" type="text" placeholder="Name this blueprint…" value="Untitled Blueprint">
+          <button class="save-btn" onclick="saveBlueprint()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save
+          </button>
+          <button class="print-btn" onclick="window.print()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            PDF
+          </button>
+        </div>
+
+        <!-- Blueprint diagram card -->
+        <div class="blueprint-card">
+          <div class="blueprint-card-header">
+            <span class="blueprint-card-title">Placement Diagram</span>
+            <span class="blueprint-card-meta" id="header-meta">16" · Grapevine · Golden angle · 16 elements</span>
+          </div>
+          <div class="blueprint-card-body">
+            <div class="diagram-wrap">
+              <svg id="blueprint-svg" width="340" height="340" viewBox="-170 -170 340 340"></svg>
+            </div>
+            <div class="diagram-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--focal-color)"></div>Focal flower</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--filler-color)"></div>Filler / greenery</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--accent-color)"></div>Accent element</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--gray-300)"></div>Base center</div>
+            </div>
+          </div>
+          <div class="blueprint-stats" id="blueprint-stats">
+            <div class="stat-cell"><div class="stat-val" id="stat-diameter">16"</div><div class="stat-lbl">Diameter</div></div>
+            <div class="stat-cell"><div class="stat-val" id="stat-total">16</div><div class="stat-lbl">Total stems</div></div>
+            <div class="stat-cell"><div class="stat-val" id="stat-density">Moderate</div><div class="stat-lbl">Density</div></div>
+            <div class="stat-cell"><div class="stat-val" id="stat-algo">Golden</div><div class="stat-lbl">Algorithm</div></div>
+          </div>
+        </div>
+
+        <!-- Placement table -->
+        <div class="blueprint-card">
+          <div class="blueprint-card-header">
+            <span class="blueprint-card-title">Placement Coordinates</span>
+            <span class="blueprint-card-meta">Polar (r, θ) — r in inches from center · θ in degrees</span>
+          </div>
+          <div class="placement-table-wrap">
+            <table class="placement-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Type</th>
+                  <th>Radius (r)</th>
+                  <th>Angle (θ)</th>
+                  <th>X pos</th>
+                  <th>Y pos</th>
+                  <th>Layer</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody id="placement-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- AI Blueprint section (Atelier locked) -->
+        <div class="blueprint-card ai-section" style="position:relative; min-height:220px;">
+          <div class="blueprint-card-header">
+            <span class="blueprint-card-title">AI Blueprint from Description</span>
+            <span style="font-size:0.6rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 9px;border-radius:100px;background:var(--atelier-pale);color:var(--atelier-c);border:1px solid rgba(26,26,26,0.12);">Atelier only</span>
+          </div>
+          <!-- Blurred content -->
+          <div class="ai-inner" style="filter:blur(3px);pointer-events:none;user-select:none;">
+            <textarea class="ai-textarea" placeholder="Describe your wreath in plain English… e.g. 'A lush autumn wreath with warm burgundy dahlias as focal flowers, eucalyptus filler, and scattered dried orange slices as accents. Classic symmetrical layout.'"></textarea>
+            <div class="ai-actions">
+              <button style="flex:1;background:var(--black);color:var(--white);border:none;border-radius:4px;padding:10px;font-size:0.72rem;font-weight:500;font-family:var(--sans);cursor:pointer;">✦ Generate from description</button>
+              <button style="background:transparent;border:1.5px solid var(--gray-200);border-radius:4px;padding:10px 14px;font-size:0.72rem;font-family:var(--sans);cursor:pointer;color:var(--gray-500);">Suggest elements</button>
+            </div>
+          </div>
+          <!-- Lock overlay -->
+          <div class="ai-lock-overlay">
+            <div class="ai-lock-card">
+              <div class="ai-lock-icon">🧠</div>
+              <span class="ai-lock-script">Atelier feature</span>
+              <h3 class="ai-lock-title">AI Blueprint from Description</h3>
+              <p class="ai-lock-desc">Describe your wreath in plain English and get a fully structured polar-coordinate blueprint in seconds. Available on Atelier plan.</p>
+              <button class="ai-lock-btn">Upgrade to Atelier →</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <!-- /preview-panel -->
+
+    </div>
+    <!-- /app-body -->
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-light)" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toast-msg">Blueprint saved!</span>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+const state = {
+  diameter: 16,
+  base: 'grapevine',
+  focal: 3,
+  filler: 8,
+  accent: 5,
+  placement: 'golden',
+  isCustom: false
+};
+
+// ══════════════════════════════════════════
+//  POLAR COORDINATE ENGINE
+// ══════════════════════════════════════════
+
+const GOLDEN_ANGLE = 137.507764; // degrees
+
+function toRad(deg) { return deg * Math.PI / 180; }
+function toDeg(rad) { return rad * 180 / Math.PI; }
+
+function generatePlacements() {
+  const R = state.diameter / 2; // outer radius in inches
+  const innerR = R * 0.2;       // inner dead zone (center)
+  const outerR = R * 0.88;      // usable outer edge
+
+  const total = state.focal + state.filler + state.accent;
+  const elements = [];
+
+  // Build element type array: focals first, then fillers, then accents
+  for (let i = 0; i < state.focal;  i++) elements.push({ type: 'focal',  idx: i });
+  for (let i = 0; i < state.filler; i++) elements.push({ type: 'filler', idx: i });
+  for (let i = 0; i < state.accent; i++) elements.push({ type: 'accent', idx: i });
+
+  // Assign radius rings by type
+  const ringMap = {
+    focal:  { rMin: outerR * 0.50, rMax: outerR * 0.80 },
+    filler: { rMin: outerR * 0.30, rMax: outerR * 0.95 },
+    accent: { rMin: outerR * 0.20, rMax: outerR * 0.88 }
+  };
+
+  const placements = [];
+
+  if (state.placement === 'golden') {
+    // Golden angle spiral — one continuous sequence
+    elements.forEach((el, i) => {
+      const ring = ringMap[el.type];
+      const t = i / Math.max(total - 1, 1);
+      const r = ring.rMin + (ring.rMax - ring.rMin) * (el.type === 'filler' ? t : 0.5 + t * 0.15);
+      const theta = (i * GOLDEN_ANGLE) % 360;
+      placements.push({ ...el, r: r, theta: theta });
+    });
+
+  } else if (state.placement === 'radial') {
+    // Equal spacing per type group
+    let globalIdx = 0;
+    ['focal','filler','accent'].forEach(type => {
+      const group = elements.filter(e => e.type === type);
+      const ring = ringMap[type];
+      group.forEach((el, i) => {
+        const theta = (i / group.length) * 360 + (type === 'focal' ? 0 : type === 'filler' ? 15 : 30);
+        const r = (ring.rMin + ring.rMax) / 2 + (i % 2 === 0 ? 0 : (ring.rMax - ring.rMin) * 0.2);
+        placements.push({ ...el, r, theta: theta % 360 });
+        globalIdx++;
+      });
+    });
+
+  } else if (state.placement === 'cluster') {
+    // Group into clusters of 3 at cardinal + diagonal points
+    const clusterAngles = [0, 45, 90, 135, 180, 225, 270, 315];
+    let gi = 0;
+    elements.forEach((el, i) => {
+      const clusterCenter = clusterAngles[gi % clusterAngles.length];
+      const spread = 22;
+      const offset = (el.idx % 3 - 1) * spread;
+      const theta = (clusterCenter + offset + 360) % 360;
+      const ring = ringMap[el.type];
+      const r = (ring.rMin + ring.rMax) / 2;
+      placements.push({ ...el, r, theta });
+      if ((i + 1) % 3 === 0) gi++;
+    });
+  }
+
+  return placements;
+}
+
+// ══════════════════════════════════════════
+//  SVG RENDERER
+// ══════════════════════════════════════════
+
+function renderDiagram(placements) {
+  const svg = document.getElementById('blueprint-svg');
+  const R = state.diameter / 2;
+  const scale = 130 / R; // scale to fit ~130px radius
+
+  svg.innerHTML = '';
+
+  const ns = 'http://www.w3.org/2000/svg';
+
+  function el(tag, attrs) {
+    const e = document.createElementNS(ns, tag);
+    Object.entries(attrs).forEach(([k,v]) => e.setAttribute(k, v));
+    return e;
+  }
+
+  // Rings
+  const ringRadii = [0.25, 0.5, 0.75, 1.0];
+  ringRadii.forEach(f => {
+    svg.appendChild(el('circle', {
+      cx: 0, cy: 0, r: R * f * scale,
+      fill: 'none', stroke: '#E8E8E8', 'stroke-width': '0.8',
+      'stroke-dasharray': f === 1.0 ? 'none' : '4 3'
+    }));
+  });
+
+  // Degree marks at 30° intervals
+  for (let deg = 0; deg < 360; deg += 30) {
+    const rad = toRad(deg - 90);
+    const x1 = Math.cos(rad) * R * scale * 0.92;
+    const y1 = Math.sin(rad) * R * scale * 0.92;
+    const x2 = Math.cos(rad) * R * scale * 1.0;
+    const y2 = Math.sin(rad) * R * scale * 1.0;
+    svg.appendChild(el('line', { x1, y1, x2, y2, stroke: '#D0D0D0', 'stroke-width': '0.5' }));
+    // Angle label
+    const tx = Math.cos(rad) * R * scale * 1.12;
+    const ty = Math.sin(rad) * R * scale * 1.12;
+    const txt = document.createElementNS(ns, 'text');
+    txt.setAttribute('x', tx); txt.setAttribute('y', ty);
+    txt.setAttribute('text-anchor', 'middle'); txt.setAttribute('dominant-baseline', 'central');
+    txt.setAttribute('font-size', '7'); txt.setAttribute('fill', '#A8A8A8');
+    txt.setAttribute('font-family', "'DM Mono', monospace");
+    txt.textContent = deg + '°';
+    svg.appendChild(txt);
+  }
+
+  // Center dot
+  svg.appendChild(el('circle', { cx: 0, cy: 0, r: 5, fill: '#E8E8E8', stroke: '#D0D0D0', 'stroke-width': '1' }));
+
+  // Element dots
+  const colorMap = { focal: '#4A6741', filler: '#7A9E76', accent: '#C4922A' };
+  const sizeMap  = { focal: 7, filler: 5, accent: 4.5 };
+  const labelOrder = { focal: 'F', filler: 'G', accent: 'A' };
+
+  placements.forEach((p, i) => {
+    const rad = toRad(p.theta - 90);
+    const x = Math.cos(rad) * p.r * scale;
+    const y = Math.sin(rad) * p.r * scale;
+    const r = sizeMap[p.type];
+    const color = colorMap[p.type];
+
+    // Outer glow ring
+    svg.appendChild(el('circle', { cx: x, cy: y, r: r + 3, fill: color, opacity: '0.15' }));
+    // Main dot
+    svg.appendChild(el('circle', { cx: x, cy: y, r, fill: color, stroke: 'white', 'stroke-width': '1.2' }));
+    // Label
+    const txt = document.createElementNS(ns, 'text');
+    txt.setAttribute('x', x); txt.setAttribute('y', y);
+    txt.setAttribute('text-anchor', 'middle'); txt.setAttribute('dominant-baseline', 'central');
+    txt.setAttribute('font-size', '5.5'); txt.setAttribute('fill', 'white');
+    txt.setAttribute('font-family', "'DM Mono', monospace"); txt.setAttribute('font-weight', '500');
+    txt.textContent = labelOrder[p.type] + (p.idx + 1);
+    svg.appendChild(txt);
+  });
+}
+
+// ══════════════════════════════════════════
+//  TABLE RENDERER
+// ══════════════════════════════════════════
+
+function renderTable(placements) {
+  const tbody = document.getElementById('placement-tbody');
+  tbody.innerHTML = '';
+
+  const typeLabel = { focal: 'Focal flower', filler: 'Filler / greenery', accent: 'Accent element' };
+  const typeColor = { focal: 'var(--focal-color)', filler: 'var(--filler-color)', accent: 'var(--accent-color)' };
+  const layerMap  = { focal: 'Layer 2', filler: 'Layer 1', accent: 'Layer 3' };
+  const noteMap   = { focal: 'Place first, anchor', filler: 'Fill & build depth', accent: 'Finish last' };
+
+  placements.forEach((p, i) => {
+    const rad = toRad(p.theta);
+    const xIn = (p.r * Math.cos(rad)).toFixed(2);
+    const yIn = (p.r * Math.sin(rad)).toFixed(2);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="cell-mono" style="color:var(--gray-400)">${String(i + 1).padStart(2, '0')}</td>
+      <td>
+        <div class="cell-type">
+          <div class="type-dot" style="background:${typeColor[p.type]}"></div>
+          <span class="type-label">${typeLabel[p.type]} ${p.idx + 1}</span>
+        </div>
+      </td>
+      <td class="cell-mono">${p.r.toFixed(2)}"</td>
+      <td class="cell-mono">${p.theta.toFixed(1)}°</td>
+      <td class="cell-mono">${xIn}"</td>
+      <td class="cell-mono">${yIn}"</td>
+      <td style="font-size:0.72rem;color:var(--gray-500)">${layerMap[p.type]}</td>
+      <td style="font-size:0.72rem;color:var(--gray-400);font-style:italic">${noteMap[p.type]}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+// ══════════════════════════════════════════
+//  UPDATE STATS + META
+// ══════════════════════════════════════════
+
+function updateMeta() {
+  const total = state.focal + state.filler + state.accent;
+  const algoLabel = { golden: 'Golden', radial: 'Radial', cluster: 'Cluster' };
+  const density = total < 10 ? 'Light' : total < 18 ? 'Moderate' : total < 26 ? 'Full' : 'Dense';
+
+  document.getElementById('header-meta').textContent =
+    `${state.diameter}" · ${state.base.charAt(0).toUpperCase() + state.base.slice(1)} · ${algoLabel[state.placement]} angle · ${total} elements`;
+
+  document.getElementById('stat-diameter').textContent = state.diameter + '"';
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-density').textContent = density;
+  document.getElementById('stat-algo').textContent = algoLabel[state.placement];
+}
+
+// ══════════════════════════════════════════
+//  MAIN GENERATE
+// ══════════════════════════════════════════
+
+function generateBlueprint() {
+  const icon = document.getElementById('gen-icon');
+  icon.classList.add('spinning');
+
+  setTimeout(() => {
+    const placements = generatePlacements();
+    renderDiagram(placements);
+    renderTable(placements);
+    updateMeta();
+    icon.classList.remove('spinning');
+    showToast('Blueprint generated ✦');
+  }, 320);
+}
+
+// ══════════════════════════════════════════
+//  UI CONTROLS
+// ══════════════════════════════════════════
+
+function selectSize(btn, name, diameter) {
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const isCustom = name === 'custom';
+  document.getElementById('custom-size-row').style.display = isCustom ? 'grid' : 'none';
+  if (!isCustom) {
+    state.diameter = diameter;
+    state.isCustom = false;
+  } else {
+    state.isCustom = true;
+    state.diameter = parseInt(document.getElementById('custom-diameter').value) || 20;
+  }
+}
+
+function updateCustomDim() {
+  const val = document.getElementById('custom-diameter').value;
+  document.getElementById('custom-dim-label').textContent = (val || '—') + '"';
+  state.diameter = parseInt(val) || 20;
+}
+
+function selectBase(btn, base) {
+  document.querySelectorAll('.base-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.base = base;
+}
+
+const limits = { focal: [1, 9], filler: [1, 20], accent: [0, 12] };
+function changeCount(type, delta) {
+  const [min, max] = limits[type];
+  state[type] = Math.min(max, Math.max(min, state[type] + delta));
+  document.getElementById(type + '-count').textContent = state[type];
+}
+
+// ══════════════════════════════════════════
+//  SAVE / LOAD
+// ══════════════════════════════════════════
+
+function saveBlueprint() {
+  const name = document.getElementById('blueprint-name').value || 'Untitled Blueprint';
+  showToast(`"${name}" saved`);
+}
+
+function loadSaved(name) {
+  const presets = {
+    'Autumn Harvest': { diameter: 24, base: 'grapevine', focal: 3, filler: 8, accent: 5, placement: 'golden' },
+    'Spring Garden':  { diameter: 16, base: 'pine',      focal: 5, filler: 10, accent: 4, placement: 'radial' },
+    'Holiday Classic':{ diameter: 20, base: 'pine',      focal: 4, filler: 12, accent: 8, placement: 'cluster' }
+  };
+  const preset = presets[name];
+  if (!preset) return;
+
+  Object.assign(state, preset);
+  document.getElementById('blueprint-name').value = name + ' Wreath';
+  document.getElementById('focal-count').textContent  = state.focal;
+  document.getElementById('filler-count').textContent = state.filler;
+  document.getElementById('accent-count').textContent = state.accent;
+
+  // Reset size buttons
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  const sizeMap = { 10:'small', 16:'medium', 24:'large' };
+  const sizeLabel = sizeMap[state.diameter];
+  if (sizeLabel) {
+    const allBtns = document.querySelectorAll('.size-btn');
+    allBtns.forEach(b => { if (b.querySelector('.size-btn-label').textContent.toLowerCase() === sizeLabel) b.classList.add('active'); });
+  }
+
+  // Reset base
+  document.querySelectorAll('.base-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('base-' + state.base).classList.add('active');
+
+  // Reset placement radio
+  document.querySelector(`input[name="placement"][value="${state.placement}"]`).checked = true;
+
+  generateBlueprint();
+  showToast(`"${name}" loaded`);
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+generateBlueprint();
+</script>
+</body>
+</html>

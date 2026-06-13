@@ -1,0 +1,244 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Memory Weaver — a lasting memorial wreath | Evercrafted</title>
+<meta name="description" content="A gentle, guided way to design a lasting memorial wreath built from who someone — or a beloved pet — truly was. Their colors, their character, their place. Beauty that holds a memory.">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FDFCFA;--soft:#F6F1E8;--ink:#2B2A24;--ink2:#4A4639;--mut:#6E6755;--faint:#9b917c;--gold:#A98249;--gold-d:#8C6A38;--green:#46663E;--green-d:#3A5532;--cream:#F7F2E8;
+--serif:'Italiana',Georgia,serif;--sans:'Inter',system-ui,sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.65;font-weight:300;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}.serif{font-family:var(--serif)}
+.nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:16px clamp(20px,5vw,64px);background:rgba(253,252,250,.92);backdrop-filter:blur(10px);border-bottom:1px solid #ece3d2}
+.logo{font-family:var(--serif);font-size:1.4rem;letter-spacing:.04em}.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:clamp(.8rem,2vw,1.8rem);align-items:center}.nav-links a{font-size:13px;color:var(--mut)}
+.wrap{max-width:760px;margin:0 auto;padding:0 clamp(20px,5vw,40px)}
+/* hero */
+.hero{text-align:center;padding:clamp(3rem,7vw,5rem) 0 clamp(1.5rem,3vw,2.5rem)}
+.ov{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);margin-bottom:1.1rem}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4.6vw,3rem);line-height:1.1;letter-spacing:.01em}
+h1 .it{font-style:italic;color:var(--green)}
+.lead{font-size:1.08rem;color:var(--ink2);max-width:34rem;margin:1.4rem auto 0;line-height:1.75}
+/* mode toggle */
+.modes{display:inline-flex;gap:.4rem;margin:2rem auto 0;background:#fff;border:1px solid #ece3d2;border-radius:100px;padding:5px}
+.mode{border:none;background:transparent;font-family:var(--sans);font-size:13px;color:var(--mut);padding:9px 20px;border-radius:100px;cursor:pointer;transition:all .18s}
+.mode.on{background:var(--green);color:#fff}
+/* intake card */
+.card{background:#fff;border:1px solid #ece3d2;border-radius:20px;padding:clamp(1.6rem,4vw,2.6rem);box-shadow:0 18px 50px rgba(90,68,32,.08);margin:2rem auto 4rem}
+.prog{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.6rem}
+.prog .step{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.dots{display:flex;gap:6px}.dot{width:7px;height:7px;border-radius:50%;background:#e7ddc9}.dot.on{background:var(--green)}
+.q{font-family:var(--serif);font-weight:400;font-size:clamp(1.3rem,3vw,1.7rem);line-height:1.3;color:var(--ink);margin-bottom:.5rem}
+.q-help{font-size:.9rem;color:var(--mut);margin-bottom:1.2rem;font-style:italic}
+textarea,input[type=text]{width:100%;font-family:var(--sans);font-size:1rem;color:var(--ink);background:#fdfbf7;border:1px solid #e2d8c5;border-radius:12px;padding:14px 16px;outline:none;resize:vertical;transition:border .18s;font-weight:300}
+textarea:focus,input:focus{border-color:var(--green)}
+textarea{min-height:96px}
+.row{display:flex;align-items:center;justify-content:space-between;margin-top:1.5rem;gap:1rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:12px 26px;border-radius:100px;font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:.03em;cursor:pointer;border:1px solid transparent;transition:all .18s}
+.btn-p{background:var(--green);color:#fff}.btn-p:hover{background:var(--green-d)}
+.btn-g{background:transparent;color:var(--mut);border-color:transparent}.btn-g:hover{color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:default}
+.skip{font-size:12px;color:var(--faint);cursor:pointer}
+/* loading */
+.loading{text-align:center;padding:2.5rem 0;color:var(--mut)}
+.loading .serif{font-size:1.5rem;color:var(--green);margin-bottom:.5rem;display:block}
+.spin{width:26px;height:26px;border:2px solid #e7ddc9;border-top-color:var(--green);border-radius:50%;margin:1rem auto 0;animation:sp 1s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* result */
+.res-title{text-align:center;margin-bottom:.4rem}
+.res-title .name{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,5vw,2.8rem);color:var(--ink);line-height:1.1}
+.res-prov{text-align:center;font-family:var(--serif);font-style:italic;font-size:1.15rem;color:var(--green);max-width:32rem;margin:.6rem auto 1.8rem;line-height:1.5}
+.preview{display:block;width:100%;max-width:380px;margin:0 auto 1.8rem;border-radius:16px;border:1px solid #ece3d2}
+.swatches{display:flex;gap:10px;justify-content:center;margin-bottom:1.6rem;flex-wrap:wrap}
+.sw{text-align:center}.sw .chip{width:46px;height:46px;border-radius:50%;border:1px solid rgba(0,0,0,.06);margin:0 auto}
+.sw .hex{font-size:10px;color:var(--faint);margin-top:5px;letter-spacing:.04em}
+.profile{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:1.8rem}
+.pf{background:var(--soft);border-radius:12px;padding:.9rem 1rem}
+.pf .l{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:.25rem}
+.pf .v{font-size:.95rem;color:var(--ink2);text-transform:capitalize}
+.tags{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;margin-bottom:2rem}
+.tag{font-size:12px;color:var(--green-d);background:rgba(70,102,62,.1);border-radius:100px;padding:5px 13px;text-transform:capitalize}
+.cta-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap}
+.note{text-align:center;font-size:12px;color:var(--faint);margin-top:1.6rem;line-height:1.6}
+.err{background:#fcf3f1;border:1px solid #f0d9d2;color:#a8434a;border-radius:12px;padding:1rem 1.2rem;font-size:.92rem;text-align:center}
+.reverent{text-align:center;font-size:.82rem;color:var(--faint);max-width:30rem;margin:1.2rem auto 0;line-height:1.6}
+.hidden{display:none}
+</style></head><body>
+
+<nav class="nav">
+  <a class="logo" href="evercrafted-marketing-site.html">Ever<span>crafted</span></a>
+  <div class="nav-links"><a href="evercrafted-marketing-site.html">Home</a><a href="evercrafted-how-it-works.html">How it works</a><a href="evercrafted-about.html">About</a></div>
+</nav>
+
+<section class="hero"><div class="wrap">
+  <div class="ov">A lasting memorial</div>
+  <h1>Hold their memory in something<br>that <span class="it">won't fade</span>.</h1>
+  <p class="lead">Fresh flowers wilt within the week. A memorial wreath designed from who they truly were — their colors, their character, the light they loved — stays. Answer a few gentle questions, and the Memory Weaver designs a piece made to hold them.</p>
+  <div class="modes">
+    <button class="mode on" data-mode="human">In memory of someone</button>
+    <button class="mode" data-mode="pet">In memory of a pet</button>
+  </div>
+</div></section>
+
+<div class="wrap"><div class="card" id="card"><!-- filled by JS --></div></div>
+
+<script src="/evercrafted-nav.js" defer></script>
+<script>
+(function(){
+  var QUESTIONS = {
+    human: [
+      {q:"Who is this wreath for — and would you tell me their name?", help:"Saying their name is where we begin.", ph:"My mother, Eleanor…"},
+      {q:"When you close your eyes and think of them, what comes first?", help:"Not facts — the image or feeling that appears before thought.", ph:"Her hands in the garden in the morning…"},
+      {q:"What colors feel like them?", help:"Not necessarily what they wore — the colors that feel like them.", ph:"Soft — dusty rose, like old photographs, and faded green…"},
+      {q:"Was there a place — a room, a garden, a season — that was most theirs?", help:"Where you could feel them most.", ph:"The porch in the late afternoon, that golden light…"},
+      {q:"If you had to describe who they were in a few words?", help:"The words that are most them.", ph:"Quiet, but present. She made you feel seen…"},
+      {q:"Where will this wreath live — and who will see it most?", help:"This shapes its scale and presence.", ph:"In the hallway, near her photograph…"},
+      {q:"Is there anything you want this wreath to hold or say?", help:"Optional — something you wish you'd said, or want to keep.", ph:"That she's not gone, just somewhere I can't reach yet…", optional:true}
+    ],
+    pet: [
+      {q:"Tell me their name, and what kind of animal they were.", help:"We begin with them, as themselves.", ph:"Bear. He was a 14-year-old golden retriever…"},
+      {q:"What was their energy — still and watchful, or always in motion?", help:"This shapes the whole composition.", ph:"Always at the door, spinning with joy…"},
+      {q:"What colors do you associate with them?", help:"Their coat, the light they loved, the place they always chose.", ph:"Grey tabby, always in the afternoon sun by the window…"},
+      {q:"What was their favorite place — where did you always find them?", help:"The spot that was most theirs.", ph:"The velvet armchair, curled in the corner…"},
+      {q:"If you had to describe them in one word — the word that is most them?", help:"The thing you're missing most.", ph:"Gentle. Fierce. Joyful…"},
+      {q:"Where will this wreath live in your home?", help:"Many place it near their bed, their urn, or their favorite spot.", ph:"Above where his bed used to be…"}
+    ]
+  };
+
+  function GRIEF_SYSTEM(mode){
+    var who = mode==='pet' ? "a beloved animal companion they have lost" : "someone they have lost";
+    return "You are the Evercrafted Memory Weaver — an emotionally intelligent botanical design system.\n\n"+
+    "A person has just shared memories of "+who+". They want a wreath designed to hold that memory. Translate their emotional responses into a structured design profile.\n\n"+
+    "Read the responses carefully and identify:\n"+
+    "- The dominant emotional atmosphere (choose ONE canonical archetype: Quiet Opulence, Weathered Romance, Sacred Warmth, Lingering Autumn, Velvet Stillness, Candlelit Gathering, Garden Memory, Coastal Melancholy, Wild Ceremony, Soft Grandeur, Inherited Beauty, Winter Reverence, Faded Celebration, Untamed Elegance, Gilded Silence, Reverence, Stillness, Drift, Sanctuary)\n"+
+    "- The movement archetype (choose one or two: Still, Drift, Cascade, Spiral, Reach, Float, Surge, Orbit, Bloom Expansion, Taper Fade, Echo Pull, Wild Lift)\n"+
+    "- The palette: exactly 3 hex colors, emotionally matched to this specific being — never generic\n"+
+    "- The density (light | open | balanced | lush | saturated)\n"+
+    "- 3 to 6 single-word emotion tags\n"+
+    "- A single-sentence provenance phrase: a poetic description of what this design holds (10-20 words)\n"+
+    "- A design title of 1-3 words — the name of this wreath\n\n"+
+    "Return ONLY a valid JSON object, no preamble, no markdown, no explanation, no coordinates, no placement data:\n"+
+    '{"atmosphere":"","movement":"","palette":["#XXXXXX","#XXXXXX","#XXXXXX"],"density":"","emotion_tags":["",""],"provenance_phrase":"","design_title":""}\n\n'+
+    "Constraints: never output angles or coordinates; never use the words stunning, beautiful, gorgeous, or vibrant; the palette must be emotionally specific, never generic whites or standard florist colors; the provenance phrase must feel earned, not generated. Return ONLY the JSON object.";
+  }
+
+  var mode='human', idx=0, answers=[];
+  var card=document.getElementById('card');
+
+  document.querySelectorAll('.mode').forEach(function(b){
+    b.addEventListener('click',function(){
+      document.querySelectorAll('.mode').forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on'); mode=b.getAttribute('data-mode'); idx=0; answers=[]; renderQ();
+    });
+  });
+
+  function renderQ(){
+    var qs=QUESTIONS[mode], item=qs[idx];
+    var dots=qs.map(function(_,i){return '<span class="dot'+(i<=idx?' on':'')+'"></span>'}).join('');
+    card.innerHTML =
+      '<div class="prog"><span class="step">'+(idx+1)+' of '+qs.length+'</span><span class="dots">'+dots+'</span></div>'+
+      '<div class="q">'+item.q+'</div>'+
+      '<div class="q-help">'+item.help+'</div>'+
+      '<textarea id="ans" placeholder="'+item.ph+'">'+(answers[idx]?answers[idx].replace(/"/g,'&quot;'):'')+'</textarea>'+
+      '<div class="row">'+
+        '<button class="btn btn-g" id="back" '+(idx===0?'style="visibility:hidden"':'')+'>← Back</button>'+
+        '<div style="display:flex;align-items:center;gap:1rem">'+
+          (item.optional?'<span class="skip" id="skip">Skip this one</span>':'')+
+          '<button class="btn btn-p" id="next">'+(idx===qs.length-1?'Weave the design ✦':'Continue →')+'</button>'+
+        '</div>'+
+      '</div>';
+    var ta=document.getElementById('ans'); ta.focus();
+    document.getElementById('next').addEventListener('click',function(){ answers[idx]=ta.value.trim(); advance(); });
+    var bk=document.getElementById('back'); if(bk) bk.addEventListener('click',function(){ answers[idx]=ta.value.trim(); idx--; renderQ(); });
+    var sk=document.getElementById('skip'); if(sk) sk.addEventListener('click',function(){ answers[idx]=''; advance(); });
+  }
+
+  function advance(){
+    var qs=QUESTIONS[mode];
+    var item=qs[idx];
+    if(!item.optional && !answers[idx]){ document.getElementById('ans').focus(); return; }
+    if(idx<qs.length-1){ idx++; renderQ(); } else { generate(); }
+  }
+
+  function generate(){
+    var qs=QUESTIONS[mode];
+    var content = qs.map(function(item,i){ return 'Q: '+item.q+'\nA: '+(answers[i]||'(not answered)'); }).join('\n\n');
+    card.innerHTML = '<div class="loading"><span class="serif">Weaving their memory…</span>Reading what you shared, and translating it into a design.<div class="spin"></div></div>';
+    fetch('/api/ai-generate',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({system:GRIEF_SYSTEM(mode),content:content,max_tokens:500})})
+      .then(function(r){return r.json().then(function(j){return {ok:r.ok,j:j}})})
+      .then(function(res){
+        if(!res.ok || !res.j.success){ return showError(res.j.error||'The design weaver is resting. Please try again in a moment.'); }
+        var profile=parseProfile(res.j.text);
+        if(!profile) return showError('That memory came back unclear — please try once more.');
+        renderResult(profile);
+      })
+      .catch(function(){ showError('Something interrupted the weaving. Please try again.'); });
+  }
+
+  function parseProfile(text){
+    try{ var s=text.indexOf('{'), e=text.lastIndexOf('}'); if(s<0||e<0) return null;
+      var p=JSON.parse(text.slice(s,e+1));
+      if(!p.palette||!p.palette.length) return null;
+      return p;
+    }catch(e){ return null; }
+  }
+
+  function renderResult(p){
+    var pal=(p.palette||[]).slice(0,3);
+    var swatches=pal.map(function(c){return '<div class="sw"><div class="chip" style="background:'+c+'"></div><div class="hex">'+c+'</div></div>'}).join('');
+    var tags=(p.emotion_tags||[]).map(function(t){return '<span class="tag">'+t+'</span>'}).join('');
+    card.innerHTML =
+      '<div class="res-title"><div class="ov" style="text-align:center">Their design</div><div class="name serif">'+(p.design_title||'Untitled')+'</div></div>'+
+      '<div class="res-prov">"'+(p.provenance_phrase||'')+'"</div>'+
+      '<img class="preview" alt="design preview" src="'+previewSVG(pal,p.density)+'">'+
+      '<div class="swatches">'+swatches+'</div>'+
+      '<div class="profile">'+
+        pf('Atmosphere',p.atmosphere)+pf('Movement',p.movement)+pf('Density',p.density)+
+      '</div>'+
+      '<div class="tags">'+tags+'</div>'+
+      '<div class="cta-row">'+
+        '<a class="btn btn-p" href="evercrafted-marketing-site.html#waitlist">Begin a commission →</a>'+
+        '<button class="btn btn-g" id="again">Design another</button>'+
+      '</div>'+
+      '<div class="reverent">This is the emotional portrait your wreath is built from. Each piece is hand-built to order and ships with a provenance card carrying their name and these words.</div>';
+    document.getElementById('again').addEventListener('click',function(){ idx=0; answers=[]; renderQ(); });
+  }
+  function pf(l,v){ return '<div class="pf"><div class="l">'+l+'</div><div class="v">'+(v||'—')+'</div></div>'; }
+
+  function showError(msg){
+    card.innerHTML='<div class="err">'+msg+'</div><div class="row" style="justify-content:center"><button class="btn btn-p" id="retry">Try again</button></div>';
+    document.getElementById('retry').addEventListener('click',function(){ renderQ(); });
+  }
+
+  // A gentle polar "design signature" preview drawn from the palette + density.
+  function previewSVG(pal,density){
+    var W=600,H=600,cx=300,cy=300,D2R=Math.PI/180;
+    var p=pal.length?pal:['#cbb89a','#9fb0c2','#e9e2d4'];
+    var n={light:6,open:8,balanced:11,lush:15,saturated:18}[density]||11;
+    var full=(density==='lush'||density==='saturated');
+    var xy=function(deg,r){return [(cx+r*Math.cos((deg-90)*D2R)).toFixed(1),(cy+r*Math.sin((deg-90)*D2R)).toFixed(1)]};
+    var s='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 '+W+' '+H+'">';
+    s+='<rect width="'+W+'" height="'+H+'" fill="#FBF8F2"/>';
+    s+='<circle cx="'+cx+'" cy="'+cy+'" r="150" fill="none" stroke="#7d6244" stroke-width="11" stroke-opacity=".5"/>';
+    // greenery sweep
+    var gFrom=full?20:150, gTo=full?340:330;
+    for(var a=gFrom;a<=gTo;a+=12){var pt=xy(a%360,150);s+='<ellipse cx="'+pt[0]+'" cy="'+pt[1]+'" rx="12" ry="4.5" transform="rotate('+(a-90)+' '+pt[0]+' '+pt[1]+')" fill="#6f8456" fill-opacity=".75"/>';}
+    // blooms along an arc, colored from palette
+    var from=full?0:200, span=full?360:170;
+    for(var i=0;i<n;i++){
+      var ang=from+ (span*(i/(n-1||1)));
+      var r=150+ (i%2?6:-4);
+      var c=p[i%p.length];
+      var rad=9+ (i%3?2:5);
+      var pt2=xy(ang%360,r);
+      s+='<circle cx="'+pt2[0]+'" cy="'+pt2[1]+'" r="'+rad+'" fill="'+c+'" stroke="rgba(120,100,60,.2)" stroke-width="1"/>';
+    }
+    s+='</svg>';
+    return 'data:image/svg+xml;utf8,'+encodeURIComponent(s);
+  }
+
+  renderQ();
+})();
+</script>
+</body></html>

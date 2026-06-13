@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Studio — Evercrafted App</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Dancing+Script:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#F8F5EF;--cream2:#F0EBE2;--cream3:#E6DFCF;--white:#FDFCF9;
+  --ink:#1B1916;--ink2:#332F28;--muted:#8A8278;--muted2:#B4AFA8;
+  --sage:#4A6741;--sage-l:#7A9971;--sage-ll:#CEC8BC;--sage-bg:#EDE8E0;--sage-d:#3A5231;
+  --bark:#6E6860;--bark-l:#AEA89E;--bark-ll:#EBE6DE;--bark-d:#504C48;
+  --rule:rgba(27,25,22,.07);--rule2:rgba(27,25,22,.13);--ruledark:rgba(27,25,22,.22);
+  --gold:#B89A6A;--shadow:0 8px 40px rgba(27,25,22,.09)
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+
+/* ── APP SHELL ── */
+.shell{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
+.sidebar{background:var(--white);border-right:1px solid var(--rule);display:flex;flex-direction:column;position:fixed;width:220px;height:100vh;overflow-y:auto;z-index:100}
+.main{margin-left:220px;min-height:100vh;display:flex;flex-direction:column}
+
+/* SIDEBAR */
+.sb-header{padding:20px 18px 16px;border-bottom:1px solid var(--rule)}
+.sb-logo{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:500;letter-spacing:.05em;color:var(--ink);display:flex;align-items:center;gap:8px}
+.sb-logo svg{width:18px;height:18px;flex-shrink:0}
+.sb-app-name{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--sage);margin-top:2px;padding-left:26px}
+.sb-tier{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--sage-d);background:var(--sage-bg);border:1px solid rgba(74,103,65,.18);border-radius:2px;padding:3px 8px;margin:12px 18px 0;width:calc(100% - 36px)}
+.sb-nav{padding:12px 0;flex:1}
+.sb-label{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);padding:10px 18px 4px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 18px;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;border-left:2px solid transparent}
+.sb-item:hover{color:var(--ink);background:var(--cream)}
+.sb-item.on{color:var(--ink);font-weight:500;background:var(--cream2);border-left-color:var(--sage)}
+.sb-item svg{width:14px;height:14px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.sb-item .badge{margin-left:auto;font-size:9px;background:var(--sage);color:#fff;border-radius:10px;padding:1px 6px}
+.sb-footer{padding:14px 18px;border-top:1px solid var(--rule)}
+.sb-user{display:flex;align-items:center;gap:9px}
+.sb-avatar{width:28px;height:28px;border-radius:50%;background:var(--sage-bg);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:var(--sage-d);flex-shrink:0}
+.sb-uname{font-size:12px;font-weight:500;color:var(--ink)}
+.sb-uplan{font-size:10px;color:var(--muted2)}
+
+/* TOP BAR */
+.topbar{height:52px;background:var(--white);border-bottom:1px solid var(--rule);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50}
+.tb-title{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--ink);flex:1}
+.tb-title em{font-style:italic;color:var(--bark)}
+.tb-actions{display:flex;gap:8px}
+.btn-sm{padding:6px 14px;font-size:11px;font-weight:500;letter-spacing:.04em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;border-radius:0}
+.btn-sm-outline{background:transparent;color:var(--ink2);border:1px solid var(--rule2)}
+.btn-sm-outline:hover{background:var(--cream2);border-color:var(--bark-l)}
+.btn-sm-primary{background:var(--sage);color:#fff;border:1px solid var(--sage)}
+.btn-sm-primary:hover{background:var(--sage-d)}
+
+/* ── VIEWS ── */
+.view{display:none;padding:28px;flex:1}
+.view.on{display:block}
+
+/* DESIGN VIEW LAYOUT */
+.design-layout{display:grid;grid-template-columns:1fr 340px;gap:20px;min-height:calc(100vh - 110px)}
+
+/* CANVAS PANEL */
+.canvas-panel{background:var(--white);border:1px solid var(--rule);border-radius:0;overflow:hidden}
+.panel-header{padding:14px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px}
+.panel-title{font-size:12px;font-weight:500;letter-spacing:.06em;color:var(--ink)}
+.panel-meta{font-size:10px;color:var(--muted2);margin-left:auto}
+.canvas-area{position:relative;background:var(--cream);min-height:480px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.canvas-area canvas{display:block}
+.canvas-zone-info{position:absolute;bottom:14px;left:14px;background:rgba(253,252,249,.92);backdrop-filter:blur(8px);border:1px solid var(--rule);padding:8px 12px;font-size:10px;color:var(--ink2);letter-spacing:.04em}
+.canvas-controls{display:flex;gap:6px;padding:12px 18px;border-top:1px solid var(--rule);flex-wrap:wrap}
+.ctrl-btn{padding:5px 12px;font-size:10px;font-weight:500;letter-spacing:.04em;cursor:pointer;border:1px solid var(--rule2);background:var(--white);color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .12s;border-radius:0}
+.ctrl-btn:hover{color:var(--ink);border-color:var(--bark-l)}
+.ctrl-btn.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ZONE PANEL */
+.zones-panel{display:flex;flex-direction:column;gap:0}
+.zone-card{background:var(--white);border:1px solid var(--rule);border-radius:0;overflow:hidden;transition:border-color .15s}
+.zone-card + .zone-card{border-top:0}
+.zone-card.active{border-color:var(--sage);z-index:1}
+.zone-header{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;user-select:none}
+.zone-swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.zone-name{font-size:12px;font-weight:500;color:var(--ink);flex:1}
+.zone-mood-tag{font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--sage-d);background:var(--sage-bg);padding:2px 7px;border-radius:2px}
+.zone-lock-btn{width:20px;height:20px;display:flex;align-items:center;justify-content:center;color:var(--muted2);cursor:pointer;transition:color .12s;background:none;border:none}
+.zone-lock-btn:hover{color:var(--sage)}
+.zone-lock-btn.locked{color:var(--sage)}
+.zone-body{display:none;padding:14px 16px;border-top:1px solid var(--rule);background:var(--cream)}
+.zone-card.active .zone-body{display:block}
+.zf-label{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);margin-bottom:5px;margin-top:10px}
+.zf-label:first-child{margin-top:0}
+.zf-input{width:100%;padding:7px 10px;border:1px solid var(--rule2);background:var(--white);font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;transition:border-color .12s;border-radius:0}
+.zf-input:focus{border-color:var(--sage)}
+.zf-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.zf-select{width:100%;padding:7px 10px;border:1px solid var(--rule2);background:var(--white);font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink);outline:none;border-radius:0;cursor:pointer;appearance:none}
+.zf-select:focus{border-color:var(--sage)}
+.mood-pills{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
+.mood-pill{font-size:10px;padding:3px 9px;border:1px solid var(--rule2);background:var(--white);color:var(--muted);cursor:pointer;border-radius:0;transition:all .12s;font-family:'DM Sans',sans-serif}
+.mood-pill:hover{border-color:var(--bark-l);color:var(--ink)}
+.mood-pill.on{background:var(--sage);color:#fff;border-color:var(--sage)}
+.zone-ai-btn{width:100%;margin-top:10px;padding:8px;font-size:11px;font-weight:500;letter-spacing:.04em;cursor:pointer;border:1px solid var(--sage);background:transparent;color:var(--sage);font-family:'DM Sans',sans-serif;transition:all .15s;border-radius:0;display:flex;align-items:center;justify-content:center;gap:7px}
+.zone-ai-btn:hover{background:var(--sage);color:#fff}
+
+/* AI PANEL */
+.ai-panel{background:var(--white);border:1px solid var(--rule);margin-bottom:20px}
+.aip-header{padding:14px 18px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:8px}
+.aip-title{font-size:12px;font-weight:500;letter-spacing:.06em;color:var(--ink)}
+.aip-badge{font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(248,245,239,.9);background:var(--sage);padding:2px 7px;border-radius:2px}
+.aip-body{padding:16px 18px}
+.ai-textarea{width:100%;min-height:72px;border:1px solid var(--rule2);background:var(--cream);font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink);padding:10px 12px;resize:vertical;outline:none;transition:border-color .12s;border-radius:0;line-height:1.6}
+.ai-textarea:focus{border-color:var(--sage);background:var(--white)}
+.ai-generate-btn{width:100%;margin-top:10px;padding:10px;font-size:12px;font-weight:500;letter-spacing:.05em;cursor:pointer;border:none;background:var(--ink);color:#fff;font-family:'DM Sans',sans-serif;transition:background .15s;border-radius:0;display:flex;align-items:center;justify-content:center;gap:8px}
+.ai-generate-btn:hover{background:var(--ink2)}
+.ai-generate-btn:disabled{background:var(--muted2);cursor:not-allowed}
+.ai-status{font-size:11px;color:var(--muted);margin-top:8px;min-height:18px}
+.ai-result{margin-top:14px;display:none}
+.ai-result.on{display:block}
+.air-quadrant{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--sage);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.air-formula{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink);margin-bottom:8px;line-height:1.1}
+.air-interp{font-size:12px;color:var(--ink2);line-height:1.75;margin-bottom:12px;font-weight:300}
+.air-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.air-meta-item{background:var(--cream2);padding:8px 10px;border-radius:0}
+.air-meta-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:2px}
+.air-meta-val{font-size:12px;color:var(--ink2)}
+.air-counts{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.air-count{text-align:center;border:1px solid var(--rule);padding:8px 4px}
+.air-count-n{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--ink);line-height:1}
+.air-count-l{font-size:9px;color:var(--muted2);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.air-scores{display:flex;gap:14px;padding-top:10px;border-top:1px solid var(--rule)}
+.air-score{font-size:11px;color:var(--muted)}
+.air-score strong{color:var(--ink)}
+.air-apply-btn{width:100%;margin-top:12px;padding:9px;font-size:11px;font-weight:500;letter-spacing:.04em;cursor:pointer;border:1px solid var(--sage);background:transparent;color:var(--sage);font-family:'DM Sans',sans-serif;transition:all .15s;border-radius:0}
+.air-apply-btn:hover{background:var(--sage);color:#fff}
+
+/* STATS VIEW */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:var(--white);border:1px solid var(--rule);padding:20px 22px}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:300;color:var(--ink);line-height:1}
+.stat-l{font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-top:4px}
+.stat-trend{font-size:11px;color:var(--sage);margin-top:6px}
+
+/* DESIGNS LIST */
+.designs-list{display:flex;flex-direction:column;gap:2px}
+.design-row{background:var(--white);border:1px solid var(--rule);padding:14px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all .15s}
+.design-row:hover{border-color:var(--rule2);box-shadow:0 2px 12px rgba(27,25,22,.04)}
+.dr-swatch{width:36px;height:36px;border-radius:0;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;flex-shrink:0}
+.dr-swatch-q{width:100%;height:100%}
+.dr-name{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;color:var(--ink);flex:1}
+.dr-meta{font-size:11px;color:var(--muted2);text-align:right}
+.dr-zones{font-size:10px;color:var(--sage-d);background:var(--sage-bg);padding:2px 8px;border-radius:2px;font-weight:500;letter-spacing:.04em}
+
+/* JOURNEY PRESET VIEW */
+.journey-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.journey-card{background:var(--white);border:1px solid var(--rule);padding:18px 20px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.journey-card::after{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:var(--sage);transform:scaleY(0);transform-origin:top;transition:transform .2s ease}
+.journey-card:hover{border-color:var(--rule2);box-shadow:var(--shadow)}
+.journey-card:hover::after{transform:scaleY(1)}
+.journey-card.selected{border-color:var(--sage)}
+.journey-card.selected::after{transform:scaleY(1)}
+.jc-name{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;color:var(--ink);margin-bottom:5px}
+.jc-desc{font-size:12px;font-weight:300;color:var(--muted);line-height:1.65}
+.jc-flow{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:10px;color:var(--muted2)}
+.jc-mood{font-size:10px;font-weight:500;letter-spacing:.06em;padding:2px 7px;background:var(--cream2);color:var(--ink2)}
+.jc-arrow{color:var(--sage-l);font-size:10px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:80px 40px;color:var(--muted)}
+.empty-icon{font-size:48px;opacity:.3;margin-bottom:16px}
+.empty-h{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--ink);margin-bottom:8px}
+.empty-p{font-size:13px;font-weight:300;line-height:1.7;max-width:340px;margin:0 auto 24px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ink);color:var(--cream);font-size:12px;padding:10px 18px;z-index:9999;transform:translateY(20px);opacity:0;transition:all .25s;pointer-events:none;border-radius:0}
+.toast.on{transform:translateY(0);opacity:1}
+
+/* SPINNER */
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
+.spin-dark{border-color:rgba(27,25,22,.1);border-top-color:var(--sage)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* LOADER OVERLAY */
+.loading-overlay{position:absolute;inset:0;background:rgba(253,252,249,.85);backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:10;opacity:0;pointer-events:none;transition:opacity .2s}
+.loading-overlay.on{opacity:1;pointer-events:all}
+.loading-text{font-size:12px;color:var(--muted);letter-spacing:.04em}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--rule2);border-radius:2px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .main{margin-left:0}
+  .design-layout{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .journey-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-header">
+    <div class="sb-logo">
+      <svg viewBox="0 0 20 20" fill="none">
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="var(--sage)" opacity=".7" transform="rotate(0,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="var(--sage)" opacity=".6" transform="rotate(72,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="var(--sage)" opacity=".7" transform="rotate(144,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="var(--sage)" opacity=".6" transform="rotate(216,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="var(--sage)" opacity=".7" transform="rotate(288,10,10)"/>
+        <circle cx="10" cy="10" r="2.2" fill="var(--bark)"/>
+      </svg>
+      Evercrafted
+    </div>
+    <div class="sb-app-name">Design Studio</div>
+  </div>
+  <div class="sb-tier">
+    <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><circle cx="5" cy="5" r="4.5" stroke="currentColor" stroke-width="1"/><circle cx="5" cy="5" r="2" fill="currentColor" opacity=".5"/></svg>
+    Studio Tier
+  </div>
+  <nav class="sb-nav">
+    <div class="sb-label">Design</div>
+    <div class="sb-item on" onclick="showView('design')">
+      <svg viewBox="0 0 16 16"><rect x="2" y="2" width="5.5" height="5.5" rx=".5"/><rect x="8.5" y="2" width="5.5" height="5.5" rx=".5"/><rect x="2" y="8.5" width="5.5" height="5.5" rx=".5"/><rect x="8.5" y="8.5" width="5.5" height="5.5" rx=".5"/></svg>
+      Design Canvas
+    </div>
+    <div class="sb-item" onclick="showView('journeys')">
+      <svg viewBox="0 0 16 16"><path d="M2 8h12M8 2l4 6-4 6"/></svg>
+      Journey Presets
+    </div>
+    <div class="sb-label">Library</div>
+    <div class="sb-item" onclick="showView('designs')">
+      <svg viewBox="0 0 16 16"><path d="M3 2h10a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1z"/><path d="M6 6h4M6 9h4"/></svg>
+      My Designs
+      <span class="badge">3</span>
+    </div>
+    <div class="sb-label">Intelligence</div>
+    <div class="sb-item" onclick="showView('ai')">
+      <svg viewBox="0 0 16 16"><path d="M8 1L9.5 5.5 14 7l-4.5 1.5L8 13 6.5 8.5 2 7l4.5-1.5z"/></svg>
+      AI Blueprint Engine
+    </div>
+    <div class="sb-label">Analytics</div>
+    <div class="sb-item" onclick="showView('stats')">
+      <svg viewBox="0 0 16 16"><path d="M2 12V8M6 12V4M10 12V7M14 12V2"/></svg>
+      Overview
+    </div>
+  </nav>
+  <div class="sb-footer">
+    <div class="sb-user">
+      <div class="sb-avatar">B</div>
+      <div>
+        <div class="sb-uname">Bret Baden</div>
+        <div class="sb-uplan">Studio Plan</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- DESIGN VIEW -->
+  <div id="view-design" class="view on">
+    <div class="topbar" style="position:static">
+      <div class="tb-title"><em>Design Studio</em> — New Wreath</div>
+      <div class="tb-actions">
+        <button class="btn-sm btn-sm-outline" onclick="toast('Blueprint exported.')">Export Blueprint</button>
+        <button class="btn-sm btn-sm-primary" onclick="toast('Design saved.')">Save Design</button>
+      </div>
+    </div>
+    <div style="padding:20px">
+      <div class="design-layout">
+
+        <!-- LEFT: Canvas + Zone Cards -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <!-- Canvas -->
+          <div class="canvas-panel">
+            <div class="panel-header">
+              <div class="panel-title">Wreath Canvas</div>
+              <div class="panel-meta">24-inch · 4 zones</div>
+            </div>
+            <div class="canvas-area" id="canvasArea">
+              <canvas id="wreathCanvas" width="480" height="480"></canvas>
+              <div class="canvas-zone-info" id="zoneInfo">Click a zone to select it</div>
+              <div class="loading-overlay" id="canvasLoader">
+                <div class="spin spin-dark"></div>
+                <div class="loading-text">Generating blueprint…</div>
+              </div>
+            </div>
+            <div class="canvas-controls">
+              <button class="ctrl-btn on" onclick="setView('full')">Full ring</button>
+              <button class="ctrl-btn" onclick="setView('zones')">Zone overlay</button>
+              <button class="ctrl-btn" onclick="setView('density')">Density map</button>
+              <button class="ctrl-btn" onclick="setView('stems')">Stem count</button>
+              <button class="ctrl-btn" style="margin-left:auto" onclick="resetCanvas()">Reset</button>
+            </div>
+          </div>
+
+          <!-- Journey Preset Bar -->
+          <div class="canvas-panel">
+            <div class="panel-header">
+              <div class="panel-title">Active Journey Preset</div>
+            </div>
+            <div style="padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+              <span id="activePresetName" style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:300;color:var(--ink);font-style:italic">None selected</span>
+              <button class="btn-sm btn-sm-outline" onclick="showView('journeys')">Choose preset →</button>
+              <div id="presetFlow" style="display:none;align-items:center;gap:6px;margin-left:auto;flex-wrap:wrap"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: Zone Panel -->
+        <div>
+          <div style="font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px">Zones</div>
+          <div class="zones-panel" id="zonesPanel">
+            <!-- injected by JS -->
+          </div>
+          <button style="width:100%;margin-top:8px;padding:9px;font-size:11px;font-weight:500;letter-spacing:.04em;cursor:pointer;border:1px dashed var(--rule2);background:transparent;color:var(--muted);font-family:'DM Sans',sans-serif;transition:all .15s;border-radius:0" onclick="addZone()">+ Add zone</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- JOURNEY PRESETS VIEW -->
+  <div id="view-journeys" class="view">
+    <div class="topbar" style="position:static">
+      <div class="tb-title">Journey <em>Presets</em></div>
+    </div>
+    <div style="padding:20px">
+      <p style="font-size:13px;font-weight:300;color:var(--muted);margin-bottom:20px;max-width:500px">A journey preset locks a mood arc across the full wreath — each zone inherits its tone from the transition defined below. Click a preset to apply it to your current design.</p>
+      <div class="journey-grid" id="journeyGrid">
+        <!-- injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MY DESIGNS VIEW -->
+  <div id="view-designs" class="view">
+    <div class="topbar" style="position:static">
+      <div class="tb-title">My <em>Designs</em></div>
+      <div class="tb-actions">
+        <button class="btn-sm btn-sm-primary" onclick="showView('design')">New design</button>
+      </div>
+    </div>
+    <div style="padding:20px">
+      <div class="designs-list" id="designsList"><!-- injected --></div>
+    </div>
+  </div>
+
+  <!-- AI ENGINE VIEW -->
+  <div id="view-ai" class="view">
+    <div class="topbar" style="position:static">
+      <div class="tb-title">AI <em>Blueprint Engine</em></div>
+    </div>
+    <div style="padding:20px;max-width:720px">
+      <div class="ai-panel">
+        <div class="aip-header">
+          <div class="aip-title">Design Intent Engine</div>
+          <div class="aip-badge">AI Powered</div>
+        </div>
+        <div class="aip-body">
+          <p style="font-size:12px;font-weight:300;color:var(--muted);margin-bottom:12px;line-height:1.7">Describe the emotion, season, client memory, or design direction. The engine will build a full wreath blueprint with zone breakdowns, element counts, and an emotional formula.</p>
+          <textarea class="ai-textarea" id="aiInput" placeholder="Example: warm morning light to cool evening — neutrals with one dramatic dusty rose focal cluster, trailing greenery, loose structure"></textarea>
+          <button class="ai-generate-btn" id="aiBtn" onclick="runAI()">
+            <span id="aiBtnText">Generate blueprint</span>
+            <div class="spin" id="aiSpin" style="display:none"></div>
+          </button>
+          <div class="ai-status" id="aiStatus"></div>
+          <div class="ai-result" id="aiResult">
+            <div class="air-quadrant" id="airQuadrant"></div>
+            <div class="air-formula" id="airFormula"></div>
+            <div class="air-interp" id="airInterp"></div>
+            <div class="air-meta-grid">
+              <div class="air-meta-item"><div class="air-meta-label">Emotional Tone</div><div class="air-meta-val" id="airTone">—</div></div>
+              <div class="air-meta-item"><div class="air-meta-label">Palette Direction</div><div class="air-meta-val" id="airPalette">—</div></div>
+              <div class="air-meta-item"><div class="air-meta-label">Density</div><div class="air-meta-val" id="airDensity">—</div></div>
+              <div class="air-meta-item"><div class="air-meta-label">Silence Arc</div><div class="air-meta-val" id="airSilence">—</div></div>
+            </div>
+            <div style="font-size:10px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px">Element Counts</div>
+            <div class="air-counts">
+              <div class="air-count"><div class="air-count-n" id="cFocal">—</div><div class="air-count-l">Focal</div></div>
+              <div class="air-count"><div class="air-count-n" id="cSupport">—</div><div class="air-count-l">Support</div></div>
+              <div class="air-count"><div class="air-count-n" id="cFiller">—</div><div class="air-count-l">Filler</div></div>
+              <div class="air-count"><div class="air-count-n" id="cGreenery">—</div><div class="air-count-l">Greenery</div></div>
+            </div>
+            <div class="air-scores">
+              <div class="air-score">Emotion fit: <strong id="scoreEmotion">—</strong></div>
+              <div class="air-score">DNA cohesion: <strong id="scoreDNA">—</strong></div>
+              <div class="air-score">Brand fit: <strong id="scoreBrand">—</strong></div>
+            </div>
+            <button class="air-apply-btn" onclick="applyBlueprintToDesign()">Apply to canvas →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATS VIEW -->
+  <div id="view-stats" class="view">
+    <div class="topbar" style="position:static">
+      <div class="tb-title"><em>Overview</em></div>
+    </div>
+    <div style="padding:20px">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-n">3</div><div class="stat-l">Saved designs</div><div class="stat-trend">↑ 2 this week</div></div>
+        <div class="stat-card"><div class="stat-n">12</div><div class="stat-l">Zones defined</div><div class="stat-trend">Avg 4 per design</div></div>
+        <div class="stat-card"><div class="stat-n">7</div><div class="stat-l">AI blueprints run</div><div class="stat-trend">↑ 3 this session</div></div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--rule);padding:20px 22px">
+        <div style="font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:14px">Recent activity</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--rule)"><div style="width:6px;height:6px;border-radius:50%;background:var(--sage);margin-top:5px;flex-shrink:0"></div><div><div style="font-size:12px;font-weight:400;color:var(--ink)">Blueprint generated — "Winter Sunrise to Spring Afternoon"</div><div style="font-size:11px;color:var(--muted2);margin-top:2px">2 hours ago</div></div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--rule)"><div style="width:6px;height:6px;border-radius:50%;background:var(--gold);margin-top:5px;flex-shrink:0"></div><div><div style="font-size:12px;font-weight:400;color:var(--ink)">Design saved — "Soft Botanicals, 4 zones"</div><div style="font-size:11px;color:var(--muted2);margin-top:2px">Yesterday</div></div></div>
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0"><div style="width:6px;height:6px;border-radius:50%;background:var(--bark-l);margin-top:5px;flex-shrink:0"></div><div><div style="font-size:12px;font-weight:400;color:var(--ink)">Journey preset applied — "Warm Morning → Cool Evening"</div><div style="font-size:11px;color:var(--muted2);margin-top:2px">3 days ago</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let zones = [
+  { id:1, name:'Focal Zone', mood:'romantic', color:'#D4B8A0', locked:false, density:'medium', palette:'blush + ivory' },
+  { id:2, name:'Accent Zone', mood:'bold',    color:'#8A7A6A', locked:false, density:'dense',  palette:'deep plum + evergreen' },
+  { id:3, name:'Fill Zone A', mood:'airy',    color:'#C5BDAF', locked:false, density:'light',  palette:'soft cream + dusty sage' },
+  { id:4, name:'Fill Zone B', mood:'calm',    color:'#9BA89A', locked:true,  density:'light',  palette:'muted green + white' },
+];
+let activeZoneId = 1;
+let activePreset = null;
+let lastBlueprint = null;
+
+const MOODS = ['romantic','bold','airy','calm','dramatic','warm','minimal','rustic','ethereal','earthy'];
+const DENSITIES = ['light','medium','dense'];
+const JOURNEY_PRESETS = [
+  { id:'wp1', name:'Winter Sunrise', from:'soft blush calm', to:'warm ivory morning', desc:'Opens cool and quiet, warms toward the base like early light through frost.', moods:['serene','quiet','luminous','warm'] },
+  { id:'wp2', name:'Harvest Moon',   from:'rich ochre bold',  to:'deep berry evening', desc:'Full, dramatic, earthy. Transitions from harvest gold into deep plum at the base.', moods:['golden','rich','bold','deep'] },
+  { id:'wp3', name:'Spring Afternoon', from:'clean green fresh', to:'soft blush romantic', desc:'Crisp botanical energy giving way to a loose, romantic focal cluster.', moods:['fresh','botanical','soft','romantic'] },
+  { id:'wp4', name:'Coastal Fog',    from:'pale grey airy', to:'muted sage quiet', desc:'A muted, atmospheric palette. Every zone floats — nothing shouts.', moods:['muted','airy','quiet','still'] },
+  { id:'wp5', name:'Midnight Garden', from:'deep ink dramatic', to:'soft grey whisper', desc:'Opens dark and lush, dissolves into a near-monochrome silver edge.', moods:['dramatic','lush','mysterious','quiet'] },
+  { id:'wp6', name:'Golden Hour',    from:'amber warm glow', to:'blush rose tender', desc:'The light equivalent in wreath form — golden warmth blushing into tenderness.', moods:['warm','golden','tender','glowing'] },
+];
+const SAVED_DESIGNS = [
+  { name:'Soft Botanicals, 4 zones', zones:4, mood:'Airy × Romantic', swatches:['#D4B8A0','#9BA89A','#C5BDAF','#8A7A6A'], modified:'2 days ago' },
+  { name:'Harvest Client Brief', zones:3, mood:'Bold × Earthy', swatches:['#B8895A','#7A6A50','#C5A880','#9A8060'], modified:'4 days ago' },
+  { name:'Winter Minimal', zones:3, mood:'Calm × Minimal', swatches:['#D0CBBF','#B4AFA8','#E6DFCF','#8A8278'], modified:'1 week ago' },
+];
+
+// ── NAV ──
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('on'));
+  document.getElementById('view-' + id).classList.add('on');
+  const map = {design:0, journeys:1, designs:2, ai:3, stats:4};
+  const items = document.querySelectorAll('.sb-item');
+  if (map[id] !== undefined) items[map[id]].classList.add('on');
+  if (id === 'design') renderCanvas();
+}
+
+// ── CANVAS ──
+function renderCanvas() {
+  const canvas = document.getElementById('wreathCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2;
+  const outerR = 200, innerR = 130;
+  ctx.clearRect(0,0,W,H);
+
+  // Subtle noise background
+  ctx.fillStyle = '#F0EBE2';
+  ctx.fillRect(0,0,W,H);
+
+  // Draw each zone as an arc segment
+  const numZones = zones.length;
+  zones.forEach((z, i) => {
+    const startAngle = (i / numZones) * Math.PI * 2 - Math.PI / 2;
+    const endAngle = ((i + 1) / numZones) * Math.PI * 2 - Math.PI / 2;
+    
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerR, startAngle, endAngle);
+    ctx.arc(cx, cy, innerR, endAngle, startAngle, true);
+    ctx.closePath();
+    
+    const alpha = z.id === activeZoneId ? 1 : 0.65;
+    ctx.fillStyle = z.color + (alpha < 1 ? 'AA' : 'FF');
+    ctx.fill();
+    
+    // Border
+    ctx.strokeStyle = z.id === activeZoneId ? '#4A6741' : 'rgba(27,25,22,0.08)';
+    ctx.lineWidth = z.id === activeZoneId ? 2 : 1;
+    ctx.stroke();
+
+    // Zone label
+    const midAngle = startAngle + (endAngle - startAngle) / 2;
+    const labelR = (outerR + innerR) / 2;
+    const lx = cx + Math.cos(midAngle) * labelR;
+    const ly = cy + Math.sin(midAngle) * labelR;
+    
+    ctx.fillStyle = z.id === activeZoneId ? '#1B1916' : 'rgba(27,25,22,0.55)';
+    ctx.font = `${z.id === activeZoneId ? '500' : '300'} 10px "DM Sans", sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(z.name.split(' ')[0], lx, ly);
+
+    // Lock icon
+    if (z.locked) {
+      ctx.fillStyle = '#4A6741';
+      ctx.font = '12px sans-serif';
+      ctx.fillText('🔒', lx, ly + 14);
+    }
+  });
+
+  // Center decoration
+  ctx.beginPath();
+  ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+  ctx.fillStyle = '#F8F5EF';
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(27,25,22,0.06)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // Center text
+  ctx.fillStyle = '#B4AFA8';
+  ctx.font = '300 13px "Cormorant Garamond", serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('Design Studio', cx, cy - 8);
+  ctx.font = '400 11px "DM Sans", sans-serif';
+  ctx.fillStyle = '#8A8278';
+  ctx.fillText(`${zones.length} zones`, cx, cy + 10);
+
+  // Canvas click handler
+  canvas.onclick = function(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const mx = (e.clientX - rect.left) * scaleX - cx;
+    const my = (e.clientY - rect.top) * scaleY - cy;
+    const dist = Math.sqrt(mx*mx + my*my);
+    
+    if (dist >= innerR && dist <= outerR) {
+      let angle = Math.atan2(my, mx) + Math.PI/2;
+      if (angle < 0) angle += Math.PI * 2;
+      const idx = Math.floor((angle / (Math.PI * 2)) * zones.length);
+      activeZoneId = zones[Math.min(idx, zones.length-1)].id;
+      renderCanvas();
+      renderZones();
+      document.getElementById('zoneInfo').textContent = `Zone selected: ${zones.find(z => z.id === activeZoneId).name}`;
+    }
+  };
+}
+
+function setView(v) {
+  document.querySelectorAll('.ctrl-btn').forEach(b => b.classList.remove('on'));
+  event.target.classList.add('on');
+}
+
+function resetCanvas() {
+  activeZoneId = 1;
+  renderCanvas();
+  renderZones();
+}
+
+// ── ZONES ──
+function renderZones() {
+  const panel = document.getElementById('zonesPanel');
+  panel.innerHTML = zones.map(z => `
+    <div class="zone-card ${z.id === activeZoneId ? 'active' : ''}" id="zc-${z.id}">
+      <div class="zone-header" onclick="selectZone(${z.id})">
+        <div class="zone-swatch" style="background:${z.color}"></div>
+        <div class="zone-name">${z.name}</div>
+        <div class="zone-mood-tag">${z.mood}</div>
+        <button class="zone-lock-btn ${z.locked ? 'locked' : ''}" onclick="event.stopPropagation();toggleLock(${z.id})" title="${z.locked ? 'Locked' : 'Unlocked'}">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5">
+            ${z.locked
+              ? '<rect x="2" y="5" width="8" height="6" rx="1"/><path d="M4 5V3.5a2 2 0 0 1 4 0V5"/>'
+              : '<rect x="2" y="5" width="8" height="6" rx="1"/><path d="M8 5V3.5A2 2 0 0 0 4 3.5"/>'}
+          </svg>
+        </button>
+      </div>
+      <div class="zone-body">
+        <div class="zf-label">Zone name</div>
+        <input class="zf-input" value="${z.name}" onchange="updateZone(${z.id},'name',this.value)">
+        <div class="zf-label">Mood</div>
+        <div class="mood-pills">
+          ${MOODS.map(m => `<button class="mood-pill ${z.mood === m ? 'on' : ''}" onclick="updateZone(${z.id},'mood','${m}')">${m}</button>`).join('')}
+        </div>
+        <div class="zf-label">Density</div>
+        <div class="zf-row">
+          ${DENSITIES.map(d => `<button class="mood-pill ${z.density === d ? 'on' : ''}" onclick="updateZone(${z.id},'density','${d}')">${d}</button>`).join('')}
+        </div>
+        <div class="zf-label">Palette note</div>
+        <input class="zf-input" value="${z.palette}" placeholder="e.g. blush + ivory" onchange="updateZone(${z.id},'palette',this.value)">
+        <button class="zone-ai-btn" onclick="aiZone(${z.id})">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 1L7.2 4.3 11 5.5 7.8 6.8 6 10.5 4.2 6.8 1 5.5 4.8 4.3z"/></svg>
+          AI suggest this zone
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectZone(id) {
+  activeZoneId = id;
+  renderZones();
+  renderCanvas();
+  document.getElementById('zoneInfo').textContent = `Zone selected: ${zones.find(z => z.id === id).name}`;
+}
+
+function toggleLock(id) {
+  const z = zones.find(z => z.id === id);
+  if (z) {
+    z.locked = !z.locked;
+    renderZones();
+    renderCanvas();
+    toast(z.locked ? `${z.name} locked.` : `${z.name} unlocked.`);
+  }
+}
+
+function updateZone(id, key, val) {
+  const z = zones.find(z => z.id === id);
+  if (z) {
+    z[key] = val;
+    renderZones();
+    renderCanvas();
+  }
+}
+
+function addZone() {
+  const id = Math.max(...zones.map(z => z.id)) + 1;
+  zones.push({ id, name:`Zone ${id}`, mood:'airy', color:`#${Math.floor(Math.random()*0x888888+0x888888).toString(16)}`, locked:false, density:'light', palette:'' });
+  renderZones();
+  renderCanvas();
+  document.querySelector('.panel-meta').textContent = `24-inch · ${zones.length} zones`;
+}
+
+function aiZone(id) {
+  const z = zones.find(z => z.id === id);
+  toast(`AI generating suggestion for ${z.name}…`);
+}
+
+// ── JOURNEY PRESETS ──
+function renderJourneys() {
+  const grid = document.getElementById('journeyGrid');
+  grid.innerHTML = JOURNEY_PRESETS.map(p => `
+    <div class="journey-card ${activePreset === p.id ? 'selected' : ''}" onclick="applyPreset('${p.id}')">
+      <div class="jc-name">${p.name}</div>
+      <div class="jc-desc">${p.desc}</div>
+      <div class="jc-flow">
+        ${p.moods.map((m,i) => `<span class="jc-mood">${m}</span>${i < p.moods.length-1 ? '<span class="jc-arrow">→</span>' : ''}`).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function applyPreset(id) {
+  activePreset = id;
+  const p = JOURNEY_PRESETS.find(x => x.id === id);
+  
+  // Apply mood arc to zones
+  if (zones.length > 0 && p.moods.length > 0) {
+    zones.forEach((z, i) => {
+      if (!z.locked) {
+        z.mood = p.moods[Math.min(i, p.moods.length - 1)];
+      }
+    });
+  }
+  
+  renderJourneys();
+  renderZones();
+  renderCanvas();
+  
+  // Update active preset display
+  document.getElementById('activePresetName').textContent = p.name;
+  const flowEl = document.getElementById('presetFlow');
+  flowEl.style.display = 'flex';
+  flowEl.innerHTML = p.moods.map((m,i) => `<span class="jc-mood">${m}</span>${i < p.moods.length-1 ? '<span class="jc-arrow">→</span>' : ''}`).join('');
+  
+  toast(`Journey preset "${p.name}" applied.`);
+  showView('design');
+}
+
+// ── DESIGNS ──
+function renderDesigns() {
+  document.getElementById('designsList').innerHTML = SAVED_DESIGNS.map(d => `
+    <div class="design-row" onclick="toast('Opening ${d.name}…')">
+      <div class="dr-swatch">
+        ${d.swatches.slice(0,4).map(c => `<div class="dr-swatch-q" style="background:${c}"></div>`).join('')}
+      </div>
+      <div>
+        <div class="dr-name">${d.name}</div>
+        <div style="font-size:11px;color:var(--muted2);margin-top:2px">${d.mood}</div>
+      </div>
+      <div>
+        <div class="dr-zones">${d.zones} zones</div>
+        <div class="dr-meta">${d.modified}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── AI ENGINE ──
+async function runAI() {
+  const input = document.getElementById('aiInput').value.trim();
+  if (!input) { toast('Add a design intent first.'); return; }
+
+  const btn = document.getElementById('aiBtn');
+  const spin = document.getElementById('aiSpin');
+  const btnText = document.getElementById('aiBtnText');
+  const status = document.getElementById('aiStatus');
+  const result = document.getElementById('aiResult');
+
+  btn.disabled = true;
+  spin.style.display = 'block';
+  btnText.textContent = 'Generating…';
+  status.textContent = 'Analyzing emotional intent…';
+  result.classList.remove('on');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: `You are the Evercrafted Blueprint Engine — an AI system that converts wreath design intentions into structured blueprint data. 
+
+Always respond ONLY with valid JSON, no markdown, no explanation. Use this exact structure:
+{
+  "quadrant": "string (e.g. Warm + Soft)",
+  "formula": "string (poetic design formula, max 8 words, e.g. 'Blush warmth dissolving into ivory silence')",
+  "interpretation": "string (2-3 sentence design interpretation, first person as the AI engine)",
+  "emotional_tone": "string",
+  "palette_direction": "string (e.g. 'Dusty rose → ivory → sage')",
+  "density": "light | medium | dense | graduated",
+  "silence_arc_deg": number,
+  "zone_count": number,
+  "elements": {
+    "focal": number,
+    "supporting": number,
+    "filler": number,
+    "greenery": number
+  },
+  "scores": {
+    "emotion_fit": number,
+    "dna_cohesion": number,
+    "brand_alignment": number
+  },
+  "zone_moodmap": ["string","string","string","string"]
+}
+
+All score values must be between 0.00 and 1.00. silence_arc_deg between 0 and 90. Be creative, poetic, and precise.`,
+        messages: [{ role: 'user', content: `Design intent: ${input}` }]
+      })
+    });
+
+    const data = await res.json();
+    const text = data.content?.find(b => b.type === 'text')?.text || '';
+    const clean = text.replace(/```json|```/g, '').trim();
+    const d = JSON.parse(clean);
+
+    // Populate UI
+    document.getElementById('airQuadrant').textContent = `◎  ${d.quadrant}  ·  ${d.zone_count} zones`;
+    document.getElementById('airFormula').textContent = d.formula;
+    document.getElementById('airInterp').textContent = d.interpretation;
+    document.getElementById('airTone').textContent = d.emotional_tone;
+    document.getElementById('airPalette').textContent = d.palette_direction;
+    document.getElementById('airDensity').textContent = d.density;
+    document.getElementById('airSilence').textContent = d.silence_arc_deg + '°';
+    document.getElementById('cFocal').textContent = d.elements.focal;
+    document.getElementById('cSupport').textContent = d.elements.supporting;
+    document.getElementById('cFiller').textContent = d.elements.filler;
+    document.getElementById('cGreenery').textContent = d.elements.greenery;
+    document.getElementById('scoreEmotion').textContent = (d.scores.emotion_fit * 100).toFixed(0) + '%';
+    document.getElementById('scoreDNA').textContent = (d.scores.dna_cohesion * 100).toFixed(0) + '%';
+    document.getElementById('scoreBrand').textContent = (d.scores.brand_alignment * 100).toFixed(0) + '%';
+
+    result.classList.add('on');
+    status.textContent = 'Blueprint generated.';
+    lastBlueprint = d;
+
+  } catch (e) {
+    status.textContent = 'Engine error — try again.';
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    spin.style.display = 'none';
+    btnText.textContent = 'Generate blueprint';
+  }
+}
+
+function applyBlueprintToDesign() {
+  if (!lastBlueprint) return;
+  const moodmap = lastBlueprint.zone_moodmap || [];
+  const count = Math.min(lastBlueprint.zone_count || 4, 6);
+
+  // Rebuild zones from blueprint
+  zones = Array.from({length: count}, (_, i) => ({
+    id: i+1,
+    name: `Zone ${i+1}`,
+    mood: moodmap[i] || 'airy',
+    color: `hsl(${30 + i*25}, ${25 + i*5}%, ${65 + i*3}%)`,
+    locked: false,
+    density: lastBlueprint.density || 'medium',
+    palette: lastBlueprint.palette_direction || ''
+  }));
+  activeZoneId = 1;
+  renderZones();
+  renderCanvas();
+  toast('Blueprint applied to canvas.');
+  showView('design');
+}
+
+// ── UTILS ──
+function toast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2400);
+}
+
+// ── INIT ──
+renderCanvas();
+renderZones();
+renderJourneys();
+renderDesigns();
+</script>
+</body>
+</html>

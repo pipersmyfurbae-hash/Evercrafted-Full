@@ -1,0 +1,493 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>How Evercrafted works — the lookbook</title>
+<meta name="description" content="From feeling to blueprint. No style quizzes, no mood boards — you describe what a piece should feel like, and Evercrafted turns it into something you can actually build.">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c1410;--bg2:#0f1a14;--cream:#ece5d6;--cream2:#c9c4b4;--mut:rgba(236,229,214,.62);--faint:rgba(236,229,214,.4);--gold:#c4a06a;--green:#8fb089;--dust:#b79bb0;--blue:#8aa0c4;--line:rgba(236,229,214,.14);
+--serif:'Italiana',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:'JetBrains Mono',ui-monospace,monospace;}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--cream);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.7}
+a{color:inherit;text-decoration:none}.serif{font-family:var(--serif)}.it{font-style:italic;color:var(--green)}
+/* top bar */
+.bar{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,5vw,56px);transition:background .4s,backdrop-filter .4s}
+.bar.solid{background:rgba(12,20,16,.7);backdrop-filter:blur(10px)}
+.bar .logo{font-family:var(--serif);font-size:1.35rem;letter-spacing:.05em;color:var(--cream)}.bar .logo span{color:var(--gold)}
+.bar nav{display:flex;align-items:center;gap:clamp(1rem,3vw,2rem)}
+.bar nav a{font-size:12px;letter-spacing:.06em;color:var(--mut);text-transform:uppercase}.bar nav a:hover{color:var(--cream)}
+.bar .cta{border:1px solid var(--gold);color:var(--gold)!important;padding:8px 18px;border-radius:100px;font-size:11px;letter-spacing:.1em}
+.bar .cta:hover{background:var(--gold);color:#0c1410!important}
+@media(max-width:720px){.bar nav .hide{display:none}}
+/* beat */
+.beat{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden;padding:clamp(5rem,12vh,8rem) clamp(20px,6vw,80px)}
+.beat.auto{min-height:auto;padding-top:clamp(4rem,9vh,6rem);padding-bottom:clamp(4rem,9vh,6rem)}
+.beat .media{position:absolute;inset:0;z-index:0;overflow:hidden}
+.beat .media video,.beat .media img{width:100%;height:120%;object-fit:cover;position:absolute;top:-10%;left:0;will-change:transform}
+.beat .scrim{position:absolute;inset:0;z-index:1}
+.scrim.center{background:radial-gradient(ellipse 100% 90% at 50% 50%,rgba(12,20,16,.6),rgba(12,20,16,.93))}
+.scrim.left{background:linear-gradient(90deg,rgba(12,20,16,.97) 0%,rgba(12,20,16,.88) 38%,rgba(12,20,16,.6) 78%,rgba(12,20,16,.45) 100%)}
+.scrim.right{background:linear-gradient(270deg,rgba(12,20,16,.97) 0%,rgba(12,20,16,.88) 38%,rgba(12,20,16,.6) 78%,rgba(12,20,16,.45) 100%)}
+.beat .inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.solidbeat{background:var(--bg2)}
+/* type */
+.ov{font-size:11px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.3rem;display:flex;align-items:center;gap:.7rem}
+.ov .s-num{width:26px;height:26px;border-radius:50%;border:1px solid currentColor;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-family:var(--serif)}
+.h-xl{font-family:var(--serif);font-weight:400;font-size:clamp(2.6rem,7vw,5rem);line-height:1.04;letter-spacing:.01em}
+.h-lg{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4.6vw,3.3rem);line-height:1.1;letter-spacing:.01em}
+.lead{font-size:clamp(1.02rem,1.5vw,1.2rem);color:var(--cream2);max-width:38rem;margin-top:1.5rem;line-height:1.75;font-weight:300}
+/* hero */
+.hero-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto}
+.pill-row{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:2.2rem;max-width:44rem}
+.pill{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut);border:1px solid var(--line);border-radius:100px;padding:7px 15px}
+.cue{margin-top:2.6rem;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);display:flex;align-items:center;gap:.8rem}
+.cue::before,.cue::after{content:'';height:1px;width:34px;background:var(--line)}
+/* rail */
+.rail-wrap{position:sticky;top:0;z-index:60;background:rgba(12,20,16,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.rail{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:.3rem;padding:12px clamp(16px,4vw,40px);overflow-x:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.rail a{display:flex;align-items:center;gap:.5rem;font-size:12px;letter-spacing:.03em;color:var(--faint);white-space:nowrap;padding:5px 4px;transition:color .25s}
+.rail a .rn{width:20px;height:20px;border-radius:50%;border:1px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:10px;transition:all .25s}
+.rail a.active{color:var(--cream)}.rail a.active .rn{background:var(--gold);color:#0c1410;border-color:var(--gold)}
+.rail .arr{color:var(--faint);font-size:13px;opacity:.5}
+@media(max-width:680px){.rail .arr{display:none}}
+/* stage grid */
+.stage{display:grid;grid-template-columns:1fr 1fr;gap:clamp(2rem,5vw,5rem);align-items:center;width:100%}
+.stage.flip .s-text{order:2}.stage.flip .s-vis{order:1}
+.stage.solo{grid-template-columns:1fr;max-width:46rem}
+.stage.solo.right{margin-left:auto}
+@media(max-width:900px){.stage{grid-template-columns:1fr;gap:2.4rem}.stage.flip .s-text{order:1}.stage.flip .s-vis{order:2}}
+.points{margin-top:1.8rem;display:flex;flex-direction:column;gap:1.1rem}
+.pt{display:flex;gap:.85rem;font-size:.96rem;line-height:1.7;color:var(--mut)}
+.pt::before{content:'';flex-shrink:0;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-top:.55rem}
+.pt strong{color:var(--cream);font-weight:500}
+/* artifact cards (dark glass) */
+.art{border:1px solid var(--line);border-radius:18px;background:rgba(236,229,214,.035);padding:1.5rem}
+.art-h{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:1rem}
+.memory{font-family:var(--serif);font-style:italic;font-size:1.05rem;line-height:1.7;color:var(--cream);background:rgba(12,20,16,.4);border-radius:12px;padding:1.1rem 1.2rem;border:1px solid var(--line)}
+.chips-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.9rem}
+.chip{background:rgba(12,20,16,.4);border:1px solid var(--line);border-radius:10px;padding:.6rem .75rem}
+.chip b{display:block;font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin-bottom:.2rem}
+.chip span{font-size:12.5px;color:var(--cream2)}
+/* tag rows */
+.tagrow{display:flex;align-items:center;gap:.8rem;padding:.7rem 0;border-bottom:1px solid var(--line)}
+.tagrow:last-child{border-bottom:none}
+.tagsw{width:34px;height:34px;border-radius:8px;flex-shrink:0}
+.tagname{font-size:13px;color:var(--cream);margin-bottom:.35rem}
+.tagtags{display:flex;flex-wrap:wrap;gap:.3rem}
+.tt{font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;padding:3px 7px;border-radius:5px;border:1px solid var(--line);color:var(--mut)}
+.tt.lead{color:var(--gold);border-color:rgba(196,160,106,.4)}
+.tt.emo{color:var(--dust);border-color:rgba(183,155,176,.4)}
+/* cream blueprint plate */
+.plate{background:#F4EEE2;border-radius:18px;padding:1.4rem;text-align:center;box-shadow:0 30px 60px rgba(0,0,0,.4)}
+.plate-cap{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#9b917c;margin-bottom:.6rem}
+.plate svg{width:100%;max-width:280px}
+.plate-legend{display:flex;flex-wrap:wrap;gap:.5rem .9rem;justify-content:center;margin-top:.7rem}
+.plate-legend span{display:inline-flex;align-items:center;gap:.35rem;font-size:10px;color:#6b6258}
+.pld{width:9px;height:9px;border-radius:50%}
+/* export card */
+.export{max-width:760px;margin:2.4rem auto 0}
+.etabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem}
+.etab{font-size:12px;letter-spacing:.04em;color:var(--mut);border:1px solid var(--line);border-radius:100px;padding:8px 16px;cursor:pointer;transition:all .2s}
+.etab.on{background:var(--gold);color:#0c1410;border-color:var(--gold)}
+.epanel{display:none}.epanel.on{display:block}
+.epoem{font-family:var(--serif);font-style:italic;font-size:1.15rem;line-height:1.8;color:var(--cream)}
+.emeta{margin-top:.8rem;font-size:11px;color:var(--faint)}
+.promptbox{font-family:var(--mono);font-size:12.5px;line-height:1.8;color:var(--cream2);background:rgba(12,20,16,.5);border:1px solid var(--line);border-radius:12px;padding:1.1rem}
+.promptbox strong{color:var(--gold);font-weight:400}
+.stem{width:100%;border-collapse:collapse;font-size:13px}
+.stem th{text-align:left;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding:.5rem .6rem;border-bottom:1px solid var(--line)}
+.stem td{padding:.5rem .6rem;border-bottom:1px solid var(--line);color:var(--cream2)}
+.stem tr:last-child td{border-bottom:none;color:var(--green)}
+.bsteps{display:flex;flex-direction:column;gap:.9rem}
+.bstep{display:flex;gap:.8rem;font-size:.94rem;color:var(--mut);line-height:1.6}
+.bstep .bn{flex-shrink:0;width:24px;height:24px;border-radius:50%;background:rgba(196,160,106,.15);color:var(--gold);display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-family:var(--serif)}
+/* fb band */
+.fb{text-align:center}.fb .inner{max-width:760px}
+/* compare */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:1.3rem;margin-top:2.6rem}
+@media(max-width:780px){.cmp{grid-template-columns:1fr}}
+.cmpcard{border:1px solid var(--line);border-radius:18px;padding:1.6rem}
+.cmpcard.after{border-color:rgba(143,176,137,.4);background:rgba(143,176,137,.05)}
+.cmp-h{display:flex;align-items:center;gap:.5rem;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:1.2rem}
+.cmp-h.bad{color:var(--faint)}.cmp-h.good{color:var(--green)}
+.cmpcard p{font-size:.95rem;line-height:1.6;padding:.6rem 0;border-bottom:1px solid var(--line);color:var(--mut)}
+.cmpcard p:last-child{border-bottom:none}
+.cmpcard.after p{color:var(--cream2)}
+/* faq */
+.faq{max-width:760px;margin:2.4rem auto 0}
+.fitem{border-bottom:1px solid var(--line)}
+.fq{width:100%;text-align:left;background:none;border:none;color:var(--cream);font-family:var(--serif);font-size:1.2rem;padding:1.2rem 0;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:1rem}
+.fq .ic{color:var(--gold);font-weight:300;font-size:1.5rem;transition:transform .25s;flex-shrink:0}
+.fitem.open .ic{transform:rotate(45deg)}
+.fa{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;color:var(--mut);font-size:.97rem;line-height:1.75}
+.fitem.open .fa{max-height:320px;padding-bottom:1.3rem}
+/* cta */
+.wl-form{display:flex;gap:.7rem;margin:2.2rem auto 0;max-width:30rem;flex-wrap:wrap;justify-content:center}
+.wl-input{flex:1;min-width:200px;padding:15px 18px;border-radius:100px;border:1px solid var(--line);background:rgba(236,229,214,.05);color:var(--cream);font-family:var(--sans);font-size:15px;outline:none}
+.wl-input::placeholder{color:var(--faint)}.wl-input:focus{border-color:var(--gold)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:15px 30px;border-radius:100px;font-size:13px;font-weight:500;letter-spacing:.05em;border:1px solid transparent;cursor:pointer;transition:all .2s}
+.btn-p{background:var(--gold);color:#0c1410}.btn-p:hover{background:#d4b27e}
+.wl-msg{margin-top:1rem;font-size:13px;min-height:1.1em;color:var(--faint)}
+.cta-alt{margin-top:1.4rem}.cta-alt a{color:var(--cream);font-size:13px;border-bottom:1px solid var(--line);padding-bottom:2px}.cta-alt a:hover{border-color:var(--gold)}
+/* footer */
+.foot{padding:3rem clamp(20px,6vw,80px);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;background:var(--bg)}
+.foot .logo{font-family:var(--serif);font-size:1.2rem}.foot .logo span{color:var(--gold)}
+.foot-links{display:flex;gap:1.6rem;flex-wrap:wrap}.foot-links a{font-size:12px;color:var(--mut)}
+.foot .cc{font-size:12px;color:var(--faint)}
+/* reveal */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.beat .media video,.beat .media img{height:100%;top:0}}
+</style></head><body>
+
+<div class="bar" id="bar">
+  <a class="logo" href="evercrafted-marketing-site.html">Ever<span>crafted</span></a>
+  <nav>
+    <a class="hide" href="evercrafted-lookbook.html">Home</a>
+    <a class="hide" href="evercrafted-marketplace.html">Add-ons</a>
+    <a class="hide" href="evercrafted-about.html">About</a>
+    <a class="cta" href="#cta">Join waitlist</a>
+  </nav>
+</div>
+
+<!-- HERO -->
+<section class="beat" id="top">
+  <div class="media"><video data-parallax autoplay muted loop playsinline poster="/assets/wreath-poster.jpg"><source src="/assets/wreath-hero.mp4" type="video/mp4"></video></div>
+  <div class="scrim left"></div>
+  <div class="hero-inner">
+    <div class="ov rv">The Evercrafted experience</div>
+    <h1 class="h-xl rv d1">From <span class="it">feeling</span><br>to blueprint.</h1>
+    <p class="lead rv d2">No style quizzes. No mood boards. You describe what a piece should feel like — and Evercrafted turns that into something you can actually build.</p>
+    <div class="pill-row rv d3">
+      <span class="pill">Memory input</span><span class="pill">Emotion mapping</span><span class="pill">Inventory tagging</span><span class="pill">Design intelligence</span><span class="pill">Composition</span><span class="pill">Export pipeline</span>
+    </div>
+    <div class="cue rv d3">Scroll through each stage</div>
+  </div>
+</section>
+
+<!-- RAIL -->
+<div class="rail-wrap">
+  <nav class="rail" id="rail">
+    <a href="#step-1" data-step="1"><span class="rn">1</span>Memory input</a><span class="arr">›</span>
+    <a href="#step-2" data-step="2"><span class="rn">2</span>Emotion mapping</a><span class="arr">›</span>
+    <a href="#step-3" data-step="3"><span class="rn">3</span>Inventory tagging</a><span class="arr">›</span>
+    <a href="#step-4" data-step="4"><span class="rn">4</span>Design intelligence</a><span class="arr">›</span>
+    <a href="#step-5" data-step="5"><span class="rn">5</span>Composition</a><span class="arr">›</span>
+    <a href="#step-6" data-step="6"><span class="rn">6</span>Export pipeline</a>
+  </nav>
+</div>
+
+<!-- STAGE 1 -->
+<section class="beat solidbeat" id="step-1">
+  <div class="inner"><div class="stage">
+    <div class="s-text">
+      <div class="ov rv"><span class="s-num">1</span>Stage one</div>
+      <h2 class="h-lg rv d1">Seven questions.<br><span class="it">Two minutes.</span></h2>
+      <p class="lead rv d2">No forms, no color pickers, no style quizzes. A short guided conversation — one question at a time — gathers everything needed to write the story of this wreath. It takes about two minutes and feels nothing like filling out a brief.</p>
+      <div class="points rv d2">
+        <div class="pt"><span><strong>What season does this memory live in?</strong> What time of day? Who was there? One sensory detail. What did it leave you with? Each question unlocks a layer that shapes the design.</span></div>
+        <div class="pt"><span><strong>The language never needs to be floral.</strong> "The smell of cedar and cold air and her" is a more complete design brief than any color palette could be.</span></div>
+        <div class="pt"><span><strong>Client commissions work exactly the same way.</strong> Take their words directly. What they tell you becomes what you build.</span></div>
+      </div>
+    </div>
+    <div class="s-vis rv d2"><div class="art">
+      <div class="art-h">Memory input</div>
+      <div class="memory">We stayed in Alfama in a small apartment with azulejo tiles on the staircase wall. There was a fado singer one night and I cried without knowing why. I was already missing it while it was still happening.</div>
+      <div class="chips-grid">
+        <div class="chip"><b>Season</b><span>Spring</span></div>
+        <div class="chip"><b>Location</b><span>Alfama, Lisbon</span></div>
+        <div class="chip"><b>Time of day</b><span>Morning</span></div>
+        <div class="chip"><b>Feeling</b><span>Something complicated</span></div>
+      </div>
+      <div class="chip" style="margin-top:.6rem"><b>Sensory detail</b><span style="font-style:italic">Orange blossom and damp stone, and the sound of fado through an open window</span></div>
+    </div></div>
+  </div></div>
+</section>
+
+<!-- STAGE 2 (photo) -->
+<section class="beat" id="step-2">
+  <div class="media"><img data-parallax src="/assets/gallery-2.png" alt="" loading="lazy"></div>
+  <div class="scrim left"></div>
+  <div class="inner"><div class="stage solo">
+    <div class="s-text">
+      <div class="ov rv"><span class="s-num">2</span>Stage two</div>
+      <h2 class="h-lg rv d1">Every piece<br><span class="it">earns its place.</span></h2>
+      <p class="lead rv d2">Grief reaches differently than joy. Peace holds still while longing moves. Evercrafted reads what you wrote and translates it into real choices — what shapes go in, how they sit, how they feel — before anything is placed.</p>
+      <div class="points rv d2">
+        <div class="pt"><span><strong>The poem is not decorative.</strong> It is where the design begins. Once written, Evercrafted reads it the way a maker would — looking for what the writing carries, not just what was described.</span></div>
+        <div class="pt"><span><strong>A memory of peace often carries longing inside it.</strong> A memory of joy is often threaded with grief for what has passed. The design is made from all of it — not just what was named. The finishes, the accent pieces, the quieter moments between the blooms.</span></div>
+        <div class="pt"><span><strong>Every floral chosen traces back to something in the poem.</strong> What holds the design together. What gives it its voice. What you notice last when you look closely at the finished piece.</span></div>
+        <div class="pt"><span><strong>The location is understood, not guessed.</strong> Alfama. Amsterdam. Clintonville. Each place has a specific architecture, a specific light, a specific surface where a wreath genuinely belongs. Evercrafted finds it.</span></div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- STAGE 3 -->
+<section class="beat solidbeat" id="step-3">
+  <div class="inner"><div class="stage flip">
+    <div class="s-text">
+      <div class="ov rv"><span class="s-num">3</span>Stage three</div>
+      <h2 class="h-lg rv d1">Your materials<br><span class="it">learn their language.</span></h2>
+      <p class="lead rv d2">Every piece in your collection gets understood. Drop a photo, paste a product name, or describe it yourself. Evercrafted reads what it sees and figures out where that piece belongs — what it brings to a design, and what kind of feeling it carries.</p>
+      <div class="points rv d2">
+        <div class="pt"><span><strong>Every piece gets described in terms the design engine understands</strong> — what job it does, how it moves, how it looks in the light, and what feeling it carries.</span></div>
+        <div class="pt"><span><strong>Not everything is meant to lead.</strong> Some pieces are the ones the eye finds first. Others fill in quietly around them. Evercrafted knows which is which.</span></div>
+        <div class="pt"><span><strong>Three ways to tag:</strong> drop a photo, paste a product name from any supplier, or fill a guided form by hand. All three produce the same result.</span></div>
+        <div class="pt"><span><strong>Every suggestion is transparent.</strong> Where the system is certain, it shows you. Where it's less sure, it tells you that too — so you always make the final call.</span></div>
+      </div>
+    </div>
+    <div class="s-vis rv d2"><div class="art">
+      <div class="art-h">Inventory tagging</div>
+      <div class="tagrow"><div class="tagsw" style="background:linear-gradient(135deg,#3a3832,#1e1c18)"></div><div><div class="tagname">Matte Charcoal Manzanita Branch</div><div class="tagtags"><span class="tt lead">Foundation</span><span class="tt">structural</span><span class="tt">commanding</span><span class="tt emo">grief</span></div></div></div>
+      <div class="tagrow"><div class="tagsw" style="background:linear-gradient(135deg,#c4a0a0,#a08080)"></div><div><div class="tagname">Dusty Mauve Peony</div><div class="tagtags"><span class="tt lead">Foundation</span><span class="tt">focal</span><span class="tt">soft</span><span class="tt emo">nostalgia</span></div></div></div>
+      <div class="tagrow"><div class="tagsw" style="background:linear-gradient(135deg,#8a9a8a,#6a8060)"></div><div><div class="tagname">Weeping Silver Eucalyptus</div><div class="tagtags"><span class="tt lead">Foundation</span><span class="tt">structural</span><span class="tt">draping</span><span class="tt emo">peace</span></div></div></div>
+      <div class="tagrow"><div class="tagsw" style="background:linear-gradient(135deg,#b0b8b8,#909898)"></div><div><div class="tagname">Matte Silver-Leaf Spray</div><div class="tagtags"><span class="tt">Detail</span><span class="tt">secondary</span><span class="tt">flowing</span><span class="tt emo">reflective</span></div></div></div>
+      <div class="tagrow"><div class="tagsw" style="background:linear-gradient(135deg,#9a8ab0,#7a6a90)"></div><div><div class="tagname">Dusty Lavender Bundle</div><div class="tagtags"><span class="tt">Detail</span><span class="tt">texture</span><span class="tt">delicate</span><span class="tt emo">nostalgia</span></div></div></div>
+    </div></div>
+  </div></div>
+</section>
+
+<!-- STAGE 4 (photo) -->
+<section class="beat" id="step-4">
+  <div class="media"><img data-parallax src="/assets/gallery-5.png" alt="" loading="lazy"></div>
+  <div class="scrim right"></div>
+  <div class="inner"><div class="stage solo right" style="text-align:right">
+    <div class="s-text">
+      <div class="ov rv" style="justify-content:flex-end"><span>Stage four</span><span class="s-num">4</span></div>
+      <h2 class="h-lg rv d1">Designed to<br><span class="it">surprise you.</span></h2>
+      <p class="lead rv d2" style="margin-left:auto">Every blueprint pulls from a different corner of your collection. The same memory, explored twice, produces two genuinely different designs — because Evercrafted is built to resist the comfortable and the predictable.</p>
+      <div class="points rv d2" style="text-align:left">
+        <div class="pt"><span><strong>The foundation layer</strong> builds from the emotional core of the memory. Each piece chosen here is what the eye finds first — the weight and shape of the whole design.</span></div>
+        <div class="pt"><span><strong>The detail layer</strong> fills in around the foundation. The quieter pieces, the textures, the small accents — chosen to sit beside the main blooms, not fight with them.</span></div>
+        <div class="pt"><span><strong>The result:</strong> every design is genuinely yours. No two designs land on the same combinations — even when they start from the same feeling. The comfortable and predictable are never the answer.</span></div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- STAGE 5 -->
+<section class="beat solidbeat" id="step-5">
+  <div class="inner"><div class="stage">
+    <div class="s-text">
+      <div class="ov rv"><span class="s-num">5</span>Stage five</div>
+      <h2 class="h-lg rv d1">Every piece finds<br><span class="it">where it belongs.</span></h2>
+      <p class="lead rv d2">Composition is not about filling space. It is about deciding what the eye finds, and when. Evercrafted maps each chosen piece to the part of the wreath where it will do its best work, leaving the rest of the form deliberately open.</p>
+      <div class="points rv d2">
+        <div class="pt"><span><strong>Every design has a place where things happen and a place where they do not.</strong> The open side of the wreath is just as intentional as the blooms — bare grapevine, breathing room, space that makes the rest feel richer.</span></div>
+        <div class="pt"><span><strong>Each piece has a natural home on the wreath.</strong> The heaviest, most important blooms sit closer to the center. Supporting pieces fill around them. Greenery spreads toward the edges and softens the whole shape.</span></div>
+        <div class="pt"><span><strong>Quantities are never guessed.</strong> A large bloom takes up more space than a delicate wisp — so it gets fewer stems. A fine, airy piece gets more. The counts that come out are the counts that actually build the wreath.</span></div>
+        <div class="pt"><span><strong>The AI reads the feeling. Evercrafted handles the design.</strong> Two separate jobs, done separately — so neither one compromises the other.</span></div>
+      </div>
+    </div>
+    <div class="s-vis rv d2"><div class="plate">
+      <div class="plate-cap">Grandmother's September Garden · Crescent · 22"</div>
+      <svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="140" cy="140" r="125" fill="none" stroke="#E4DFD8" stroke-width=".5"/>
+        <circle cx="140" cy="140" r="95" fill="none" stroke="#E4DFD8" stroke-width=".5" stroke-dasharray="3 3"/>
+        <circle cx="140" cy="140" r="64" fill="none" stroke="#E4DFD8" stroke-width=".5" stroke-dasharray="2 2"/>
+        <circle cx="140" cy="140" r="34" fill="none" stroke="#E4DFD8" stroke-width=".5"/>
+        <path d="M140 140 L222 80 A125 125 0 1 1 57 80 Z" fill="rgba(242,239,233,0.7)" stroke="none"/>
+        <path d="M57 80 A125 125 0 0 1 222 80" fill="none" stroke="#4A6741" stroke-width=".8" stroke-dasharray="4 3" opacity=".5"/>
+        <circle cx="72" cy="118" r="10" fill="#3a3832" stroke="#4A6741" stroke-width="1.2" opacity=".9"/>
+        <circle cx="88" cy="88" r="9" fill="#8a9a8a" stroke="#4A6741" stroke-width="1.2" opacity=".9"/>
+        <circle cx="106" cy="72" r="8" fill="#c4a0a0" stroke="#6A5A80" stroke-width="1"/>
+        <circle cx="134" cy="63" r="7" fill="#e8e0d0" stroke="#6A5A80" stroke-width="1"/>
+        <circle cx="165" cy="68" r="6" fill="#b0b8b8" stroke="#8a7d9e" stroke-width=".8"/>
+        <circle cx="195" cy="85" r="5" fill="#9a8ab0" stroke="#8a7d9e" stroke-width=".8"/>
+        <circle cx="54" cy="148" r="4" fill="#7a9070" stroke="#4A6741" stroke-width=".8"/>
+        <circle cx="60" cy="100" r="4" fill="#7a9070" stroke="#4A6741" stroke-width=".8"/>
+        <circle cx="218" cy="108" r="4" fill="#7a9070" stroke="#4A6741" stroke-width=".8"/>
+        <circle cx="214" cy="150" r="3" fill="#c8b890" stroke="#9A7A40" stroke-width=".8"/>
+        <circle cx="140" cy="140" r="8" fill="#F2EFE9" stroke="#E4DFD8"/>
+        <text x="140" y="50" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#A8A8A8" letter-spacing=".08em">SILENCE ZONE</text>
+        <text x="80" y="175" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#4A6741" letter-spacing=".06em">active sweep</text>
+      </svg>
+      <div class="plate-legend">
+        <span><span class="pld" style="background:#3a3832;border:1px solid #4A6741"></span>structural P1</span>
+        <span><span class="pld" style="background:#c4a0a0;border:1px solid #6A5A80"></span>focal P1</span>
+        <span><span class="pld" style="background:#b0b8b8;border:1px solid #8a7d9e"></span>secondary P2</span>
+        <span><span class="pld" style="background:#7a9070;border:1px solid #4A6741"></span>greenery P2</span>
+      </div>
+    </div></div>
+  </div></div>
+</section>
+
+<!-- STAGE 6 (photo) -->
+<section class="beat auto" id="step-6">
+  <div class="media"><img data-parallax src="/assets/gallery-1.png" alt="" loading="lazy"></div>
+  <div class="scrim center"></div>
+  <div class="inner" style="text-align:center">
+    <div class="ov rv" style="justify-content:center"><span class="s-num">6</span>Stage six</div>
+    <h2 class="h-lg rv d1">Five outputs.<br><span class="it">All at once.</span></h2>
+    <p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">Every memory becomes five things simultaneously — the poetic scene, the location map, the blueprint, the location-aware render prompt, and the build guide. Everything you and your client need, generated in one pass.</p>
+    <div class="export rv d2" style="text-align:left">
+      <div class="etabs">
+        <div class="etab on" data-exp="poem">Poetic scene</div>
+        <div class="etab" data-exp="prompt">Render prompt</div>
+        <div class="etab" data-exp="stems">Stem counts</div>
+        <div class="etab" data-exp="build">Build guide</div>
+      </div>
+      <div class="art">
+        <div class="epanel on" id="ep-poem">
+          <div class="epoem">"The wreath hangs on the azulejo-tiled staircase wall as the first light spreads across the Tagus like spilled honey. Orange blossoms drift from unseen trees, mixing with the salt tang of the river. Even now, watching the light inch across the terracotta rooftops, there is the strange ache of missing this moment while still living inside it."</div>
+          <div class="emeta">Alfama, Lisbon · Spring · Morning · nostalgia / tenderness / melancholy</div>
+        </div>
+        <div class="epanel" id="ep-prompt">
+          <div class="promptbox"><strong>Luxury faux botanical wreath,</strong> crescent composition, 22-inch grapevine base, artisan-crafted. Emotional tone: nostalgia, sadness, trust. Structural foundation: Weeping Silver Eucalyptus, Charcoal Manzanita Branch — <strong>weeping and architectural forms</strong>, positioned in the foundational sweep. Focal blooms: Dusty Mauve Peony, Ivory Garden Rose. Secondary: Silver Leaf Spray, Lavender Bundle. Intentional negative space exposes raw grapevine. <strong>Premium silk florals</strong> — no fresh flowers, no plastic. Editorial product photography, shallow depth of field, matte aged plaster wall. --ar 4:5 --style raw --q 2</div>
+        </div>
+        <div class="epanel" id="ep-stems">
+          <table class="stem"><thead><tr><th>Floral</th><th>Zone</th><th>Weight</th><th>Stems</th></tr></thead><tbody>
+            <tr><td>Charcoal Manzanita</td><td>structural</td><td>heavy</td><td>4</td></tr>
+            <tr><td>Weeping Eucalyptus</td><td>structural</td><td>mid</td><td>5</td></tr>
+            <tr><td>Dusty Mauve Peony</td><td>focal</td><td>heavy</td><td>4</td></tr>
+            <tr><td>Ivory Garden Rose</td><td>focal</td><td>mid</td><td>5</td></tr>
+            <tr><td>Silver Leaf Spray</td><td>secondary</td><td>light</td><td>8</td></tr>
+            <tr><td>Lavender Bundle</td><td>texture</td><td>wispy</td><td>12</td></tr>
+            <tr><td>Sage Eucalyptus</td><td>greenery</td><td>light</td><td>14</td></tr>
+            <tr><td colspan="3" style="font-weight:500">Total</td><td>52</td></tr>
+          </tbody></table>
+        </div>
+        <div class="epanel" id="ep-build">
+          <div class="bsteps">
+            <div class="bstep"><span class="bn">1</span><span>Soak grapevine base if needed. Identify your active sweep and mark the 12 o'clock silence point with a small wire tie.</span></div>
+            <div class="bstep"><span class="bn">2</span><span>Place structural layer first. Wire the Charcoal Manzanita at 8:00–9:00, weeping Silver Eucalyptus at 7:00–8:00. Secure with paddle wire, allow natural droop.</span></div>
+            <div class="bstep"><span class="bn">3</span><span>Add the focal blooms. Cluster the Dusty Mauve Peony at roughly 9:00, the Ivory Rose just above. Vary the head angles — never two blooms facing the same direction.</span></div>
+            <div class="bstep"><span class="bn">4</span><span>Build in the detail pieces. Tuck Silver Leaf Spray along the sweep. Scatter Lavender Bundles through the open spaces. Fill the outer edge with Sage Eucalyptus.</span></div>
+            <div class="bstep"><span class="bn">5</span><span>Step back. Confirm silence zone is clean from 330° to 210°. Adjust any stems pulling toward the open negative space.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FB BAND -->
+<section class="beat fb" id="fb">
+  <div class="media"><img data-parallax src="/assets/band-interior.png" alt="A finished Evercrafted wreath in a room" loading="lazy"></div>
+  <div class="scrim center"></div>
+  <div class="inner">
+    <div class="ov rv" style="justify-content:center">Made to be lived with</div>
+    <h2 class="h-lg rv d1">The piece on the door<br><span class="it">started as a sentence.</span></h2>
+    <p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">Every Evercrafted design ends here — a finished wreath in a real room, built from a single memory.</p>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="beat auto solidbeat">
+  <div class="inner">
+    <div style="text-align:center;max-width:680px;margin:0 auto">
+      <h2 class="h-lg rv">Before and <span class="it">after.</span></h2>
+      <p class="lead rv d1" style="margin-left:auto;margin-right:auto;text-align:center">What the design process looks like without Evercrafted — and with it.</p>
+    </div>
+    <div class="cmp rv d1">
+      <div class="cmpcard">
+        <div class="cmp-h bad">✕ &nbsp;Without Evercrafted</div>
+        <p>Scroll Pinterest for 45 minutes hoping something sparks</p>
+        <p>Pick florals by eye — same "safe" choices every time</p>
+        <p>Guess at proportions and stem counts</p>
+        <p>Realise mid-build you're missing a key piece</p>
+        <p>Write your own Midjourney prompt from scratch</p>
+        <p>Every design starts to look like the last one</p>
+        <p>Can't explain to clients what makes this design theirs</p>
+      </div>
+      <div class="cmpcard after">
+        <div class="cmp-h good">✓ &nbsp;With Evercrafted</div>
+        <p>Paste a memory. Blueprint generates in seconds</p>
+        <p>Each design draws from a different emotional space — genuinely, every time</p>
+        <p>Exact quantities — pulled from your actual inventory</p>
+        <p>Validates against what you actually own before generating</p>
+        <p>Production-ready render prompt exports automatically</p>
+        <p>A built-in intelligence ensures no two designs converge on the same combinations</p>
+        <p>Every design traces back to a named emotion and a real memory</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="beat auto">
+  <div class="inner">
+    <div style="text-align:center"><h2 class="h-lg rv">Common <span class="it">questions.</span></h2></div>
+    <div class="faq rv d1" id="faq-list"></div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="beat" id="cta">
+  <div class="media"><img data-parallax src="/assets/waitlist-bg.png" alt="" loading="lazy"></div>
+  <div class="scrim center"></div>
+  <div class="inner" style="text-align:center;max-width:680px">
+    <div class="ov rv" style="justify-content:center">Early access</div>
+    <h2 class="h-lg rv d1">Ready to try it?</h2>
+    <p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">Join the waitlist for early access and founding member pricing locked in at signup.</p>
+    <form class="wl-form rv d2" id="wl-form">
+      <input class="wl-input" id="wl-email" type="email" placeholder="Your email address" required>
+      <button class="btn btn-p" type="submit">Join waitlist →</button>
+    </form>
+    <div class="wl-msg" id="wl-msg">No spam. Founding pricing locked at signup.</div>
+    <div class="cta-alt rv d3"><a href="evercrafted-try.html">Or try a memory of your own now →</a></div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="logo">Ever<span>crafted</span></div>
+  <div class="foot-links"><a href="evercrafted-lookbook.html">Home</a><a href="evercrafted-pricing.html">Pricing</a><a href="evercrafted-try.html">Try it</a><a href="#cta">Waitlist</a></div>
+  <div class="cc">© 2026 Evercrafted</div>
+</footer>
+
+<script>
+(function(){
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var bar=document.getElementById('bar');
+  addEventListener('scroll',function(){bar.classList.toggle('solid',scrollY>40)},{passive:true});
+
+  // reveal
+  var rio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');rio.unobserve(e.target);}})},{threshold:.14});
+  [].forEach.call(document.querySelectorAll('.rv'),function(el){rio.observe(el)});
+
+  // parallax
+  var media=[].slice.call(document.querySelectorAll('[data-parallax]'));
+  if(!reduce){var ticking=false;addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){media.forEach(function(v){var r=v.getBoundingClientRect();var off=(r.top+r.height/2-innerHeight/2)/innerHeight;v.style.transform='translateY('+(off*-6)+'%)';});ticking=false;});},{passive:true});}
+
+  // videos play on view
+  var vids=[].slice.call(document.querySelectorAll('.beat video'));
+  vids.forEach(function(v){v.muted=true;v.playsInline=true;});
+  if(reduce){vids.forEach(function(v){v.removeAttribute('autoplay');v.removeAttribute('loop');});}
+  else{var vio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var p=e.target.play();if(p&&p.catch)p.catch(function(){});}else{e.target.pause();}})},{threshold:.25});vids.forEach(function(v){vio.observe(v)});}
+
+  // rail active + smooth scroll
+  var steps=['step-1','step-2','step-3','step-4','step-5','step-6'];
+  var railLinks=[].slice.call(document.querySelectorAll('#rail a'));
+  function setActive(){var mid=scrollY+innerHeight*0.4,active='1';steps.forEach(function(id){var el=document.getElementById(id);if(el&&el.offsetTop<=mid)active=id.split('-')[1];});railLinks.forEach(function(a){a.classList.toggle('active',a.dataset.step===active);});}
+  addEventListener('scroll',setActive,{passive:true});setActive();
+  railLinks.forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var t=document.getElementById(a.getAttribute('href').slice(1));if(t)scrollTo({top:t.offsetTop-70,behavior:'smooth'});});});
+
+  // export tabs
+  [].forEach.call(document.querySelectorAll('.etab'),function(t){t.addEventListener('click',function(){document.querySelectorAll('.etab').forEach(function(x){x.classList.remove('on')});document.querySelectorAll('.epanel').forEach(function(p){p.classList.remove('on')});t.classList.add('on');document.getElementById('ep-'+t.dataset.exp).classList.add('on');});});
+
+  // FAQ
+  var FAQS=[
+    {q:"Do I need to know anything about floral design to use Evercrafted?",a:"No. If you know what you want a piece to feel like and you have materials to work with, Evercrafted handles the rest. The more of your collection you bring into the system, the richer and more distinctive each design becomes."},
+    {q:"How is this different from just using AI image generation?",a:"Image generators produce pictures of wreaths. Evercrafted produces wreaths — with exact quantities, a placement map, and a construction sequence. The visual is something you get along the way. The wreath you can actually build is the point."},
+    {q:"What if the emotion reading does not feel right?",a:"Every interpretation is yours to change before anything generates. The system makes its reading of your memory, then hands it back to you. Adjust anything that does not feel right — the design responds immediately."},
+    {q:"Can I use this for client commissions?",a:"Yes — that is one of the primary use cases. Take your client's written description of what they want the piece to represent, paste it in, and let the system translate it. You get a design you can discuss with them and a visual for mockup approval before a single stem is cut."},
+    {q:"Does it work with any faux botanical supplier?",a:"Yes. You bring in your materials however you source them — drop a photo, paste a product name, or describe it yourself. Whether your stock comes from Melrose, Silk Fair, DecoWoerner, or anywhere else, Evercrafted reads it the same way."},
+    {q:"What happens when I do not have a floral that matches the emotional character?",a:"If your collection does not have an exact match, Evercrafted finds the next closest thing — a piece that carries a similar feeling. The design still feels true to where it started."},
+    {q:"Can I save and revisit designs across seasons?",a:"Yes. Every design lives in your account. Studio tier and above lets you bring the same composition into a new season — different materials, same shape and feeling. Your autumn piece becomes a starting point for your winter one."}
+  ];
+  var fl=document.getElementById('faq-list');
+  FAQS.forEach(function(f){var d=document.createElement('div');d.className='fitem';d.innerHTML='<button class="fq">'+f.q+'<span class="ic">+</span></button><div class="fa">'+f.a+'</div>';fl.appendChild(d);d.querySelector('.fq').addEventListener('click',function(){var open=d.classList.contains('open');document.querySelectorAll('.fitem').forEach(function(i){i.classList.remove('open')});if(!open)d.classList.add('open');});});
+
+  // waitlist
+  var f=document.getElementById('wl-form'),em=document.getElementById('wl-email'),msg=document.getElementById('wl-msg'),btn=f.querySelector('button');
+  f.addEventListener('submit',function(e){e.preventDefault();var email=(em.value||'').trim();if(!email)return;btn.disabled=true;var o=btn.textContent;btn.textContent='Joining…';
+    fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:'how-it-works-lookbook'})})
+    .then(function(r){return r.json().catch(function(){return{}})})
+    .then(function(j){if(j&&j.success){btn.textContent="You're on the list ✓";em.value='';msg.style.color='var(--green)';msg.textContent='✓ '+email+' is on the list. We will be in touch.';}else{throw new Error()}})
+    .catch(function(){btn.disabled=false;btn.textContent=o;msg.style.color='#e0a0a0';msg.textContent='Something went wrong — please try again.';});
+  });
+})();
+</script>
+</body></html>

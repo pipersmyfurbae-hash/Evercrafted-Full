@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Build View — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="evercrafted-schema.js"></script>
+<style>
+:root{
+  --cream:#F5F2ED; --surface:#FFFFFF; --ink:#1C1A17; --charcoal:#3A3530;
+  --stone:#7A736A; --faint:#A89F95; --line:#E4DDD3; --sage:#6B7C5C;
+  --serif:'Cormorant Garamond',Georgia,serif; --sans:'Jost',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);line-height:1.6;font-weight:300}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:980px;margin:0 auto;padding:0 1.5rem}
+.top{display:flex;align-items:center;justify-content:space-between;padding:1.1rem 0;border-bottom:1px solid var(--line)}
+.logo{font-family:var(--serif);font-size:1.4rem}.logo span{color:var(--sage)}
+.top a{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--stone)}
+.head{text-align:center;padding:1.75rem 0 .5rem}
+.eyebrow{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--sage)}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.1;margin-top:.3rem}
+.meta{font-size:12px;color:var(--stone);margin-top:.4rem}
+/* stage */
+.stage-wrap{display:flex;justify-content:center;padding:1.5rem 0}
+.stage{position:relative;width:min(86vw,520px);aspect-ratio:1;border-radius:50%}
+.floral{position:absolute;transform-origin:center;opacity:0;transition:opacity .5s ease, transform .6s cubic-bezier(.2,.8,.3,1)}
+.floral.in{opacity:1}
+.light{position:absolute;border-radius:50%;filter:blur(.5px);box-shadow:0 0 10px 3px rgba(255,214,120,.7);opacity:0;transition:opacity .5s}
+.light.on{opacity:1}
+/* controls */
+.controls{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;padding:.5rem 0 1rem}
+.btn{padding:10px 20px;border-radius:100px;border:1px solid var(--ink);background:var(--ink);color:#fff;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.06em;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:hover{background:var(--sage);border-color:var(--sage);color:#fff}
+.legend{display:flex;flex-wrap:wrap;gap:.4rem;justify-content:center;padding:.5rem 0 3rem;max-width:680px;margin:0 auto}
+.lg{font-size:10px;color:var(--stone);display:inline-flex;align-items:center;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:3px 9px}
+.lg .dot{width:8px;height:8px;border-radius:50%;border:1px solid rgba(0,0,0,.15)}
+.note{text-align:center;font-size:11px;color:var(--faint);padding-bottom:2rem;max-width:520px;margin:0 auto}
+.muted{text-align:center;color:var(--faint);padding:3rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">Ever<span>crafted</span></div>
+    <a href="evercrafted-designs.html">← Saved designs</a>
+  </div>
+  <div class="head">
+    <div class="eyebrow">Build view</div>
+    <h1 id="title">Your wreath, constructed</h1>
+    <div class="meta" id="meta"></div>
+  </div>
+  <div class="stage-wrap"><div class="stage" id="stage"></div></div>
+  <div class="controls">
+    <button class="btn" onclick="play()">▶ Build</button>
+    <button class="btn ghost" id="lightsBtn" onclick="toggleLights()">✦ Lights</button>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="note" id="note"></div>
+</div>
+
+<script>
+const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
+const ARCS = (window.EC_SCHEMA && EC_SCHEMA.FORMULA_ARCS) || {};
+// display geometry (fraction of stage radius) and stacking order per role
+const ROLE_R = { structural:0.66, focal:0.50, secondary:0.58, bridge:0.46, greenery:0.80, accent:0.70, texture:0.56, filler:0.62 };
+const ROLE_Z = { structural:2, greenery:4, bridge:5, secondary:6, texture:7, focal:8, accent:9 };
+const ROLE_SIZE = { structural:1.15, greenery:1.05, focal:1.2, secondary:0.95, bridge:0.9, accent:0.7, texture:0.8 };
+const BEHAVIOR_SIZE = { heavy:1.25, mid:1, light:0.8, wispy:0.62 };
+const PALETTE_HEX = {'neutral-light':'#EFE9DE','neutral-mid':'#C9B7A8','neutral-dark':'#4A3F38','botanical-green':'#7A8C6B','champagne':'#D7C49A','silver':'#C2C6C9'};
+let FLORALS = [];
+
+function shade(hex, amt){
+  try{ let h=hex.replace('#',''); if(h.length===3)h=h.split('').map(c=>c+c).join('');
+    let r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
+    r=Math.max(0,Math.min(255,r+amt));g=Math.max(0,Math.min(255,g+amt));b=Math.max(0,Math.min(255,b+amt));
+    return '#'+[r,g,b].map(x=>x.toString(16).padStart(2,'0')).join(''); }catch(e){ return hex; }
+}
+function rgba(hex, a){
+  try{ let h=hex.replace('#',''); if(h.length===3)h=h.split('').map(c=>c+c).join('');
+    const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
+    return `rgba(${r},${g},${b},${a})`; }catch(e){ return hex; }
+}
+// Build an SVG glyph for ONE placeable unit (a single bloom/sprig — never the whole spray)
+function floralSVG(item){
+  const c = item.colorHex || PALETTE_HEX[item.palette] || '#c9b7a8';
+  const role = item.role;
+  const s = 100, cx = 50, cy = 50;
+  let inner = '';
+  if(role==='greenery' || (role==='structural' && item.palette==='botanical-green')){
+    const green = item.palette==='botanical-green' ? c : '#7A8C6B';
+    for(let i=0;i<5;i++){ const a=(i/5)*360 + 8; inner += `<g transform="rotate(${a} ${cx} ${cy})"><ellipse cx="${cx}" cy="${cy-26}" rx="7" ry="22" fill="${green}" stroke="${shade(green,-22)}" stroke-width="1"/></g>`; }
+  } else if(role==='structural'){
+    for(let i=0;i<3;i++){ const a=110+i*28; inner += `<g transform="rotate(${a} ${cx} ${cy})"><rect x="${cx-2}" y="${cy-40}" width="4" height="42" rx="2" fill="${shade(c,-10)}"/></g>`; }
+  } else if(role==='accent' || role==='texture'){
+    for(let i=0;i<7;i++){ const a=(i/7)*360; inner += `<g transform="rotate(${a} ${cx} ${cy})"><circle cx="${cx}" cy="${cy-22}" r="5" fill="${c}" stroke="${shade(c,-20)}" stroke-width=".6"/></g>`; }
+    inner += `<circle cx="${cx}" cy="${cy}" r="5" fill="${shade(c,-15)}"/>`;
+  } else {
+    // focal / secondary / bridge: layered bloom
+    const petals = role==='focal' ? 8 : 6;
+    const rOuter = role==='focal' ? 30 : 24;
+    for(let i=0;i<petals;i++){ const a=(i/petals)*360; inner += `<g transform="rotate(${a} ${cx} ${cy})"><ellipse cx="${cx}" cy="${cy-rOuter*0.55}" rx="${rOuter*0.42}" ry="${rOuter*0.7}" fill="${c}" stroke="${shade(c,-18)}" stroke-width=".8" opacity=".96"/></g>`; }
+    for(let i=0;i<petals;i++){ const a=(i/petals)*360 + 22; inner += `<g transform="rotate(${a} ${cx} ${cy})"><ellipse cx="${cx}" cy="${cy-rOuter*0.32}" rx="${rOuter*0.3}" ry="${rOuter*0.46}" fill="${shade(c,14)}" opacity=".95"/></g>`; }
+    inner += `<circle cx="${cx}" cy="${cy}" r="${rOuter*0.22}" fill="${shade(c,-26)}"/>`;
+  }
+  return `<svg viewBox="0 0 ${s} ${s}" width="100%" height="100%" style="overflow:visible">${inner}</svg>`;
+}
+
+function layout(design){
+  const stage = document.getElementById('stage');
+  stage.innerHTML = '';
+  const slots = (design.slots || design.data && design.data.slots || []).filter(Boolean);
+  document.getElementById('title').textContent = design.title || 'Your wreath, constructed';
+  document.getElementById('meta').textContent = [design.formula, design.totalStems? design.totalStems+' stems':'', slots.length+' florals'].filter(Boolean).join('  ·  ');
+
+  // grapevine ring base
+  const ring = document.createElement('div');
+  ring.style.cssText = 'position:absolute;inset:9%;border-radius:50%;border:14px solid #8a6f4e;box-shadow:inset 0 0 18px rgba(0,0,0,.25), 0 6px 18px rgba(0,0,0,.12);background:radial-gradient(circle at 50% 40%, #efe9de 0%, #efe9de 58%, transparent 60%)';
+  ring.style.zIndex = 1;
+  stage.appendChild(ring);
+
+  // PLACEMENT comes from the SINGLE SOURCE OF TRUTH — same coordinates the
+  // blueprint dot-map uses, so the two views can never disagree.
+  const wreathDiam = design.diam || design.diameter || 22; // inches — sets true scale
+  const maxR = 0.46; // fraction of stage radius the ring occupies
+  const placed = (window.EC_SCHEMA && EC_SCHEMA.placeSlots)
+    ? EC_SCHEMA.placeSlots(slots, normalizeFormula(design.formula), { wreathDiam })
+    : { units: [] };
+  FLORALS = [];
+
+  placed.units.forEach(p => {
+    const cx = 50 + p.x * (maxR * 100);
+    const cy = 50 + p.y * (maxR * 100);
+    const col = p.colorHex || PALETTE_HEX[p.palette] || '#c9b7a8';
+    const isGreen = p.role === 'greenery' || p.role === 'structural';
+    // true-to-scale; greenery a touch larger so the base reads as a continuous body
+    let sizePct = p.sizeFrac * 100 * (isGreen ? 1.5 : 1.2);
+    sizePct = Math.max(isGreen ? 9 : 6, Math.min(44, sizePct));
+    const el = document.createElement('div');
+    el.className = 'floral';
+    el.style.left = cx + '%'; el.style.top = cy + '%';
+    el.style.width = sizePct + '%'; el.style.aspectRatio = '1';
+    el.style.zIndex = p.z; el.dataset.z = p.z; el.dataset.rot = p.rot;
+    el.style.transform = 'translate(-50%,-50%) scale(.55) rotate(' + p.rot + 'deg)';
+    el.title = (p.name || '') + ' · ' + p.role + (p.stemCount > 1 ? ` (from ${p.stemCount} stems)` : '');
+    // FLAT semi-transparent disk with a clean edge — a real circle, not a gradient.
+    // Overlaps blend through alpha into clean colour masses. No blur, no fade.
+    el.style.borderRadius = '50%';
+    el.style.background = rgba(col, isGreen ? 0.48 : 0.62);
+    stage.appendChild(el);
+    FLORALS.push(el);
+  });
+
+  buildLegend(slots);
+  document.getElementById('note').textContent = 'Each mass is a floral in its true colour, drawn to scale at its real diameter — a placement study for building, not a photo. The hero render is generated separately.';
+  play();
+}
+
+function normalizeFormula(f){
+  if(!f) return 'Crescent';
+  const keys = Object.keys(ARCS);
+  const hit = keys.find(k => k.toLowerCase() === String(f).toLowerCase());
+  return hit || keys.find(k=>k.toLowerCase().replace(/\s/g,'')===String(f).toLowerCase().replace(/\s/g,'')) || 'Crescent';
+}
+
+function play(){
+  // reveal florals layer by layer (low z first)
+  const ordered = [...FLORALS].sort((a,b)=>(+a.dataset.z)-(+b.dataset.z));
+  ordered.forEach(el=>{ const rot=el.dataset.rot||0; el.classList.remove('in'); el.style.transform='translate(-50%,-50%) scale(.55) rotate('+rot+'deg)'; });
+  ordered.forEach((el,i)=>{
+    const rot=el.dataset.rot||0;
+    setTimeout(()=>{ el.classList.add('in'); el.style.transform='translate(-50%,-50%) scale(1) rotate('+rot+'deg)'; }, 100 + i*28);
+  });
+}
+
+let lit = false;
+function toggleLights(){
+  lit = !lit;
+  document.querySelectorAll('.light').forEach(l=>l.remove());
+  if(!lit) return;
+  const stage = document.getElementById('stage');
+  const n = 16 + Math.floor(Math.random()*8);
+  for(let i=0;i<n;i++){
+    const deg = Math.random()*360, rad=(deg-90)*Math.PI/180;
+    const rr = 0.30 + Math.random()*0.16;
+    const x = 50 + Math.cos(rad)*rr*100, y = 50 + Math.sin(rad)*rr*100;
+    const size = 6 + Math.random()*5;
+    const l = document.createElement('div');
+    l.className = 'light';
+    l.style.cssText += `left:${x}%;top:${y}%;width:${size}px;height:${size}px;margin-left:${-size/2}px;margin-top:${-size/2}px;background:${Math.random()>0.12?'#ffd86e':'#fff'};z-index:50`;
+    stage.appendChild(l);
+    setTimeout(()=>l.classList.add('on'), 40 + i*30);
+  }
+}
+
+function buildLegend(slots){
+  const seen = {};
+  slots.forEach(s=>{ const c=s.colorHex||PALETTE_HEX[s.palette]||'#ccc'; seen[s.name]={c,role:s.role}; });
+  document.getElementById('legend').innerHTML = Object.entries(seen).map(([n,o])=>
+    `<span class="lg"><span class="dot" style="background:${o.c}"></span>${n}</span>`).join('');
+}
+
+async function init(){
+  const params = new URLSearchParams(location.search);
+  const id = params.get('design');
+  if(id){
+    try{
+      const r = await fetch(`${CONFIG.apiBase}/api/designs`); const j = await r.json();
+      const d = (j.data||[]).find(x=>x.id===id);
+      if(d){ layout({ title:d.title, formula:d.formula, totalStems:d.totalStems, slots:(d.data&&d.data.slots)||[] }); return; }
+    }catch(e){}
+  }
+  try{
+    const raw = localStorage.getItem('ec_build');
+    if(raw){ layout(JSON.parse(raw)); return; }
+  }catch(e){}
+  document.getElementById('stage').innerHTML = '<p class="muted">No design to build. Generate one in the Memory Scene or Manual Design tool, save it, then open “View build” from Saved Designs.</p>';
+  document.getElementById('meta').textContent = '';
+}
+init();
+</script>
+<script src="/evercrafted-nav.js" defer></script>
+</body>
+</html>

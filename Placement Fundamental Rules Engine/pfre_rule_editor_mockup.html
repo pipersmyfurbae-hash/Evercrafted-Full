@@ -1,0 +1,149 @@
+<style>
+.rule-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:0.5px solid var(--color-border-tertiary); gap:12px; }
+.rule-row:last-child { border-bottom:none; }
+.rule-name { font-size:13px; font-weight:500; color:var(--color-text-primary); flex:1; }
+.rule-desc { font-size:12px; color:var(--color-text-secondary); margin-top:2px; }
+.badge { font-size:11px; padding:3px 8px; border-radius:20px; white-space:nowrap; }
+.badge-z-a { background:#E1F5EE; color:#0F6E56; }
+.badge-z-b { background:#E6F1FB; color:#185FA5; }
+.badge-z-c { background:#EEEDFE; color:#534AB7; }
+.badge-all { background:#F1EFE8; color:#5F5E5A; }
+.toggle { position:relative; width:30px; height:17px; flex-shrink:0; }
+.toggle input { opacity:0; width:0; height:0; position:absolute; }
+.slider-t { position:absolute; inset:0; background:var(--color-border-secondary); border-radius:9px; cursor:pointer; transition:background .2s; }
+.slider-t:before { content:''; position:absolute; width:13px; height:13px; left:2px; top:2px; background:#fff; border-radius:50%; transition:transform .2s; }
+.toggle input:checked + .slider-t { background:#185FA5; }
+.toggle input:checked + .slider-t:before { transform:translateX(13px); }
+.score-bar-bg { height:4px; background:var(--color-border-tertiary); border-radius:2px; width:80px; }
+.score-bar-fill { height:4px; border-radius:2px; }
+.section-title { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:.06em; color:var(--color-text-tertiary); padding:14px 0 6px; }
+</style>
+
+<div style="background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-tertiary);padding:16px 20px;max-width:620px;margin:0 auto;">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+    <div>
+      <div style="font-size:15px;font-weight:500;color:var(--color-text-primary);">Placement Rules Engine</div>
+      <div style="font-size:12px;color:var(--color-text-secondary);">Fundamental constraints applied before generation</div>
+    </div>
+    <span style="font-size:12px;padding:4px 10px;border-radius:20px;background:var(--color-background-success);color:var(--color-text-success);">7 active</span>
+  </div>
+
+  <div class="section-title">Visual weight</div>
+  <div class="rule-row">
+    <div style="flex:1;">
+      <div class="rule-name">Radial balance threshold</div>
+      <div class="rule-desc">Left/right visual weight difference must stay within tolerance</div>
+    </div>
+    <span class="badge badge-all">All zones</span>
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:72px;background:#185FA5;"></div></div>
+        <span style="font-size:12px;color:var(--color-text-secondary);">90%</span>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);">enforcement</div>
+    </div>
+    <label class="toggle"><input type="checkbox" checked><span class="slider-t"></span></label>
+  </div>
+  <div class="rule-row">
+    <div style="flex:1;">
+      <div class="rule-name">Top-heavy prevention</div>
+      <div class="rule-desc">Dense clusters blocked in top 30° arc unless anchor is top</div>
+    </div>
+    <span class="badge badge-z-a">Zone A</span>
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:64px;background:#185FA5;"></div></div>
+        <span style="font-size:12px;color:var(--color-text-secondary);">80%</span>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);">enforcement</div>
+    </div>
+    <label class="toggle"><input type="checkbox" checked><span class="slider-t"></span></label>
+  </div>
+
+  <div class="section-title">Depth layering</div>
+  <div class="rule-row">
+    <div style="flex:1;">
+      <div class="rule-name">Zone stacking order</div>
+      <div class="rule-desc">Zone A must underlay B; B must underlay C — no inversions</div>
+    </div>
+    <span class="badge badge-all">All zones</span>
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:80px;background:#185FA5;"></div></div>
+        <span style="font-size:12px;color:var(--color-text-secondary);">100%</span>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);">enforcement</div>
+    </div>
+    <label class="toggle"><input type="checkbox" checked><span class="slider-t"></span></label>
+  </div>
+  <div class="rule-row">
+    <div style="flex:1;">
+      <div class="rule-name">Stem insertion angle</div>
+      <div class="rule-desc">Stems must angle toward wreath center ±15°</div>
+    </div>
+    <span class="badge badge-z-a">Zone A</span>
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:56px;background:#185FA5;"></div></div>
+        <span style="font-size:12px;color:var(--color-text-secondary);">70%</span>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);">enforcement</div>
+    </div>
+    <label class="toggle"><input type="checkbox" checked><span class="slider-t"></span></label>
+  </div>
+
+  <div class="section-title">Focal hierarchy</div>
+  <div class="rule-row">
+    <div style="flex:1;">
+      <div class="rule-name">Single focal point rule</div>
+      <div class="rule-desc">Only one hero element (largest, boldest color) allowed in Zone C</div>
+    </div>
+    <span class="badge badge-z-c">Zone C</span>
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:80px;background:#185FA5;"></div></div>
+        <span style="font-size:12px;color:var(--color-text-secondary);">100%</span>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);">enforcement</div>
+    </div>
+    <label class="toggle"><input type="checkbox" checked><span class="slider-t"></span></label>
+  </div>
+  <div class="rule-row">
+    <div style="flex:1;">
+      <div class="rule-name">Color contrast gradient</div>
+      <div class="rule-desc">Highest-contrast elements placed in Zone C, softer tones in A</div>
+    </div>
+    <span class="badge badge-z-b">Zone B</span>
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:48px;background:#185FA5;"></div></div>
+        <span style="font-size:12px;color:var(--color-text-secondary);">60%</span>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);">enforcement</div>
+    </div>
+    <label class="toggle"><input type="checkbox" checked><span class="slider-t"></span></label>
+  </div>
+
+  <div class="section-title">Density &amp; coverage</div>
+  <div class="rule-row">
+    <div style="flex:1;">
+      <div class="rule-name">Base coverage minimum</div>
+      <div class="rule-desc">Zone A must be at least 85% covered before mid-layer elements are placed</div>
+    </div>
+    <span class="badge badge-z-a">Zone A</span>
+    <div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+        <div class="score-bar-bg"><div class="score-bar-fill" style="width:80px;background:#185FA5;"></div></div>
+        <span style="font-size:12px;color:var(--color-text-secondary);">100%</span>
+      </div>
+      <div style="font-size:11px;color:var(--color-text-tertiary);">enforcement</div>
+    </div>
+    <label class="toggle"><input type="checkbox" checked><span class="slider-t"></span></label>
+  </div>
+
+  <div style="margin-top:16px;padding-top:14px;border-top:0.5px solid var(--color-border-tertiary);display:flex;gap:8px;justify-content:flex-end;">
+    <button onclick="sendPrompt('Add a new placement rule to the PFRE')" style="font-size:13px;padding:7px 14px;">+ Add rule ↗</button>
+    <button onclick="sendPrompt('Show me a wreath design generated with these PFRE rules active')" style="font-size:13px;padding:7px 14px;">Preview design ↗</button>
+  </div>
+</div>

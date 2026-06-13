@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Client Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white:       #FFFFFF;
+  --off-white:   #F9F7F4;
+  --paper:       #F2EFE9;
+  --black:       #1A1A1A;
+  --charcoal:    #2E2E2E;
+  --ink:         #4A4A4A;
+  --green:       #4A6741;
+  --green-light: #6B8F67;
+  --green-pale:  #EEF2ED;
+  --green-dim:   rgba(74,103,65,0.10);
+  --gray-100:    #F5F5F5;
+  --gray-200:    #E8E8E8;
+  --gray-300:    #D0D0D0;
+  --gray-400:    #A8A8A8;
+  --gray-500:    #787878;
+  --warning:     #C4922A;
+  --warning-pale:#FEF3E2;
+  --error:       #B94040;
+  --error-pale:  #FCEAEA;
+  --info:        #4A6785;
+  --info-pale:   #EEF1F6;
+  --studio-c:    #7A4A85;
+  --studio-pale: #F3EEF6;
+  --serif:       'Cormorant Garamond', Georgia, serif;
+  --sans:        'Inter', system-ui, sans-serif;
+  --script:      'Dancing Script', cursive;
+  --mono:        'DM Mono', 'Fira Code', monospace;
+  --sidebar-w:   232px;
+  --topbar-h:    52px;
+  --ease:        cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html, body { height: 100%; overflow: hidden; font-family: var(--sans); color: var(--black); -webkit-font-smoothing: antialiased; }
+
+/* ══ SHELL ══ */
+.shell { display: grid; grid-template-columns: var(--sidebar-w) 1fr; grid-template-rows: var(--topbar-h) 1fr; height: 100vh; }
+
+/* ── Sidebar (shared) ── */
+.sidebar { grid-column:1; grid-row:1/3; background:var(--white); border-right:1px solid var(--gray-200); display:flex; flex-direction:column; overflow:hidden; z-index:10; }
+.sidebar-brand { height:var(--topbar-h); display:flex; align-items:center; padding:0 18px; border-bottom:1px solid var(--gray-200); flex-shrink:0; gap:10px; text-decoration:none; }
+.sidebar-brand-logo { font-family:var(--script); font-size:1.3rem; color:var(--green); font-weight:700; line-height:1; }
+.sidebar-brand-sep { width:1px; height:14px; background:var(--gray-200); }
+.sidebar-brand-sub { font-size:0.62rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--gray-400); }
+.sidebar-nav { flex:1; overflow-y:auto; padding:12px 0 20px; scrollbar-width:thin; scrollbar-color:var(--gray-200) transparent; }
+.sidebar-nav::-webkit-scrollbar { width:4px; }
+.sidebar-nav::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:4px; }
+.nav-group { margin-bottom:4px; }
+.nav-group-label { display:flex; align-items:center; gap:8px; padding:10px 18px 6px; }
+.nav-tier-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.dot-bloom { background:#4A6741; } .dot-craft { background:#4A6785; } .dot-studio { background:#7A4A85; } .dot-atelier { background:#1A1A1A; }
+.nav-group-name { font-size:0.6rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--gray-400); }
+.nav-group-price { margin-left:auto; font-size:0.58rem; color:var(--gray-300); }
+.nav-item { display:flex; align-items:center; gap:10px; padding:8px 18px; text-decoration:none; border-left:2px solid transparent; transition:background 0.15s; cursor:pointer; }
+.nav-item:hover { background:var(--gray-100); }
+.nav-item.active { background:var(--green-pale); border-left-color:var(--green); }
+.nav-item.active .nav-item-name { color:var(--green); font-weight:500; }
+.nav-item-icon { font-size:0.95rem; opacity:0.7; flex-shrink:0; width:18px; text-align:center; }
+.nav-item.active .nav-item-icon { opacity:1; }
+.nav-item-name { font-size:0.78rem; color:var(--ink); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.nav-item-badge { font-size:0.52rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:2px 6px; border-radius:100px; flex-shrink:0; }
+.badge-ai  { background:#F0EDE8; color:#1A1A1A; border:1px solid rgba(26,26,26,0.12); }
+.badge-new { background:var(--green-pale); color:var(--green); border:1px solid rgba(74,103,65,0.15); }
+.sidebar-footer { flex-shrink:0; border-top:1px solid var(--gray-200); padding:12px 14px; display:flex; flex-direction:column; gap:2px; }
+.sidebar-user { display:flex; align-items:center; gap:10px; padding:8px; border-radius:6px; cursor:pointer; transition:background 0.15s; }
+.sidebar-user:hover { background:var(--gray-100); }
+.user-avatar { width:28px; height:28px; border-radius:50%; background:var(--green-pale); border:1px solid rgba(74,103,65,0.2); display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:600; color:var(--green); flex-shrink:0; }
+.user-info { flex:1; min-width:0; }
+.user-name { font-size:0.75rem; font-weight:500; color:var(--black); }
+.user-tier { font-size:0.6rem; color:var(--gray-400); }
+
+/* ── Topbar ── */
+.topbar { grid-column:2; grid-row:1; height:var(--topbar-h); background:var(--white); border-bottom:1px solid var(--gray-200); display:flex; align-items:center; padding:0 24px; z-index:9; }
+.topbar-breadcrumb { display:flex; align-items:center; gap:6px; flex:1; }
+.breadcrumb-home { font-size:0.72rem; color:var(--gray-400); text-decoration:none; }
+.breadcrumb-sep { font-size:0.65rem; color:var(--gray-300); }
+.breadcrumb-current { font-size:0.72rem; font-weight:500; color:var(--black); }
+.topbar-right { display:flex; align-items:center; gap:8px; }
+.topbar-tier-badge { display:inline-flex; align-items:center; gap:5px; font-size:0.6rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:4px 10px; border-radius:100px; }
+.tb-studio { background:var(--studio-pale); color:var(--studio-c); border:1px solid rgba(122,74,133,0.15); }
+.topbar-divider { width:1px; height:18px; background:var(--gray-200); margin:0 4px; }
+.topbar-icon-btn { width:30px; height:30px; border-radius:6px; border:none; background:transparent; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:background 0.15s; color:var(--gray-400); }
+.topbar-icon-btn:hover { background:var(--gray-100); color:var(--black); }
+.topbar-btn { display:inline-flex; align-items:center; gap:6px; background:var(--black); color:var(--white); font-size:0.62rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; padding:7px 16px; border-radius:4px; cursor:pointer; border:none; font-family:var(--sans); transition:background 0.2s; }
+.topbar-btn:hover { background:var(--green); }
+
+/* ══ MAIN ══ */
+.app-main { grid-column:2; grid-row:2; overflow:hidden; display:flex; flex-direction:column; background:var(--off-white); }
+
+/* Page header */
+.page-header { background:var(--white); border-bottom:1px solid var(--gray-200); padding:18px 28px 16px; display:flex; align-items:center; justify-content:space-between; gap:20px; flex-shrink:0; }
+.page-header-left { display:flex; flex-direction:column; }
+.page-header-kicker { font-family:var(--script); font-size:0.9rem; color:var(--green); font-weight:600; }
+.page-header-title { font-family:var(--serif); font-size:1.45rem; font-weight:400; color:var(--black); line-height:1.2; }
+.page-header-desc { font-size:0.75rem; color:var(--gray-500); font-weight:300; margin-top:2px; }
+.page-header-actions { display:flex; align-items:center; gap:8px; }
+
+/* Tab bar */
+.tab-bar { background:var(--white); border-bottom:1px solid var(--gray-200); padding:0 28px; display:flex; gap:0; flex-shrink:0; overflow-x:auto; }
+.tab-bar::-webkit-scrollbar { display:none; }
+.tab-btn { padding:14px 18px; font-size:0.72rem; font-weight:500; color:var(--gray-500); border:none; background:transparent; cursor:pointer; border-bottom:2px solid transparent; transition:color 0.18s, border-color 0.18s; white-space:nowrap; font-family:var(--sans); display:flex; align-items:center; gap:7px; }
+.tab-btn:hover { color:var(--black); }
+.tab-btn.active { color:var(--green); border-bottom-color:var(--green); }
+.tab-count { background:var(--gray-200); color:var(--gray-500); font-size:0.58rem; font-weight:600; padding:2px 6px; border-radius:100px; }
+.tab-btn.active .tab-count { background:var(--green-pale); color:var(--green); }
+
+/* Tab panels */
+.tab-content { flex:1; overflow:hidden; }
+.tab-panel { display:none; height:100%; overflow-y:auto; }
+.tab-panel.active { display:block; }
+.tab-panel::-webkit-scrollbar { width:6px; }
+.tab-panel::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:4px; }
+
+/* ══════════════════════════════════════════
+   TAB 1 — PROJECTS (KANBAN)
+══════════════════════════════════════════ */
+.kanban-wrap { padding:24px; height:100%; overflow-x:auto; }
+.kanban-board { display:grid; grid-template-columns:repeat(4,280px); gap:16px; min-height:calc(100% - 48px); }
+
+.kanban-col { display:flex; flex-direction:column; gap:0; }
+.col-header { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-radius:6px 6px 0 0; border:1px solid var(--gray-200); border-bottom:none; background:var(--white); }
+.col-title { font-size:0.68rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; }
+.col-title-enquiry  { color:var(--info); }
+.col-title-proposal { color:var(--warning); }
+.col-title-active   { color:var(--studio-c); }
+.col-title-complete { color:var(--green); }
+.col-count { font-size:0.62rem; background:var(--gray-200); color:var(--gray-500); padding:2px 7px; border-radius:100px; font-weight:500; }
+.col-body { flex:1; background:var(--gray-100); border:1px solid var(--gray-200); border-radius:0 0 6px 6px; padding:10px; display:flex; flex-direction:column; gap:8px; min-height:200px; }
+
+/* Project cards */
+.project-card { background:var(--white); border:1px solid var(--gray-200); border-radius:6px; padding:14px; cursor:pointer; transition:transform 0.2s var(--ease), box-shadow 0.2s; }
+.project-card:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,0,0,0.08); }
+.project-card-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:10px; }
+.client-avatar { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:600; color:var(--white); flex-shrink:0; }
+.project-status-dot { width:7px; height:7px; border-radius:50%; }
+.dot-new      { background:var(--info); }
+.dot-pending  { background:var(--warning); }
+.dot-active   { background:var(--studio-c); }
+.dot-done     { background:var(--green); }
+.project-name { font-family:var(--serif); font-size:0.95rem; font-weight:400; color:var(--black); margin-bottom:3px; line-height:1.25; }
+.project-client { font-size:0.68rem; color:var(--gray-500); margin-bottom:10px; }
+.project-meta { display:flex; gap:8px; flex-wrap:wrap; }
+.meta-pill { font-size:0.6rem; padding:2px 8px; border-radius:100px; border:1px solid; }
+.meta-pill-due { background:var(--warning-pale); color:var(--warning); border-color:rgba(196,146,42,0.2); }
+.meta-pill-val { background:var(--green-pale); color:var(--green); border-color:rgba(74,103,65,0.2); }
+.meta-pill-stage { background:var(--gray-100); color:var(--gray-500); border-color:var(--gray-200); }
+.project-progress { margin-top:10px; }
+.progress-bar { height:3px; background:var(--gray-200); border-radius:100px; overflow:hidden; margin-top:4px; }
+.progress-fill { height:100%; border-radius:100px; }
+.progress-label { display:flex; justify-content:space-between; font-size:0.58rem; color:var(--gray-400); }
+.add-project-btn { display:flex; align-items:center; gap:6px; padding:10px 12px; border:1.5px dashed var(--gray-300); border-radius:6px; background:transparent; cursor:pointer; font-size:0.72rem; color:var(--gray-400); transition:all 0.18s; font-family:var(--sans); width:100%; justify-content:center; }
+.add-project-btn:hover { border-color:var(--green); color:var(--green); background:var(--green-pale); }
+
+/* ══════════════════════════════════════════
+   TAB 2 — PROJECT DETAIL / APPROVALS
+══════════════════════════════════════════ */
+.detail-layout { display:grid; grid-template-columns:1fr 340px; height:100%; overflow:hidden; }
+.detail-main { overflow-y:auto; padding:24px; }
+.detail-main::-webkit-scrollbar { width:6px; }
+.detail-main::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:4px; }
+.detail-sidebar { border-left:1px solid var(--gray-200); overflow-y:auto; background:var(--white); }
+.detail-sidebar::-webkit-scrollbar { width:4px; }
+.detail-sidebar::-webkit-scrollbar-thumb { background:var(--gray-200); border-radius:4px; }
+
+/* Project detail header */
+.detail-header { background:var(--white); border:1px solid var(--gray-200); border-radius:6px; padding:20px 24px; margin-bottom:20px; display:flex; align-items:center; gap:16px; }
+.detail-client-avatar { width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.82rem; font-weight:600; color:var(--white); flex-shrink:0; }
+.detail-title { font-family:var(--serif); font-size:1.3rem; font-weight:400; color:var(--black); margin-bottom:3px; }
+.detail-subtitle { font-size:0.75rem; color:var(--gray-500); }
+.detail-header-actions { margin-left:auto; display:flex; gap:8px; }
+
+/* Stage pipeline */
+.stage-pipeline { display:flex; align-items:center; margin-bottom:20px; background:var(--white); border:1px solid var(--gray-200); border-radius:6px; padding:16px 20px; gap:0; overflow-x:auto; }
+.stage-step { display:flex; flex-direction:column; align-items:center; gap:5px; flex:1; min-width:72px; }
+.stage-dot { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.62rem; font-weight:600; border:2px solid var(--gray-200); color:var(--gray-400); transition:all 0.2s; }
+.stage-dot.done    { background:var(--green); border-color:var(--green); color:var(--white); }
+.stage-dot.current { background:var(--studio-c); border-color:var(--studio-c); color:var(--white); }
+.stage-label { font-size:0.6rem; text-align:center; color:var(--gray-400); line-height:1.3; }
+.stage-label.done    { color:var(--green); font-weight:500; }
+.stage-label.current { color:var(--studio-c); font-weight:500; }
+.stage-connector { flex:1; height:2px; background:var(--gray-200); min-width:20px; }
+.stage-connector.done { background:var(--green); }
+
+/* Design concept cards */
+.concept-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:20px; }
+.concept-card { background:var(--white); border:1px solid var(--gray-200); border-radius:6px; overflow:hidden; transition:box-shadow 0.2s; }
+.concept-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.07); }
+.concept-visual { height:160px; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.concept-visual svg { position:absolute; }
+.concept-body { padding:14px 16px; }
+.concept-title { font-family:var(--serif); font-size:1rem; font-weight:400; color:var(--black); margin-bottom:4px; }
+.concept-desc { font-size:0.72rem; color:var(--gray-500); line-height:1.5; margin-bottom:12px; font-weight:300; }
+.concept-actions { display:flex; gap:8px; }
+.btn-approve { flex:1; background:var(--green); color:var(--white); border:none; border-radius:4px; padding:8px; font-size:0.68rem; font-weight:500; letter-spacing:0.06em; text-transform:uppercase; cursor:pointer; font-family:var(--sans); transition:background 0.18s; display:flex; align-items:center; justify-content:center; gap:5px; }
+.btn-approve:hover { background:var(--green-light); }
+.btn-approve.approved { background:var(--green-pale); color:var(--green); cursor:default; border:1px solid rgba(74,103,65,0.2); }
+.btn-revise { background:transparent; color:var(--gray-500); border:1.5px solid var(--gray-200); border-radius:4px; padding:8px 12px; font-size:0.68rem; font-weight:500; cursor:pointer; font-family:var(--sans); transition:all 0.18s; }
+.btn-revise:hover { border-color:var(--warning); color:var(--warning); }
+.concept-approved-badge { display:inline-flex; align-items:center; gap:5px; font-size:0.62rem; font-weight:600; color:var(--green); background:var(--green-pale); padding:4px 10px; border-radius:100px; border:1px solid rgba(74,103,65,0.2); }
+
+/* Activity feed */
+.activity-section { background:var(--white); border:1px solid var(--gray-200); border-radius:6px; overflow:hidden; }
+.activity-header { padding:14px 20px; border-bottom:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; }
+.activity-title { font-family:var(--serif); font-size:1rem; font-weight:400; color:var(--black); }
+.activity-feed { display:flex; flex-direction:column; }
+.activity-item { display:flex; gap:12px; padding:14px 20px; border-bottom:1px solid var(--gray-200); }
+.activity-item:last-child { border-bottom:none; }
+.activity-icon { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.75rem; flex-shrink:0; margin-top:1px; }
+.ai-green { background:var(--green-pale); }
+.ai-amber { background:var(--warning-pale); }
+.ai-blue  { background:var(--info-pale); }
+.ai-gray  { background:var(--gray-100); }
+.activity-text { flex:1; }
+.activity-main { font-size:0.78rem; color:var(--ink); line-height:1.45; }
+.activity-main strong { color:var(--black); font-weight:500; }
+.activity-time { font-size:0.62rem; color:var(--gray-400); margin-top:3px; }
+
+/* Detail sidebar sections */
+.ds-section { border-bottom:1px solid var(--gray-200); padding:18px 20px; }
+.ds-section:last-child { border-bottom:none; }
+.ds-heading { font-size:0.62rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--gray-400); margin-bottom:14px; }
+.ds-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.ds-row:last-child { margin-bottom:0; }
+.ds-label { font-size:0.72rem; color:var(--gray-500); }
+.ds-value { font-size:0.78rem; font-weight:500; color:var(--black); text-align:right; }
+.ds-value-green { color:var(--green); }
+.ds-value-amber { color:var(--warning); }
+
+/* Message input */
+.message-form { padding:14px 16px; border-top:1px solid var(--gray-200); display:flex; gap:8px; align-items:flex-end; }
+.message-input { flex:1; border:1.5px solid var(--gray-200); border-radius:4px; padding:9px 12px; font-family:var(--sans); font-size:0.8rem; color:var(--black); outline:none; resize:none; min-height:36px; max-height:90px; font-weight:300; line-height:1.5; transition:border-color 0.2s; }
+.message-input:focus { border-color:var(--green); }
+.message-send { width:34px; height:34px; background:var(--black); border:none; border-radius:4px; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.18s; flex-shrink:0; }
+.message-send:hover { background:var(--green); }
+
+/* ══════════════════════════════════════════
+   TAB 3 — INVOICES
+══════════════════════════════════════════ */
+.invoices-wrap { padding:24px; display:flex; flex-direction:column; gap:20px; }
+
+/* Summary strip */
+.invoice-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; background:var(--gray-200); border-radius:6px; overflow:hidden; }
+.inv-stat { background:var(--white); padding:18px 20px; }
+.inv-stat-val { font-family:var(--serif); font-size:1.6rem; font-weight:300; color:var(--black); line-height:1; margin-bottom:4px; }
+.inv-stat-val.green { color:var(--green); }
+.inv-stat-val.amber { color:var(--warning); }
+.inv-stat-lbl { font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-400); }
+
+/* Invoice table */
+.invoice-table-card { background:var(--white); border:1px solid var(--gray-200); border-radius:6px; overflow:hidden; }
+.inv-table-header { padding:14px 20px; border-bottom:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; }
+.inv-table-title { font-family:var(--serif); font-size:1rem; font-weight:400; }
+.inv-table { width:100%; border-collapse:collapse; font-size:0.78rem; }
+.inv-table thead th { padding:10px 16px; text-align:left; font-size:0.6rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--gray-400); border-bottom:1px solid var(--gray-200); }
+.inv-table tbody td { padding:12px 16px; border-bottom:1px solid var(--gray-200); vertical-align:middle; }
+.inv-table tbody tr:last-child td { border-bottom:none; }
+.inv-table tbody tr:hover td { background:var(--off-white); }
+.inv-num { font-family:var(--mono); font-size:0.72rem; color:var(--gray-500); }
+.inv-client { display:flex; align-items:center; gap:8px; }
+.inv-avatar { width:24px; height:24px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.58rem; font-weight:600; color:var(--white); flex-shrink:0; }
+.inv-status { display:inline-flex; align-items:center; gap:4px; font-size:0.62rem; font-weight:600; padding:3px 9px; border-radius:100px; letter-spacing:0.06em; }
+.status-paid     { background:var(--green-pale);   color:var(--green);   border:1px solid rgba(74,103,65,0.2); }
+.status-pending  { background:var(--warning-pale); color:var(--warning); border:1px solid rgba(196,146,42,0.2); }
+.status-overdue  { background:var(--error-pale);   color:var(--error);   border:1px solid rgba(185,64,64,0.2); }
+.status-draft    { background:var(--gray-100);     color:var(--gray-500);border:1px solid var(--gray-200); }
+.inv-amount { font-weight:500; color:var(--black); }
+.inv-action { display:flex; gap:6px; }
+.btn-sm-outline { padding:5px 10px; font-size:0.62rem; border:1px solid var(--gray-200); border-radius:3px; background:transparent; color:var(--gray-500); cursor:pointer; font-family:var(--sans); transition:all 0.15s; }
+.btn-sm-outline:hover { border-color:var(--black); color:var(--black); }
+.btn-sm-green { padding:5px 10px; font-size:0.62rem; border:none; border-radius:3px; background:var(--green); color:var(--white); cursor:pointer; font-family:var(--sans); transition:background 0.15s; }
+.btn-sm-green:hover { background:var(--green-light); }
+
+/* ══════════════════════════════════════════
+   TAB 4 — WHITE-LABEL SETTINGS
+══════════════════════════════════════════ */
+.settings-wrap { padding:24px; display:grid; grid-template-columns:1fr 360px; gap:24px; }
+.settings-form { display:flex; flex-direction:column; gap:20px; }
+.settings-card { background:var(--white); border:1px solid var(--gray-200); border-radius:6px; overflow:hidden; }
+.settings-card-header { padding:14px 20px; border-bottom:1px solid var(--gray-200); }
+.settings-card-title { font-family:var(--serif); font-size:1rem; font-weight:400; color:var(--black); margin-bottom:2px; }
+.settings-card-desc { font-size:0.72rem; color:var(--gray-500); font-weight:300; }
+.settings-card-body { padding:20px; display:flex; flex-direction:column; gap:16px; }
+.field-group { display:flex; flex-direction:column; gap:6px; }
+.field-label { font-size:0.65rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--gray-500); }
+.field-input, .field-select { background:var(--white); border:1.5px solid var(--gray-200); border-radius:4px; padding:9px 12px; font-family:var(--sans); font-size:0.85rem; color:var(--black); outline:none; transition:border-color 0.2s, box-shadow 0.2s; width:100%; font-weight:300; }
+.field-input:focus, .field-select:focus { border-color:var(--green); box-shadow:0 0 0 3px var(--green-dim); }
+.field-hint { font-size:0.68rem; color:var(--gray-400); }
+.color-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.color-field { display:flex; flex-direction:column; gap:6px; }
+.color-preview-row { display:flex; align-items:center; gap:10px; }
+.color-swatch { width:32px; height:32px; border-radius:4px; border:1px solid var(--gray-200); flex-shrink:0; cursor:pointer; }
+.field-input-short { max-width:120px; font-family:var(--mono); font-size:0.8rem; }
+.toggle-row { display:flex; align-items:center; justify-content:space-between; gap:16px; }
+.toggle-info { flex:1; }
+.toggle-title { font-size:0.78rem; font-weight:500; color:var(--black); margin-bottom:2px; }
+.toggle-desc  { font-size:0.68rem; color:var(--gray-400); font-weight:300; }
+.toggle { position:relative; width:36px; height:20px; flex-shrink:0; }
+.toggle input { opacity:0; width:0; height:0; }
+.toggle-track { position:absolute; inset:0; background:var(--gray-200); border-radius:100px; transition:background 0.2s; cursor:pointer; }
+.toggle input:checked + .toggle-track { background:var(--green); }
+.toggle-thumb { position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:50%; background:var(--white); transition:transform 0.2s; pointer-events:none; box-shadow:0 1px 3px rgba(0,0,0,0.15); }
+.toggle input:checked ~ .toggle-thumb { transform:translateX(16px); }
+
+/* Portal preview */
+.portal-preview { position:sticky; top:0; }
+.preview-card { background:var(--white); border:1px solid var(--gray-200); border-radius:6px; overflow:hidden; }
+.preview-card-header { padding:14px 20px; border-bottom:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; }
+.preview-card-title { font-family:var(--serif); font-size:1rem; font-weight:400; }
+.preview-badge { font-size:0.58rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; background:var(--green-pale); color:var(--green); padding:3px 8px; border-radius:100px; border:1px solid rgba(74,103,65,0.15); }
+.portal-mockup { padding:0; }
+.portal-topbar { display:flex; align-items:center; justify-content:space-between; padding:10px 16px; border-bottom:1px solid var(--gray-200); }
+.portal-logo-area { display:flex; align-items:center; gap:8px; }
+.portal-logo-dot { width:24px; height:24px; border-radius:4px; background:var(--green); display:flex; align-items:center; justify-content:center; }
+.portal-logo-name { font-size:0.8rem; font-weight:500; color:var(--black); font-family:var(--script); }
+.portal-nav { display:flex; gap:12px; }
+.portal-nav-item { font-size:0.62rem; color:var(--gray-400); }
+.portal-nav-item.active { color:var(--green); font-weight:500; }
+.portal-body { padding:16px; }
+.portal-hero { background:var(--green-pale); border-radius:6px; padding:16px; margin-bottom:12px; border:1px solid rgba(74,103,65,0.12); }
+.portal-hero-greeting { font-family:var(--script); font-size:1.1rem; color:var(--green); font-weight:600; display:block; margin-bottom:2px; }
+.portal-hero-sub { font-size:0.7rem; color:var(--ink); font-weight:300; }
+.portal-cards { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.portal-mini-card { background:var(--white); border:1px solid var(--gray-200); border-radius:4px; padding:10px 12px; }
+.portal-mini-label { font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-400); margin-bottom:3px; }
+.portal-mini-value { font-family:var(--serif); font-size:1.1rem; font-weight:300; color:var(--black); }
+.portal-mini-value.green { color:var(--green); }
+.save-settings-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; background:var(--black); color:var(--white); border:none; border-radius:4px; padding:12px; font-family:var(--sans); font-size:0.75rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; cursor:pointer; transition:background 0.2s; }
+.save-settings-btn:hover { background:var(--green); }
+
+/* ══ SHARED BUTTONS ══ */
+.btn { display:inline-flex; align-items:center; gap:7px; padding:8px 18px; border-radius:4px; font-family:var(--sans); font-size:0.72rem; font-weight:500; letter-spacing:0.06em; cursor:pointer; border:none; transition:all 0.2s; text-decoration:none; white-space:nowrap; }
+.btn-primary { background:var(--black); color:var(--white); }
+.btn-primary:hover { background:var(--charcoal); transform:translateY(-1px); }
+.btn-green { background:var(--green); color:var(--white); }
+.btn-green:hover { background:var(--green-light); }
+.btn-outline { background:transparent; color:var(--black); border:1.5px solid var(--gray-300); }
+.btn-outline:hover { border-color:var(--black); }
+.btn-sm { padding:6px 14px; font-size:0.66rem; }
+
+/* Toast */
+.toast { position:fixed; bottom:24px; right:24px; background:var(--black); color:var(--white); font-size:0.75rem; font-weight:500; padding:11px 18px; border-radius:4px; display:none; align-items:center; gap:8px; z-index:999; }
+.toast.show { display:flex; animation:toastIn 0.3s var(--ease) forwards; }
+@keyframes toastIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+/* ══ RESPONSIVE ══ */
+@media (max-width:900px) {
+  :root { --sidebar-w:0px; }
+  .sidebar { display:none; }
+  .shell { grid-template-columns:1fr; }
+  .topbar, .app-main { grid-column:1; }
+  .kanban-board { grid-template-columns:repeat(2,260px); }
+  .concept-grid { grid-template-columns:1fr; }
+  .detail-layout { grid-template-columns:1fr; }
+  .detail-sidebar { border-left:none; border-top:1px solid var(--gray-200); }
+  .invoice-summary { grid-template-columns:1fr 1fr; }
+  .settings-wrap { grid-template-columns:1fr; }
+  .portal-preview { position:static; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <!-- ══ SIDEBAR ══ -->
+  <aside class="sidebar">
+    <a href="index.html" class="sidebar-brand">
+      <span class="sidebar-brand-logo">Evercrafted</span>
+      <div class="sidebar-brand-sep" style="width:1px;height:14px;background:var(--gray-200)"></div>
+      <span class="sidebar-brand-sub">Studio</span>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-group">
+        <div class="nav-group-label"><div class="nav-tier-dot dot-bloom"></div><span class="nav-group-name">Bloom</span><span class="nav-group-price">$19/mo</span></div>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🌸</span><span class="nav-item-name">Tutorial Guide</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🍂</span><span class="nav-item-name">Seasonal Lookbook</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label"><div class="nav-tier-dot dot-craft"></div><span class="nav-group-name">Craft</span><span class="nav-group-price">$39/mo</span></div>
+        <a class="nav-item" href="#"><span class="nav-item-icon">📦</span><span class="nav-item-name">Inventory Tracker</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">💰</span><span class="nav-item-name">Pricing Calculator</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🧾</span><span class="nav-item-name">Order Manager</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label"><div class="nav-tier-dot dot-studio"></div><span class="nav-group-name">Studio</span><span class="nav-group-price">$69/mo</span></div>
+        <a class="nav-item" href="app-blueprint.html"><span class="nav-item-icon">🌿</span><span class="nav-item-name">Blueprint Generator</span><span class="nav-item-badge badge-new">Flagship</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🎨</span><span class="nav-item-name">Collection Builder</span></a>
+        <a class="nav-item active" href="#"><span class="nav-item-icon">🤝</span><span class="nav-item-name">Client Portal</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🏠</span><span class="nav-item-name">Room Visualizer</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🛍️</span><span class="nav-item-name">Storefront</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">📋</span><span class="nav-item-name">Build Instructions</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">📅</span><span class="nav-item-name">Booking & Invoicing</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">📊</span><span class="nav-item-name">Analytics</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🏷️</span><span class="nav-item-name">Etsy Listing Builder</span></a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label"><div class="nav-tier-dot dot-atelier"></div><span class="nav-group-name">Atelier</span><span class="nav-group-price">$129/mo</span></div>
+        <a class="nav-item" href="#"><span class="nav-item-icon">✨</span><span class="nav-item-name">AI Visualizer</span><span class="nav-item-badge badge-ai">AI</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🪄</span><span class="nav-item-name">AI Stylist</span><span class="nav-item-badge badge-ai">AI</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🧠</span><span class="nav-item-name">AI Blueprint</span><span class="nav-item-badge badge-ai">AI</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">💡</span><span class="nav-item-name">AI Pricing Advisor</span><span class="nav-item-badge badge-ai">AI</span></a>
+        <a class="nav-item" href="#"><span class="nav-item-icon">🔗</span><span class="nav-item-name">Supplier Intelligence</span><span class="nav-item-badge badge-ai">AI</span></a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="user-avatar">SR</div>
+        <div class="user-info"><div class="user-name">Sarah R.</div><div class="user-tier">Studio Plan · 3 of 5 seats</div></div>
+        <span style="color:var(--gray-300);font-size:0.7rem">⌄</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══ TOPBAR ══ -->
+  <header class="topbar">
+    <div class="topbar-breadcrumb">
+      <a href="index.html" class="breadcrumb-home">Apps</a>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-sep">Studio</span>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">Client Portal</span>
+    </div>
+    <div class="topbar-right">
+      <span class="topbar-tier-badge tb-studio">Studio</span>
+      <div class="topbar-divider"></div>
+      <button class="topbar-icon-btn" title="Share portal link" onclick="showToast('Portal link copied to clipboard ✦')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      </button>
+      <button class="topbar-icon-btn" title="Notifications">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <div class="topbar-divider"></div>
+      <button class="topbar-btn" onclick="showToast('New project created')">+ New Project</button>
+    </div>
+  </header>
+
+  <!-- ══ APP MAIN ══ -->
+  <main class="app-main">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <span class="page-header-kicker">Studio · White-label</span>
+        <h1 class="page-header-title">Client Portal</h1>
+        <p class="page-header-desc">Manage projects, share design concepts, collect approvals, and send invoices — all in your branded client workspace.</p>
+      </div>
+      <div class="page-header-actions">
+        <button class="btn btn-outline btn-sm" onclick="switchTab('settings')">⚙ Branding settings</button>
+        <button class="btn btn-green btn-sm" onclick="showToast('Portal link copied — share with clients ✦')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          Copy Portal Link
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab bar -->
+    <div class="tab-bar">
+      <button class="tab-btn active" id="tab-projects" onclick="switchTab('projects')">
+        Projects <span class="tab-count">7</span>
+      </button>
+      <button class="tab-btn" id="tab-approvals" onclick="switchTab('approvals')">
+        Design Approvals <span class="tab-count" style="background:var(--warning-pale);color:var(--warning)">2</span>
+      </button>
+      <button class="tab-btn" id="tab-invoices" onclick="switchTab('invoices')">
+        Invoices <span class="tab-count">12</span>
+      </button>
+      <button class="tab-btn" id="tab-settings" onclick="switchTab('settings')">
+        White-Label Settings
+      </button>
+    </div>
+
+    <!-- Tab content -->
+    <div class="tab-content">
+
+      <!-- ════ TAB 1: PROJECTS KANBAN ════ -->
+      <div class="tab-panel active" id="panel-projects">
+        <div class="kanban-wrap">
+          <div class="kanban-board">
+
+            <!-- Enquiry -->
+            <div class="kanban-col">
+              <div class="col-header">
+                <span class="col-title col-title-enquiry">Enquiry</span>
+                <span class="col-count">2</span>
+              </div>
+              <div class="col-body">
+
+                <div class="project-card" onclick="switchTab('approvals')">
+                  <div class="project-card-top">
+                    <div class="client-avatar" style="background:#7B8C9E">MR</div>
+                    <div class="project-status-dot dot-new"></div>
+                  </div>
+                  <div class="project-name">Holiday Dining Room</div>
+                  <div class="project-client">Margaret R. · Enquired 2d ago</div>
+                  <div class="project-meta">
+                    <span class="meta-pill meta-pill-val">~$680</span>
+                    <span class="meta-pill meta-pill-stage">Awaiting brief</span>
+                  </div>
+                </div>
+
+                <div class="project-card" onclick="switchTab('approvals')">
+                  <div class="project-card-top">
+                    <div class="client-avatar" style="background:#9E8B7B">TW</div>
+                    <div class="project-status-dot dot-new"></div>
+                  </div>
+                  <div class="project-name">Spring Entryway Refresh</div>
+                  <div class="project-client">Tom W. · Enquired 5d ago</div>
+                  <div class="project-meta">
+                    <span class="meta-pill meta-pill-val">~$420</span>
+                    <span class="meta-pill meta-pill-stage">Brief received</span>
+                  </div>
+                </div>
+
+                <button class="add-project-btn" onclick="showToast('New project form opening…')">+ Add project</button>
+              </div>
+            </div>
+
+            <!-- Proposal -->
+            <div class="kanban-col">
+              <div class="col-header">
+                <span class="col-title col-title-proposal">Proposal</span>
+                <span class="col-count">2</span>
+              </div>
+              <div class="col-body">
+
+                <div class="project-card" onclick="switchTab('approvals')">
+                  <div class="project-card-top">
+                    <div class="client-avatar" style="background:#7B9E76">DK</div>
+                    <div class="project-status-dot dot-pending"></div>
+                  </div>
+                  <div class="project-name">Autumn Statement Wreath</div>
+                  <div class="project-client">Diane K. · Awaiting approval</div>
+                  <div class="project-meta">
+                    <span class="meta-pill meta-pill-due">Due Oct 12</span>
+                    <span class="meta-pill meta-pill-val">$895</span>
+                  </div>
+                  <div class="project-progress">
+                    <div class="progress-label"><span>Design sent</span><span>50%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:50%;background:var(--warning)"></div></div>
+                  </div>
+                </div>
+
+                <div class="project-card" onclick="switchTab('approvals')">
+                  <div class="project-card-top">
+                    <div class="client-avatar" style="background:#9E7B8C">LB</div>
+                    <div class="project-status-dot dot-pending"></div>
+                  </div>
+                  <div class="project-name">Winter Mantel Collection</div>
+                  <div class="project-client">Lisa B. · Concept shared</div>
+                  <div class="project-meta">
+                    <span class="meta-pill meta-pill-due">Due Nov 1</span>
+                    <span class="meta-pill meta-pill-val">$1,240</span>
+                  </div>
+                  <div class="project-progress">
+                    <div class="progress-label"><span>Awaiting feedback</span><span>40%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:40%;background:var(--warning)"></div></div>
+                  </div>
+                </div>
+
+                <button class="add-project-btn" onclick="showToast('New project form opening…')">+ Add project</button>
+              </div>
+            </div>
+
+            <!-- Active -->
+            <div class="kanban-col">
+              <div class="col-header">
+                <span class="col-title col-title-active">In Progress</span>
+                <span class="col-count">2</span>
+              </div>
+              <div class="col-body">
+
+                <div class="project-card" onclick="switchTab('approvals')">
+                  <div class="project-card-top">
+                    <div class="client-avatar" style="background:#7B8E9E">AC</div>
+                    <div class="project-status-dot dot-active"></div>
+                  </div>
+                  <div class="project-name">Farmhouse Foyer Wreath</div>
+                  <div class="project-client">Anne C. · Building now</div>
+                  <div class="project-meta">
+                    <span class="meta-pill meta-pill-due">Due Sep 28</span>
+                    <span class="meta-pill meta-pill-val">$550</span>
+                  </div>
+                  <div class="project-progress">
+                    <div class="progress-label"><span>In build</span><span>75%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:75%;background:var(--studio-c)"></div></div>
+                  </div>
+                </div>
+
+                <div class="project-card" onclick="switchTab('approvals')">
+                  <div class="project-card-top">
+                    <div class="client-avatar" style="background:#9E9A7B">JF</div>
+                    <div class="project-status-dot dot-active"></div>
+                  </div>
+                  <div class="project-name">Coastal Summer Series</div>
+                  <div class="project-client">James F. · Deposit paid</div>
+                  <div class="project-meta">
+                    <span class="meta-pill meta-pill-val">$1,890</span>
+                    <span class="meta-pill meta-pill-stage">3 wreaths</span>
+                  </div>
+                  <div class="project-progress">
+                    <div class="progress-label"><span>Materials sourced</span><span>30%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:30%;background:var(--studio-c)"></div></div>
+                  </div>
+                </div>
+
+                <button class="add-project-btn" onclick="showToast('New project form opening…')">+ Add project</button>
+              </div>
+            </div>
+
+            <!-- Complete -->
+            <div class="kanban-col">
+              <div class="col-header">
+                <span class="col-title col-title-complete">Complete</span>
+                <span class="col-count">3</span>
+              </div>
+              <div class="col-body">
+
+                <div class="project-card">
+                  <div class="project-card-top">
+                    <div class="client-avatar" style="background:#76899E">PH</div>
+                    <div class="project-status-dot dot-done"></div>
+                  </div>
+                  <div class="project-name">Valentine's Front Door</div>
+                  <div class="project-client">Paula H. · Delivered Feb 10</div>
+                  <div class="project-meta">
+                    <span class="meta-pill" style="background:var(--green-pale);color:var(--green);border-color:rgba(74,103,65,0.2)">Paid · $380</span>
+                    <span class="meta-pill meta-pill-stage">⭐ 5 stars</span>
+                  </div>
+                </div>
+
+                <div class="project-card">
+                  <div class="project-card-top">
+                    <div class="client-avatar" style="background:#7B9E9E">KM</div>
+                    <div class="project-status-dot dot-done"></div>
+                  </div>
+                  <div class="project-name">Spring Market Collection</div>
+                  <div class="project-client">Karen M. · Delivered Mar 1</div>
+                  <div class="project-meta">
+                    <span class="meta-pill" style="background:var(--green-pale);color:var(--green);border-color:rgba(74,103,65,0.2)">Paid · $2,100</span>
+                  </div>
+                </div>
+
+                <div class="project-card">
+                  <div class="project-card-top">
+                    <div class="client-avatar" style="background:#9E7B7B">RO</div>
+                    <div class="project-status-dot dot-done"></div>
+                  </div>
+                  <div class="project-name">Office Lobby Wreaths</div>
+                  <div class="project-client">Rachel O. · Delivered Mar 15</div>
+                  <div class="project-meta">
+                    <span class="meta-pill" style="background:var(--green-pale);color:var(--green);border-color:rgba(74,103,65,0.2)">Paid · $3,200</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div><!-- /kanban-board -->
+        </div>
+      </div>
+
+      <!-- ════ TAB 2: DESIGN APPROVALS ════ -->
+      <div class="tab-panel" id="panel-approvals">
+        <div class="detail-layout">
+
+          <!-- Main -->
+          <div class="detail-main">
+
+            <!-- Project header -->
+            <div class="detail-header">
+              <div class="detail-client-avatar" style="background:#7B9E76">DK</div>
+              <div>
+                <div class="detail-title">Autumn Statement Wreath</div>
+                <div class="detail-subtitle">Diane K. · Proposal sent Oct 3 · $895 · Due Oct 12</div>
+              </div>
+              <div class="detail-header-actions">
+                <button class="btn btn-outline btn-sm">Message client</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast('Invoice created and sent to Diane ✦')">Send Invoice</button>
+              </div>
+            </div>
+
+            <!-- Stage pipeline -->
+            <div class="stage-pipeline">
+              <div class="stage-step">
+                <div class="stage-dot done">✓</div>
+                <div class="stage-label done">Enquiry</div>
+              </div>
+              <div class="stage-connector done"></div>
+              <div class="stage-step">
+                <div class="stage-dot done">✓</div>
+                <div class="stage-label done">Brief</div>
+              </div>
+              <div class="stage-connector done"></div>
+              <div class="stage-step">
+                <div class="stage-dot current">3</div>
+                <div class="stage-label current">Design review</div>
+              </div>
+              <div class="stage-connector"></div>
+              <div class="stage-step">
+                <div class="stage-dot">4</div>
+                <div class="stage-label">Deposit</div>
+              </div>
+              <div class="stage-connector"></div>
+              <div class="stage-step">
+                <div class="stage-dot">5</div>
+                <div class="stage-label">In build</div>
+              </div>
+              <div class="stage-connector"></div>
+              <div class="stage-step">
+                <div class="stage-dot">6</div>
+                <div class="stage-label">Delivered</div>
+              </div>
+            </div>
+
+            <!-- Concept cards -->
+            <div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+              <h3 style="font-family:var(--serif);font-size:1rem;font-weight:400;color:var(--black)">Design Concepts — Awaiting client approval</h3>
+              <button class="btn btn-outline btn-sm" onclick="showToast('New concept added')">+ Add concept</button>
+            </div>
+
+            <div class="concept-grid" id="concept-grid">
+
+              <div class="concept-card" id="concept-1">
+                <div class="concept-visual" style="background:#EEF2ED;">
+                  <!-- Botanical wreath illustration -->
+                  <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                    <circle cx="60" cy="60" r="48" stroke="#C8DCC5" stroke-width="1" stroke-dasharray="4 3"/>
+                    <circle cx="60" cy="60" r="34" stroke="#BFD0BC" stroke-width="0.5"/>
+                    <g stroke="#4A6741" stroke-width="1.2" fill="none" stroke-linecap="round">
+                      <path d="M60 12C60 12 54 6 48 8C42 10 44 18 50 18C54 18 60 12 60 12Z" fill="rgba(74,103,65,0.15)"/>
+                      <path d="M60 12C60 12 66 6 72 8C78 10 76 18 70 18C66 18 60 12 60 12Z" fill="rgba(74,103,65,0.15)"/>
+                      <path d="M108 60C108 60 114 54 112 48C110 42 102 44 102 50C102 54 108 60 108 60Z" fill="rgba(74,103,65,0.15)"/>
+                      <path d="M108 60C108 60 114 66 112 72C110 78 102 76 102 70C102 66 108 60 108 60Z" fill="rgba(74,103,65,0.15)"/>
+                      <path d="M60 108C60 108 54 114 48 112C42 110 44 102 50 102C54 102 60 108 60 108Z" fill="rgba(74,103,65,0.15)"/>
+                      <path d="M60 108C60 108 66 114 72 112C78 110 76 102 70 102C66 102 60 108 60 108Z" fill="rgba(74,103,65,0.15)"/>
+                      <path d="M12 60C12 60 6 54 8 48C10 42 18 44 18 50C18 54 12 60 12 60Z" fill="rgba(74,103,65,0.15)"/>
+                      <path d="M12 60C12 60 6 66 8 72C10 78 18 76 18 70C18 66 12 60 12 60Z" fill="rgba(74,103,65,0.15)"/>
+                    </g>
+                    <g fill="rgba(196,146,42,0.7)">
+                      <circle cx="60" cy="24" r="4"/><circle cx="96" cy="60" r="4"/><circle cx="60" cy="96" r="4"/><circle cx="24" cy="60" r="4"/>
+                    </g>
+                    <circle cx="60" cy="60" r="8" fill="rgba(74,103,65,0.12)" stroke="#4A6741" stroke-width="0.8"/>
+                    <circle cx="60" cy="60" r="3" fill="rgba(74,103,65,0.4)"/>
+                  </svg>
+                </div>
+                <div class="concept-body">
+                  <div class="concept-title">Option A — Classic Harvest</div>
+                  <p class="concept-desc">24" grapevine base · dried dahlias · eucalyptus · golden amber palette · golden angle placement</p>
+                  <div class="concept-actions" id="concept-1-actions">
+                    <button class="btn-approve" onclick="approveConcept(1)">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      Approve
+                    </button>
+                    <button class="btn-revise" onclick="showToast('Revision request sent to Diane')">Revise</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="concept-card" id="concept-2">
+                <div class="concept-visual" style="background:#FEF3E2;">
+                  <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                    <circle cx="60" cy="60" r="48" stroke="#F5D9A8" stroke-width="1" stroke-dasharray="4 3"/>
+                    <circle cx="60" cy="60" r="34" stroke="#EFC97A" stroke-width="0.5"/>
+                    <g stroke="#C4922A" stroke-width="1.2" fill="none" stroke-linecap="round">
+                      <path d="M60 14C60 14 53 8 46 10C39 13 42 21 49 21C54 21 60 14 60 14Z" fill="rgba(196,146,42,0.2)"/>
+                      <path d="M60 14C60 14 67 8 74 10C81 13 78 21 71 21C66 21 60 14 60 14Z" fill="rgba(196,146,42,0.2)"/>
+                      <path d="M106 60C106 60 112 53 110 46C107 39 99 42 99 49C99 54 106 60 106 60Z" fill="rgba(196,146,42,0.2)"/>
+                      <path d="M14 60C14 60 8 53 10 46C13 39 21 42 21 49C21 54 14 60 14 60Z" fill="rgba(196,146,42,0.2)"/>
+                      <path d="M60 106C60 106 53 112 46 110C39 107 42 99 49 99C54 99 60 106 60 106Z" fill="rgba(196,146,42,0.2)"/>
+                    </g>
+                    <g fill="rgba(74,103,65,0.6)">
+                      <circle cx="60" cy="26" r="3.5"/><circle cx="94" cy="60" r="3.5"/><circle cx="26" cy="60" r="3.5"/>
+                      <circle cx="82" cy="82" r="3"/><circle cx="38" cy="38" r="3"/>
+                    </g>
+                    <circle cx="60" cy="60" r="9" fill="rgba(196,146,42,0.12)" stroke="#C4922A" stroke-width="0.8"/>
+                    <circle cx="60" cy="60" r="3.5" fill="rgba(196,146,42,0.5)"/>
+                  </svg>
+                </div>
+                <div class="concept-body">
+                  <div class="concept-title">Option B — Warm & Abundant</div>
+                  <p class="concept-desc">24" grapevine base · sunflowers + amaranth · dried orange slices · deep amber + terracotta palette</p>
+                  <div class="concept-actions" id="concept-2-actions">
+                    <button class="btn-approve" onclick="approveConcept(2)">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      Approve
+                    </button>
+                    <button class="btn-revise" onclick="showToast('Revision request sent to Diane')">Revise</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Activity feed -->
+            <div class="activity-section">
+              <div class="activity-header">
+                <span class="activity-title">Project Activity</span>
+                <span style="font-size:0.68rem;color:var(--gray-400)">Diane K. · 3 interactions</span>
+              </div>
+              <div class="activity-feed">
+                <div class="activity-item">
+                  <div class="activity-icon ai-amber">💬</div>
+                  <div class="activity-text">
+                    <div class="activity-main"><strong>Diane K.</strong> viewed the design concepts and left a comment: "Love Option A but wondering if we could do burgundy instead of amber?"</div>
+                    <div class="activity-time">Today · 2:14 pm</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon ai-blue">📨</div>
+                  <div class="activity-text">
+                    <div class="activity-main"><strong>You</strong> sent two design concepts to Diane for review.</div>
+                    <div class="activity-time">Yesterday · 11:30 am</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon ai-green">✓</div>
+                  <div class="activity-text">
+                    <div class="activity-main"><strong>Diane K.</strong> accepted the project brief and confirmed the $895 budget.</div>
+                    <div class="activity-time">Oct 2 · 4:01 pm</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-icon ai-gray">🌿</div>
+                  <div class="activity-text">
+                    <div class="activity-main">Project <strong>"Autumn Statement Wreath"</strong> created and portal invite sent to Diane K.</div>
+                    <div class="activity-time">Oct 1 · 9:15 am</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /detail-main -->
+
+          <!-- Sidebar -->
+          <div class="detail-sidebar">
+            <div class="ds-section">
+              <div class="ds-heading">Project details</div>
+              <div class="ds-row"><span class="ds-label">Client</span><span class="ds-value">Diane K.</span></div>
+              <div class="ds-row"><span class="ds-label">Value</span><span class="ds-value ds-value-green">$895.00</span></div>
+              <div class="ds-row"><span class="ds-label">Deposit (50%)</span><span class="ds-value ds-value-amber">Pending</span></div>
+              <div class="ds-row"><span class="ds-label">Due date</span><span class="ds-value">Oct 12, 2025</span></div>
+              <div class="ds-row"><span class="ds-label">Stage</span><span class="ds-value">Design review</span></div>
+            </div>
+            <div class="ds-section">
+              <div class="ds-heading">Design brief</div>
+              <div class="ds-row"><span class="ds-label">Size</span><span class="ds-value">24" statement</span></div>
+              <div class="ds-row"><span class="ds-label">Style</span><span class="ds-value">Rustic harvest</span></div>
+              <div class="ds-row"><span class="ds-label">Palette</span><span class="ds-value">Warm amber, deep burgundy</span></div>
+              <div class="ds-row"><span class="ds-label">Base</span><span class="ds-value">Grapevine</span></div>
+              <div class="ds-row"><span class="ds-label">Delivery</span><span class="ds-value">Pickup</span></div>
+            </div>
+            <div class="ds-section">
+              <div class="ds-heading">Quick actions</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center" onclick="showToast('Invoice drafted for Diane')">Create invoice</button>
+                <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center" onclick="showToast('Blueprint Generator opening…')">Open in Blueprint Generator</button>
+                <button class="btn btn-outline btn-sm" style="width:100%;justify-content:center" onclick="showToast('Client portal link copied')">Copy client portal link</button>
+              </div>
+            </div>
+            <div class="message-form">
+              <textarea class="message-input" id="msg-input" rows="1" placeholder="Message Diane…" oninput="autoResize(this)"></textarea>
+              <button class="message-send" onclick="sendMessage()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ════ TAB 3: INVOICES ════ -->
+      <div class="tab-panel" id="panel-invoices">
+        <div class="invoices-wrap">
+
+          <div class="invoice-summary">
+            <div class="inv-stat">
+              <div class="inv-stat-val green">$6,840</div>
+              <div class="inv-stat-lbl">Collected this month</div>
+            </div>
+            <div class="inv-stat">
+              <div class="inv-stat-val amber">$1,342</div>
+              <div class="inv-stat-lbl">Outstanding</div>
+            </div>
+            <div class="inv-stat">
+              <div class="inv-stat-val">12</div>
+              <div class="inv-stat-lbl">Total invoices</div>
+            </div>
+            <div class="inv-stat">
+              <div class="inv-stat-val">4.2d</div>
+              <div class="inv-stat-lbl">Avg. payment time</div>
+            </div>
+          </div>
+
+          <div class="invoice-table-card">
+            <div class="inv-table-header">
+              <span class="inv-table-title">All Invoices</span>
+              <div style="display:flex;gap:8px;">
+                <button class="btn btn-outline btn-sm" onclick="showToast('Filter panel opening…')">Filter</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast('New invoice created ✦')">+ New Invoice</button>
+              </div>
+            </div>
+            <table class="inv-table">
+              <thead>
+                <tr>
+                  <th>Invoice #</th>
+                  <th>Client</th>
+                  <th>Project</th>
+                  <th>Amount</th>
+                  <th>Issued</th>
+                  <th>Due</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="inv-num">EC-0024</span></td>
+                  <td><div class="inv-client"><div class="inv-avatar" style="background:#7B8C9E">AC</div>Anne C.</div></td>
+                  <td style="font-size:0.75rem;color:var(--ink)">Farmhouse Foyer Wreath</td>
+                  <td><span class="inv-amount">$275.00</span> <span style="font-size:0.62rem;color:var(--gray-400)">deposit</span></td>
+                  <td style="font-size:0.72rem;color:var(--gray-500)">Sep 18</td>
+                  <td style="font-size:0.72rem;color:var(--gray-500)">Sep 25</td>
+                  <td><span class="inv-status status-paid">✓ Paid</span></td>
+                  <td><div class="inv-action"><button class="btn-sm-outline" onclick="showToast('Invoice EC-0024 downloaded')">PDF</button></div></td>
+                </tr>
+                <tr>
+                  <td><span class="inv-num">EC-0025</span></td>
+                  <td><div class="inv-client"><div class="inv-avatar" style="background:#7B9E76">DK</div>Diane K.</div></td>
+                  <td style="font-size:0.75rem;color:var(--ink)">Autumn Statement Wreath</td>
+                  <td><span class="inv-amount">$447.50</span> <span style="font-size:0.62rem;color:var(--gray-400)">deposit</span></td>
+                  <td style="font-size:0.72rem;color:var(--gray-500)">Oct 3</td>
+                  <td style="font-size:0.72rem;color:var(--warning);font-weight:500)">Oct 10</td>
+                  <td><span class="inv-status status-pending">⏳ Pending</span></td>
+                  <td><div class="inv-action"><button class="btn-sm-outline" onclick="showToast('Reminder sent to Diane')">Remind</button><button class="btn-sm-green" onclick="showToast('Payment link copied')">Pay link</button></div></td>
+                </tr>
+                <tr>
+                  <td><span class="inv-num">EC-0026</span></td>
+                  <td><div class="inv-client"><div class="inv-avatar" style="background:#9E8B7B">JF</div>James F.</div></td>
+                  <td style="font-size:0.75rem;color:var(--ink)">Coastal Summer Series</td>
+                  <td><span class="inv-amount">$945.00</span> <span style="font-size:0.62rem;color:var(--gray-400)">deposit</span></td>
+                  <td style="font-size:0.72rem;color:var(--gray-500)">Sep 30</td>
+                  <td style="font-size:0.72rem;color:var(--error);font-weight:500">Oct 7 ⚠</td>
+                  <td><span class="inv-status status-overdue">! Overdue</span></td>
+                  <td><div class="inv-action"><button class="btn-sm-outline" onclick="showToast('Overdue notice sent to James')">Chase</button><button class="btn-sm-green" onclick="showToast('Payment link copied')">Pay link</button></div></td>
+                </tr>
+                <tr>
+                  <td><span class="inv-num">EC-0027</span></td>
+                  <td><div class="inv-client"><div class="inv-avatar" style="background:#9E7B8C">LB</div>Lisa B.</div></td>
+                  <td style="font-size:0.75rem;color:var(--ink)">Winter Mantel Collection</td>
+                  <td><span class="inv-amount">$620.00</span> <span style="font-size:0.62rem;color:var(--gray-400)">deposit</span></td>
+                  <td style="font-size:0.72rem;color:var(--gray-500)">—</td>
+                  <td style="font-size:0.72rem;color:var(--gray-500)">—</td>
+                  <td><span class="inv-status status-draft">Draft</span></td>
+                  <td><div class="inv-action"><button class="btn-sm-outline" onclick="showToast('Invoice EC-0027 opened for editing')">Edit</button><button class="btn-sm-green" onclick="showToast('Invoice sent to Lisa ✦')">Send</button></div></td>
+                </tr>
+                <tr>
+                  <td><span class="inv-num">EC-0023</span></td>
+                  <td><div class="inv-client"><div class="inv-avatar" style="background:#76899E">PH</div>Paula H.</div></td>
+                  <td style="font-size:0.75rem;color:var(--ink)">Valentine's Front Door</td>
+                  <td><span class="inv-amount">$380.00</span></td>
+                  <td style="font-size:0.72rem;color:var(--gray-500)">Feb 5</td>
+                  <td style="font-size:0.72rem;color:var(--gray-500)">Feb 12</td>
+                  <td><span class="inv-status status-paid">✓ Paid</span></td>
+                  <td><div class="inv-action"><button class="btn-sm-outline" onclick="showToast('Invoice EC-0023 downloaded')">PDF</button></div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ════ TAB 4: WHITE-LABEL SETTINGS ════ -->
+      <div class="tab-panel" id="panel-settings">
+        <div class="settings-wrap">
+
+          <div class="settings-form">
+
+            <!-- Brand identity -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-title">Brand Identity</div>
+                <div class="settings-card-desc">Your clients see this branding — not Evercrafted's.</div>
+              </div>
+              <div class="settings-card-body">
+                <div class="field-group">
+                  <label class="field-label">Studio / Business name</label>
+                  <input class="field-input" type="text" value="Wildrose Wreath Co." id="studio-name" oninput="updatePreview()">
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Tagline (shown on portal home)</label>
+                  <input class="field-input" type="text" value="Handcrafted with love, designed for your home." id="studio-tagline" oninput="updatePreview()">
+                </div>
+                <div class="color-row">
+                  <div class="color-field">
+                    <label class="field-label">Brand color</label>
+                    <div class="color-preview-row">
+                      <div class="color-swatch" id="brand-swatch" style="background:#4A6741" onclick="document.getElementById('brand-color-picker').click()"></div>
+                      <input class="field-input field-input-short" type="text" id="brand-color-input" value="#4A6741" oninput="updateColor('brand',this.value)" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--gray-200)'">
+                      <input type="color" id="brand-color-picker" value="#4A6741" style="display:none" oninput="syncColorInput('brand',this.value)">
+                    </div>
+                  </div>
+                  <div class="color-field">
+                    <label class="field-label">Accent color</label>
+                    <div class="color-preview-row">
+                      <div class="color-swatch" id="accent-swatch" style="background:#C4922A" onclick="document.getElementById('accent-color-picker').click()"></div>
+                      <input class="field-input field-input-short" type="text" id="accent-color-input" value="#C4922A" oninput="updateColor('accent',this.value)" onfocus="this.style.borderColor='var(--green)'" onblur="this.style.borderColor='var(--gray-200)'">
+                      <input type="color" id="accent-color-picker" value="#C4922A" style="display:none" oninput="syncColorInput('accent',this.value)">
+                    </div>
+                  </div>
+                </div>
+                <div class="field-group">
+                  <label class="field-label">Custom domain (optional)</label>
+                  <input class="field-input" type="text" placeholder="clients.wildrosewreath.com">
+                  <span class="field-hint">Point your DNS CNAME to portal.evercrafted.com — we handle the SSL.</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Portal behaviour -->
+            <div class="settings-card">
+              <div class="settings-card-header">
+                <div class="settings-card-title">Portal Behaviour</div>
+                <div class="settings-card-desc">Control what clients can see and do in their portal.</div>
+              </div>
+              <div class="settings-card-body">
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-title">Show project timeline</div><div class="toggle-desc">Clients can see the stage pipeline for their project</div></div>
+                  <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-title">Allow client messaging</div><div class="toggle-desc">Clients can send messages directly through the portal</div></div>
+                  <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-title">Show invoice history</div><div class="toggle-desc">Clients can view and download all past invoices</div></div>
+                  <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-title">Require approval before build</div><div class="toggle-desc">Projects can't move to "In Build" until client approves a concept</div></div>
+                  <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+                </div>
+                <div class="toggle-row">
+                  <div class="toggle-info"><div class="toggle-title">Hide Evercrafted branding</div><div class="toggle-desc">Removes all "Powered by Evercrafted" references from client view</div></div>
+                  <label class="toggle"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+                </div>
+              </div>
+            </div>
+
+            <button class="save-settings-btn" onclick="showToast('Brand settings saved ✦')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+              Save Settings
+            </button>
+
+          </div>
+
+          <!-- Portal preview -->
+          <div class="portal-preview">
+            <div class="preview-card">
+              <div class="preview-card-header">
+                <span class="preview-card-title">Client portal preview</span>
+                <span class="preview-badge">Live preview</span>
+              </div>
+              <div class="portal-mockup">
+                <div class="portal-topbar">
+                  <div class="portal-logo-area">
+                    <div class="portal-logo-dot" id="preview-logo-dot">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <span class="portal-logo-name" id="preview-name">Wildrose Wreath Co.</span>
+                  </div>
+                  <div class="portal-nav">
+                    <span class="portal-nav-item active">My Projects</span>
+                    <span class="portal-nav-item">Invoices</span>
+                    <span class="portal-nav-item">Messages</span>
+                  </div>
+                </div>
+                <div class="portal-body">
+                  <div class="portal-hero" id="preview-hero">
+                    <span class="portal-hero-greeting">Welcome back, Diane.</span>
+                    <span class="portal-hero-sub" id="preview-tagline">Handcrafted with love, designed for your home.</span>
+                  </div>
+                  <div class="portal-cards">
+                    <div class="portal-mini-card">
+                      <div class="portal-mini-label">Active projects</div>
+                      <div class="portal-mini-value">1</div>
+                    </div>
+                    <div class="portal-mini-card">
+                      <div class="portal-mini-label">Awaiting review</div>
+                      <div class="portal-mini-value green" id="preview-brand-val">2 designs</div>
+                    </div>
+                    <div class="portal-mini-card">
+                      <div class="portal-mini-label">Next invoice</div>
+                      <div class="portal-mini-value">$447.50</div>
+                    </div>
+                    <div class="portal-mini-card">
+                      <div class="portal-mini-label">Messages</div>
+                      <div class="portal-mini-value">1 new</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /tab-content -->
+
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--green-light)" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toast-msg">Done</span>
+</div>
+
+<script>
+// ── Tab switching
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  document.getElementById('panel-' + tab).classList.add('active');
+}
+
+// ── Concept approval
+function approveConcept(id) {
+  const actions = document.getElementById('concept-' + id + '-actions');
+  actions.innerHTML = '<span class="concept-approved-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Approved by you</span>';
+  showToast('Concept approved — client notified ✦');
+}
+
+// ── Textarea auto-resize
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 90) + 'px';
+}
+
+// ── Send message
+function sendMessage() {
+  const input = document.getElementById('msg-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  input.style.height = 'auto';
+  showToast('Message sent to Diane ✦');
+}
+
+// ── White-label preview update
+function updatePreview() {
+  const name = document.getElementById('studio-name').value || 'Your Studio';
+  const tagline = document.getElementById('studio-tagline').value || '';
+  document.getElementById('preview-name').textContent = name;
+  document.getElementById('preview-tagline').textContent = tagline;
+}
+
+function updateColor(type, hex) {
+  if (hex.length !== 7 || !hex.startsWith('#')) return;
+  if (type === 'brand') {
+    document.getElementById('brand-swatch').style.background = hex;
+    document.getElementById('preview-logo-dot').style.background = hex;
+    document.getElementById('preview-hero').style.background = hex + '18';
+    document.getElementById('preview-hero').style.borderColor = hex + '30';
+    document.querySelector('.portal-hero-greeting').style.color = hex;
+  } else {
+    document.getElementById('accent-swatch').style.background = hex;
+    document.getElementById('preview-brand-val').style.color = hex;
+  }
+}
+
+function syncColorInput(type, hex) {
+  if (type === 'brand') {
+    document.getElementById('brand-color-input').value = hex;
+  } else {
+    document.getElementById('accent-color-input').value = hex;
+  }
+  updateColor(type, hex);
+}
+
+// ── Toast
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>

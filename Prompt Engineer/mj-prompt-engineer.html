@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prompt Engine — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ec-white:#FFFFFF; --ec-off-white:#F9F7F4; --ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A; --ec-charcoal:#2E2E2E; --ec-ink:#4A4A4A;
+  --ec-green:#4A6741; --ec-green-light:#6B8F67; --ec-green-pale:#EEF2ED;
+  --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-border:#E8E8E8; --ec-border-dark:#D0D0D0;
+  --ec-atelier-bg:#1A1A1A; --ec-atelier-fg:#F2EFE9;
+  --radius:6px; --radius-lg:12px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.06); --shadow:0 4px 16px rgba(0,0,0,0.08);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--ec-off-white);color:var(--ec-black);min-height:100vh;font-size:14px;}
+
+/* HEADER */
+.header{background:var(--ec-white);border-bottom:1px solid var(--ec-border);padding:0 32px;display:flex;align-items:center;justify-content:space-between;height:60px;position:sticky;top:0;z-index:100;}
+.header-brand{display:flex;align-items:center;gap:12px;}
+.brand-wordmark{font-family:'Dancing Script',cursive;font-size:22px;color:var(--ec-green);letter-spacing:0.02em;}
+.brand-sep{color:var(--ec-border-dark);font-size:18px;}
+.brand-app{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:400;color:var(--ec-charcoal);letter-spacing:0.08em;text-transform:uppercase;}
+.tier-badge{font-family:'Inter',sans-serif;font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:var(--ec-atelier-bg);color:var(--ec-atelier-fg);}
+.header-nav{display:flex;align-items:center;gap:8px;}
+.nav-tab{font-size:12px;font-weight:400;color:var(--ec-ink);padding:6px 14px;border-radius:20px;cursor:pointer;border:none;background:none;font-family:'Inter',sans-serif;letter-spacing:0.04em;transition:all 0.15s;}
+.nav-tab:hover{background:var(--ec-paper);color:var(--ec-black);}
+.nav-tab.active{background:var(--ec-green-pale);color:var(--ec-green);}
+
+/* BOTANICAL SVG */
+.botanical-accent{position:fixed;right:-20px;top:80px;opacity:0.06;pointer-events:none;z-index:0;}
+
+/* LAYOUT */
+.app{display:grid;grid-template-columns:320px 1fr;min-height:calc(100vh - 60px);position:relative;z-index:1;}
+
+/* SIDEBAR */
+.sidebar{background:var(--ec-white);border-right:1px solid var(--ec-border);padding:28px 24px;display:flex;flex-direction:column;gap:20px;overflow-y:auto;max-height:calc(100vh - 60px);}
+.sidebar-section{display:flex;flex-direction:column;gap:10px;}
+.section-label{font-size:10px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--ec-green);font-family:'Inter',sans-serif;}
+.mode-card{border:1.5px solid var(--ec-border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:all 0.15s;background:var(--ec-white);}
+.mode-card:hover{border-color:var(--ec-green-light);background:var(--ec-green-pale);}
+.mode-card.selected{border-color:var(--ec-green);background:var(--ec-green-pale);}
+.mode-card-title{font-size:13px;font-weight:500;color:var(--ec-black);margin-bottom:3px;}
+.mode-card-desc{font-size:11px;color:var(--ec-ink);line-height:1.5;}
+.mode-card-lock{font-size:10px;color:var(--ec-border-dark);margin-top:4px;}
+
+/* LOCKED CARD */
+.mode-card.locked{opacity:1;position:relative;overflow:hidden;cursor:default;}
+.mode-card.locked::after{content:'';position:absolute;inset:0;background:rgba(249,247,244,0.75);backdrop-filter:blur(2px);}
+.lock-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:2;}
+.lock-icon{font-size:18px;}
+.lock-text{font-size:10px;font-weight:500;color:var(--ec-charcoal);letter-spacing:0.06em;}
+.upgrade-link{font-size:10px;color:var(--ec-green);text-decoration:underline;cursor:pointer;}
+
+.divider{display:flex;align-items:center;gap:10px;color:var(--ec-border-dark);font-size:11px;}
+.divider::before,.divider::after{content:'';flex:1;border-top:1px solid var(--ec-border);}
+
+/* CONTROL ROW */
+.control-row{display:flex;flex-direction:column;gap:6px;}
+.control-label{font-size:11px;font-weight:500;color:var(--ec-charcoal);letter-spacing:0.04em;}
+select,input[type=text],textarea{width:100%;border:1px solid var(--ec-border);border-radius:var(--radius);padding:8px 12px;font-size:12px;font-family:'Inter',sans-serif;color:var(--ec-black);background:var(--ec-off-white);outline:none;transition:border 0.15s;}
+select:focus,input:focus,textarea:focus{border-color:var(--ec-green);}
+textarea{resize:vertical;min-height:80px;line-height:1.6;}
+
+/* MAIN */
+.main{padding:32px;display:flex;flex-direction:column;gap:24px;overflow-y:auto;max-height:calc(100vh - 60px);}
+.main-header{display:flex;align-items:flex-start;justify-content:space-between;}
+.main-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ec-black);letter-spacing:0.02em;line-height:1.2;}
+.main-title em{font-style:italic;color:var(--ec-green);}
+.main-subtitle{font-size:12px;color:var(--ec-ink);margin-top:4px;letter-spacing:0.04em;}
+
+/* INPUT ZONE */
+.input-zone{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--radius-lg);padding:24px;display:flex;flex-direction:column;gap:16px;}
+.input-label{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-green);}
+.big-textarea{width:100%;border:1px solid var(--ec-border);border-radius:var(--radius);padding:14px 16px;font-size:14px;font-family:'Inter',sans-serif;color:var(--ec-black);background:var(--ec-off-white);outline:none;resize:vertical;min-height:100px;line-height:1.7;transition:border 0.15s;}
+.big-textarea:focus{border-color:var(--ec-green);}
+.big-textarea::placeholder{color:var(--ec-border-dark);font-style:italic;}
+.input-row{display:flex;gap:12px;flex-wrap:wrap;}
+.input-chip{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ec-ink);}
+.input-chip select{padding:5px 8px;font-size:11px;width:auto;}
+.generate-btn{align-self:flex-start;background:var(--ec-green);color:var(--ec-white);border:none;border-radius:var(--radius);padding:10px 24px;font-size:12px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;display:flex;align-items:center;gap:8px;}
+.generate-btn:hover{background:var(--ec-green-light);}
+.generate-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.generate-btn .spinner{width:12px;height:12px;border:2px solid rgba(255,255,255,0.3);border-top-color:white;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+.generate-btn.loading .spinner{display:block;}
+.generate-btn.loading .btn-text{display:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* EC DIVIDER */
+.ec-divider{display:flex;align-items:center;gap:14px;color:var(--ec-border-dark);font-size:11px;letter-spacing:0.1em;}
+.ec-divider::before,.ec-divider::after{content:'';flex:1;border-top:1px solid var(--ec-border);}
+
+/* OUTPUT ZONE */
+.output-zone{display:none;flex-direction:column;gap:16px;}
+.output-zone.visible{display:flex;}
+.output-card{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--radius-lg);overflow:hidden;}
+.output-card-header{padding:14px 20px;border-bottom:1px solid var(--ec-border);display:flex;align-items:center;justify-content:space-between;}
+.output-card-title{font-size:11px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-charcoal);}
+.copy-btn{font-size:10px;font-weight:500;letter-spacing:0.06em;text-transform:uppercase;color:var(--ec-green);background:none;border:1px solid var(--ec-green);border-radius:20px;padding:4px 12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+.copy-btn:hover{background:var(--ec-green-pale);}
+.copy-btn.copied{color:var(--ec-white);background:var(--ec-green);border-color:var(--ec-green);}
+.output-body{padding:20px;font-family:'DM Mono',monospace;font-size:13px;line-height:1.8;color:var(--ec-charcoal);white-space:pre-wrap;word-break:break-word;}
+.output-body.prose{font-family:'Inter',sans-serif;font-size:13px;line-height:1.8;}
+
+/* SCORE CARD */
+.score-card{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--radius-lg);padding:20px;}
+.score-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:12px;}
+.score-dim{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.score-label{font-size:9px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-ink);text-align:center;}
+.score-val{font-size:20px;font-family:'Cormorant Garamond',serif;font-weight:500;color:var(--ec-black);}
+.score-val.good{color:var(--ec-green);}
+.score-val.warn{color:#B88A2A;}
+.score-val.bad{color:#B84A2A;}
+.score-bar{width:100%;height:3px;background:var(--ec-border);border-radius:2px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:2px;background:var(--ec-green);transition:width 0.4s ease;}
+.score-bar-fill.warn{background:#B88A2A;}
+.score-bar-fill.bad{background:#B84A2A;}
+.score-summary{margin-top:14px;padding-top:14px;border-top:1px solid var(--ec-border);display:flex;align-items:center;justify-content:space-between;}
+.score-avg{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;}
+.gaps-list{font-size:11px;color:var(--ec-ink);}
+.gaps-label{font-weight:500;color:var(--ec-charcoal);}
+
+/* LOADING */
+.skeleton{background:linear-gradient(90deg,var(--ec-paper) 25%,var(--ec-border) 50%,var(--ec-paper) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:var(--radius);height:14px;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* HISTORY */
+.history-list{display:flex;flex-direction:column;gap:6px;}
+.history-item{border:1px solid var(--ec-border);border-radius:var(--radius);padding:10px 12px;cursor:pointer;transition:all 0.15s;}
+.history-item:hover{border-color:var(--ec-green-light);background:var(--ec-green-pale);}
+.history-item-text{font-size:11px;color:var(--ec-charcoal);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.history-item-meta{font-size:10px;color:var(--ec-border-dark);margin-top:2px;}
+.empty-history{font-size:11px;color:var(--ec-border-dark);font-style:italic;}
+
+/* RESPONSIVE */
+@media(max-width:800px){
+  .app{grid-template-columns:1fr;}
+  .sidebar{max-height:none;border-right:none;border-bottom:1px solid var(--ec-border);}
+  .score-grid{grid-template-columns:repeat(4,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- Botanical SVG Accent -->
+<svg class="botanical-accent" width="320" height="480" viewBox="0 0 320 480" fill="none">
+  <ellipse cx="160" cy="240" rx="140" ry="220" stroke="#4A6741" stroke-width="1.5" fill="none"/>
+  <ellipse cx="160" cy="240" rx="90" ry="160" stroke="#4A6741" stroke-width="1" fill="none"/>
+  <path d="M60 120 Q160 80 260 120 Q200 160 160 240 Q120 160 60 120Z" stroke="#4A6741" stroke-width="1" fill="none"/>
+  <path d="M60 360 Q160 400 260 360 Q200 320 160 240 Q120 320 60 360Z" stroke="#4A6741" stroke-width="1" fill="none"/>
+  <circle cx="160" cy="240" r="6" stroke="#4A6741" stroke-width="1.5" fill="none"/>
+  <circle cx="160" cy="120" r="3" fill="#4A6741" opacity="0.4"/>
+  <circle cx="160" cy="360" r="3" fill="#4A6741" opacity="0.4"/>
+</svg>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-brand">
+    <span class="brand-wordmark">Evercrafted</span>
+    <span class="brand-sep">|</span>
+    <span class="brand-app">Prompt Engine</span>
+    <span class="tier-badge">Atelier</span>
+  </div>
+  <nav class="header-nav">
+    <button class="nav-tab active" onclick="switchTab('build')">Build</button>
+    <button class="nav-tab" onclick="switchTab('iterate')">Iterate</button>
+    <button class="nav-tab" onclick="switchTab('history')">History</button>
+  </nav>
+</header>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="section-label">Mode</div>
+
+      <div class="mode-card selected" id="mode-new" onclick="selectMode('new')">
+        <div class="mode-card-title">✦ Build New Prompt</div>
+        <div class="mode-card-desc">Describe your image. Get a production-ready V7 prompt with params.</div>
+      </div>
+
+      <div class="mode-card" id="mode-debug" onclick="selectMode('debug')">
+        <div class="mode-card-title">⚠ Debug Output</div>
+        <div class="mode-card-desc">Paste a failing prompt. Diagnose the failure mode and get a fix.</div>
+      </div>
+
+      <div class="mode-card locked" id="mode-score">
+        <div class="mode-card-title">◎ Score & Analyze</div>
+        <div class="mode-card-desc">7-dimension scoring with gap analysis.</div>
+        <div class="lock-overlay">
+          <span class="lock-icon">🔒</span>
+          <span class="lock-text">Studio+</span>
+          <span class="upgrade-link">Upgrade</span>
+        </div>
+      </div>
+
+      <div class="mode-card locked" id="mode-batch">
+        <div class="mode-card-title">⊞ Batch Variations</div>
+        <div class="mode-card-desc">Generate 3–5 prompt variations from one brief.</div>
+        <div class="lock-overlay">
+          <span class="lock-icon">🔒</span>
+          <span class="lock-text">Atelier only</span>
+          <span class="upgrade-link">Upgrade</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">✦</div>
+
+    <div class="sidebar-section">
+      <div class="section-label">Parameters</div>
+      <div class="control-row">
+        <div class="control-label">Version</div>
+        <select id="param-version">
+          <option value="--v 7" selected>V7 (recommended)</option>
+          <option value="--v 6.1">V6.1</option>
+          <option value="--niji 6">Niji 6 (anime)</option>
+        </select>
+      </div>
+      <div class="control-row">
+        <div class="control-label">Aspect Ratio</div>
+        <select id="param-ar">
+          <option value="--ar 1:1">1:1 Square</option>
+          <option value="--ar 16:9">16:9 Widescreen</option>
+          <option value="--ar 9:16">9:16 Portrait</option>
+          <option value="--ar 5:4" selected>5:4 Product</option>
+          <option value="--ar 4:5">4:5 Editorial</option>
+          <option value="--ar 3:2">3:2 Classic</option>
+          <option value="--ar 21:9">21:9 Ultrawide</option>
+        </select>
+      </div>
+      <div class="control-row">
+        <div class="control-label">Style</div>
+        <select id="param-style">
+          <option value="--style raw" selected>Raw (photorealism)</option>
+          <option value="">Default (MJ aesthetic)</option>
+          <option value="--style cute">Cute</option>
+          <option value="--style expressive">Expressive</option>
+        </select>
+      </div>
+      <div class="control-row">
+        <div class="control-label">Stylize (--s)</div>
+        <select id="param-s">
+          <option value="--s 50">50 — Very literal</option>
+          <option value="--s 100">100 — Default</option>
+          <option value="--s 150" selected>150 — Light editorial</option>
+          <option value="--s 250">250 — Editorial</option>
+          <option value="--s 400">400 — Art</option>
+          <option value="--s 600">600 — Heavy style</option>
+        </select>
+      </div>
+      <div class="control-row">
+        <div class="control-label">Quality</div>
+        <select id="param-q">
+          <option value="--q 1">Q1 — Standard</option>
+          <option value="--q 2" selected>Q2 — Final render</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="divider">✦</div>
+
+    <div class="sidebar-section">
+      <div class="section-label">Genre</div>
+      <div class="control-row">
+        <select id="param-genre">
+          <option value="product">Product Photography</option>
+          <option value="editorial">Editorial / Fashion</option>
+          <option value="interior">Interior / Vignette</option>
+          <option value="portrait">Portrait</option>
+          <option value="landscape">Landscape</option>
+          <option value="flatlay">Flat Lay</option>
+          <option value="conceptual">Conceptual / Art</option>
+        </select>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- BUILD TAB -->
+    <div id="tab-build">
+      <div class="main-header">
+        <div>
+          <h1 class="main-title">Build a <em>Midjourney</em> Prompt</h1>
+          <p class="main-subtitle">Describe your image — get a V7-optimized prompt, ready to paste.</p>
+        </div>
+      </div>
+
+      <div class="input-zone">
+        <div class="input-label">Describe your image</div>
+        <textarea id="user-brief" class="big-textarea" placeholder="e.g. A 24-inch bleached grapevine wreath with dusty blush peonies and dried eucalyptus, asymmetric form, concentrated upper-left…"></textarea>
+        <div class="input-row">
+          <div class="input-chip">
+            <span>Sref URL (optional):</span>
+            <input type="text" id="sref-url" placeholder="https://..." style="width:200px;">
+          </div>
+          <div class="input-chip">
+            <span>Oref URL (optional):</span>
+            <input type="text" id="oref-url" placeholder="https://..." style="width:200px;">
+          </div>
+        </div>
+        <button class="generate-btn" id="generate-btn" onclick="generatePrompt()">
+          <div class="spinner"></div>
+          <span class="btn-text">Generate Prompt</span>
+        </button>
+      </div>
+
+      <div class="ec-divider">✦</div>
+
+      <!-- OUTPUT -->
+      <div class="output-zone" id="output-zone">
+
+        <div class="output-card">
+          <div class="output-card-header">
+            <span class="output-card-title">Paste-Ready Prompt</span>
+            <button class="copy-btn" onclick="copyText('paste-prompt', this)">Copy</button>
+          </div>
+          <div class="output-body" id="paste-prompt"></div>
+        </div>
+
+        <!-- SCORE CARD -->
+        <div class="score-card">
+          <div class="output-card-title">7-Dimension Score</div>
+          <div class="score-grid" id="score-grid"></div>
+          <div class="score-summary">
+            <div>
+              <div style="font-size:10px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-ink);margin-bottom:2px;">Overall</div>
+              <div class="score-avg" id="score-avg">—</div>
+            </div>
+            <div class="gaps-list">
+              <span class="gaps-label">Gaps: </span>
+              <span id="gaps-text">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="output-card">
+          <div class="output-card-header">
+            <span class="output-card-title">Machine-Facing Breakdown</span>
+            <button class="copy-btn" onclick="copyText('machine-prompt', this)">Copy</button>
+          </div>
+          <div class="output-body" id="machine-prompt"></div>
+        </div>
+
+        <div class="output-card">
+          <div class="output-card-header">
+            <span class="output-card-title">Iteration Notes</span>
+          </div>
+          <div class="output-body prose" id="iteration-notes"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ITERATE TAB -->
+    <div id="tab-iterate" style="display:none;">
+      <div class="main-header">
+        <div>
+          <h1 class="main-title">Debug & <em>Iterate</em></h1>
+          <p class="main-subtitle">Paste a failing prompt. Describe what's wrong. Get a diagnosis + fix.</p>
+        </div>
+      </div>
+      <div class="input-zone">
+        <div class="input-label">Failing Prompt</div>
+        <textarea id="failing-prompt" class="big-textarea" placeholder="Paste your current Midjourney prompt here…"></textarea>
+        <div class="input-label" style="margin-top:8px;">What's wrong with the output?</div>
+        <textarea id="failure-desc" class="big-textarea" style="min-height:60px;" placeholder="e.g. The florals look plastic and shiny. The background isn't clean studio — it keeps showing a window…"></textarea>
+        <button class="generate-btn" onclick="debugPrompt()">
+          <div class="spinner"></div>
+          <span class="btn-text">Diagnose & Fix</span>
+        </button>
+      </div>
+      <div class="ec-divider">✦</div>
+      <div class="output-zone" id="debug-output-zone">
+        <div class="output-card">
+          <div class="output-card-header">
+            <span class="output-card-title">Diagnosis</span>
+          </div>
+          <div class="output-body prose" id="diagnosis-text"></div>
+        </div>
+        <div class="output-card">
+          <div class="output-card-header">
+            <span class="output-card-title">Fixed Prompt</span>
+            <button class="copy-btn" onclick="copyText('fixed-prompt', this)">Copy</button>
+          </div>
+          <div class="output-body" id="fixed-prompt"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY TAB -->
+    <div id="tab-history" style="display:none;">
+      <div class="main-header">
+        <div>
+          <h1 class="main-title">Prompt <em>History</em></h1>
+          <p class="main-subtitle">Your recent generated prompts this session.</p>
+        </div>
+      </div>
+      <div class="history-list" id="history-list">
+        <p class="empty-history">No prompts generated yet this session.</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─── TIER ───────────────────────────────────────────
+const TIER_RANK = { bloom:1, craft:2, studio:3, atelier:4 };
+const USER_TIER = "atelier";
+function canAccess(required) { return TIER_RANK[USER_TIER] >= TIER_RANK[required]; }
+
+// ─── MODE ────────────────────────────────────────────
+let currentMode = 'new';
+function selectMode(mode) {
+  if ((mode === 'score') && !canAccess('studio')) return;
+  if ((mode === 'batch') && !canAccess('atelier')) return;
+  currentMode = mode;
+  document.querySelectorAll('.mode-card:not(.locked)').forEach(c => c.classList.remove('selected'));
+  document.getElementById('mode-' + mode)?.classList.add('selected');
+}
+
+// ─── TABS ────────────────────────────────────────────
+function switchTab(tab) {
+  ['build','iterate','history'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = t === tab ? '' : 'none';
+    document.querySelectorAll('.nav-tab')[['build','iterate','history'].indexOf(t)].classList.toggle('active', t === tab);
+  });
+}
+
+// ─── PARAMS ──────────────────────────────────────────
+function getParams() {
+  const version = document.getElementById('param-version').value;
+  const ar = document.getElementById('param-ar').value;
+  const style = document.getElementById('param-style').value;
+  const s = document.getElementById('param-s').value;
+  const q = document.getElementById('param-q').value;
+  const oref = document.getElementById('oref-url').value.trim();
+  const sref = document.getElementById('sref-url').value.trim();
+  let params = [];
+  if (oref) params.push(`--oref ${oref}`);
+  if (sref) params.push(`--sref ${sref}`);
+  if (style) params.push(style);
+  params.push(s, q, ar, version);
+  return params.filter(Boolean).join(' ');
+}
+
+// ─── SYSTEM PROMPT ───────────────────────────────────
+function buildSystemPrompt(genre) {
+  return `You are a Midjourney V7 expert prompt engineer with deep knowledge of every parameter, token weighting rule, and failure mode.
+
+Your task: Transform a user's image description into a production-ready Midjourney V7 prompt.
+
+GENRE: ${genre}
+
+OUTPUT FORMAT — respond ONLY with valid JSON, no markdown, no preamble:
+{
+  "paste_prompt": "[clean prose prompt ready to paste into MJ, followed by the params block on the same line]",
+  "machine_breakdown": "[structured token breakdown with labeled sections: [SUBJECT] [COMPOSITION] [STYLE] [LIGHTING] [MOOD] [MATERIAL] [NEGATIVE] [PARAMS]]",
+  "scores": {
+    "subject": [1-10],
+    "lighting": [1-10],
+    "color": [1-10],
+    "mood": [1-10],
+    "composition": [1-10],
+    "material": [1-10],
+    "spatial": [1-10]
+  },
+  "score_notes": {
+    "subject": "one line note",
+    "lighting": "one line note",
+    "color": "one line note",
+    "mood": "one line note",
+    "composition": "one line note",
+    "material": "one line note",
+    "spatial": "one line note"
+  },
+  "gaps": ["list of dimension names scoring below 7, or empty array"],
+  "iteration_notes": "2-3 sentences: what this prompt does well, what to try if the output doesn't match intent"
+}
+
+RULES:
+- Subject must be first in the prompt — never lead with style or adjectives
+- Use --style raw for product/photorealism. Include it in params
+- Keep prose prompt under 75 words
+- Use --no for exclusions (don't rely on prose negatives alone)
+- Machine breakdown uses labeled sections like [SUBJECT] etc.
+- The paste_prompt must end with the full param string on the same line
+- For Evercrafted wreaths: always include "complete absence of plastic sheen, soft matte petals" and "not illustration, not romanticized, gallery-quality product documentation"`;
+}
+
+function buildDebugSystemPrompt() {
+  return `You are a Midjourney V7 expert who diagnoses failing prompts and rewrites them.
+
+KNOWN FAILURE MODES:
+FM-01: Subject replaced/merged — subject token too weak
+FM-02: Wrong subject interpretation — ambiguous noun
+FM-03: Missing element — element buried too late in prompt
+FM-04: Over-stylized/painterly — missing --style raw or high --s
+FM-05: Wrong aesthetic register — missing explicit style anchor
+FM-06: MJ house style override — missing --style raw
+FM-07: Flat lighting — no direction or quality specified
+FM-08: Blown out — too many bright tokens
+FM-09: Wrong composition/framing — no explicit shot type
+FM-10: Depth confusion — no DOF or focal length
+FM-11: Unwanted elements — need --no parameter
+FM-12: Wrong background — not specified
+FM-13: Not detailed enough — low --q or vague qualifiers
+FM-14: Too much grain — film references in prompt
+FM-15: Grid inconsistency — high --chaos or ambiguous prompt
+FM-16: Text rendering failure — text too long or no --style raw
+EC-01: Plastic sheen on botanicals
+EC-02: Wrong wreath silhouette
+EC-03: Hallucinated florals
+EC-04: Dew/fresh flower look
+EC-05: Background not studio
+EC-06: Wrong scale
+
+OUTPUT — respond ONLY with valid JSON:
+{
+  "failure_modes": ["list of FM codes that apply"],
+  "root_cause": "2-3 sentences explaining why this prompt is failing",
+  "fixed_prompt": "the complete rewritten prompt with params, paste-ready",
+  "changes_made": ["list of specific changes: what was added, removed, or moved"]
+}`;
+}
+
+// ─── CLAUDE API ───────────────────────────────────────
+async function callClaude(messages, systemPrompt, maxTokens=1500) {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens: maxTokens,
+      system: systemPrompt,
+      messages
+    })
+  });
+  const data = await res.json();
+  return data.content.filter(b=>b.type==="text").map(b=>b.text).join("\n");
+}
+
+// ─── GENERATE ─────────────────────────────────────────
+async function generatePrompt() {
+  const brief = document.getElementById('user-brief').value.trim();
+  if (!brief) return;
+  const genre = document.getElementById('param-genre').value;
+  const params = getParams();
+  const btn = document.getElementById('generate-btn');
+  btn.classList.add('loading');
+  btn.disabled = true;
+
+  try {
+    const systemPrompt = buildSystemPrompt(genre);
+    const userMessage = `Image description: ${brief}\n\nParameter block to use: ${params}`;
+    const raw = await callClaude([{role:'user', content: userMessage}], systemPrompt, 1500);
+
+    let data;
+    try {
+      const clean = raw.replace(/```json|```/g,'').trim();
+      data = JSON.parse(clean);
+    } catch(e) {
+      document.getElementById('paste-prompt').textContent = raw;
+      document.getElementById('output-zone').classList.add('visible');
+      return;
+    }
+
+    document.getElementById('paste-prompt').textContent = data.paste_prompt || '';
+    document.getElementById('machine-prompt').textContent = data.machine_breakdown || '';
+    document.getElementById('iteration-notes').textContent = data.iteration_notes || '';
+
+    // Scores
+    renderScores(data.scores || {}, data.score_notes || {});
+    const gaps = data.gaps || [];
+    document.getElementById('gaps-text').textContent = gaps.length ? gaps.join(', ') : 'None';
+
+    document.getElementById('output-zone').classList.add('visible');
+    saveToHistory(brief, data.paste_prompt || '');
+  } catch(e) {
+    document.getElementById('paste-prompt').textContent = 'Error: ' + e.message;
+    document.getElementById('output-zone').classList.add('visible');
+  } finally {
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  }
+}
+
+// ─── DEBUG ─────────────────────────────────────────────
+async function debugPrompt() {
+  const failing = document.getElementById('failing-prompt').value.trim();
+  const desc = document.getElementById('failure-desc').value.trim();
+  if (!failing) return;
+
+  const btns = document.querySelectorAll('#tab-iterate .generate-btn');
+  btns.forEach(b => { b.classList.add('loading'); b.disabled = true; });
+
+  try {
+    const userMessage = `Failing prompt:\n${failing}\n\nProblem description:\n${desc || 'Not specified — diagnose from the prompt itself.'}`;
+    const raw = await callClaude([{role:'user', content: userMessage}], buildDebugSystemPrompt(), 1200);
+
+    let data;
+    try {
+      const clean = raw.replace(/```json|```/g,'').trim();
+      data = JSON.parse(clean);
+    } catch(e) {
+      document.getElementById('diagnosis-text').textContent = raw;
+      document.getElementById('fixed-prompt').textContent = '';
+      document.getElementById('debug-output-zone').classList.add('visible');
+      return;
+    }
+
+    const diagnosis = [
+      data.failure_modes?.length ? `Failure modes: ${data.failure_modes.join(', ')}` : '',
+      '',
+      data.root_cause || '',
+      '',
+      data.changes_made?.length ? 'Changes made:\n' + data.changes_made.map(c => '• ' + c).join('\n') : ''
+    ].filter(l => l !== undefined).join('\n').trim();
+
+    document.getElementById('diagnosis-text').textContent = diagnosis;
+    document.getElementById('fixed-prompt').textContent = data.fixed_prompt || '';
+    document.getElementById('debug-output-zone').classList.add('visible');
+  } catch(e) {
+    document.getElementById('diagnosis-text').textContent = 'Error: ' + e.message;
+    document.getElementById('debug-output-zone').classList.add('visible');
+  } finally {
+    btns.forEach(b => { b.classList.remove('loading'); b.disabled = false; });
+  }
+}
+
+// ─── SCORES ────────────────────────────────────────────
+const DIMS = ['subject','lighting','color','mood','composition','material','spatial'];
+function renderScores(scores, notes) {
+  const grid = document.getElementById('score-grid');
+  grid.innerHTML = '';
+  let total = 0; let count = 0;
+  DIMS.forEach(dim => {
+    const val = scores[dim] || 0;
+    total += val; count++;
+    const cls = val >= 8 ? 'good' : val >= 6 ? 'warn' : 'bad';
+    const fillW = Math.round((val/10)*100);
+    grid.innerHTML += `
+      <div class="score-dim" title="${notes[dim]||''}">
+        <div class="score-label">${dim.slice(0,4)}</div>
+        <div class="score-val ${cls}">${val}</div>
+        <div class="score-bar"><div class="score-bar-fill ${cls}" style="width:${fillW}%"></div></div>
+      </div>`;
+  });
+  const avg = count ? (total/count).toFixed(1) : '—';
+  const avgEl = document.getElementById('score-avg');
+  avgEl.textContent = avg + '/10';
+  const avgNum = parseFloat(avg);
+  avgEl.style.color = avgNum >= 8 ? 'var(--ec-green)' : avgNum >= 6 ? '#B88A2A' : '#B84A2A';
+}
+
+// ─── HISTORY ───────────────────────────────────────────
+const promptHistory = [];
+function saveToHistory(brief, prompt) {
+  promptHistory.unshift({ brief: brief.slice(0,60), prompt, time: new Date().toLocaleTimeString() });
+  renderHistory();
+}
+function renderHistory() {
+  const list = document.getElementById('history-list');
+  if (!promptHistory.length) { list.innerHTML = '<p class="empty-history">No prompts generated yet this session.</p>'; return; }
+  list.innerHTML = promptHistory.map((h,i) => `
+    <div class="history-item" onclick="loadHistory(${i})">
+      <div class="history-item-text">${h.brief}</div>
+      <div class="history-item-meta">${h.time}</div>
+    </div>`).join('');
+}
+function loadHistory(i) {
+  const h = promptHistory[i];
+  document.getElementById('user-brief').value = h.brief;
+  document.getElementById('paste-prompt').textContent = h.prompt;
+  document.getElementById('output-zone').classList.add('visible');
+  switchTab('build');
+}
+
+// ─── COPY ─────────────────────────────────────────────
+function copyText(id, btn) {
+  const text = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+</script>
+</body>
+</html>

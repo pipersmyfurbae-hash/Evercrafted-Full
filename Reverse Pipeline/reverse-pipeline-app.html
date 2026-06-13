@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reverse Pipeline — Evercrafted</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ec-white:        #FFFFFF;
+      --ec-off-white:    #F9F7F4;
+      --ec-paper:        #F2EFE9;
+      --ec-black:        #1A1A1A;
+      --ec-charcoal:     #2E2E2E;
+      --ec-ink:          #4A4A4A;
+      --ec-green:        #4A6741;
+      --ec-green-light:  #6B8F67;
+      --ec-green-pale:   #EEF2ED;
+      --ec-green-dim:    rgba(74, 103, 65, 0.12);
+      --ec-gray-100:     #F5F5F5;
+      --ec-gray-200:     #E8E8E8;
+      --ec-gray-300:     #D0D0D0;
+      --ec-gray-400:     #A8A8A8;
+      --ec-gray-500:     #787878;
+      --ec-border:       var(--ec-gray-200);
+      --ec-shadow-sm:    0 1px 3px rgba(0,0,0,0.06);
+      --ec-shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+      --ec-shadow-lg:    0 8px 32px rgba(0,0,0,0.10);
+      --ec-font-serif:   'Cormorant Garamond', Georgia, serif;
+      --ec-font-sans:    'Inter', system-ui, sans-serif;
+      --ec-font-script:  'Dancing Script', cursive;
+      --ec-font-mono:    'DM Mono', monospace;
+      --ec-radius-sm:    4px;
+      --ec-radius-md:    8px;
+      --ec-radius-lg:    14px;
+      --ec-radius-xl:    20px;
+      --ec-transition:   200ms ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--ec-font-sans);
+      background: var(--ec-off-white);
+      color: var(--ec-black);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── App Shell ── */
+    .app-shell {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Topbar ── */
+    .topbar {
+      background: var(--ec-white);
+      border-bottom: 1px solid var(--ec-border);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .topbar-logo {
+      font-family: var(--ec-font-serif);
+      font-size: 1.375rem;
+      font-weight: 600;
+      color: var(--ec-green);
+      letter-spacing: -0.01em;
+    }
+    .topbar-divider { width: 1px; height: 20px; background: var(--ec-border); }
+    .topbar-feature {
+      font-family: var(--ec-font-sans);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ec-ink);
+    }
+    .tier-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      background: var(--ec-green-pale);
+      color: var(--ec-green);
+    }
+
+    /* ── Main Layout ── */
+    .main-layout {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      height: calc(100vh - 60px);
+    }
+
+    /* ── Left Panel ── */
+    .left-panel {
+      background: var(--ec-white);
+      border-right: 1px solid var(--ec-border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .panel-section {
+      padding: 1.75rem 1.75rem 0;
+    }
+    .panel-section:last-child { padding-bottom: 1.75rem; }
+    .section-label {
+      font-family: var(--ec-font-sans);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ec-gray-400);
+      margin-bottom: 0.875rem;
+    }
+    .section-divider {
+      height: 1px;
+      background: var(--ec-border);
+      margin: 1.5rem 1.75rem;
+    }
+
+    /* ── Upload Zone ── */
+    .upload-zone {
+      border: 2px dashed var(--ec-gray-200);
+      border-radius: var(--ec-radius-lg);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--ec-transition);
+      background: var(--ec-off-white);
+      position: relative;
+      overflow: hidden;
+    }
+    .upload-zone:hover {
+      border-color: var(--ec-green);
+      background: var(--ec-green-pale);
+    }
+    .upload-zone.has-image {
+      border-style: solid;
+      border-color: var(--ec-green);
+      padding: 0;
+      background: var(--ec-black);
+    }
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .upload-icon {
+      font-size: 2.25rem;
+      margin-bottom: 0.75rem;
+      display: block;
+      opacity: 0.5;
+    }
+    .upload-title {
+      font-family: var(--ec-font-serif);
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--ec-charcoal);
+      margin-bottom: 0.35rem;
+    }
+    .upload-hint {
+      font-family: var(--ec-font-mono);
+      font-size: 0.7rem;
+      color: var(--ec-gray-400);
+    }
+    .preview-img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: calc(var(--ec-radius-lg) - 2px);
+      display: block;
+    }
+    .preview-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0; right: 0;
+      padding: 0.75rem 1rem;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      color: white;
+      font-family: var(--ec-font-mono);
+      font-size: 0.7rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 0 0 calc(var(--ec-radius-lg) - 2px) calc(var(--ec-radius-lg) - 2px);
+    }
+    .preview-change-btn {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      color: white;
+      font-size: 0.65rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--ec-radius-sm);
+      cursor: pointer;
+      font-family: var(--ec-font-mono);
+    }
+
+    /* ── Form Elements ── */
+    .form-group { margin-bottom: 1.25rem; }
+    .form-label {
+      font-family: var(--ec-font-sans);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ec-ink);
+      display: block;
+      margin-bottom: 0.45rem;
+    }
+    .form-input {
+      width: 100%;
+      padding: 0.7rem 0.875rem;
+      border: 1.5px solid var(--ec-border);
+      border-radius: var(--ec-radius-md);
+      font-family: var(--ec-font-mono);
+      font-size: 0.8rem;
+      color: var(--ec-black);
+      background: var(--ec-white);
+      transition: border-color var(--ec-transition);
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--ec-green);
+      box-shadow: 0 0 0 3px var(--ec-green-dim);
+    }
+    .form-input::placeholder { color: var(--ec-gray-300); }
+
+    /* ── Buttons ── */
+    .btn {
+      width: 100%;
+      padding: 0.875rem 1.5rem;
+      border: none;
+      border-radius: var(--ec-radius-md);
+      font-family: var(--ec-font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--ec-transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .btn-primary {
+      background: var(--ec-green);
+      color: var(--ec-white);
+      box-shadow: 0 4px 14px rgba(74,103,65,0.3);
+    }
+    .btn-primary:hover:not(:disabled) {
+      background: var(--ec-green-light);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(74,103,65,0.4);
+    }
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--ec-ink);
+      border: 1.5px solid var(--ec-border);
+    }
+    .btn-ghost:hover {
+      border-color: var(--ec-green);
+      color: var(--ec-green);
+    }
+    .btn + .btn { margin-top: 0.6rem; }
+
+    /* ── Progress ── */
+    .progress-wrapper {
+      background: var(--ec-off-white);
+      border-radius: var(--ec-radius-md);
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--ec-border);
+      margin-bottom: 1rem;
+    }
+    .progress-status {
+      font-family: var(--ec-font-mono);
+      font-size: 0.75rem;
+      color: var(--ec-green);
+      margin-bottom: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .progress-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--ec-green);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+    .progress-track {
+      height: 4px;
+      background: var(--ec-gray-200);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--ec-green), var(--ec-green-light));
+      border-radius: 2px;
+      transition: width 0.5s ease;
+    }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+    /* ── Status Messages ── */
+    .msg {
+      padding: 0.75rem 1rem;
+      border-radius: var(--ec-radius-md);
+      font-size: 0.8rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+    .msg-error {
+      background: #FEF2F2;
+      border: 1px solid #FECACA;
+      color: #991B1B;
+    }
+    .msg-success {
+      background: var(--ec-green-pale);
+      border: 1px solid rgba(74,103,65,0.2);
+      color: var(--ec-green);
+      font-weight: 500;
+    }
+
+    /* ── Detection Cards ── */
+    .detection-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+    .detection-card {
+      background: var(--ec-off-white);
+      border: 1px solid var(--ec-border);
+      border-radius: var(--ec-radius-md);
+      padding: 0.75rem;
+    }
+    .detection-card-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ec-gray-400);
+      margin-bottom: 0.25rem;
+    }
+    .detection-card-value {
+      font-family: var(--ec-font-serif);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ec-charcoal);
+    }
+    .detection-card.full { grid-column: 1 / -1; }
+
+    /* ── Right Panel ── */
+    .right-panel {
+      display: grid;
+      grid-template-rows: auto 1fr;
+      overflow: hidden;
+      background: var(--ec-paper);
+    }
+    .output-topbar {
+      background: var(--ec-white);
+      border-bottom: 1px solid var(--ec-border);
+      padding: 0 2rem;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .output-tabs {
+      display: flex;
+      gap: 0;
+      height: 100%;
+    }
+    .output-tab {
+      padding: 0 1.25rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ec-gray-400);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      display: flex;
+      align-items: center;
+      transition: all var(--ec-transition);
+      background: none;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+    }
+    .output-tab.active {
+      color: var(--ec-green);
+      border-bottom-color: var(--ec-green);
+    }
+    .output-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .action-btn {
+      padding: 0.4rem 0.875rem;
+      border: 1.5px solid var(--ec-border);
+      border-radius: var(--ec-radius-md);
+      font-family: var(--ec-font-sans);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: var(--ec-white);
+      color: var(--ec-ink);
+      transition: all var(--ec-transition);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .action-btn:hover {
+      border-color: var(--ec-green);
+      color: var(--ec-green);
+    }
+    .action-btn:disabled { opacity: 0.3; cursor: default; }
+
+    /* ── Output Area ── */
+    .output-area { overflow-y: auto; padding: 2rem; }
+
+    /* Placeholder */
+    .placeholder-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      text-align: center;
+      color: var(--ec-gray-400);
+    }
+    .placeholder-icon-large { font-size: 5rem; margin-bottom: 1.5rem; opacity: 0.2; }
+    .placeholder-title {
+      font-family: var(--ec-font-serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--ec-gray-300);
+      margin-bottom: 0.5rem;
+    }
+    .placeholder-hint { font-size: 0.8rem; color: var(--ec-gray-400); }
+
+    /* JSON view */
+    .json-output {
+      background: var(--ec-charcoal);
+      color: #E8DCC8;
+      border-radius: var(--ec-radius-lg);
+      padding: 1.75rem;
+      font-family: var(--ec-font-mono);
+      font-size: 0.78rem;
+      line-height: 1.8;
+      overflow-x: auto;
+      white-space: pre;
+      box-shadow: var(--ec-shadow-lg);
+    }
+
+    /* Visual breakdown */
+    .breakdown-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem; }
+    .stat-card {
+      background: var(--ec-white);
+      border: 1px solid var(--ec-border);
+      border-radius: var(--ec-radius-lg);
+      padding: 1.25rem;
+      text-align: center;
+      box-shadow: var(--ec-shadow-sm);
+    }
+    .stat-number {
+      font-family: var(--ec-font-serif);
+      font-size: 2.25rem;
+      font-weight: 600;
+      color: var(--ec-green);
+      line-height: 1;
+      margin-bottom: 0.35rem;
+    }
+    .stat-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ec-gray-400);
+    }
+    .element-list { display: flex; flex-direction: column; gap: 0.6rem; }
+    .element-row {
+      background: var(--ec-white);
+      border: 1px solid var(--ec-border);
+      border-radius: var(--ec-radius-md);
+      padding: 1rem 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--ec-shadow-sm);
+    }
+    .element-name {
+      font-family: var(--ec-font-serif);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ec-charcoal);
+    }
+    .element-color {
+      font-size: 0.75rem;
+      color: var(--ec-gray-500);
+      font-style: italic;
+    }
+    .element-role-tag {
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: 9999px;
+    }
+    .role-focal { background: var(--ec-green-pale); color: var(--ec-green); }
+    .role-accent { background: #FEF3C7; color: #92400E; }
+    .role-greenery { background: #F0FDF4; color: #166534; }
+    .role-supporting { background: var(--ec-gray-100); color: var(--ec-gray-500); }
+    .element-qty {
+      font-family: var(--ec-font-mono);
+      font-size: 0.75rem;
+      color: var(--ec-ink);
+      background: var(--ec-gray-100);
+      padding: 0.2rem 0.5rem;
+      border-radius: var(--ec-radius-sm);
+    }
+
+    /* Midjourney prompt */
+    .prompt-block {
+      background: var(--ec-charcoal);
+      color: #C9F0C0;
+      border-radius: var(--ec-radius-lg);
+      padding: 1.75rem;
+      font-family: var(--ec-font-mono);
+      font-size: 0.78rem;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      box-shadow: var(--ec-shadow-lg);
+    }
+    .prompt-section-label {
+      font-family: var(--ec-font-sans);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ec-gray-400);
+      margin: 1.5rem 0 0.75rem;
+    }
+
+    /* Palette strip */
+    .palette-strip {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.75rem;
+    }
+    .palette-chip {
+      padding: 0.3rem 0.8rem;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 500;
+      background: var(--ec-white);
+      border: 1.5px solid var(--ec-border);
+      color: var(--ec-ink);
+    }
+
+    /* Next steps */
+    .next-steps {
+      background: var(--ec-green-pale);
+      border: 1px solid rgba(74,103,65,0.15);
+      border-radius: var(--ec-radius-lg);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .next-steps-title {
+      font-family: var(--ec-font-serif);
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--ec-green);
+      margin-bottom: 1rem;
+    }
+    .next-step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 0.6rem;
+      font-size: 0.8rem;
+      color: var(--ec-ink);
+    }
+    .next-step-num {
+      min-width: 20px;
+      height: 20px;
+      background: var(--ec-green);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    @media (max-width: 900px) {
+      .main-layout { grid-template-columns: 1fr; grid-template-rows: auto 1fr; height: auto; }
+      .left-panel { max-height: 80vh; }
+      .breakdown-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Topbar -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="topbar-logo">Evercrafted</span>
+      <div class="topbar-divider"></div>
+      <span class="topbar-feature">Reverse Pipeline</span>
+    </div>
+    <span class="tier-badge">Studio</span>
+  </header>
+
+  <!-- Main -->
+  <div class="main-layout">
+
+    <!-- LEFT: Input Panel -->
+    <aside class="left-panel" id="leftPanel">
+
+      <!-- Upload -->
+      <div class="panel-section">
+        <div class="section-label">Wreath Image</div>
+        <div class="upload-zone" id="uploadZone">
+          <input type="file" accept="image/*" id="fileInput" />
+          <span class="upload-icon">🌿</span>
+          <p class="upload-title">Drop your wreath image</p>
+          <p class="upload-hint">PNG · JPG · WEBP · Up to 20MB (auto-compressed)</p>
+          <img id="previewImg" class="preview-img" style="display:none" />
+          <div id="previewOverlay" class="preview-overlay" style="display:none">
+            <span id="previewMeta"></span>
+            <button class="preview-change-btn" onclick="document.getElementById('fileInput').click()">Change</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- API Key -->
+      <div class="panel-section">
+        <div class="section-label">Configuration</div>
+        <div class="form-group">
+          <label class="form-label" for="apiKeyInput">Anthropic API Key</label>
+          <input type="password" class="form-input" id="apiKeyInput" placeholder="sk-ant-api03-…" />
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <!-- Status / Progress -->
+      <div class="panel-section" id="progressSection" style="display:none">
+        <div class="progress-wrapper">
+          <div class="progress-status">
+            <div class="progress-dot"></div>
+            <span id="statusText">Initializing…</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error / Success -->
+      <div class="panel-section" id="msgSection" style="display:none">
+        <div id="msgBox" class="msg"></div>
+      </div>
+
+      <!-- Actions -->
+      <div class="panel-section">
+        <button class="btn btn-primary" id="analyzeBtn" disabled onclick="analyzeImage()">
+          <span>↺</span> Analyze & Generate Blueprint
+        </button>
+        <button class="btn btn-ghost" onclick="resetAll()">Reset</button>
+      </div>
+
+      <!-- Detected Summary (post-analysis) -->
+      <div id="detectionSummary" style="display:none">
+        <div class="section-divider"></div>
+        <div class="panel-section">
+          <div class="section-label">Detected</div>
+          <div class="detection-grid" id="detectionGrid"></div>
+          <div style="margin-top:1rem">
+            <div class="section-label">Color Palette</div>
+            <div class="palette-strip" id="paletteStrip"></div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- RIGHT: Output Panel -->
+    <main class="right-panel">
+
+      <div class="output-topbar">
+        <div class="output-tabs">
+          <button class="output-tab active" onclick="switchTab('visual', this)">Visual Summary</button>
+          <button class="output-tab" onclick="switchTab('json', this)">Blueprint JSON</button>
+          <button class="output-tab" onclick="switchTab('prompt', this)">Midjourney Prompt</button>
+        </div>
+        <div class="output-actions">
+          <button class="action-btn" id="copyBtn" disabled onclick="copyOutput()">⊕ Copy</button>
+          <button class="action-btn" id="downloadBtn" disabled onclick="downloadOutput()">↓ Download</button>
+        </div>
+      </div>
+
+      <div class="output-area" id="outputArea">
+        <div class="placeholder-state">
+          <div class="placeholder-icon-large">⚙️</div>
+          <p class="placeholder-title">No blueprint yet</p>
+          <p class="placeholder-hint">Upload a wreath image and click Analyze to begin</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<script>
+  let currentImage = null;
+  let currentImageB64 = null;
+  let currentMediaType = 'image/jpeg';
+  let blueprintData = null;
+  let activeTab = 'visual';
+
+  // ── File Handling ──
+  document.getElementById('fileInput').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (file.size > 20 * 1024 * 1024) { showMsg('error', 'Image must be under 20MB'); return; }
+    currentImage = file;
+    currentMediaType = 'image/jpeg'; // always compress to JPEG for API
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      const dataUrl = ev.target.result;
+      // Compress via canvas — resize to max 2048px on longest side, quality 0.85
+      const img = new Image();
+      img.onload = function() {
+        const MAX = 2048;
+        let { width, height } = img;
+        if (width > MAX || height > MAX) {
+          if (width > height) { height = Math.round(height * MAX / width); width = MAX; }
+          else { width = Math.round(width * MAX / height); height = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        const compressed = canvas.toDataURL('image/jpeg', 0.85);
+        currentImageB64 = compressed.split(',')[1];
+        const compressedKB = Math.round(currentImageB64.length * 0.75 / 1024);
+        document.getElementById('previewImg').src = dataUrl;
+        document.getElementById('previewImg').style.display = 'block';
+        document.getElementById('previewOverlay').style.display = 'flex';
+        document.getElementById('previewMeta').textContent = `${file.name} · ${(file.size/1024).toFixed(0)}KB → ${compressedKB}KB`;
+        document.getElementById('uploadZone').classList.add('has-image');
+        document.querySelector('.upload-icon').style.display = 'none';
+        document.querySelector('.upload-title').style.display = 'none';
+        document.querySelector('.upload-hint').style.display = 'none';
+        updateAnalyzeBtn();
+      };
+      img.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('apiKeyInput').addEventListener('input', updateAnalyzeBtn);
+
+  function updateAnalyzeBtn() {
+    const hasImage = !!currentImage;
+    const hasKey = document.getElementById('apiKeyInput').value.trim().length > 10;
+    document.getElementById('analyzeBtn').disabled = !(hasImage && hasKey);
+  }
+
+  // ── Analysis ──
+  async function analyzeImage() {
+    const apiKey = document.getElementById('apiKeyInput').value.trim();
+    if (!currentImageB64 || !apiKey) return;
+
+    blueprintData = null;
+    document.getElementById('analyzeBtn').disabled = true;
+    document.getElementById('copyBtn').disabled = true;
+    document.getElementById('downloadBtn').disabled = true;
+    hideMsg();
+    showProgress(true, 'Vision pass — reading florals…', 15);
+    document.getElementById('detectionSummary').style.display = 'none';
+    setOutputPlaceholder('Analyzing image with Claude Vision…');
+
+    try {
+      const visionRes = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 4000,
+          messages: [{
+            role: 'user',
+            content: [
+              { type: 'image', source: { type: 'base64', media_type: currentMediaType, data: currentImageB64 } },
+              { type: 'text', text: `Analyze this wreath image and return ONLY a JSON object (no markdown, no commentary):
+
+{
+  "wreath_diameter_inches": 24,
+  "depth_inches": 4,
+  "visual_style": "elegant",
+  "color_palette": ["cream", "sage green", "burgundy"],
+  "textures": ["silk", "matte", "waxy"],
+  "elements": [
+    {
+      "type": "rose",
+      "specific_name": "cabbage rose",
+      "color": "cream white",
+      "texture": "silk satin",
+      "quantity": 5,
+      "size_description": "large 3-4 inch blooms",
+      "role": "focal"
+    }
+  ],
+  "placements": [
+    {
+      "element": "cream cabbage rose",
+      "theta": 315,
+      "radius": 8,
+      "layer": "foreground",
+      "orientation": "forward-facing"
+    }
+  ],
+  "composition": {
+    "focal_strategy": "asymmetric-cluster",
+    "density": "balanced",
+    "focal_location": "lower right quadrant (280-330 degrees)"
+  }
+}
+
+Identify: all flower types with quantities and colors, all greenery, accent elements, estimate diameter (18/24/30 inches), depth, visual style, and color palette. Include role: focal/accent/greenery/supporting.` }
+            ]
+          }]
+        })
+      });
+
+      if (!visionRes.ok) {
+        const err = await visionRes.json();
+        throw new Error(err.error?.message || `API error ${visionRes.status}`);
+      }
+
+      showProgress(true, 'Processing vision analysis…', 55);
+      const visionData = await visionRes.json();
+      const rawText = visionData.content[0].text;
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('Could not parse vision response as JSON');
+      const analysis = JSON.parse(jsonMatch[0]);
+
+      showProgress(true, 'Generating blueprint schema…', 80);
+      blueprintData = buildBlueprint(analysis);
+
+      showProgress(true, 'Complete!', 100);
+      setTimeout(() => {
+        showProgress(false);
+        showMsg('success', `✓ Blueprint generated — ${analysis.elements?.length || 0} elements detected`);
+        renderDetectionSummary(analysis);
+        renderOutput(activeTab);
+        document.getElementById('copyBtn').disabled = false;
+        document.getElementById('downloadBtn').disabled = false;
+        document.getElementById('analyzeBtn').disabled = false;
+      }, 600);
+
+    } catch(err) {
+      showProgress(false);
+      showMsg('error', err.message);
+      document.getElementById('analyzeBtn').disabled = false;
+      setOutputPlaceholder('Analysis failed — check error above and try again');
+    }
+  }
+
+  function buildBlueprint(a) {
+    return {
+      metadata: {
+        name: 'Reverse-Engineered Wreath',
+        generated_at: new Date().toISOString(),
+        version: '2.0-reverse',
+        confidence: 0.82,
+        method: 'vision-analysis',
+        aesthetic_philosophy: a.composition?.focal_location || 'Analyzed from image'
+      },
+      specifications: {
+        outer_diameter: a.wreath_diameter_inches || 24,
+        inner_diameter: Math.round((a.wreath_diameter_inches || 24) * 0.33),
+        depth: a.depth_inches || 4,
+        unit: 'inches'
+      },
+      design_brief: {
+        original_request: '[reverse-engineered from image]',
+        visual_style: a.visual_style || 'elegant',
+        target_color_palette: a.color_palette || [],
+        textures: a.textures || [],
+        focal_point_strategy: a.composition?.focal_strategy || 'asymmetric-cluster',
+        density_target: a.composition?.density || 'balanced'
+      },
+      bill_of_materials: (a.elements || []).map((el, i) => ({
+        sku: `DETECTED_${String(i+1).padStart(3,'0')}`,
+        name: `${el.specific_name || el.type} — ${el.color}`,
+        category: el.role || 'supporting',
+        role: el.role || 'supporting',
+        quantity: el.quantity || 1,
+        price_per_unit: 0,
+        total_price: 0,
+        score: 85,
+        detected_description: el.size_description || '',
+        detected_texture: el.texture || ''
+      })),
+      placements: (a.placements || []).map((p, i) => ({
+        name: p.element,
+        sku: `DETECTED_${String(i+1).padStart(3,'0')}`,
+        position: {
+          theta: p.theta || 0,
+          r: p.radius || 8,
+          orientation: p.orientation || 'tangential',
+          insertion_angle: 35
+        },
+        layer: p.layer === 'foreground' ? 1 : p.layer === 'middle' ? 2 : 3,
+        role: p.element?.toLowerCase().includes('rose') ? 'hero-anchor' : 'supporting'
+      })),
+      rendering: {
+        midjourney_prompt: buildMJPrompt(a)
+      }
+    };
+  }
+
+  function buildMJPrompt(a) {
+    const diameter = a.wreath_diameter_inches || 24;
+    const style = a.visual_style || 'elegant';
+    const palette = (a.color_palette || []).join(', ');
+    const mainFloralEl = (a.elements || []).find(e => e.role === 'focal');
+    const mainFloral = mainFloralEl ? `${mainFloralEl.color} ${mainFloralEl.specific_name || mainFloralEl.type}` : 'mixed florals';
+    return `Flat-lay, straight-on professional product photograph of a ${diameter}-inch luxury faux floral wreath, photographed on pure white background with soft natural daylight and subtle shadow depth.
+
+Asymmetrical ${style} style wreath on natural brown grapevine base, approximately 18% base visibility through small irregular micro negative spaces.
+
+Primary greenery layer covering roughly 72%, organic tangential flow, soft overlap, restrained density.
+
+Focal florals: ${mainFloral}, positioned asymmetrically. Color palette: ${palette}. Natural color variations, one bloom partially concealed behind another for depth.
+
+Accent elements organized into three small zones. Layered depth progression: greenery (rear) to florals (mid) to accents (surface).
+
+Quiet luxury aesthetic — matte and waxy foliage contrast, silk florals with subtle translucency at edges, woody stems with realistic joints, natural imperfections preserved.
+
+--v 7 --style raw --ar 1:1 --q 2 --chaos 12`;
+  }
+
+  // ── UI Rendering ──
+  function switchTab(tab, el) {
+    activeTab = tab;
+    document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    if (blueprintData) renderOutput(tab);
+  }
+
+  function renderOutput(tab) {
+    const area = document.getElementById('outputArea');
+    if (!blueprintData) { setOutputPlaceholder('Waiting for analysis…'); return; }
+
+    if (tab === 'json') {
+      area.innerHTML = `<div class="json-output">${escHtml(JSON.stringify(blueprintData, null, 2))}</div>`;
+    } else if (tab === 'prompt') {
+      area.innerHTML = `
+        <p class="prompt-section-label">Midjourney Render Prompt</p>
+        <div class="prompt-block">${escHtml(blueprintData.rendering?.midjourney_prompt || '')}</div>
+        <div class="next-steps" style="margin-top:1.5rem">
+          <p style="font-size:0.8rem;color:var(--ec-ink)">Copy this prompt directly into Midjourney (/imagine) or the Evercrafted Prompt Compiler to generate a photoreal render of this reverse-engineered design.</p>
+        </div>`;
+    } else {
+      // Visual summary
+      const bom = blueprintData.bill_of_materials || [];
+      const specs = blueprintData.specifications || {};
+      const brief = blueprintData.design_brief || {};
+      const focals = bom.filter(e => e.category === 'focal').length;
+      const totalStems = bom.reduce((sum, e) => sum + (e.quantity || 0), 0);
+
+      const statsHtml = `
+        <div class="breakdown-grid">
+          <div class="stat-card"><div class="stat-number">${specs.outer_diameter}"</div><div class="stat-label">Diameter</div></div>
+          <div class="stat-card"><div class="stat-number">${bom.length}</div><div class="stat-label">Element Types</div></div>
+          <div class="stat-card"><div class="stat-number">${totalStems}</div><div class="stat-label">Total Stems</div></div>
+          <div class="stat-card"><div class="stat-number">${focals}</div><div class="stat-label">Focal Elements</div></div>
+          <div class="stat-card"><div class="stat-number">${specs.depth}"</div><div class="stat-label">Depth</div></div>
+          <div class="stat-card"><div class="stat-number">${Math.round(blueprintData.metadata?.confidence * 100)}%</div><div class="stat-label">Confidence</div></div>
+        </div>`;
+
+      const elementsHtml = bom.map(el => `
+        <div class="element-row">
+          <div>
+            <div class="element-name">${escHtml(el.name)}</div>
+            <div class="element-color">${escHtml(el.detected_description || '')}</div>
+          </div>
+          <span class="element-role-tag role-${el.role || 'supporting'}">${el.role || 'supporting'}</span>
+          <span class="element-qty">×${el.quantity}</span>
+        </div>`).join('');
+
+      const paletteHtml = (brief.target_color_palette || []).map(c =>
+        `<span class="palette-chip">${escHtml(c)}</span>`).join('');
+
+      const nextStepsHtml = [
+        'Review detected elements for accuracy — AI vision is ~82% reliable',
+        'Match placeholder SKUs (DETECTED_001…) to your verified supplier database',
+        'Adjust stem quantities based on actual wreath density',
+        'Add pricing from your inventory for cost-to-build estimate',
+        'Send to Blueprint Scoring Engine to validate composition quality',
+        'Use Midjourney Prompt tab to generate a render preview'
+      ].map((s, i) => `<div class="next-step-item"><div class="next-step-num">${i+1}</div><span>${s}</span></div>`).join('');
+
+      area.innerHTML = `
+        <p class="prompt-section-label" style="margin-top:0">Design Metrics</p>
+        ${statsHtml}
+        ${paletteHtml ? `<p class="prompt-section-label">Color Palette</p><div class="palette-strip" style="margin-bottom:1.5rem">${paletteHtml}</div>` : ''}
+        <p class="prompt-section-label">Bill of Materials</p>
+        <div class="element-list">${elementsHtml || '<p style="color:var(--ec-gray-400);font-size:0.8rem">No elements detected</p>'}</div>
+        <div class="next-steps">
+          <p class="next-steps-title">Next Steps</p>
+          ${nextStepsHtml}
+        </div>`;
+    }
+  }
+
+  function renderDetectionSummary(a) {
+    const grid = document.getElementById('detectionGrid');
+    grid.innerHTML = `
+      <div class="detection-card"><div class="detection-card-label">Diameter</div><div class="detection-card-value">${a.wreath_diameter_inches || '?'}"</div></div>
+      <div class="detection-card"><div class="detection-card-label">Depth</div><div class="detection-card-value">${a.depth_inches || '?'}"</div></div>
+      <div class="detection-card full"><div class="detection-card-label">Visual Style</div><div class="detection-card-value" style="font-size:0.875rem;font-weight:500">${escHtml(a.visual_style || '—')}</div></div>
+      <div class="detection-card"><div class="detection-card-label">Elements</div><div class="detection-card-value">${(a.elements || []).length}</div></div>
+      <div class="detection-card"><div class="detection-card-label">Placements</div><div class="detection-card-value">${(a.placements || []).length}</div></div>`;
+    const strip = document.getElementById('paletteStrip');
+    strip.innerHTML = (a.color_palette || []).map(c =>
+      `<span class="palette-chip">${escHtml(c)}</span>`).join('');
+    document.getElementById('detectionSummary').style.display = 'block';
+  }
+
+  function setOutputPlaceholder(msg) {
+    document.getElementById('outputArea').innerHTML = `
+      <div class="placeholder-state">
+        <div class="placeholder-icon-large">⚙️</div>
+        <p class="placeholder-title">No blueprint yet</p>
+        <p class="placeholder-hint">${escHtml(msg)}</p>
+      </div>`;
+  }
+
+  // ── Copy / Download ──
+  function copyOutput() {
+    if (!blueprintData) return;
+    const text = activeTab === 'json'
+      ? JSON.stringify(blueprintData, null, 2)
+      : activeTab === 'prompt'
+        ? blueprintData.rendering?.midjourney_prompt || ''
+        : JSON.stringify(blueprintData.bill_of_materials, null, 2);
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copyBtn');
+      btn.textContent = '✓ Copied';
+      setTimeout(() => { btn.innerHTML = '⊕ Copy'; }, 2000);
+    });
+  }
+
+  function downloadOutput() {
+    if (!blueprintData) return;
+    const content = JSON.stringify(blueprintData, null, 2);
+    const blob = new Blob([content], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `evercrafted-blueprint-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ── Utilities ──
+  function showProgress(visible, msg, pct) {
+    const sec = document.getElementById('progressSection');
+    sec.style.display = visible ? 'block' : 'none';
+    if (visible) {
+      document.getElementById('statusText').textContent = msg || '';
+      document.getElementById('progressFill').style.width = (pct || 0) + '%';
+    }
+  }
+
+  function showMsg(type, text) {
+    const sec = document.getElementById('msgSection');
+    const box = document.getElementById('msgBox');
+    sec.style.display = 'block';
+    box.className = `msg msg-${type}`;
+    box.textContent = text;
+  }
+  function hideMsg() {
+    document.getElementById('msgSection').style.display = 'none';
+  }
+
+  function resetAll() {
+    currentImage = null; currentImageB64 = null; blueprintData = null;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('previewImg').style.display = 'none';
+    document.getElementById('previewImg').src = '';
+    document.getElementById('previewOverlay').style.display = 'none';
+    document.getElementById('uploadZone').classList.remove('has-image');
+    document.querySelector('.upload-icon').style.display = '';
+    document.querySelector('.upload-title').style.display = '';
+    document.querySelector('.upload-hint').style.display = '';
+    document.getElementById('detectionSummary').style.display = 'none';
+    document.getElementById('copyBtn').disabled = true;
+    document.getElementById('downloadBtn').disabled = true;
+    document.getElementById('analyzeBtn').disabled = true;
+    showProgress(false);
+    hideMsg();
+    setOutputPlaceholder('Upload a wreath image and click Analyze to begin');
+  }
+
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>

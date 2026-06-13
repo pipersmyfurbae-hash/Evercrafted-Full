@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Where Craft Meets Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ec-white:       #FFFFFF;
+  --ec-off-white:   #F9F7F4;
+  --ec-paper:       #F2EFE9;
+  --ec-black:       #1A1A1A;
+  --ec-charcoal:    #2E2E2E;
+  --ec-ink:         #4A4A4A;
+  --ec-green:       #4A6741;
+  --ec-green-light: #6B8F67;
+  --ec-green-pale:  #EEF2ED;
+  --ec-green-dim:   rgba(74,103,65,0.12);
+  --ec-gray-200:    #E8E8E8;
+  --ec-gray-300:    #D0D0D0;
+  --ec-gray-400:    #A8A8A8;
+  --ec-gray-500:    #787878;
+  --ec-serif:       'Cormorant Garamond', Georgia, serif;
+  --ec-sans:        'Inter', system-ui, sans-serif;
+  --ec-script:      'Dancing Script', cursive;
+  --ease-out:       cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--ec-sans);
+  background: var(--ec-off-white);
+  color: var(--ec-black);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 60px;
+  background: rgba(249,247,244,0.88);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s;
+}
+nav.scrolled { border-color: var(--ec-gray-200); }
+.nav-brand {
+  font-family: var(--ec-script);
+  font-size: 1.6rem;
+  color: var(--ec-green);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+.nav-links {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ec-ink);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--ec-green); }
+.nav-cta {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ec-white);
+  background: var(--ec-black);
+  padding: 10px 24px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+}
+.nav-cta:hover { background: var(--ec-green); transform: translateY(-1px); }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 80px;
+  overflow: hidden;
+}
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 60px 80px 60px;
+  position: relative;
+}
+.hero-tag {
+  font-family: var(--ec-sans);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ec-green);
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.8s var(--ease-out) 0.2s forwards;
+}
+.hero-tag::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--ec-green);
+}
+.hero-title {
+  font-family: var(--ec-serif);
+  font-size: clamp(3rem, 5vw, 5.5rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ec-black);
+  margin-bottom: 8px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.9s var(--ease-out) 0.35s forwards;
+}
+.hero-title em {
+  font-style: italic;
+  color: var(--ec-green);
+}
+.hero-title-script {
+  font-family: var(--ec-script);
+  font-size: clamp(2.5rem, 4vw, 4.5rem);
+  color: var(--ec-charcoal);
+  display: block;
+  line-height: 1.2;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.9s var(--ease-out) 0.5s forwards;
+}
+.hero-body {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--ec-ink);
+  max-width: 420px;
+  margin: 32px 0 48px;
+  font-weight: 300;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.8s var(--ease-out) 0.65s forwards;
+}
+.hero-actions {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.8s var(--ease-out) 0.78s forwards;
+}
+.btn-primary {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ec-white);
+  background: var(--ec-black);
+  padding: 14px 36px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: all 0.25s;
+  display: inline-block;
+}
+.btn-primary:hover { background: var(--ec-green); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74,103,65,0.25); }
+.btn-ghost {
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ec-ink);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 0.2s, gap 0.2s;
+}
+.btn-ghost:hover { color: var(--ec-green); gap: 14px; }
+.btn-ghost::after { content: '→'; }
+
+.hero-right {
+  position: relative;
+  background: var(--ec-paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeIn 1.2s var(--ease-out) 0.4s forwards;
+}
+.hero-visual {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hero-wreath-bg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.wreath-circle-outer {
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  border: 1px solid var(--ec-gray-300);
+  position: absolute;
+  animation: slowRotate 60s linear infinite;
+}
+.wreath-circle-inner {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  border: 1px solid var(--ec-gray-300);
+  position: absolute;
+  animation: slowRotate 40s linear infinite reverse;
+}
+.hero-center-card {
+  background: var(--ec-white);
+  border-radius: 4px;
+  padding: 48px 40px;
+  text-align: center;
+  box-shadow: 0 2px 32px rgba(0,0,0,0.08);
+  position: relative;
+  z-index: 2;
+  max-width: 280px;
+}
+.hero-center-card .script-accent {
+  font-family: var(--ec-script);
+  font-size: 1.3rem;
+  color: var(--ec-green);
+  display: block;
+  margin-bottom: 12px;
+}
+.hero-center-card h3 {
+  font-family: var(--ec-serif);
+  font-size: 1.5rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--ec-black);
+  margin-bottom: 20px;
+}
+.hero-center-card p {
+  font-size: 0.82rem;
+  color: var(--ec-gray-500);
+  letter-spacing: 0.06em;
+  line-height: 1.7;
+}
+.hero-leaf-1, .hero-leaf-2, .hero-leaf-3 {
+  position: absolute;
+  opacity: 0.18;
+  color: var(--ec-green);
+}
+.hero-leaf-1 { top: 80px; right: 60px; transform: rotate(30deg); }
+.hero-leaf-2 { bottom: 100px; left: 50px; transform: rotate(-45deg); }
+.hero-leaf-3 { top: 50%; right: 40px; transform: rotate(60deg) translateY(-50%); }
+
+/* ── ABOUT ── */
+#about {
+  padding: 120px 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: center;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.about-left .section-tag {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ec-green);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.about-left .section-tag::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--ec-green);
+}
+.about-left h2 {
+  font-family: var(--ec-serif);
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 28px;
+}
+.about-left p {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--ec-ink);
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+.about-signature {
+  margin-top: 36px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.signature-line {
+  font-family: var(--ec-script);
+  font-size: 1.8rem;
+  color: var(--ec-green);
+}
+.signature-meta {
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ec-gray-400);
+  line-height: 1.6;
+}
+.about-right {
+  position: relative;
+}
+.about-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.stat-card {
+  background: var(--ec-white);
+  padding: 40px 32px;
+  text-align: center;
+}
+.stat-card:nth-child(1) { background: var(--ec-black); color: var(--ec-white); border-radius: 4px 0 0 0; }
+.stat-card:nth-child(2) { background: var(--ec-green-pale); border-radius: 0 4px 0 0; }
+.stat-card:nth-child(3) { background: var(--ec-paper); border-radius: 0 0 0 4px; }
+.stat-card:nth-child(4) { background: var(--ec-green); color: var(--ec-white); border-radius: 0 0 4px 0; }
+.stat-number {
+  font-family: var(--ec-serif);
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.stat-card:nth-child(1) .stat-number { color: var(--ec-white); }
+.stat-card:nth-child(4) .stat-number { color: var(--ec-white); }
+.stat-label {
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.stat-card:nth-child(2) .stat-label { color: var(--ec-green); opacity: 0.8; }
+.stat-card:nth-child(3) .stat-label { color: var(--ec-ink); }
+
+/* ── DIVIDER ── */
+.botanical-divider {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 60px;
+  color: var(--ec-gray-300);
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.botanical-divider::before,
+.botanical-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ec-gray-200);
+}
+.botanical-divider svg { flex-shrink: 0; }
+
+/* ── SERVICES ── */
+#services {
+  padding: 120px 60px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.services-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  margin-bottom: 80px;
+  align-items: end;
+}
+.services-header .section-tag {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ec-green);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.services-header .section-tag::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--ec-green);
+}
+.services-header h2 {
+  font-family: var(--ec-serif);
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 300;
+  line-height: 1.2;
+}
+.services-header-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.services-header-right p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--ec-ink);
+  font-weight: 300;
+  margin-bottom: 28px;
+}
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.service-card {
+  background: var(--ec-white);
+  padding: 48px 36px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s var(--ease-out);
+  cursor: default;
+}
+.service-card:hover { transform: translateY(-4px); z-index: 2; box-shadow: 0 12px 40px rgba(0,0,0,0.1); }
+.service-card:nth-child(2) { background: var(--ec-black); }
+.service-card:nth-child(5) { background: var(--ec-green); }
+.service-num {
+  font-family: var(--ec-serif);
+  font-size: 3.5rem;
+  font-weight: 300;
+  line-height: 1;
+  color: var(--ec-gray-200);
+  margin-bottom: 28px;
+  display: block;
+}
+.service-card:nth-child(2) .service-num { color: rgba(255,255,255,0.12); }
+.service-card:nth-child(5) .service-num { color: rgba(255,255,255,0.2); }
+.service-title {
+  font-family: var(--ec-serif);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--ec-black);
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+.service-card:nth-child(2) .service-title,
+.service-card:nth-child(5) .service-title { color: var(--ec-white); }
+.service-desc {
+  font-size: 0.88rem;
+  line-height: 1.75;
+  color: var(--ec-gray-500);
+  font-weight: 300;
+}
+.service-card:nth-child(2) .service-desc { color: rgba(255,255,255,0.55); }
+.service-card:nth-child(5) .service-desc { color: rgba(255,255,255,0.7); }
+.service-tag {
+  display: inline-block;
+  margin-top: 28px;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ec-green);
+  border: 1px solid var(--ec-green-pale);
+  background: var(--ec-green-pale);
+  padding: 4px 12px;
+  border-radius: 2px;
+}
+.service-card:nth-child(2) .service-tag { color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+.service-card:nth-child(5) .service-tag { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.25); }
+
+/* ── TESTIMONIAL STRIP ── */
+.testimonial-strip {
+  background: var(--ec-paper);
+  border-top: 1px solid var(--ec-gray-200);
+  border-bottom: 1px solid var(--ec-gray-200);
+  padding: 64px 60px;
+  overflow: hidden;
+}
+.testimonial-track {
+  display: flex;
+  gap: 80px;
+  align-items: center;
+  animation: marquee 40s linear infinite;
+  width: max-content;
+}
+.testimonial-item {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  min-width: 360px;
+  flex-shrink: 0;
+}
+.testimonial-quote-mark {
+  font-family: var(--ec-serif);
+  font-size: 3rem;
+  line-height: 1;
+  color: var(--ec-green);
+  flex-shrink: 0;
+  margin-top: -8px;
+}
+.testimonial-text {
+  font-family: var(--ec-serif);
+  font-size: 1.05rem;
+  font-style: italic;
+  line-height: 1.65;
+  color: var(--ec-charcoal);
+}
+.testimonial-author {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ec-gray-400);
+  margin-top: 10px;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ── CONTACT ── */
+#contact {
+  padding: 120px 60px;
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: start;
+}
+.contact-left .section-tag {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ec-green);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.contact-left .section-tag::before {
+  content: '';
+  display: block;
+  width: 28px;
+  height: 1px;
+  background: var(--ec-green);
+}
+.contact-left h2 {
+  font-family: var(--ec-serif);
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 300;
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+.contact-left p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--ec-ink);
+  font-weight: 300;
+  margin-bottom: 40px;
+}
+.contact-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.contact-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+.contact-icon {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--ec-gray-200);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.contact-item-label {
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ec-gray-400);
+  margin-bottom: 4px;
+}
+.contact-item-value {
+  font-family: var(--ec-serif);
+  font-size: 1.05rem;
+  color: var(--ec-black);
+}
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.form-group label {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ec-gray-500);
+  font-weight: 500;
+}
+.form-group input,
+.form-group textarea,
+.form-group select {
+  background: var(--ec-white);
+  border: 1px solid var(--ec-gray-200);
+  border-radius: 2px;
+  padding: 14px 18px;
+  font-family: var(--ec-sans);
+  font-size: 0.9rem;
+  color: var(--ec-black);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  font-weight: 300;
+  appearance: none;
+}
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--ec-green);
+  box-shadow: 0 0 0 3px var(--ec-green-dim);
+}
+.form-group textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: var(--ec-gray-400); }
+.form-submit {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.form-note {
+  font-size: 0.78rem;
+  color: var(--ec-gray-400);
+}
+.btn-submit {
+  background: var(--ec-black);
+  color: var(--ec-white);
+  border: none;
+  padding: 14px 40px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.25s;
+  font-family: var(--ec-sans);
+}
+.btn-submit:hover { background: var(--ec-green); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74,103,65,0.25); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--ec-black);
+  color: var(--ec-white);
+  padding: 60px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 60px;
+  align-items: start;
+}
+.footer-brand .script-logo {
+  font-family: var(--ec-script);
+  font-size: 1.8rem;
+  color: var(--ec-green-light);
+  display: block;
+  margin-bottom: 16px;
+}
+.footer-brand p {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.4);
+  font-weight: 300;
+  max-width: 280px;
+}
+.footer-col h4 {
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 20px;
+}
+.footer-col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.footer-col ul a {
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.6);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.footer-col ul a:hover { color: var(--ec-green-light); }
+.footer-bottom {
+  background: var(--ec-charcoal);
+  padding: 24px 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-bottom p {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.04em;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+@keyframes slowRotate {
+  to { transform: rotate(360deg); }
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--ease-out);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  #hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-right { display: none; }
+  .hero-left { padding: 120px 40px 80px; }
+  #about, #contact { grid-template-columns: 1fr; gap: 60px; padding: 80px 40px; }
+  .services-header { grid-template-columns: 1fr; gap: 20px; }
+  .services-grid { grid-template-columns: 1fr 1fr; }
+  #services { padding: 80px 40px; }
+  nav { padding: 18px 40px; }
+  .nav-links { gap: 24px; }
+  footer { grid-template-columns: 1fr 1fr; padding: 48px 40px; }
+  .footer-brand { grid-column: 1 / -1; }
+  .footer-bottom { padding: 20px 40px; }
+}
+@media (max-width: 640px) {
+  nav { padding: 16px 24px; }
+  .nav-links { display: none; }
+  .hero-left { padding: 100px 24px 60px; }
+  #about, #contact, #services { padding: 60px 24px; }
+  .services-grid { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .about-stats-grid { grid-template-columns: 1fr 1fr; }
+  .botanical-divider { padding: 0 24px; }
+  footer { grid-template-columns: 1fr; padding: 40px 24px; }
+  .footer-bottom { padding: 16px 24px; flex-direction: column; gap: 8px; text-align: center; }
+  .testimonial-strip { padding: 48px 0; }
+  .form-submit { flex-direction: column; align-items: flex-start; gap: 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#" class="nav-brand">Evercrafted</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Platform</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Join Waitlist</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-tag">Launching 2025</div>
+    <h1 class="hero-title">The studio for<br><em>serious</em> makers</h1>
+    <span class="hero-title-script">& designers</span>
+    <p class="hero-body">Evercrafted is the all-in-one platform for professional wreath makers and interior designers — design, manage, sell, and grow your craft business from one elegant workspace.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Request Early Access</a>
+      <a href="#services" class="btn-ghost">See the platform</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-visual">
+      <div class="hero-wreath-bg">
+        <div class="wreath-circle-outer"></div>
+        <div class="wreath-circle-inner"></div>
+      </div>
+      <!-- Leaf accents -->
+      <div class="hero-leaf-1">
+        <svg width="60" height="60" viewBox="0 0 32 32" fill="none" style="color:var(--ec-green)">
+          <path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+          <path d="M16 18C16 18 12 16 10 13" stroke="currentColor" stroke-width="1" fill="none"/>
+          <path d="M16 14C16 14 20 12 22 9" stroke="currentColor" stroke-width="1" fill="none"/>
+        </svg>
+      </div>
+      <div class="hero-leaf-2">
+        <svg width="48" height="48" viewBox="0 0 32 32" fill="none" style="color:var(--ec-green)">
+          <path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+        </svg>
+      </div>
+      <div class="hero-center-card">
+        <span class="script-accent">Design beautifully</span>
+        <h3>Blueprint. Build. Sell.</h3>
+        <p>From wreath blueprint<br>to storefront listing<br>in one workflow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-left reveal">
+    <div class="section-tag">Our Story</div>
+    <h2>Built by makers, for the art of making</h2>
+    <p>Evercrafted was born from a simple frustration: talented wreath artists and interior designers were spending more time managing spreadsheets than doing what they love. We believed there had to be a better way.</p>
+    <p>The platform unifies design tools, supply tracking, client management, and selling into one refined workspace — so you can spend more time creating, and less time juggling tools.</p>
+    <div class="about-signature">
+      <span class="signature-line">Bret</span>
+      <div class="signature-meta">Founder & Designer<br>Evercrafted Studio</div>
+    </div>
+  </div>
+  <div class="about-right reveal reveal-delay-2">
+    <div class="about-stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" style="color:#fff">500K+</div>
+        <div class="stat-label" style="color:rgba(255,255,255,0.5)">Wreath sellers in the US</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color:var(--ec-green)">6+</div>
+        <div class="stat-label">Tools replaced by one</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color:var(--ec-ink)">19</div>
+        <div class="stat-label">Modular apps available</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">4</div>
+        <div class="stat-label" style="color:rgba(255,255,255,0.6)">Subscription tiers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTANICAL DIVIDER -->
+<div class="botanical-divider">
+  <svg width="24" height="24" viewBox="0 0 32 32" fill="none" style="color:var(--ec-gray-300)">
+    <path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+    <path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+    <path d="M16 18C16 18 12 16 10 13" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M16 14C16 14 20 12 22 9" stroke="currentColor" stroke-width="1" fill="none"/>
+  </svg>
+</div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-header reveal">
+    <div>
+      <div class="section-tag">The Platform</div>
+      <h2>Every tool your craft business needs</h2>
+    </div>
+    <div class="services-header-right">
+      <p>Four subscription tiers — from Bloom for beginners to Atelier for professionals — with modular apps you can mix and match to build the perfect workspace.</p>
+      <a href="#contact" class="btn-ghost" style="font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:color 0.2s,gap 0.2s;">Explore all 19 apps</a>
+    </div>
+  </div>
+  <div class="services-grid reveal">
+    <div class="service-card">
+      <span class="service-num">01</span>
+      <div class="service-title">Wreath Design Studio</div>
+      <p class="service-desc">Drag-and-drop wreath canvas with polar coordinate placement, real-time COGS calculation, and blueprint export. Design and price simultaneously.</p>
+      <span class="service-tag">Studio Tier</span>
+    </div>
+    <div class="service-card">
+      <span class="service-num">02</span>
+      <div class="service-title">AI Stylist & Trend Engine</div>
+      <p class="service-desc">Seasonal trend analysis from Pinterest and Instagram. Color palette suggestions, floriography lookups, and Midjourney prompt generation for visualizations.</p>
+      <span class="service-tag">Atelier Tier</span>
+    </div>
+    <div class="service-card">
+      <span class="service-num">03</span>
+      <div class="service-title">Supply & Inventory Tracker</div>
+      <p class="service-desc">Log materials with unit costs. Auto-reorder alerts, supplier integrations, and per-design cost breakdowns linked directly to your blueprints.</p>
+      <span class="service-tag">Craft Tier</span>
+    </div>
+    <div class="service-card">
+      <span class="service-num">04</span>
+      <div class="service-title">Room Visualizer</div>
+      <p class="service-desc">Interior designer moodboard builder with AR decor overlay, color palette extraction from room photos, and shoppable product proposals for clients.</p>
+      <span class="service-tag">Studio Tier</span>
+    </div>
+    <div class="service-card">
+      <span class="service-num">05</span>
+      <div class="service-title">Client Portal</div>
+      <p class="service-desc">White-labeled client workspace for designers. Share concepts, collect approvals, send invoices, and take deposits — all in one branded experience.</p>
+      <span class="service-tag">Pro Tier</span>
+    </div>
+    <div class="service-card">
+      <span class="service-num">06</span>
+      <div class="service-title">Storefront & Marketplace</div>
+      <p class="service-desc">Sell direct from your Evercrafted storefront or list in the maker marketplace. Integrated shipping, tax, and Etsy/Instagram sync.</p>
+      <span class="service-tag">All Tiers</span>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<div class="testimonial-strip">
+  <div class="testimonial-track">
+    <!-- First set -->
+    <div class="testimonial-item">
+      <div class="testimonial-quote-mark">"</div>
+      <div>
+        <p class="testimonial-text">Finally a tool that understands how wreath makers actually think. The blueprint generator alone is worth every penny.</p>
+        <p class="testimonial-author">Sarah M. — Professional Wreath Artist, Nashville</p>
+      </div>
+    </div>
+    <div class="testimonial-item">
+      <div class="testimonial-quote-mark">"</div>
+      <div>
+        <p class="testimonial-text">I replaced six different tools with Evercrafted. My clients love the portal and I love having everything in one place.</p>
+        <p class="testimonial-author">Diane K. — Interior Design Consultant, Chicago</p>
+      </div>
+    </div>
+    <div class="testimonial-item">
+      <div class="testimonial-quote-mark">"</div>
+      <div>
+        <p class="testimonial-text">The supply tracker connected to my designs changed everything. I know my margins before I even start building.</p>
+        <p class="testimonial-author">Jessica R. — Etsy Seller & Wreath Educator</p>
+      </div>
+    </div>
+    <div class="testimonial-item">
+      <div class="testimonial-quote-mark">"</div>
+      <div>
+        <p class="testimonial-text">The AI trend alerts every season are like having a style consultant on retainer. Absolute game-changer for my fall collection.</p>
+        <p class="testimonial-author">Amber T. — Seasonal Decor Studio Owner</p>
+      </div>
+    </div>
+    <!-- Duplicate for infinite loop -->
+    <div class="testimonial-item">
+      <div class="testimonial-quote-mark">"</div>
+      <div>
+        <p class="testimonial-text">Finally a tool that understands how wreath makers actually think. The blueprint generator alone is worth every penny.</p>
+        <p class="testimonial-author">Sarah M. — Professional Wreath Artist, Nashville</p>
+      </div>
+    </div>
+    <div class="testimonial-item">
+      <div class="testimonial-quote-mark">"</div>
+      <div>
+        <p class="testimonial-text">I replaced six different tools with Evercrafted. My clients love the portal and I love having everything in one place.</p>
+        <p class="testimonial-author">Diane K. — Interior Design Consultant, Chicago</p>
+      </div>
+    </div>
+    <div class="testimonial-item">
+      <div class="testimonial-quote-mark">"</div>
+      <div>
+        <p class="testimonial-text">The supply tracker connected to my designs changed everything. I know my margins before I even start building.</p>
+        <p class="testimonial-author">Jessica R. — Etsy Seller & Wreath Educator</p>
+      </div>
+    </div>
+    <div class="testimonial-item">
+      <div class="testimonial-quote-mark">"</div>
+      <div>
+        <p class="testimonial-text">The AI trend alerts every season are like having a style consultant on retainer. Absolute game-changer for my fall collection.</p>
+        <p class="testimonial-author">Amber T. — Seasonal Decor Studio Owner</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-left reveal">
+    <div class="section-tag">Get in Touch</div>
+    <h2>Join the waitlist or ask us anything</h2>
+    <p>We're opening early access to a small group of professional makers and designers. Apply below, or reach out with any questions about the platform.</p>
+    <div class="contact-detail">
+      <div class="contact-item">
+        <div class="contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ec-green)" stroke-width="1.5">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+        </div>
+        <div>
+          <div class="contact-item-label">Email</div>
+          <div class="contact-item-value">hello@evercrafted.com</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ec-green)" stroke-width="1.5">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <div>
+          <div class="contact-item-label">Based in</div>
+          <div class="contact-item-value">Cincinnati, Ohio</div>
+        </div>
+      </div>
+      <div class="contact-item">
+        <div class="contact-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ec-green)" stroke-width="1.5">
+            <rect x="2" y="3" width="20" height="14" rx="2"/>
+            <path d="M8 21h8M12 17v4"/>
+          </svg>
+        </div>
+        <div>
+          <div class="contact-item-label">Platform</div>
+          <div class="contact-item-value">Launching 2025 · SaaS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="contact-form reveal reveal-delay-2" id="contact-form-wrap">
+    <div class="form-row">
+      <div class="form-group">
+        <label>First Name</label>
+        <input type="text" placeholder="Sarah">
+      </div>
+      <div class="form-group">
+        <label>Last Name</label>
+        <input type="text" placeholder="Mitchell">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Email Address</label>
+      <input type="email" placeholder="you@studio.com">
+    </div>
+    <div class="form-group">
+      <label>I am a…</label>
+      <select>
+        <option value="" disabled selected>Select your role</option>
+        <option>Wreath Maker / Crafter</option>
+        <option>Interior Designer</option>
+        <option>Both</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Message (optional)</label>
+      <textarea placeholder="Tell us about your business or any questions you have…"></textarea>
+    </div>
+    <div class="form-submit">
+      <span class="form-note">We'll respond within 24 hours.</span>
+      <button class="btn-submit" onclick="handleSubmit(event)">Request Access →</button>
+    </div>
+    <div id="form-success" style="display:none;background:var(--ec-green-pale);border:1px solid var(--ec-green-dim);border-radius:4px;padding:20px 24px;">
+      <p style="font-family:var(--ec-serif);font-size:1.1rem;color:var(--ec-green);margin-bottom:6px">You're on the list ✦</p>
+      <p style="font-size:0.85rem;color:var(--ec-ink)">Thanks for reaching out. We'll be in touch with early access details soon.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">
+    <span class="script-logo">Evercrafted</span>
+    <p>The all-in-one platform for professional wreath makers and interior designers. Design beautifully, build confidently, sell with ease.</p>
+  </div>
+  <div class="footer-col">
+    <h4>Platform</h4>
+    <ul>
+      <li><a href="#services">All Apps</a></li>
+      <li><a href="#services">Pricing</a></li>
+      <li><a href="#services">Bloom Tier</a></li>
+      <li><a href="#services">Atelier Tier</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h4>Company</h4>
+    <ul>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2025 Evercrafted. All rights reserved.</p>
+  <p style="font-family:var(--ec-script);font-size:1rem;color:rgba(255,255,255,0.2)">Made with care</p>
+</div>
+
+<script>
+// Nav scroll effect
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Service card hover lift on touch devices
+document.querySelectorAll('.service-card').forEach(card => {
+  card.addEventListener('mouseenter', () => {
+    document.querySelectorAll('.service-card').forEach(c => {
+      if (c !== card) c.style.opacity = '0.7';
+    });
+  });
+  card.addEventListener('mouseleave', () => {
+    document.querySelectorAll('.service-card').forEach(c => c.style.opacity = '1');
+  });
+});
+
+// Contact form
+function handleSubmit(e) {
+  e.preventDefault();
+  const form = document.getElementById('contact-form-wrap');
+  const success = document.getElementById('form-success');
+  const inputs = form.querySelectorAll('input, textarea, select, button');
+  inputs.forEach(el => el.style.opacity = '0.3');
+  setTimeout(() => {
+    success.style.display = 'block';
+    success.style.animation = 'fadeUp 0.5s ease forwards';
+  }, 400);
+}
+
+// Smooth hover on ghost buttons
+document.querySelectorAll('.btn-ghost').forEach(btn => {
+  btn.addEventListener('mouseenter', () => btn.style.gap = '14px');
+  btn.addEventListener('mouseleave', () => btn.style.gap = '8px');
+});
+</script>
+</body>
+</html>

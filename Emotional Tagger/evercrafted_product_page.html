@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emotion-Tagged Inventory Starter — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ec-white:       #FFFFFF;
+    --ec-off-white:   #F9F7F4;
+    --ec-paper:       #F2EFE9;
+    --ec-black:       #1A1A1A;
+    --ec-charcoal:    #2E2E2E;
+    --ec-ink:         #4A4A4A;
+    --ec-green:       #4A6741;
+    --ec-green-light: #6B8F67;
+    --ec-green-pale:  #EEF2ED;
+    --ec-green-dim:   rgba(74,103,65,0.10);
+    --ec-gray-200:    #E8E8E8;
+    --ec-gray-400:    #A8A8A8;
+    --ec-gray-500:    #787878;
+    --ec-serif:       'Cormorant Garamond', Georgia, serif;
+    --ec-sans:        'Inter', system-ui, sans-serif;
+    --ec-script:      'Dancing Script', cursive;
+    --ec-shadow-lg:   0 8px 40px rgba(0,0,0,0.09);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--ec-sans); background: var(--ec-white); color: var(--ec-black); line-height: 1.6; }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 6rem 1.5rem 4rem;
+    background: var(--ec-off-white);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(74,103,65,0.07) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-family: var(--ec-sans);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ec-green);
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.1s forwards;
+  }
+  .hero-title {
+    font-family: var(--ec-serif);
+    font-size: clamp(42px, 7vw, 80px);
+    font-weight: 300;
+    line-height: 1.08;
+    letter-spacing: -0.02em;
+    color: var(--ec-black);
+    max-width: 820px;
+    margin-bottom: 1.25rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.2s forwards;
+  }
+  .hero-title em { font-style: italic; color: var(--ec-green); }
+  .hero-sub {
+    font-family: var(--ec-sans);
+    font-size: 17px;
+    color: var(--ec-ink);
+    max-width: 520px;
+    line-height: 1.65;
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.35s forwards;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s ease 0.5s forwards;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ec-green);
+    color: var(--ec-white);
+    font-family: var(--ec-sans);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 14px 32px;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: background 200ms ease, transform 200ms ease;
+  }
+  .btn-primary:hover { background: var(--ec-charcoal); transform: translateY(-2px); }
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    color: var(--ec-ink);
+    font-family: var(--ec-sans);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 14px 28px;
+    text-decoration: none;
+    border: 1px solid var(--ec-gray-200);
+    transition: border-color 200ms ease, color 200ms ease;
+  }
+  .btn-ghost:hover { border-color: var(--ec-green); color: var(--ec-green); }
+  .hero-price-note {
+    margin-top: 1.25rem;
+    font-size: 13px;
+    color: var(--ec-gray-500);
+    opacity: 0;
+    animation: fadeUp 0.7s ease 0.65s forwards;
+  }
+  .hero-price-note strong { color: var(--ec-black); font-weight: 600; }
+
+  /* ── STATS BAR ── */
+  .stats {
+    background: var(--ec-green);
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+  }
+  .stat { text-align: center; color: var(--ec-white); }
+  .stat-num { font-family: var(--ec-serif); font-size: 32px; font-weight: 300; line-height: 1; display: block; }
+  .stat-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; opacity: 0.75; margin-top: 3px; display: block; }
+
+  /* ── SECTIONS ── */
+  section { padding: 6rem 1.5rem; }
+  .container { max-width: 1080px; margin: 0 auto; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ec-green);
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: var(--ec-serif);
+    font-size: clamp(30px, 4vw, 46px);
+    font-weight: 300;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+  .section-body { font-size: 16px; color: var(--ec-ink); line-height: 1.7; max-width: 560px; }
+
+  /* ── WHAT'S INSIDE ── */
+  .inside { background: var(--ec-paper); }
+  .inside-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .inside-card {
+    background: var(--ec-white);
+    padding: 2rem 1.75rem;
+    border: 1px solid var(--ec-gray-200);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+  .inside-card:hover { transform: translateY(-3px); box-shadow: var(--ec-shadow-lg); }
+  .inside-card-num {
+    font-family: var(--ec-serif);
+    font-size: 42px;
+    font-weight: 300;
+    color: var(--ec-green);
+    line-height: 1;
+    margin-bottom: 0.75rem;
+  }
+  .inside-card h3 { font-family: var(--ec-sans); font-size: 14px; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: 0.02em; }
+  .inside-card p { font-size: 14px; color: var(--ec-ink); line-height: 1.6; }
+
+  /* ── EMOTION PREVIEW ── */
+  .emotions-section { background: var(--ec-white); }
+  .emotion-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 2rem; }
+  .emotion-pill {
+    font-size: 12px;
+    padding: 5px 14px;
+    border: 1px solid var(--ec-green-pale);
+    color: var(--ec-green);
+    background: var(--ec-green-pale);
+    font-family: var(--ec-sans);
+    font-weight: 500;
+    transition: background 150ms ease;
+    cursor: default;
+  }
+  .emotion-pill:hover { background: var(--ec-green); color: var(--ec-white); }
+
+  /* ── SAMPLE TABLE ── */
+  .sample-section { background: var(--ec-off-white); }
+  .table-wrap { overflow-x: auto; margin-top: 2.5rem; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    background: var(--ec-green);
+    color: var(--ec-white);
+    text-align: left;
+    padding: 10px 14px;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--ec-gray-200); color: var(--ec-ink); vertical-align: top; }
+  tr:nth-child(even) td { background: var(--ec-paper); }
+  .emo-cell { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { font-size: 11px; padding: 2px 8px; background: var(--ec-green-pale); color: var(--ec-green); font-weight: 500; }
+  .primary-tag { background: var(--ec-green); color: var(--ec-white); }
+
+  /* ── WHO IS THIS FOR ── */
+  .for-section { background: var(--ec-white); }
+  .for-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-top: 3rem; }
+  .for-card { border-left: 2px solid var(--ec-green); padding-left: 1.5rem; }
+  .for-card h3 { font-family: var(--ec-serif); font-size: 22px; font-weight: 400; margin-bottom: 0.5rem; }
+  .for-card p { font-size: 14px; color: var(--ec-ink); line-height: 1.65; }
+
+  /* ── WHAT'S INCLUDED ── */
+  .includes-section { background: var(--ec-paper); }
+  .files-list { margin-top: 2rem; display: flex; flex-direction: column; gap: 1rem; }
+  .file-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--ec-white);
+    border: 1px solid var(--ec-gray-200);
+  }
+  .file-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--ec-green-pale);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--ec-green);
+    letter-spacing: 0.04em;
+    flex-shrink: 0;
+  }
+  .file-meta h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+  .file-meta p { font-size: 13px; color: var(--ec-ink); line-height: 1.5; }
+
+  /* ── CTA ── */
+  .cta-section {
+    background: var(--ec-green);
+    text-align: center;
+    padding: 7rem 1.5rem;
+  }
+  .cta-script {
+    font-family: var(--ec-script);
+    font-size: 28px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0.5rem;
+  }
+  .cta-title {
+    font-family: var(--ec-serif);
+    font-size: clamp(34px, 5vw, 60px);
+    font-weight: 300;
+    color: var(--ec-white);
+    line-height: 1.1;
+    margin-bottom: 1.25rem;
+    letter-spacing: -0.02em;
+  }
+  .cta-sub { font-size: 16px; color: rgba(255,255,255,0.75); max-width: 480px; margin: 0 auto 2.5rem; line-height: 1.6; }
+  .btn-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ec-white);
+    color: var(--ec-green);
+    font-family: var(--ec-sans);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 16px 40px;
+    text-decoration: none;
+    letter-spacing: 0.03em;
+    transition: transform 200ms ease;
+  }
+  .btn-cta:hover { transform: translateY(-2px); }
+  .cta-note { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 1rem; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--ec-black);
+    color: var(--ec-gray-400);
+    text-align: center;
+    padding: 2rem 1.5rem;
+    font-size: 13px;
+  }
+  footer a { color: var(--ec-gray-400); text-decoration: none; }
+  footer a:hover { color: var(--ec-white); }
+
+  /* ── BOTANICAL DIVIDER ── */
+  .botanical-divider { display: flex; justify-content: center; padding: 1rem 0; opacity: 0.45; }
+
+  /* ── REVEAL ANIMATION ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 640px) {
+    .stats { gap: 2rem; }
+    section { padding: 4rem 1.25rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Evercrafted · Starter Product</div>
+  <h1 class="hero-title">Stop guessing what your<br><em>inventory feels like.</em></h1>
+  <p class="hero-sub">72 faux florals, greenery, and accents — pre-tagged with emotion labels, color modifiers, and design notes. Plug directly into the Evercrafted blueprint pipeline, or use it as your sourcing roadmap.</p>
+  <div class="hero-actions">
+    <a href="#purchase" class="btn-primary">Get the Starter Pack →</a>
+    <a href="#sample" class="btn-ghost">See a sample</a>
+  </div>
+  <p class="hero-price-note"><strong>$19</strong> · CSV + PDF Guide · Instant download · Use forever</p>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><span class="stat-num">72</span><span class="stat-label">Items tagged</span></div>
+  <div class="stat"><span class="stat-num">4</span><span class="stat-label">Emotion tags per item</span></div>
+  <div class="stat"><span class="stat-num">9</span><span class="stat-label">Color families</span></div>
+  <div class="stat"><span class="stat-num">6</span><span class="stat-label">Item categories</span></div>
+</div>
+
+<!-- WHAT'S INSIDE -->
+<section class="inside">
+  <div class="container">
+    <div class="section-label reveal">What's inside</div>
+    <h2 class="section-title reveal">Everything the pipeline needs.<br>Nothing it doesn't.</h2>
+    <p class="section-body reveal">The Evercrafted Floral Emotion Framework assigns emotional meaning to every floral type based on botanical symbolism — then modifies it by color. This starter CSV does that work for 72 common faux florals so you don't have to.</p>
+    <div class="inside-grid">
+      <div class="inside-card reveal">
+        <div class="inside-card-num">27</div>
+        <h3>Focal florals</h3>
+        <p>Peonies, garden roses, dahlias, ranunculus, hydrangeas, anemones, and specialty statement blooms — in the colors that matter most.</p>
+      </div>
+      <div class="inside-card reveal">
+        <div class="inside-card-num">11</div>
+        <h3>Greenery varieties</h3>
+        <p>Eucalyptus, olive, salal, fern, dusty miller, boxwood, and moss — the base and secondary layers that make everything else work.</p>
+      </div>
+      <div class="inside-card reveal">
+        <div class="inside-card-num">10</div>
+        <h3>Filler materials</h3>
+        <p>Larkspur, statice, baby's breath, amaranthus, and broom bloom — texture fills that bridge your focal clusters without competing with them.</p>
+      </div>
+      <div class="inside-card reveal">
+        <div class="inside-card-num">24</div>
+        <h3>Textures, accents & ribbons</h3>
+        <p>Dried grasses, seed pods, cotton, berries, pinecones, and velvet ribbons — the finishing layer that makes a build feel complete.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTANICAL DIVIDER -->
+<div class="botanical-divider">
+  <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color: #4A6741">
+    <path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+    <path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+    <path d="M16 18 C16 18 12 16 10 13" stroke="currentColor" stroke-width="1" fill="none"/>
+    <path d="M16 14 C16 14 20 12 22 9" stroke="currentColor" stroke-width="1" fill="none"/>
+  </svg>
+</div>
+
+<!-- EMOTION VOCABULARY -->
+<section class="emotions-section">
+  <div class="container">
+    <div class="section-label reveal">Emotion vocabulary</div>
+    <h2 class="section-title reveal">Every design intention,<br>covered.</h2>
+    <p class="section-body reveal">The 72 items in this starter pack collectively cover the following emotional territories. When you build a wreath with intent, you'll have the materials to back it up.</p>
+    <div class="emotion-grid reveal">
+      <span class="emotion-pill">romance</span><span class="emotion-pill">tenderness</span><span class="emotion-pill">nostalgia</span>
+      <span class="emotion-pill">warmth</span><span class="emotion-pill">calm</span><span class="emotion-pill">serenity</span>
+      <span class="emotion-pill">drama</span><span class="emotion-pill">richness</span><span class="emotion-pill">mystery</span>
+      <span class="emotion-pill">boldness</span><span class="emotion-pill">transformation</span><span class="emotion-pill">depth</span>
+      <span class="emotion-pill">groundedness</span><span class="emotion-pill">naturalness</span><span class="emotion-pill">shelter</span>
+      <span class="emotion-pill">earthiness</span><span class="emotion-pill">harvest</span><span class="emotion-pill">abundance</span>
+      <span class="emotion-pill">joy</span><span class="emotion-pill">delight</span><span class="emotion-pill">celebration</span>
+      <span class="emotion-pill">elegance</span><span class="emotion-pill">quiet luxury</span><span class="emotion-pill">nobility</span>
+      <span class="emotion-pill">freedom</span><span class="emotion-pill">wabi-sabi</span><span class="emotion-pill">simplicity</span>
+      <span class="emotion-pill">winter magic</span><span class="emotion-pill">resilience</span><span class="emotion-pill">purity</span>
+      <span class="emotion-pill">grace</span><span class="emotion-pill">stillness</span><span class="emotion-pill">longing</span>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE TABLE -->
+<section class="sample-section" id="sample">
+  <div class="container">
+    <div class="section-label reveal">Sample rows</div>
+    <h2 class="section-title reveal">See exactly what you're getting.</h2>
+    <p class="section-body reveal">Five rows from the full CSV. Every item follows this structure — machine-readable, blueprint-ready, and designed to be sourced from real suppliers.</p>
+    <div class="table-wrap reveal">
+      <table>
+        <thead>
+          <tr>
+            <th>SKU</th><th>Name</th><th>Category</th><th>Emotion tags</th><th>Primary</th><th>Color modifier</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>EC-001</td>
+            <td>Ivory Peony Stem</td>
+            <td>Focal</td>
+            <td><div class="emo-cell"><span class="tag">softness</span><span class="tag">nostalgia</span><span class="tag">quiet elegance</span><span class="tag">grace</span></div></td>
+            <td><span class="tag primary-tag">softness</span></td>
+            <td>ivory → warmth + quiet elegance</td>
+          </tr>
+          <tr>
+            <td>EC-015</td>
+            <td>Dusty Blue Hydrangea Stem</td>
+            <td>Focal</td>
+            <td><div class="emo-cell"><span class="tag">nostalgia</span><span class="tag">calm</span><span class="tag">serenity</span><span class="tag">longing</span></div></td>
+            <td><span class="tag primary-tag">nostalgia</span></td>
+            <td>dusty blue → nostalgia + longing</td>
+          </tr>
+          <tr>
+            <td>EC-019</td>
+            <td>Burgundy Dahlia Stem</td>
+            <td>Focal</td>
+            <td><div class="emo-cell"><span class="tag">drama</span><span class="tag">strength</span><span class="tag">desire</span><span class="tag">transformation</span></div></td>
+            <td><span class="tag primary-tag">drama</span></td>
+            <td>burgundy → depth + desire + drama</td>
+          </tr>
+          <tr>
+            <td>EC-028</td>
+            <td>Silver Dollar Eucalyptus Spray</td>
+            <td>Greenery</td>
+            <td><div class="emo-cell"><span class="tag">clarity</span><span class="tag">calm</span><span class="tag">renewal</span><span class="tag">groundedness</span></div></td>
+            <td><span class="tag primary-tag">clarity</span></td>
+            <td>sage/silver → calm + renewal</td>
+          </tr>
+          <tr>
+            <td>EC-039</td>
+            <td>Ivory Dried Pampas Grass Stem</td>
+            <td>Texture</td>
+            <td><div class="emo-cell"><span class="tag">freedom</span><span class="tag">quiet nostalgia</span><span class="tag">organic</span><span class="tag">wabi-sabi</span></div></td>
+            <td><span class="tag primary-tag">freedom</span></td>
+            <td>cream → warmth + quiet luxury</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IS THIS FOR -->
+<section class="for-section">
+  <div class="container">
+    <div class="section-label reveal">Who this is for</div>
+    <h2 class="section-title reveal">Three types of makers.<br>One starter pack.</h2>
+    <div class="for-grid">
+      <div class="for-card reveal">
+        <h3>The pipeline user</h3>
+        <p>You're using the Evercrafted blueprint engine and you need a real inventory to feed it. This CSV loads directly into the system. Skip the tagging step entirely.</p>
+      </div>
+      <div class="for-card reveal">
+        <h3>The strategic buyer</h3>
+        <p>You want to build a thoughtful inventory before you start sourcing. This guide shows you exactly which emotion territories each item covers — so you buy with intention, not instinct.</p>
+      </div>
+      <div class="for-card reveal">
+        <h3>The design educator</h3>
+        <p>You teach wreath-making or floral design and want a structured reference your students can use. The emotion tags give language to intuitions they already have but couldn't articulate.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FILES INCLUDED -->
+<section class="includes-section" id="purchase">
+  <div class="container">
+    <div class="section-label reveal">What you'll download</div>
+    <h2 class="section-title reveal">Two files. Everything you need.</h2>
+    <div class="files-list reveal">
+      <div class="file-item">
+        <div class="file-icon">CSV</div>
+        <div class="file-meta">
+          <h4>evercrafted_emotion_inventory.csv</h4>
+          <p>72 rows. 13 columns. Opens in Excel, Numbers, Google Sheets, or any CSV reader. Upload directly to the Evercrafted blueprint pipeline or use as a reference. Includes SKU, name, type, color, category, quantity guide, emotion tags, color modifier, design use notes, and confidence level.</p>
+        </div>
+      </div>
+      <div class="file-item">
+        <div class="file-icon">PDF</div>
+        <div class="file-meta">
+          <h4>evercrafted_emotion_inventory_guide.pdf</h4>
+          <p>8-page companion guide. How to read the CSV, emotion vocabulary reference, palette coverage breakdown, four ready-to-use emotional profile recipes, and the complete Evercrafted design canon. Print it and keep it at your build table.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-script">ready to build with intention?</div>
+    <h2 class="cta-title">Your inventory,<br>emotionally fluent.</h2>
+    <p class="cta-sub">72 items. Pre-tagged. Pipeline-ready. One download — and your wreath-building process changes permanently.</p>
+    <a href="#" class="btn-cta">Get the Starter Pack — $19 →</a>
+    <p class="cta-note">CSV + PDF · Instant download · Personal &amp; small-business use</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Evercrafted · <a href="#">evercrafted.co</a> · Questions? <a href="mailto:hello@evercrafted.co">hello@evercrafted.co</a></p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('in'), i * 60);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

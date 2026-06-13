@@ -6,7 +6,7 @@
 <title>How It Works — Evercrafted</title>
 <meta name="description" content="See how Evercrafted turns a memory or feeling into a physically buildable luxury wreath blueprint — step by step.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Dancing+Script:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Dancing+Script:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --white:#FFFFFF;--off:#F9F7F4;--paper:#F2EFE9;--warm:#EDE8E0;
@@ -16,8 +16,8 @@
   --dust:#7A5A80;--dustp:#F5EEF4;--dustd:rgba(122,90,128,.10);
   --blue:#4A6785;--bluep:#EEF4F9;--blued:rgba(74,103,133,.10);
   --bd:#E4DFD8;--bdd:#CCC7BE;
-  --serif:'Cormorant Garamond',Georgia,serif;
-  --sans:'Jost',system-ui,sans-serif;
+  --serif:'Italiana',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
   --script:'Dancing Script',cursive;
   --sh:0 1px 4px rgba(0,0,0,.06);
   --sm:0 4px 20px rgba(0,0,0,.08);
@@ -46,10 +46,12 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .hb-ring{position:absolute;border-radius:50%;border:1px solid rgba(74,103,65,.07)}
 .hb-1{width:700px;height:700px;top:-250px;right:-200px}
 .hb-2{width:500px;height:500px;bottom:-200px;left:-150px;border-color:rgba(154,122,64,.05)}
-.hero-inner{max-width:780px;margin:0 auto;padding:0 2rem;position:relative}
+.hib-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.hib-scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 85% 78% at 50% 45%,rgba(242,239,233,.72),rgba(242,239,233,.93))}
+.hero-inner{max-width:780px;margin:0 auto;padding:0 2rem;position:relative;z-index:2}
 .hero-overline{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:1.1rem;display:flex;align-items:center;justify-content:center;gap:.6rem}
 .hero-overline::before,.hero-overline::after{content:'';height:1px;width:24px;background:var(--green);opacity:.5}
-.hero-h1{font-family:var(--serif);font-size:clamp(2.8rem,6vw,5rem);font-weight:400;line-height:1.08;letter-spacing:-.02em;margin-bottom:1.25rem}
+.hero-h1{font-family:var(--serif);font-size:clamp(2.3rem, 4.2vw, 3.3rem);font-weight:400;line-height:1.08;letter-spacing:-.02em;margin-bottom:1.25rem}
 .hero-h1 em{font-style:italic;color:var(--green)}
 .hero-h1 .sc{font-family:var(--script);font-weight:600;font-size:1.05em;color:var(--gold)}
 .hero-lead{font-size:18px;color:var(--ink);line-height:1.7;max-width:580px;margin:0 auto 2.5rem;font-weight:300}
@@ -137,7 +139,7 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .tct-pass1{background:rgba(74,103,65,.15);color:#3a5a30}
 .tct-pass2{background:rgba(122,90,128,.15);color:#6a3a78}
 
-/* Step 4 — two-pass engine */
+/* Step 4 — intelligent layered engine */
 .engine-card{padding:1.5rem}
 .pass-band{border-radius:10px;padding:1rem;margin-bottom:.7rem}
 .pb1{background:rgba(74,103,65,.06);border:1px solid rgba(74,103,65,.15)}
@@ -177,9 +179,18 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .stem-table tr:last-child td{border:none}
 
 /* COMPARISON */
-.compare-section{background:var(--black);padding:5rem 0}
-.compare-section .container{text-align:center}
-.compare-h{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--white);margin-bottom:.75rem}
+.fb-band{position:relative;min-height:72vh;display:flex;align-items:center;overflow:hidden;background:#e9e2d6}
+.fb-band>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.fb-band .fb-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(253,252,250,.94),rgba(253,252,250,.6) 38%,rgba(253,252,250,.08) 70%,rgba(253,252,250,0))}
+.fb-band .fb-inner{position:relative;z-index:2;max-width:760px;padding:0 clamp(20px,6vw,90px)}
+.fb-band .fb-ov{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.fb-band h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.8rem, 3.5vw, 2.64rem);line-height:1.08;letter-spacing:.01em;color:var(--charcoal,#2e2e2e)}
+.fb-band p{margin-top:1.2rem;max-width:30rem;color:var(--ink,#4a4a4a);font-size:1.05rem;line-height:1.7}
+.compare-section{background:var(--black);padding:5rem 0;position:relative;overflow:hidden}
+.compare-section::before{content:"";position:absolute;inset:0;background:url('/assets/compare-bg.png') center/cover no-repeat;opacity:.30;z-index:0}
+.compare-section::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(22,20,16,.84),rgba(22,20,16,.93));z-index:0}
+.compare-section .container{text-align:center;position:relative;z-index:1}
+.compare-h{font-family:var(--serif);font-size:clamp(1.64rem, 3.2vw, 2.4rem);font-weight:400;color:var(--white);margin-bottom:.75rem}
 .compare-h em{font-style:italic;color:var(--goldl)}
 .compare-lead{font-size:16px;color:rgba(255,255,255,.55);max-width:520px;margin:0 auto 3rem;font-weight:300}
 .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;max-width:780px;margin:0 auto}
@@ -212,8 +223,11 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .faq-item.open .faq-a{max-height:300px;padding-bottom:1.1rem}
 
 /* CTA BAND */
-.cta-band{background:var(--green);padding:5rem 0;text-align:center}
-.cta-band h2{font-family:var(--serif);font-size:clamp(2.2rem,4vw,3.2rem);font-weight:400;color:var(--white);margin-bottom:.9rem;line-height:1.2}
+.cta-band{background:var(--green);padding:5rem 0;text-align:center;position:relative;overflow:hidden}
+.cta-band::before{content:"";position:absolute;inset:0;background:url('/assets/waitlist-bg.png') center/cover no-repeat;opacity:.22;z-index:0}
+.cta-band::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(58,85,50,.82),rgba(48,71,42,.93));z-index:0}
+.cta-band .container{position:relative;z-index:1}
+.cta-band h2{font-family:var(--serif);font-size:clamp(1.8rem, 3.2vw, 2.4rem);font-weight:400;color:var(--white);margin-bottom:.9rem;line-height:1.2}
 .cta-band p{font-size:16px;color:rgba(255,255,255,.7);max-width:480px;margin:0 auto 2rem;font-weight:300}
 .cta-form{display:flex;gap:.6rem;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center}
 .cta-input{flex:1;min-width:200px;padding:13px 20px;border-radius:100px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:var(--white);font-family:var(--sans);font-size:14px;outline:none;-webkit-appearance:none}
@@ -230,6 +244,9 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 .foot-links{display:flex;gap:1.5rem}
 .foot-links a{color:rgba(255,255,255,.45);text-decoration:none;transition:color var(--tr);font-size:12px}
 .foot-links a:hover{color:rgba(255,255,255,.8)}
+
+.step-section>.step-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.10;z-index:0;pointer-events:none}
+.step-section>.container{position:relative;z-index:1}
 </style>
 </head>
 <body>
@@ -247,7 +264,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-bg"><div class="hb-ring hb-1"></div><div class="hb-ring hb-2"></div></div>
+  <div class="hero-bg"><video class="hib-vid" autoplay loop muted playsinline poster="/assets/wreath-poster.jpg"><source src="/assets/wreath-hero.mp4" type="video/mp4"></video><div class="hib-scrim"></div><div class="hb-ring hb-1"></div><div class="hb-ring hb-2"></div></div>
   <div class="hero-inner">
     <div class="hero-overline">The Evercrafted experience</div>
     <h1 class="hero-h1">From <em>feeling</em> to<br><span class="sc">blueprint</span></h1>
@@ -290,11 +307,11 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
           <span class="s-num" style="background:var(--gp);color:var(--green)">1</span>
           Stage one
         </div>
-        <h2 class="step-h2">You share what<br><em>this piece is for</em></h2>
-        <p class="step-lead">There are no color pickers, no style quizzes, no dropdown menus. You describe what this wreath should hold — a person, a place, a season, a feeling. Plain language is the only input you need.</p>
+        <h2 class="step-h2">Seven questions.<br><em>Two minutes.</em></h2>
+        <p class="step-lead">No forms, no color pickers, no style quizzes. A short guided conversation — one question at a time — gathers everything needed to write the story of this wreath. It takes about two minutes and feels nothing like filling out a brief.</p>
         <div class="step-points">
-          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>Any level of detail works.</strong> A single word like "grief" or a paragraph about your grandmother's garden — both produce valid blueprints.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>The language doesn't need to be floral.</strong> "Cold morning light through old windows" produces a far more distinctive design than "dusty blue and silver."</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>What season does this memory live in?</strong> What time of day? Who was there? One sensory detail. What did it leave you with? Each question unlocks a layer that shapes the design.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>The language never needs to be floral.</strong> "The smell of cedar and cold air and her" is a more complete design brief than any color palette could be.</span></div>
           <div class="sp"><span class="sp-dot" style="background:var(--green)"></span><span class="sp-text"><strong>Client commissions work exactly the same way.</strong> Take their words directly. What they tell you becomes what you build.</span></div>
         </div>
       </div>
@@ -302,17 +319,21 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
         <div class="vis-box">
           <div class="mem-card">
             <div class="mem-label">Memory input</div>
-            <textarea class="mem-textarea" readonly>My grandmother's garden in late September — tall cosmos swaying, the smell of dried lavender, that warmth before the cold arrived. She always wore grey linen and smelled like earth and flowers mixed together.</textarea>
-            <div class="mem-chip-row">
-              <span class="mem-chip mc-g">nostalgia</span>
-              <span class="mem-chip mc-g">sadness</span>
-              <span class="mem-chip mc-g">trust</span>
-              <span class="mem-chip mc-o">anticipation</span>
-              <span class="mem-chip mc-p">longing</span>
-            </div>
-            <div class="mem-formula">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
-              Formula selected: Crescent · Soft weight · Draping direction
+            <div style="display:flex;flex-direction:column;gap:.6rem">
+              <div style="background:var(--off);border-radius:8px;padding:.7rem .9rem;border:1px solid var(--bd)">
+                <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:.3rem">The memory</div>
+                <div style="font-family:var(--serif);font-size:.95rem;font-style:italic;color:var(--charcoal,#2e2e2e);line-height:1.65">We stayed in Alfama in a small apartment with azulejo tiles on the staircase wall. There was a fado singer one night and I cried without knowing why. I was already missing it while it was still happening.</div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem">
+                <div style="background:var(--gp);border-radius:8px;padding:.6rem .75rem;border:1px solid rgba(74,103,65,.15)"><div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase">Season</div><div style="font-size:12px;color:var(--charcoal,#2e2e2e);margin-top:.15rem">Spring</div></div>
+                <div style="background:var(--gp);border-radius:8px;padding:.6rem .75rem;border:1px solid rgba(74,103,65,.15)"><div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase">Location</div><div style="font-size:12px;color:var(--charcoal,#2e2e2e);margin-top:.15rem">Alfama, Lisbon</div></div>
+                <div style="background:var(--gp);border-radius:8px;padding:.6rem .75rem;border:1px solid rgba(74,103,65,.15)"><div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase">Time of day</div><div style="font-size:12px;color:var(--charcoal,#2e2e2e);margin-top:.15rem">Morning</div></div>
+                <div style="background:var(--gp);border-radius:8px;padding:.6rem .75rem;border:1px solid rgba(74,103,65,.15)"><div style="font-size:9px;font-weight:700;color:var(--green);letter-spacing:.08em;text-transform:uppercase">Feeling</div><div style="font-size:12px;color:var(--charcoal,#2e2e2e);margin-top:.15rem">Something complicated</div></div>
+              </div>
+              <div style="background:var(--off);border-radius:8px;padding:.6rem .75rem;border:1px solid var(--bd)">
+                <div style="font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-bottom:.25rem">Sensory detail</div>
+                <div style="font-size:12px;font-style:italic;color:var(--ink)">Orange blossom and damp stone, and the sound of fado through an open window</div>
+              </div>
             </div>
           </div>
         </div>
@@ -322,7 +343,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 </section>
 
 <!-- ═══════════════ STEP 2 ═══════════════ -->
-<section class="step-section" id="step-2">
+<section class="step-section" id="step-2"><div class="step-bg" style="background-image:url('/assets/gallery-2.png')"></div>
   <div class="container">
     <div class="step-grid flip">
       <div class="reveal">
@@ -330,13 +351,13 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
           <span class="s-num" style="background:var(--goldp);color:var(--gold)">2</span>
           Stage two
         </div>
-        <h2 class="step-h2">The feeling becomes<br><em>physical character</em></h2>
+        <h2 class="step-h2">Every piece<br><em>earns its place.</em></h2>
         <p class="step-lead">Grief reaches differently than joy. Peace holds still while longing moves. Evercrafted reads what you wrote and translates it into real choices — what shapes go in, how they sit, how they feel — before anything is placed.</p>
         <div class="step-points">
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The emotional core</strong> of your memory shapes the heaviest, most present pieces — the ones that hold the whole design together and define what the wreath looks like from across the room.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The quieter, more layered feelings</strong> — the subtle ones, the bittersweet ones — shape the details that fill in around the main blooms. The finishes, the accent pieces, the quieter moments between the blooms.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The depth of feeling shapes the weight of the design.</strong> A raw, close grief makes different choices than a soft, distant nostalgia. The design matches the feeling — not just the words.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>When a feeling contains its opposite</strong> — joy and loss together, peace threaded with longing — the composition holds both. It doesn't resolve the tension. It makes it visible.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The poem is not decorative.</strong> It is where the design begins. Once written, Evercrafted reads it the way a maker would — looking for what the writing carries, not just what was described.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>A memory of peace often carries longing inside it.</strong> A memory of joy is often threaded with grief for what has passed. The design is made from all of it — not just what was named. The finishes, the accent pieces, the quieter moments between the blooms.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>Every floral chosen traces back to something in the poem.</strong> What holds the design together. What gives it its voice. What you notice last when you look closely at the finished piece.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The location is understood, not guessed.</strong> Alfama. Amsterdam. Clintonville. Each place has a specific architecture, a specific light, a specific surface where a wreath genuinely belongs. Evercrafted finds it.</span></div>
         </div>
       </div>
       <div class="reveal rd2">
@@ -463,7 +484,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 </section>
 
 <!-- ═══════════════ STEP 4 ═══════════════ -->
-<section class="step-section" id="step-4">
+<section class="step-section" id="step-4"><div class="step-bg" style="background-image:url('/assets/gallery-5.png')"></div>
   <div class="container">
     <div class="step-grid flip">
       <div class="reveal">
@@ -485,7 +506,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
             <div class="pass-band pb1">
               <div class="pass-label pl1">
                 <span style="width:16px;height:16px;border-radius:50%;background:var(--green);display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700">1</span>
-                Foundation layer — the heart of the design
+                What holds it together — the heart of the design
               </div>
               <div class="pass-slots">
                 <span class="pslot ps1f">Weeping Eucalyptus ✓</span>
@@ -570,9 +591,9 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
               <!-- Center -->
               <circle cx="140" cy="140" r="8" fill="#F2EFE9" stroke="#E4DFD8"/>
               <!-- Labels -->
-              <text x="140" y="50" text-anchor="middle" font-family="Jost,sans-serif" font-size="9" fill="#A8A8A8" letter-spacing=".08em">SILENCE ZONE</text>
-              <text x="80" y="175" text-anchor="middle" font-family="Jost,sans-serif" font-size="9" fill="#4A6741" letter-spacing=".06em">COMPOSITION</text>
-              <text x="200" y="175" text-anchor="middle" font-family="Jost,sans-serif" font-size="9" fill="#4A6741" letter-spacing=".06em">active sweep</text>
+              <text x="140" y="50" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#A8A8A8" letter-spacing=".08em">SILENCE ZONE</text>
+              <text x="80" y="175" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#4A6741" letter-spacing=".06em">COMPOSITION</text>
+              <text x="200" y="175" text-anchor="middle" font-family="Inter,sans-serif" font-size="9" fill="#4A6741" letter-spacing=".06em">active sweep</text>
             </svg>
             <div class="polar-legend">
               <span class="pl-dot"><span class="pld" style="background:#3a3832;border:1px solid #4A6741"></span>structural P1</span>
@@ -588,7 +609,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 </section>
 
 <!-- ═══════════════ STEP 6 ═══════════════ -->
-<section class="step-section" id="step-6">
+<section class="step-section" id="step-6"><div class="step-bg" style="background-image:url('/assets/gallery-1.png')"></div>
   <div class="container">
     <div class="step-grid flip">
       <div class="reveal">
@@ -596,24 +617,31 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
           <span class="s-num" style="background:var(--goldp);color:var(--gold)">6</span>
           Stage six
         </div>
-        <h2 class="step-h2">Everything you need<br><em>to go make it.</em></h2>
-        <p class="step-lead">Knowing what to make is only half of it. Evercrafted gives you the visual to show a client, the quantities to shop or pull from stock, and the steps to actually build it — all from the same design, all at once.</p>
+        <h2 class="step-h2">Five outputs.<br><em>All at once.</em></h2>
+        <p class="step-lead">Every memory becomes five things simultaneously — the poetic scene, the location map, the blueprint, the location-aware render prompt, and the build guide. Everything you and your client need, generated in one pass.</p>
         <div class="step-points">
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The render image</strong> — a production-ready prompt built from the actual florals in your design, not a generic description. Show clients before you build a single stem.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>Exact quantities</strong> — every material, with the precise count needed. Pulls directly from what you have in stock. No estimation, no waste.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The build sequence</strong> — step-by-step construction matched to your specific design. What goes on first, where it sits, how it finishes.</span></div>
-          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>A saved blueprint</strong> — your design lives in your account. Revisit it, adapt it for another season, share it with a collaborator, or use it as the starting point for something new.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The poetic scene</strong> — 150 words that inhabit the memory. Written to be read, printed on a card, or shared with a client before the piece is built.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The location map</strong> — the place pinned. The architecture and lifestyle researched. The render setting chosen from what makes that specific place itself.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The render prompt</strong> — places the wreath in the actual world of the memory. Not a studio wall. Not a generic surface. The exact place where the design belongs, chosen from the location itself.</span></div>
+          <div class="sp"><span class="sp-dot" style="background:var(--gold)"></span><span class="sp-text"><strong>The blueprint and build guide</strong> — exact stem counts per zone, the polar placement map, and a sequenced construction guide. From screen to finished wreath without a gap.</span></div>
         </div>
       </div>
       <div class="reveal rd2">
         <div class="vis-box">
           <div class="export-tabs">
-            <div class="etab on" onclick="switchExport('prompt',this)">Render prompt</div>
+            <div class="etab on" onclick="switchExport('poem',this)">Poetic scene</div>
+            <div class="etab" onclick="switchExport('prompt',this)">Render prompt</div>
             <div class="etab" onclick="switchExport('stems',this)">Stem counts</div>
             <div class="etab" onclick="switchExport('build',this)">Build guide</div>
           </div>
           <div class="export-panels">
-            <div class="exp-panel on" id="ep-prompt">
+            <div class="exp-panel on" id="ep-poem">
+              <div style="font-family:var(--serif);font-size:1rem;font-style:italic;line-height:1.85;color:var(--ink)">
+                "The wreath hangs on the azulejo-tiled staircase wall as the first light spreads across the Tagus like spilled honey. Orange blossoms drift from unseen trees, mixing with the salt tang of the river. Even now, watching the light inch across the terracotta rooftops, there is the strange ache of missing this moment while still living inside it."
+              </div>
+              <div style="margin-top:.75rem;font-size:11px;color:var(--faint)">Alfama, Lisbon · Spring · Morning · nostalgia / tenderness / melancholy</div>
+            </div>
+            <div class="exp-panel" id="ep-prompt">
               <div class="prompt-box">
                 <strong>Luxury faux botanical wreath,</strong> crescent composition, 22-inch grapevine base, artisan-crafted. Emotional tone: nostalgia, sadness, trust. Structural foundation: Weeping Silver Eucalyptus, Charcoal Manzanita Branch — <strong>weeping and architectural forms</strong>, positioned in the foundational sweep. Focal blooms: Dusty Mauve Peony, Ivory Garden Rose. Secondary: Silver Leaf Spray, Lavender Bundle. Intentional negative space exposes raw grapevine. <strong>Premium silk florals</strong> — no fresh flowers, no plastic. Editorial product photography, shallow depth of field, matte aged plaster wall. --ar 4:5 --style raw --q 2
               </div>
@@ -650,6 +678,16 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 </section>
 
 <!-- COMPARE -->
+<section class="fb-band">
+  <img src="/assets/band-interior.png" alt="A finished Evercrafted wreath in a room">
+  <div class="fb-scrim"></div>
+  <div class="fb-inner">
+    <div class="fb-ov">Made to be lived with</div>
+    <h2>The piece on the door<br>started as a sentence.</h2>
+    <p>Every Evercrafted design ends here — a finished wreath in a real room, built from a single memory.</p>
+  </div>
+</section>
+
 <section class="compare-section">
   <div class="container">
     <div class="reveal">
@@ -711,22 +749,9 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
       <button class="cta-btn" type="submit">Join waitlist →</button>
     </form>
     <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:.9rem" id="cta-msg">No spam. Founding pricing locked at signup.</div>
+    <div style="margin-top:1.25rem"><a href="evercrafted-try.html" style="color:rgba(255,255,255,.9);font-size:13px;font-weight:500;letter-spacing:.04em;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:2px">Or try a memory of your own now →</a></div>
   </div>
 </section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="foot-inner">
-    <div class="foot-logo">Ever<span>crafted</span></div>
-    <div class="foot-links">
-      <a href="evercrafted-marketing-site.html">Home</a>
-      <a href="evercrafted-marketing-site.html#pricing">Pricing</a>
-      <a href="evercrafted-marketing-site.html#waitlist">Waitlist</a>
-      <a href="#">Privacy</a>
-    </div>
-    <div style="font-size:11px">© 2025 Evercrafted Studio</div>
-  </div>
-</footer>
 
 <script>
 // NAV scroll active
@@ -751,6 +776,7 @@ document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
 
 // Export tabs
 function switchExport(id, btn) {
+  if (id === 'poem') { document.querySelectorAll('.etab').forEach(t=>t.classList.remove('on')); document.querySelectorAll('.exp-panel').forEach(p=>p.classList.remove('on')); btn.classList.add('on'); document.getElementById('ep-poem').classList.add('on'); return; }
   document.querySelectorAll('.etab').forEach(t => t.classList.remove('on'));
   document.querySelectorAll('.exp-panel').forEach(p => p.classList.remove('on'));
   btn.classList.add('on');
@@ -805,9 +831,18 @@ function toggleFaq(btn) {
 }
 
 // CTA
-function handleCTA(e) {
+async function handleCTA(e) {
   e.preventDefault();
   const email = document.getElementById('cta-email').value;
+  // apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
+  const apiBase = (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '';
+  try {
+    await fetch(`${apiBase}/api/waitlist`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source: 'how-it-works' }),
+    });
+  } catch (err) { console.warn('Waitlist:', err.message); }
   document.getElementById('cta-msg').textContent = `✓ ${email} is on the list. We will be in touch.`;
   document.getElementById('cta-msg').style.color = 'rgba(255,255,255,.85)';
   document.getElementById('cta-email').value = '';
@@ -822,5 +857,6 @@ document.querySelectorAll('.rail-step').forEach(a => {
   });
 });
 </script>
+<script src="/evercrafted-nav.js" defer></script>
 </body>
 </html>

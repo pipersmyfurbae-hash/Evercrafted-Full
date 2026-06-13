@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — QACS · Quadrant Arc Coordinate System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────────────────────── */
+:root {
+  --ec-white:#FFFFFF;--ec-off-white:#F9F7F4;--ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A;--ec-charcoal:#2E2E2E;--ec-ink:#4A4A4A;
+  --ec-green:#4A6741;--ec-green-light:#6B8F67;--ec-green-pale:#EEF2ED;
+  --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-gray-100:#F5F5F5;--ec-gray-200:#E8E8E8;--ec-gray-300:#D0D0D0;
+  --ec-gray-400:#A8A8A8;--ec-gray-500:#787878;
+  --ec-warning:#C4922A;--ec-error:#B94040;--ec-info:#4A6785;
+  --ec-surface:var(--ec-white);--ec-surface-alt:var(--ec-off-white);
+  --ec-border:var(--ec-gray-200);--ec-border-dark:var(--ec-gray-300);
+  --ec-text:var(--ec-black);--ec-text-muted:var(--ec-ink);--ec-text-faint:var(--ec-gray-500);
+  --ec-font-serif:'Cormorant Garamond','Georgia',serif;
+  --ec-font-sans:'Inter',system-ui,sans-serif;
+  --ec-font-script:'Dancing Script',cursive;
+  --ec-font-mono:'DM Mono','Fira Code',monospace;
+  --ec-space-1:0.25rem;--ec-space-2:0.5rem;--ec-space-3:0.75rem;--ec-space-4:1rem;
+  --ec-space-5:1.5rem;--ec-space-6:2rem;--ec-space-8:2.5rem;--ec-space-10:3rem;
+  --ec-radius-sm:4px;--ec-radius-md:8px;--ec-radius-lg:14px;--ec-radius-xl:20px;--ec-radius-full:9999px;
+  --ec-shadow-sm:0 1px 3px rgba(0,0,0,0.06);--ec-shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --ec-shadow-card:0 2px 8px rgba(0,0,0,0.06),0 0 0 1px var(--ec-border);
+  --ec-shadow-lg:0 8px 32px rgba(0,0,0,0.10);
+  --ec-transition:200ms ease;
+}
+
+/* ─── RESET ──────────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--ec-font-sans);background:var(--ec-off-white);color:var(--ec-text);min-height:100vh;}
+
+/* ─── LAYOUT ─────────────────────────────────────────────────────────────── */
+.ec-app{max-width:1280px;margin:0 auto;padding:var(--ec-space-6) var(--ec-space-5);}
+.app-grid{display:grid;grid-template-columns:340px 1fr;gap:var(--ec-space-5);align-items:start;margin-top:var(--ec-space-5);}
+
+/* ─── HEADER ─────────────────────────────────────────────────────────────── */
+.ec-app-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:var(--ec-space-4) var(--ec-space-6);
+  background:var(--ec-white);
+  border-radius:var(--ec-radius-xl);
+  box-shadow:var(--ec-shadow-card);
+  margin-bottom:var(--ec-space-5);
+}
+.ec-app-header__brand{display:flex;align-items:center;gap:var(--ec-space-3);}
+.ec-script{font-family:var(--ec-font-script);font-size:1.5rem;color:var(--ec-green);font-weight:600;line-height:1;}
+.header-divider{width:1px;height:20px;background:var(--ec-border-dark);}
+.ec-app-header__app-name{font-family:var(--ec-font-sans);font-size:0.8125rem;color:var(--ec-text-faint);letter-spacing:0.05em;font-weight:500;}
+.header-right{display:flex;align-items:center;gap:var(--ec-space-3);}
+
+/* Tier badge */
+.ec-tier-badge{font-family:var(--ec-font-sans);font-size:0.6875rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:var(--ec-radius-full);}
+.ec-tier-studio{background:#F5EEF4;color:#7A4A85;}
+.ec-tier-atelier{background:var(--ec-black);color:var(--ec-paper);}
+
+/* Info badges */
+.info-badge{font-size:0.6875rem;padding:3px 10px;border-radius:var(--ec-radius-full);font-weight:500;}
+.info-badge-blue{background:#EEF4F9;color:#4A6785;}
+.info-badge-warm{background:#FEF6EC;color:#C4922A;}
+
+/* Tier switcher */
+.tier-switcher{display:flex;align-items:center;gap:var(--ec-space-2);padding:3px;background:var(--ec-gray-100);border-radius:var(--ec-radius-full);}
+.tier-switch-btn{padding:4px 12px;border-radius:var(--ec-radius-full);font-size:0.6875rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;border:none;cursor:pointer;background:transparent;color:var(--ec-gray-500);transition:all var(--ec-transition);}
+.tier-switch-btn.active-studio{background:#F5EEF4;color:#7A4A85;}
+.tier-switch-btn.active-atelier{background:var(--ec-black);color:var(--ec-paper);}
+
+/* ─── PAGE TITLE AREA ────────────────────────────────────────────────────── */
+.page-title-area{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  background:var(--ec-white);border-radius:var(--ec-radius-xl);
+  box-shadow:var(--ec-shadow-card);padding:var(--ec-space-5) var(--ec-space-6);
+  margin-bottom:var(--ec-space-5);
+}
+.page-title-left{}
+.app-subtitle{font-family:var(--ec-font-serif);font-size:1.75rem;color:var(--ec-text);font-weight:400;line-height:1.2;}
+.app-subtitle em{font-style:italic;color:var(--ec-green);}
+.app-description{font-size:0.8125rem;color:var(--ec-text-faint);margin-top:var(--ec-space-2);max-width:520px;line-height:1.6;}
+.page-title-right{display:flex;align-items:center;gap:var(--ec-space-3);}
+.botanical-accent{display:flex;align-items:center;opacity:0.3;}
+
+/* Design session inputs */
+.session-bar{display:flex;gap:var(--ec-space-3);align-items:center;flex-wrap:wrap;margin-top:var(--ec-space-4);padding-top:var(--ec-space-4);border-top:1px solid var(--ec-border);}
+.session-field{display:flex;flex-direction:column;gap:4px;}
+.session-field label{font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-text-faint);}
+.session-input{padding:6px 12px;background:var(--ec-off-white);border:1.5px solid var(--ec-border);border-radius:var(--ec-radius-md);font-family:var(--ec-font-sans);font-size:0.8125rem;color:var(--ec-text);outline:none;transition:border-color var(--ec-transition);}
+.session-input:focus{border-color:var(--ec-green);box-shadow:0 0 0 3px var(--ec-green-dim);}
+.session-input-wide{width:240px;}
+.session-input-sm{width:100px;}
+
+/* ─── CARDS ──────────────────────────────────────────────────────────────── */
+.ec-card{background:var(--ec-surface);border-radius:var(--ec-radius-lg);box-shadow:var(--ec-shadow-card);padding:var(--ec-space-5);}
+.ec-card--warm{background:var(--ec-paper);}
+.ec-card--green{background:var(--ec-green-pale);border:1px solid var(--ec-green-dim);}
+.ec-card--dark{background:var(--ec-black);color:var(--ec-white);}
+
+/* ─── SECTION LABELS ─────────────────────────────────────────────────────── */
+.ec-label{font-family:var(--ec-font-sans);font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-text-faint);}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--ec-space-4);}
+.section-title{font-family:var(--ec-font-serif);font-size:1.125rem;color:var(--ec-text);}
+
+/* ─── INPUTS ─────────────────────────────────────────────────────────────── */
+.ec-input{width:100%;padding:9px var(--ec-space-4);background:var(--ec-white);border:1.5px solid var(--ec-border);border-radius:var(--ec-radius-md);font-family:var(--ec-font-sans);font-size:1rem;color:var(--ec-text);outline:none;transition:border-color var(--ec-transition);}
+.ec-input:focus{border-color:var(--ec-green);box-shadow:0 0 0 3px var(--ec-green-dim);}
+.ec-input::placeholder{color:var(--ec-gray-400);}
+select.ec-input{cursor:pointer;}
+.ec-range{width:100%;accent-color:var(--ec-green);cursor:pointer;height:4px;}
+
+/* ─── BUTTONS ────────────────────────────────────────────────────────────── */
+.ec-btn{display:inline-flex;align-items:center;gap:var(--ec-space-2);padding:10px var(--ec-space-5);border-radius:var(--ec-radius-md);font-family:var(--ec-font-sans);font-size:0.8125rem;font-weight:500;cursor:pointer;border:none;transition:all var(--ec-transition);letter-spacing:0.02em;}
+.ec-btn-primary{background:var(--ec-black);color:var(--ec-white);}
+.ec-btn-primary:hover{background:var(--ec-charcoal);transform:translateY(-1px);box-shadow:var(--ec-shadow-md);}
+.ec-btn-green{background:var(--ec-green);color:var(--ec-white);}
+.ec-btn-green:hover{background:var(--ec-green-light);transform:translateY(-1px);}
+.ec-btn-outline{background:transparent;color:var(--ec-text);border:1.5px solid var(--ec-border-dark);}
+.ec-btn-outline:hover{border-color:var(--ec-black);background:var(--ec-gray-100);}
+.ec-btn-atelier{background:var(--ec-black);color:var(--ec-paper);border:1px solid #444;}
+.ec-btn-atelier:hover{background:#2a2a2a;transform:translateY(-1px);}
+.ec-btn-sm{padding:6px 12px;font-size:0.6875rem;}
+.ec-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;box-shadow:none;}
+
+/* ─── FORM GROUPS ────────────────────────────────────────────────────────── */
+.form-group{display:flex;flex-direction:column;gap:var(--ec-space-2);margin-bottom:var(--ec-space-4);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:var(--ec-space-3);}
+.form-label{font-size:0.8125rem;font-weight:500;color:var(--ec-text-muted);}
+.form-hint{font-size:0.6875rem;color:var(--ec-text-faint);}
+
+/* ─── CANVAS ─────────────────────────────────────────────────────────────── */
+.canvas-wrap{position:relative;background:var(--ec-white);border-radius:var(--ec-radius-lg);box-shadow:var(--ec-shadow-card);overflow:hidden;}
+.canvas-toolbar{display:flex;align-items:center;justify-content:space-between;padding:var(--ec-space-3) var(--ec-space-5);border-bottom:1px solid var(--ec-border);background:var(--ec-off-white);}
+.canvas-toolbar-left{display:flex;align-items:center;gap:var(--ec-space-3);}
+.canvas-toolbar-right{display:flex;gap:var(--ec-space-2);}
+.canvas-inner{padding:var(--ec-space-4);display:flex;justify-content:center;}
+canvas{display:block;cursor:crosshair;}
+
+/* ─── PLACEMENT LIST ─────────────────────────────────────────────────────── */
+.placement-list{display:flex;flex-direction:column;gap:var(--ec-space-2);max-height:300px;overflow-y:auto;}
+.placement-item{display:flex;align-items:center;gap:var(--ec-space-3);padding:var(--ec-space-3) var(--ec-space-4);background:var(--ec-off-white);border-radius:var(--ec-radius-md);border:1px solid var(--ec-border);transition:border-color var(--ec-transition);}
+.placement-item:hover{border-color:var(--ec-border-dark);}
+.placement-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.placement-info{flex:1;min-width:0;}
+.placement-name{font-size:0.8125rem;font-weight:500;color:var(--ec-text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.placement-meta{font-family:var(--ec-font-mono);font-size:0.6875rem;color:var(--ec-text-faint);}
+.placement-remove{background:none;border:none;cursor:pointer;color:var(--ec-gray-400);padding:2px 4px;border-radius:4px;transition:color var(--ec-transition);}
+.placement-remove:hover{color:var(--ec-error);}
+
+/* ─── CODE BLOCKS ────────────────────────────────────────────────────────── */
+.code-block{background:var(--ec-black);border-radius:var(--ec-radius-md);padding:var(--ec-space-4);font-family:var(--ec-font-mono);font-size:0.6875rem;color:#A8D5A2;line-height:1.7;overflow-x:auto;max-height:260px;overflow-y:auto;white-space:pre;}
+.code-key{color:#F5C6A0;}
+.code-string{color:#A8D5A2;}
+.code-num{color:#9BB5E8;}
+.code-punct{color:var(--ec-gray-400);}
+
+/* ─── OVERLAYS PANEL ─────────────────────────────────────────────────────── */
+.overlay-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--ec-space-2);}
+.overlay-toggle{display:flex;align-items:center;gap:var(--ec-space-2);padding:var(--ec-space-2) var(--ec-space-3);border-radius:var(--ec-radius-sm);cursor:pointer;transition:background var(--ec-transition);font-size:0.8125rem;}
+.overlay-toggle:hover{background:var(--ec-gray-100);}
+.toggle-check{width:16px;height:16px;accent-color:var(--ec-green);cursor:pointer;}
+
+/* ─── SYMMETRY PILLS ─────────────────────────────────────────────────────── */
+.sym-pills{display:flex;gap:var(--ec-space-2);flex-wrap:wrap;}
+.sym-pill{padding:5px 12px;border-radius:var(--ec-radius-full);font-size:0.6875rem;font-weight:500;cursor:pointer;border:1.5px solid var(--ec-border);background:transparent;transition:all var(--ec-transition);color:var(--ec-text-muted);}
+.sym-pill.active{background:var(--ec-black);color:var(--ec-white);border-color:var(--ec-black);}
+.sym-pill:hover:not(.active){border-color:var(--ec-green);color:var(--ec-green);}
+
+/* ─── ARC BANDS ──────────────────────────────────────────────────────────── */
+.arc-bands-list{display:flex;flex-direction:column;gap:var(--ec-space-2);}
+.arc-band-item{display:flex;align-items:center;gap:var(--ec-space-3);padding:var(--ec-space-2) var(--ec-space-3);border-radius:var(--ec-radius-sm);background:var(--ec-off-white);font-size:0.8125rem;}
+.band-swatch{width:20px;height:6px;border-radius:3px;flex-shrink:0;}
+
+/* ─── DIVIDER ────────────────────────────────────────────────────────────── */
+.ec-divider{display:flex;align-items:center;gap:var(--ec-space-4);margin:var(--ec-space-5) 0;color:var(--ec-gray-300);font-size:1.125rem;}
+.ec-divider::before,.ec-divider::after{content:'';flex:1;height:1px;background:var(--ec-border);}
+
+/* ─── COORD CHIP ─────────────────────────────────────────────────────────── */
+.coord-chip{font-family:var(--ec-font-mono);font-size:0.6875rem;background:var(--ec-green-pale);color:var(--ec-green);padding:2px 8px;border-radius:var(--ec-radius-full);border:1px solid var(--ec-green-dim);}
+
+/* ─── TABS ───────────────────────────────────────────────────────────────── */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--ec-border);margin-bottom:var(--ec-space-5);}
+.tab-btn{padding:var(--ec-space-3) var(--ec-space-4);font-size:0.8125rem;font-family:var(--ec-font-sans);font-weight:500;cursor:pointer;background:none;border:none;color:var(--ec-text-faint);border-bottom:2px solid transparent;margin-bottom:-1px;transition:all var(--ec-transition);}
+.tab-btn.active{color:var(--ec-green);border-bottom-color:var(--ec-green);}
+.tab-btn:hover:not(.active){color:var(--ec-text-muted);}
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* ─── QUADRANT CARDS ─────────────────────────────────────────────────────── */
+.quad-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--ec-space-2);}
+.quad-card{padding:var(--ec-space-3);border-radius:var(--ec-radius-md);border:1.5px solid var(--ec-border);text-align:center;}
+.quad-card.q-nw{border-color:#9BB5E8;background:#F0F4FF;}
+.quad-card.q-ne{border-color:#A8D5A2;background:#F0FFF2;}
+.quad-card.q-sw{border-color:#F5C6A0;background:#FFF7F0;}
+.quad-card.q-se{border-color:#D5A8D5;background:#FDF0FF;}
+.quad-name{font-size:0.6875rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:4px;}
+.quad-count{font-family:var(--ec-font-mono);font-size:1.375rem;font-weight:500;}
+.quad-label{font-size:0.6875rem;color:var(--ec-text-faint);}
+
+/* ─── TOOLTIP ────────────────────────────────────────────────────────────── */
+#tooltip{position:fixed;background:var(--ec-black);color:var(--ec-white);padding:6px 10px;border-radius:var(--ec-radius-sm);font-family:var(--ec-font-mono);font-size:0.6875rem;pointer-events:none;z-index:100;display:none;white-space:nowrap;}
+
+/* ─── COPY BTN ───────────────────────────────────────────────────────────── */
+.copy-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;background:var(--ec-green-pale);border:1px solid var(--ec-green-dim);color:var(--ec-green);border-radius:var(--ec-radius-sm);font-size:0.6875rem;font-weight:500;cursor:pointer;transition:all var(--ec-transition);}
+.copy-btn:hover{background:var(--ec-green);color:var(--ec-white);}
+.copy-btn.copied{background:var(--ec-green);color:var(--ec-white);}
+
+/* ─── EMPTY STATE ────────────────────────────────────────────────────────── */
+.empty-state{text-align:center;padding:var(--ec-space-8) var(--ec-space-5);color:var(--ec-text-faint);}
+.empty-icon{font-size:2rem;margin-bottom:var(--ec-space-3);}
+.empty-text{font-size:0.8125rem;line-height:1.6;}
+
+/* ─── AI PLACEMENT PANEL ─────────────────────────────────────────────────── */
+.ai-panel{position:relative;border-radius:var(--ec-radius-lg);overflow:hidden;}
+.ai-panel-inner{background:linear-gradient(135deg,#1A1A1A 0%,#252520 100%);padding:var(--ec-space-5);border-radius:var(--ec-radius-lg);}
+.ai-panel-header{display:flex;align-items:center;gap:var(--ec-space-3);margin-bottom:var(--ec-space-4);}
+.ai-orb{width:32px;height:32px;background:linear-gradient(135deg,#4A6741,#6B8F67);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.ai-panel-title{font-family:var(--ec-font-serif);font-size:1rem;color:var(--ec-white);}
+.ai-panel-subtitle{font-size:0.6875rem;color:rgba(255,255,255,0.4);}
+.ai-textarea{width:100%;padding:var(--ec-space-3) var(--ec-space-4);background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.15);border-radius:var(--ec-radius-md);font-family:var(--ec-font-sans);font-size:0.8125rem;color:var(--ec-white);outline:none;resize:none;transition:border-color var(--ec-transition);line-height:1.5;}
+.ai-textarea::placeholder{color:rgba(255,255,255,0.3);}
+.ai-textarea:focus{border-color:var(--ec-green-light);box-shadow:0 0 0 3px rgba(74,103,65,0.25);}
+.ai-run-btn{display:flex;align-items:center;gap:var(--ec-space-2);padding:10px var(--ec-space-5);border-radius:var(--ec-radius-md);font-family:var(--ec-font-sans);font-size:0.8125rem;font-weight:500;cursor:pointer;border:none;background:var(--ec-green);color:var(--ec-white);transition:all var(--ec-transition);letter-spacing:0.02em;width:100%;justify-content:center;margin-top:var(--ec-space-3);}
+.ai-run-btn:hover{background:var(--ec-green-light);}
+.ai-run-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.ai-status{font-size:0.6875rem;color:rgba(255,255,255,0.5);margin-top:var(--ec-space-2);text-align:center;min-height:16px;}
+
+/* Tier gate lock overlay */
+.tier-gate{position:absolute;inset:0;border-radius:var(--ec-radius-lg);z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--ec-space-3);text-align:center;padding:var(--ec-space-5);backdrop-filter:blur(6px);background:rgba(249,247,244,0.85);}
+.tier-gate-icon{font-size:2rem;}
+.tier-gate-title{font-family:var(--ec-font-serif);font-size:1.25rem;color:var(--ec-text);}
+.tier-gate-body{font-size:0.8125rem;color:var(--ec-text-faint);line-height:1.6;max-width:260px;}
+.tier-gate-cta{display:inline-flex;align-items:center;gap:var(--ec-space-2);padding:8px 20px;border-radius:var(--ec-radius-full);background:var(--ec-black);color:var(--ec-white);font-size:0.75rem;font-weight:600;letter-spacing:0.05em;text-transform:uppercase;border:none;cursor:pointer;transition:all var(--ec-transition);}
+.tier-gate-cta:hover{background:var(--ec-charcoal);transform:translateY(-1px);}
+
+/* ─── BALANCE BAR ────────────────────────────────────────────────────────── */
+.balance-bar-wrap{height:8px;background:var(--ec-border);border-radius:4px;overflow:hidden;display:flex;gap:1px;}
+.bb-seg{height:100%;transition:width 0.35s ease;}
+
+/* ─── PIPELINE STATUS ────────────────────────────────────────────────────── */
+.pipeline-chips{display:flex;gap:var(--ec-space-2);flex-wrap:wrap;}
+.pipeline-chip{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:var(--ec-radius-full);font-size:0.6875rem;font-weight:500;border:1px solid var(--ec-border);background:var(--ec-off-white);color:var(--ec-text-faint);}
+.pipeline-chip.connected{background:var(--ec-green-pale);border-color:var(--ec-green-dim);color:var(--ec-green);}
+.pipeline-chip.pending{background:#FEF6EC;border-color:#F5D5A0;color:var(--ec-warning);}
+.chip-dot{width:6px;height:6px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* ─── SCROLLBAR ──────────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--ec-gray-300);border-radius:2px;}
+
+/* ─── FADE IN ────────────────────────────────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+.ec-app-header{animation:fadeUp 0.4s ease both;}
+.page-title-area{animation:fadeUp 0.5s 0.05s ease both;}
+.app-grid{animation:fadeUp 0.5s 0.1s ease both;}
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media(max-width:960px){
+  .app-grid{grid-template-columns:1fr;}
+  .canvas-inner{overflow-x:auto;}
+  .page-title-area{flex-direction:column;gap:var(--ec-space-4);}
+}
+</style>
+</head>
+<body>
+<div id="tooltip"></div>
+
+<div class="ec-app">
+
+  <!-- ─── HEADER ──────────────────────────────────────────────────────────── -->
+  <header class="ec-app-header">
+    <div class="ec-app-header__brand">
+      <span class="ec-script">Evercrafted</span>
+      <div class="header-divider"></div>
+      <span class="ec-app-header__app-name">QACS · Quadrant Arc Coordinate System</span>
+    </div>
+    <div class="header-right">
+      <span class="info-badge info-badge-blue">v1.0</span>
+      <span class="info-badge info-badge-warm">Phase 2 · Developer Tool</span>
+      <!-- Tier switcher (demo only) -->
+      <div class="tier-switcher" title="Demo: switch tier to preview features">
+        <button class="tier-switch-btn active-studio" id="ts-studio" onclick="setDemoTier('studio',this)">Studio</button>
+        <button class="tier-switch-btn" id="ts-atelier" onclick="setDemoTier('atelier',this)">Atelier</button>
+      </div>
+      <div class="ec-tier-badge ec-tier-studio" id="active-tier-badge">Studio</div>
+    </div>
+  </header>
+
+  <!-- ─── PAGE TITLE ────────────────────────────────────────────────────── -->
+  <div class="page-title-area">
+    <div class="page-title-left">
+      <h1 class="app-subtitle">Polar Coordinate <em>Placement Engine</em></h1>
+      <p class="app-description">Place, inspect, and export precise stem coordinates for wreath blueprints. Click the canvas to place elements, or use the form. Exports EC_CANON_V1 JSON ready for the Blueprint Inspector, Output Studio, and API Gateway.</p>
+      <!-- Session fields -->
+      <div class="session-bar">
+        <div class="session-field">
+          <label>Design Name</label>
+          <input class="session-input session-input-wide" id="design-name" type="text" placeholder="Untitled Blueprint">
+        </div>
+        <div class="session-field">
+          <label>Wreath Size</label>
+          <select class="session-input session-input-sm" id="wreath-size" onchange="redraw()">
+            <option value="16">16 in</option>
+            <option value="20">20 in</option>
+            <option value="24" selected>24 in</option>
+            <option value="28">28 in</option>
+            <option value="36">36 in</option>
+          </select>
+        </div>
+        <div class="session-field">
+          <label>Designer Notes</label>
+          <input class="session-input session-input-wide" id="design-notes" type="text" placeholder="Client name, occasion, palette…">
+        </div>
+      </div>
+    </div>
+    <div class="page-title-right">
+      <!-- Botanical SVG -->
+      <div class="botanical-accent">
+        <svg width="64" height="64" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--ec-green)">
+          <path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+          <path d="M16 18 C16 18 12 16 10 13" stroke="currentColor" stroke-width="1" fill="none"/>
+          <path d="M16 14 C16 14 20 12 22 9" stroke="currentColor" stroke-width="1" fill="none"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-grid">
+
+    <!-- ─── LEFT PANEL ──────────────────────────────────────────────────── -->
+    <div style="display:flex;flex-direction:column;gap:var(--ec-space-4);">
+
+      <!-- ADD ELEMENT FORM -->
+      <div class="ec-card">
+        <div class="section-head">
+          <span class="section-title">Add Element</span>
+          <span class="coord-chip" id="cursor-coord">hover canvas</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Element Name</label>
+          <input class="ec-input" id="el-name" type="text" placeholder="e.g. White Peony Focal">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Category</label>
+            <select class="ec-input" id="el-cat">
+              <option value="focal">Focal</option>
+              <option value="greenery" selected>Greenery</option>
+              <option value="filler">Filler</option>
+              <option value="accent">Accent</option>
+              <option value="base">Base</option>
+              <option value="ribbon">Ribbon</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom:0;">
+            <label class="form-label">Arc Band</label>
+            <select class="ec-input" id="el-radius">
+              <option value="inner">Inner (0–33%)</option>
+              <option value="mid" selected>Mid (33–66%)</option>
+              <option value="outer">Outer (66–100%)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-top:var(--ec-space-4);">
+          <div style="display:flex;justify-content:space-between;margin-bottom:var(--ec-space-2);">
+            <label class="form-label">Angle</label>
+            <span class="coord-chip" id="angle-display">0°</span>
+          </div>
+          <input type="range" class="ec-range" id="el-angle" min="0" max="359" value="0">
+          <div style="display:flex;justify-content:space-between;margin-top:4px;">
+            <span style="font-size:0.6875rem;color:var(--ec-text-faint);">0° (12:00)</span>
+            <span style="font-size:0.6875rem;color:var(--ec-text-faint);">360°</span>
+          </div>
+        </div>
+
+        <div style="margin-top:var(--ec-space-4);">
+          <div style="display:flex;justify-content:space-between;margin-bottom:var(--ec-space-2);">
+            <label class="form-label">Density</label>
+            <span class="coord-chip" id="density-display">medium</span>
+          </div>
+          <select class="ec-input" id="el-density">
+            <option value="low">Low</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-top:var(--ec-space-4);margin-bottom:0;">
+          <label class="form-label">Stem Count</label>
+          <input class="ec-input" id="el-stems" type="number" min="1" max="20" value="3">
+        </div>
+
+        <div style="display:flex;gap:var(--ec-space-3);margin-top:var(--ec-space-5);">
+          <button class="ec-btn ec-btn-green" style="flex:1;" onclick="addElement()">+ Place Element</button>
+          <button class="ec-btn ec-btn-outline" onclick="clearAll()">Clear All</button>
+        </div>
+      </div>
+
+      <!-- EDITOR OVERLAYS -->
+      <div class="ec-card">
+        <div class="section-head" style="margin-bottom:var(--ec-space-3);">
+          <span class="section-title">Editor Overlays</span>
+        </div>
+        <div class="overlay-grid">
+          <label class="overlay-toggle"><input type="checkbox" class="toggle-check" id="ov-grid" checked onchange="redraw()"> Grid Lines</label>
+          <label class="overlay-toggle"><input type="checkbox" class="toggle-check" id="ov-bands" checked onchange="redraw()"> Arc Bands</label>
+          <label class="overlay-toggle"><input type="checkbox" class="toggle-check" id="ov-clock" checked onchange="redraw()"> Clock Labels</label>
+          <label class="overlay-toggle"><input type="checkbox" class="toggle-check" id="ov-quads" checked onchange="redraw()"> Quadrants</label>
+          <label class="overlay-toggle"><input type="checkbox" class="toggle-check" id="ov-labels" checked onchange="redraw()"> Element Labels</label>
+          <label class="overlay-toggle"><input type="checkbox" class="toggle-check" id="ov-angles" onchange="redraw()"> Angle Rays</label>
+        </div>
+
+        <div class="ec-divider">✦</div>
+
+        <div style="margin-bottom:var(--ec-space-3);"><span class="ec-label">Symmetry Preview Mode</span></div>
+        <div class="sym-pills" id="sym-pills">
+          <button class="sym-pill active" data-sym="none" onclick="setSymmetry(this,'none')">None</button>
+          <button class="sym-pill" data-sym="mirror-h" onclick="setSymmetry(this,'mirror-h')">Mirror H</button>
+          <button class="sym-pill" data-sym="mirror-v" onclick="setSymmetry(this,'mirror-v')">Mirror V</button>
+          <button class="sym-pill" data-sym="radial-3" onclick="setSymmetry(this,'radial-3')">3× Radial</button>
+          <button class="sym-pill" data-sym="radial-5" onclick="setSymmetry(this,'radial-5')">5× Radial</button>
+        </div>
+        <p class="form-hint" style="margin-top:var(--ec-space-3);">Symmetry ghosts are preview-only — not included in blueprint export.</p>
+      </div>
+
+      <!-- ARC BAND REFERENCE -->
+      <div class="ec-card ec-card--green">
+        <div class="ec-label" style="margin-bottom:var(--ec-space-3);">Arc Band Reference</div>
+        <div class="arc-bands-list">
+          <div class="arc-band-item">
+            <div class="band-swatch" style="background:rgba(155,181,232,0.5);border:1px solid #9BB5E8;"></div>
+            <div><div style="font-weight:500;font-size:0.8125rem;">Inner Band · 0–33%</div><div style="font-size:0.6875rem;color:var(--ec-text-faint);">Base / anchor / structural greenery</div></div>
+          </div>
+          <div class="arc-band-item">
+            <div class="band-swatch" style="background:rgba(168,213,162,0.5);border:1px solid #A8D5A2;"></div>
+            <div><div style="font-weight:500;font-size:0.8125rem;">Mid Band · 33–66%</div><div style="font-size:0.6875rem;color:var(--ec-text-faint);">Focal florals / body greenery</div></div>
+          </div>
+          <div class="arc-band-item">
+            <div class="band-swatch" style="background:rgba(213,168,213,0.5);border:1px solid #D5A8D5;"></div>
+            <div><div style="font-weight:500;font-size:0.8125rem;">Outer Band · 66–100%</div><div style="font-size:0.6875rem;color:var(--ec-text-faint);">Trailing accents / draping / edge texture</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ─── PIPELINE STATUS ──────────────────────────────────────────── -->
+      <div class="ec-card">
+        <div class="ec-label" style="margin-bottom:var(--ec-space-3);">Pipeline Connections</div>
+        <div class="pipeline-chips">
+          <div class="pipeline-chip pending"><span class="chip-dot"></span>Blueprint Inspector</div>
+          <div class="pipeline-chip pending"><span class="chip-dot"></span>Output Studio</div>
+          <div class="pipeline-chip pending"><span class="chip-dot"></span>API Gateway</div>
+          <div class="pipeline-chip"><span class="chip-dot"></span>ABC Lab</div>
+          <div class="pipeline-chip"><span class="chip-dot"></span>Genome Dashboard</div>
+        </div>
+        <p class="form-hint" style="margin-top:var(--ec-space-3);">Orange = wiring in progress. Copy JSON and paste into connected modules manually until integration is complete.</p>
+      </div>
+
+    </div>
+
+    <!-- ─── RIGHT PANEL ─────────────────────────────────────────────────── -->
+    <div style="display:flex;flex-direction:column;gap:var(--ec-space-4);">
+
+      <!-- AI PLACEMENT PANEL -->
+      <div class="ai-panel" id="ai-placement-panel">
+        <div class="ai-panel-inner">
+          <div class="ai-panel-header">
+            <div class="ai-orb">✦</div>
+            <div>
+              <div class="ai-panel-title">AI Natural Language Placement</div>
+              <div class="ai-panel-subtitle">Atelier · Describe → Claude places</div>
+            </div>
+            <div class="ec-tier-badge ec-tier-atelier" style="margin-left:auto;">Atelier</div>
+          </div>
+          <textarea class="ai-textarea" id="ai-prompt" rows="3"
+            placeholder='e.g. "Three white peony focals in the lower-left crescent zone, mid-radius. Add eucalyptus greenery scattered throughout the outer band."'></textarea>
+          <button class="ai-run-btn" id="ai-run-btn" onclick="runAIPlacement()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h4M7 5l2 2-2 2" stroke="currentColor" stroke-width="1.2"/></svg>
+            Generate Placements
+          </button>
+          <div class="ai-status" id="ai-status"></div>
+        </div>
+        <!-- Tier gate overlay -->
+        <div class="tier-gate" id="ai-tier-gate">
+          <div class="tier-gate-icon">🔒</div>
+          <div class="tier-gate-title">Atelier Feature</div>
+          <div class="tier-gate-body">Describe your placement in natural language and Claude will generate precise polar coordinates automatically.</div>
+          <button class="tier-gate-cta" onclick="setDemoTier('atelier', document.getElementById('ts-atelier'))">Upgrade to Atelier →</button>
+        </div>
+      </div>
+
+      <!-- CANVAS -->
+      <div class="canvas-wrap">
+        <div class="canvas-toolbar">
+          <div class="canvas-toolbar-left">
+            <span class="ec-label">Placement Canvas</span>
+            <span class="coord-chip" id="placement-count">0 elements</span>
+          </div>
+          <div class="canvas-toolbar-right">
+            <button class="ec-btn ec-btn-outline ec-btn-sm" onclick="zoomIn()">＋ Zoom</button>
+            <button class="ec-btn ec-btn-outline ec-btn-sm" onclick="zoomOut()">－ Zoom</button>
+            <button class="ec-btn ec-btn-outline ec-btn-sm" onclick="resetZoom()">Reset</button>
+          </div>
+        </div>
+        <div class="canvas-inner">
+          <canvas id="wreath-canvas" width="540" height="540"></canvas>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="ec-card">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab(this,'tab-placements')">Placement List</button>
+          <button class="tab-btn" onclick="switchTab(this,'tab-quadrants')">Quadrant Map</button>
+          <button class="tab-btn" onclick="switchTab(this,'tab-export')">Export JSON</button>
+          <button class="tab-btn" onclick="switchTab(this,'tab-spec')">Dev Spec</button>
+        </div>
+
+        <!-- PLACEMENT LIST -->
+        <div id="tab-placements" class="tab-panel active">
+          <div id="placement-list-wrap">
+            <div class="empty-state" id="empty-placements">
+              <div class="empty-icon">🌿</div>
+              <div class="empty-text">No elements placed yet.<br>Use the form, click the canvas,<br>or describe a placement with AI (Atelier).</div>
+            </div>
+            <div class="placement-list" id="placement-list"></div>
+          </div>
+        </div>
+
+        <!-- QUADRANT MAP -->
+        <div id="tab-quadrants" class="tab-panel">
+          <div class="quad-grid">
+            <div class="quad-card q-nw">
+              <div class="quad-name" style="color:#4A6785;">NW · 270°–360°</div>
+              <div class="quad-count" id="q-nw-count">0</div>
+              <div class="quad-label">elements</div>
+              <div style="margin-top:6px;font-size:0.6875rem;color:var(--ec-text-faint);" id="q-nw-cats">—</div>
+            </div>
+            <div class="quad-card q-ne">
+              <div class="quad-name" style="color:#4A7A48;">NE · 0°–90°</div>
+              <div class="quad-count" id="q-ne-count">0</div>
+              <div class="quad-label">elements</div>
+              <div style="margin-top:6px;font-size:0.6875rem;color:var(--ec-text-faint);" id="q-ne-cats">—</div>
+            </div>
+            <div class="quad-card q-sw">
+              <div class="quad-name" style="color:#C4922A;">SW · 180°–270°</div>
+              <div class="quad-count" id="q-sw-count">0</div>
+              <div class="quad-label">elements</div>
+              <div style="margin-top:6px;font-size:0.6875rem;color:var(--ec-text-faint);" id="q-sw-cats">—</div>
+            </div>
+            <div class="quad-card q-se">
+              <div class="quad-name" style="color:#7A4A85;">SE · 90°–180°</div>
+              <div class="quad-count" id="q-se-count">0</div>
+              <div class="quad-label">elements</div>
+              <div style="margin-top:6px;font-size:0.6875rem;color:var(--ec-text-faint);" id="q-se-cats">—</div>
+            </div>
+          </div>
+
+          <div style="margin-top:var(--ec-space-4);padding:var(--ec-space-4);background:var(--ec-off-white);border-radius:var(--ec-radius-md);">
+            <div class="ec-label" style="margin-bottom:var(--ec-space-3);">Visual Mass Balance</div>
+            <div class="balance-bar-wrap">
+              <div id="bb-nw" class="bb-seg" style="background:#9BB5E8;width:25%;" title="NW"></div>
+              <div id="bb-ne" class="bb-seg" style="background:#A8D5A2;width:25%;" title="NE"></div>
+              <div id="bb-sw" class="bb-seg" style="background:#F5C6A0;width:25%;" title="SW"></div>
+              <div id="bb-se" class="bb-seg" style="background:#D5A8D5;width:25%;" title="SE"></div>
+            </div>
+            <div style="display:flex;gap:var(--ec-space-3);margin-top:var(--ec-space-2);">
+              <span style="font-size:0.6875rem;color:#4A6785;">■ NW</span>
+              <span style="font-size:0.6875rem;color:#4A7A48;">■ NE</span>
+              <span style="font-size:0.6875rem;color:#C4922A;">■ SW</span>
+              <span style="font-size:0.6875rem;color:#7A4A85;">■ SE</span>
+            </div>
+            <div id="balance-note" style="font-size:0.6875rem;margin-top:var(--ec-space-3);color:var(--ec-text-faint);">Place elements to see balance score.</div>
+          </div>
+
+          <!-- Stem count summary -->
+          <div style="margin-top:var(--ec-space-4);padding:var(--ec-space-4);background:var(--ec-green-pale);border:1px solid var(--ec-green-dim);border-radius:var(--ec-radius-md);">
+            <div class="ec-label" style="margin-bottom:var(--ec-space-3);">Stem Count Summary</div>
+            <div id="stem-summary" style="font-size:0.8125rem;color:var(--ec-text-faint);">—</div>
+          </div>
+        </div>
+
+        <!-- EXPORT JSON -->
+        <div id="tab-export" class="tab-panel">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--ec-space-4);">
+            <div>
+              <span class="ec-label">EC_CANON_V1 Blueprint JSON</span>
+              <p style="font-size:0.6875rem;color:var(--ec-text-faint);margin-top:4px;">Paste into Blueprint Inspector · Output Studio · API Gateway /blueprint/create</p>
+            </div>
+            <button class="copy-btn" id="copy-json-btn" onclick="copyJSON()">⎘ Copy JSON</button>
+          </div>
+          <div class="code-block" id="json-output">// Add elements to generate blueprint JSON</div>
+        </div>
+
+        <!-- DEV SPEC -->
+        <div id="tab-spec" class="tab-panel">
+          <div style="margin-bottom:var(--ec-space-5);">
+            <div class="ec-label" style="margin-bottom:var(--ec-space-3);">Coordinate System Reference</div>
+            <div class="code-block">
+<span class="code-key">/* QACS Polar Coordinate Spec · EC_CANON_V1 */</span>
+<span class="code-key">Origin:</span>       <span class="code-string">Center of wreath base</span>
+<span class="code-key">Angle 0°:</span>     <span class="code-string">12:00 position (top)</span>
+<span class="code-key">Direction:</span>    <span class="code-string">Clockwise (CW)</span>
+<span class="code-key">Radius:</span>       <span class="code-string">Normalized 0–1  (1 = wreath edge)</span>
+<span class="code-key">Canonical:</span>    <span class="code-string">{ rNorm, theta }  — stored as radius_norm + angle_deg</span>
+
+<span class="code-key">Arc Bands:</span>
+  inner:  <span class="code-num">0.00</span>–<span class="code-num">0.33</span>  midpoint <span class="code-num">0.16</span>  <span class="code-string">// base, anchor</span>
+  mid:    <span class="code-num">0.33</span>–<span class="code-num">0.66</span>  midpoint <span class="code-num">0.50</span>  <span class="code-string">// focal, body</span>
+  outer:  <span class="code-num">0.66</span>–<span class="code-num">1.00</span>  midpoint <span class="code-num">0.83</span>  <span class="code-string">// accent, drape</span>
+
+<span class="code-key">Clock Mapping:</span>
+  12:00 → <span class="code-num">0°</span>   3:00 → <span class="code-num">90°</span>
+   6:00 → <span class="code-num">180°</span>  9:00 → <span class="code-num">270°</span>
+
+<span class="code-key">Quadrant Mapping:</span>
+  NE:  <span class="code-num">0°</span>–<span class="code-num">90°</span>     SE:  <span class="code-num">90°</span>–<span class="code-num">180°</span>
+  SW: <span class="code-num">180°</span>–<span class="code-num">270°</span>    NW: <span class="code-num">270°</span>–<span class="code-num">360°</span>
+
+<span class="code-key">XY Canvas Conversion:</span>
+  x = cx + r * sin(angle_rad) * radius_norm
+  y = cy - r * cos(angle_rad) * radius_norm</div>
+          </div>
+
+          <div style="margin-bottom:var(--ec-space-5);">
+            <div class="ec-label" style="margin-bottom:var(--ec-space-3);">TypeScript Interface · WreathPlacement</div>
+            <div class="code-block"><span class="code-key">interface</span> <span class="code-string">WreathPlacement</span> <span class="code-punct">{</span>
+  id<span class="code-punct">:</span>            <span class="code-string">string</span><span class="code-punct">;</span>
+  element<span class="code-punct">:</span>       <span class="code-string">string</span><span class="code-punct">;</span>
+  category<span class="code-punct">:</span>     <span class="code-string">'focal'|'greenery'|'filler'|'accent'|'base'|'ribbon'</span><span class="code-punct">;</span>
+  angle_deg<span class="code-punct">:</span>    <span class="code-num">number</span><span class="code-punct">;</span>    <span class="code-key">// 0–359, 0 = 12:00 CW</span>
+  clock<span class="code-punct">:</span>        <span class="code-string">string</span><span class="code-punct">;</span>    <span class="code-key">// "3:00"</span>
+  radius<span class="code-punct">:</span>       <span class="code-string">'inner'|'mid'|'outer'</span><span class="code-punct">;</span>
+  radius_norm<span class="code-punct">:</span>  <span class="code-num">number</span><span class="code-punct">;</span>    <span class="code-key">// 0.16 | 0.50 | 0.83</span>
+  density<span class="code-punct">:</span>      <span class="code-string">'low'|'medium'|'high'</span><span class="code-punct">;</span>
+  stem_count<span class="code-punct">:</span>   <span class="code-num">number</span><span class="code-punct">;</span>
+  quadrant<span class="code-punct">:</span>     <span class="code-string">'NE'|'SE'|'SW'|'NW'</span><span class="code-punct">;</span>
+  wreath_size_in<span class="code-punct">:</span> <span class="code-num">number</span><span class="code-punct">;</span>
+  xy<span class="code-punct">:</span> <span class="code-punct">{</span> x<span class="code-punct">:</span> <span class="code-num">number</span><span class="code-punct">;</span> y<span class="code-punct">:</span> <span class="code-num">number</span> <span class="code-punct">};</span>
+<span class="code-punct">}</span>
+
+<span class="code-key">interface</span> <span class="code-string">QACSBlueprint</span> <span class="code-punct">{</span>
+  wreath_id<span class="code-punct">:</span>       <span class="code-string">string</span><span class="code-punct">;</span>
+  design_name<span class="code-punct">:</span>     <span class="code-string">string</span><span class="code-punct">;</span>
+  size_in<span class="code-punct">:</span>         <span class="code-num">number</span><span class="code-punct">;</span>
+  element_count<span class="code-punct">:</span>   <span class="code-num">number</span><span class="code-punct">;</span>
+  symmetry_mode<span class="code-punct">:</span>   <span class="code-string">string</span><span class="code-punct">;</span>
+  notes<span class="code-punct">:</span>           <span class="code-string">string</span><span class="code-punct">;</span>
+  placements<span class="code-punct">:</span>      <span class="code-string">WreathPlacement</span><span class="code-punct">[];</span>
+<span class="code-punct">}</span></div>
+          </div>
+
+          <div>
+            <div class="ec-label" style="margin-bottom:var(--ec-space-3);">Pipeline Integration Checklist</div>
+            <div style="display:flex;flex-direction:column;gap:var(--ec-space-2);">
+              <div style="display:flex;align-items:center;gap:var(--ec-space-3);font-size:0.8125rem;padding:var(--ec-space-2) 0;border-bottom:1px solid var(--ec-border);">
+                <span style="color:var(--ec-warning);">⏳</span><div><strong>Blueprint Inspector import</strong> — paste QACS JSON → renders in Inspector view</div><span class="info-badge info-badge-blue">High</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--ec-space-3);font-size:0.8125rem;padding:var(--ec-space-2) 0;border-bottom:1px solid var(--ec-border);">
+                <span style="color:var(--ec-warning);">⏳</span><div><strong>Output Studio hand-off</strong> — compile cut list + build guide from QACS blueprint</div><span class="info-badge info-badge-blue">High</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--ec-space-3);font-size:0.8125rem;padding:var(--ec-space-2) 0;border-bottom:1px solid var(--ec-border);">
+                <span style="color:var(--ec-gray-400);">○</span><div><strong>Placement Debugger comparison</strong> — side-by-side formula vs. manual</div><span class="info-badge" style="background:var(--ec-off-white);color:var(--ec-text-faint);">Medium</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--ec-space-3);font-size:0.8125rem;padding:var(--ec-space-2) 0;border-bottom:1px solid var(--ec-border);">
+                <span style="color:var(--ec-gray-400);">○</span><div><strong>API Gateway /blueprint/create</strong> — POST QACS JSON → store in Blueprint DB</div><span class="info-badge" style="background:var(--ec-off-white);color:var(--ec-text-faint);">Medium</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:var(--ec-space-3);font-size:0.8125rem;padding:var(--ec-space-2) 0;">
+                <span style="color:var(--ec-gray-400);">○</span><div><strong>ABC Lab seed</strong> — use QACS placement as ABC generation seed</div><span class="info-badge" style="background:var(--ec-off-white);color:var(--ec-text-faint);">Low</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── TIER GATE SYSTEM ─────────────────────────────────────────────────────────
+const TIER_RANK = { bloom:1, craft:2, studio:3, atelier:4 };
+let USER_TIER = 'studio';
+
+function canAccess(required) {
+  return TIER_RANK[USER_TIER] >= TIER_RANK[required];
+}
+
+function setDemoTier(tier, btn) {
+  USER_TIER = tier;
+  document.querySelectorAll('.tier-switch-btn').forEach(b => {
+    b.className = 'tier-switch-btn';
+  });
+  const badge = document.getElementById('active-tier-badge');
+  if (tier === 'studio') {
+    btn.classList.add('active-studio');
+    badge.className = 'ec-tier-badge ec-tier-studio';
+    badge.textContent = 'Studio';
+  } else {
+    btn.classList.add('active-atelier');
+    badge.className = 'ec-tier-badge ec-tier-atelier';
+    badge.textContent = 'Atelier';
+  }
+  updateTierGates();
+}
+
+function updateTierGates() {
+  // AI placement gate
+  const gate = document.getElementById('ai-tier-gate');
+  gate.style.display = canAccess('atelier') ? 'none' : 'flex';
+}
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let placements = [];
+let symmetryMode = 'none';
+let zoom = 1;
+let hoveredAngle = null;
+const CANVAS_SIZE = 540;
+const CENTER = CANVAS_SIZE / 2;
+
+const CATEGORY_COLORS = {
+  focal:    '#9BB5E8',
+  greenery: '#A8D5A2',
+  filler:   '#F5C6A0',
+  accent:   '#D5A8D5',
+  base:     '#B5B5A8',
+  ribbon:   '#F5A0A8'
+};
+
+const RADIUS_NORM = { inner: 0.16, mid: 0.50, outer: 0.83 };
+
+// ─── CANVAS SETUP ─────────────────────────────────────────────────────────────
+const canvas = document.getElementById('wreath-canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.addEventListener('mousemove', onCanvasMove);
+canvas.addEventListener('click', onCanvasClick);
+canvas.addEventListener('mouseleave', () => {
+  hoveredAngle = null;
+  document.getElementById('cursor-coord').textContent = '—';
+  document.getElementById('tooltip').style.display = 'none';
+  redraw();
+});
+
+function canvasToCoord(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  const x = (e.clientX - rect.left) * scaleX;
+  const y = (e.clientY - rect.top) * scaleY;
+  const dx = x - CENTER;
+  const dy = y - CENTER;
+  const dist = Math.sqrt(dx*dx + dy*dy);
+  const r = getWreathRadius();
+  const normDist = dist / r;
+  let angleDeg = Math.atan2(dx, -dy) * (180 / Math.PI);
+  if (angleDeg < 0) angleDeg += 360;
+  return { x, y, angle: Math.round(angleDeg), normDist };
+}
+
+function onCanvasMove(e) {
+  const { angle, normDist } = canvasToCoord(e);
+  hoveredAngle = angle;
+  document.getElementById('cursor-coord').textContent = `${angle}° · r${normDist.toFixed(2)}`;
+  const clock = angleToClock(angle);
+  const quad = getQuadrant(angle);
+  const band = normDist <= 0.33 ? 'inner' : normDist <= 0.66 ? 'mid' : 'outer';
+  const tip = document.getElementById('tooltip');
+  tip.textContent = `${angle}° · ${clock} · ${quad} · ${band}`;
+  tip.style.display = 'block';
+  tip.style.left = (e.clientX + 14) + 'px';
+  tip.style.top = (e.clientY - 8) + 'px';
+  redraw();
+}
+
+function onCanvasClick(e) {
+  const { angle, normDist } = canvasToCoord(e);
+  if (normDist > 1.05) return;
+  const band = normDist <= 0.33 ? 'inner' : normDist <= 0.66 ? 'mid' : 'outer';
+  document.getElementById('el-angle').value = angle;
+  document.getElementById('el-radius').value = band;
+  document.getElementById('angle-display').textContent = angle + '°';
+  addElement();
+}
+
+// ─── DRAWING ──────────────────────────────────────────────────────────────────
+function getWreathRadius() { return (CENTER - 24) * zoom; }
+
+function redraw() {
+  ctx.clearRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+  const r = getWreathRadius();
+  const cx = CENTER, cy = CENTER;
+
+  // Background
+  ctx.fillStyle = '#FAFAF8';
+  ctx.fillRect(0, 0, CANVAS_SIZE, CANVAS_SIZE);
+
+  const showGrid  = document.getElementById('ov-grid').checked;
+  const showBands = document.getElementById('ov-bands').checked;
+  const showClock = document.getElementById('ov-clock').checked;
+  const showQuads = document.getElementById('ov-quads').checked;
+  const showLabels= document.getElementById('ov-labels').checked;
+  const showAngles= document.getElementById('ov-angles').checked;
+
+  // ARC BANDS
+  if (showBands) {
+    const bands = [
+      { from: 0, to: 0.33, color: 'rgba(155,181,232,0.10)', stroke: 'rgba(155,181,232,0.35)' },
+      { from: 0.33, to: 0.66, color: 'rgba(168,213,162,0.10)', stroke: 'rgba(168,213,162,0.35)' },
+      { from: 0.66, to: 1.0, color: 'rgba(213,168,213,0.10)', stroke: 'rgba(213,168,213,0.35)' },
+    ];
+    bands.forEach(b => {
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * b.to, 0, Math.PI * 2);
+      ctx.arc(cx, cy, r * b.from, 0, Math.PI * 2, true);
+      ctx.fillStyle = b.color;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * b.to, 0, Math.PI * 2);
+      ctx.strokeStyle = b.stroke;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+  }
+
+  // QUADRANT OVERLAYS
+  if (showQuads) {
+    const quadColors = [
+      { start: -Math.PI/2, end: 0,          color: 'rgba(168,213,162,0.04)' },
+      { start: 0,          end: Math.PI/2,   color: 'rgba(213,168,213,0.04)' },
+      { start: Math.PI/2,  end: Math.PI,     color: 'rgba(245,198,160,0.04)' },
+      { start: Math.PI,    end: 3*Math.PI/2, color: 'rgba(155,181,232,0.04)' },
+    ];
+    quadColors.forEach(q => {
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.arc(cx, cy, r, q.start, q.end);
+      ctx.closePath();
+      ctx.fillStyle = q.color;
+      ctx.fill();
+    });
+    ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([6, 4]);
+    [[cx,cy-r,cx,cy+r],[cx-r,cy,cx+r,cy]].forEach(([x1,y1,x2,y2]) => {
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+    });
+    ctx.setLineDash([]);
+  }
+
+  // GRID
+  if (showGrid) {
+    for (let deg = 0; deg < 360; deg += 30) {
+      const rad = (deg - 90) * Math.PI / 180;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + r * Math.cos(rad), cy + r * Math.sin(rad));
+      ctx.strokeStyle = 'rgba(0,0,0,0.05)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+  }
+
+  // OUTER RING
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(74,103,65,0.25)';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.3, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(74,103,65,0.12)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // CLOCK LABELS
+  if (showClock) {
+    const hours = ['12','1','2','3','4','5','6','7','8','9','10','11'];
+    hours.forEach((h, i) => {
+      const deg = i * 30 - 90;
+      const rad = deg * Math.PI / 180;
+      const lx = cx + (r + 18) * Math.cos(rad);
+      const ly = cy + (r + 18) * Math.sin(rad);
+      ctx.font = '500 10px Inter, sans-serif';
+      ctx.fillStyle = 'rgba(120,120,120,0.7)';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(h, lx, ly);
+    });
+  }
+
+  // HOVER RAY
+  if (hoveredAngle !== null) {
+    const rad = (hoveredAngle - 90) * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + r * Math.cos(rad), cy + r * Math.sin(rad));
+    ctx.strokeStyle = 'rgba(74,103,65,0.35)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // ANGLE RAYS
+  if (showAngles) {
+    placements.forEach(p => {
+      const rad = (p.angle_deg - 90) * Math.PI / 180;
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + r * Math.cos(rad), cy + r * Math.sin(rad));
+      ctx.strokeStyle = CATEGORY_COLORS[p.category] + '88';
+      ctx.lineWidth = 0.5;
+      ctx.setLineDash([2, 4]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+  }
+
+  // SYMMETRY GHOST + ALL PLACEMENTS
+  const allPlacements = buildSymmetryPlacements();
+  allPlacements.forEach(p => {
+    const isGhost = p.ghost;
+    const rad = (p.angle_deg - 90) * Math.PI / 180;
+    const rn = RADIUS_NORM[p.radius];
+    const px = cx + r * rn * Math.cos(rad);
+    const py = cy + r * rn * Math.sin(rad);
+    const color = CATEGORY_COLORS[p.category] || '#888';
+    const dotSize = p.density === 'low' ? 6 : p.density === 'high' ? 11 : 8;
+
+    if (isGhost) ctx.globalAlpha = 0.28;
+
+    ctx.beginPath();
+    ctx.arc(px, py, dotSize + 3, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(0,0,0,0.06)';
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(px, py, dotSize, 0, Math.PI*2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    if (!isGhost && p.stem_count > 1) {
+      ctx.font = 'bold 7px Inter, sans-serif';
+      ctx.fillStyle = '#fff';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(p.stem_count, px, py);
+    }
+
+    ctx.globalAlpha = 1;
+
+    if (showLabels && !isGhost) {
+      const labelR = rn + 0.14;
+      const lx = cx + r * labelR * Math.cos(rad);
+      const ly = cy + r * labelR * Math.sin(rad);
+      ctx.font = '500 9px Inter, sans-serif';
+      ctx.fillStyle = '#2E2E2E';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const shortName = p.element.length > 16 ? p.element.slice(0,14)+'…' : p.element;
+      ctx.fillText(shortName, lx, ly);
+    }
+  });
+
+  // CENTER MARKER
+  ctx.beginPath();
+  ctx.arc(cx, cy, 3, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(74,103,65,0.4)';
+  ctx.fill();
+}
+
+function buildSymmetryPlacements() {
+  const all = [...placements];
+  if (symmetryMode === 'none') return all;
+  const ghosts = [];
+  placements.forEach(p => {
+    if (symmetryMode === 'mirror-h') {
+      ghosts.push({...p, angle_deg: (360 - p.angle_deg) % 360, ghost: true});
+    } else if (symmetryMode === 'mirror-v') {
+      ghosts.push({...p, angle_deg: (180 - p.angle_deg + 360) % 360, ghost: true});
+    } else if (symmetryMode === 'radial-3') {
+      [120, 240].forEach(offset => ghosts.push({...p, angle_deg: (p.angle_deg + offset) % 360, ghost: true}));
+    } else if (symmetryMode === 'radial-5') {
+      [72, 144, 216, 288].forEach(offset => ghosts.push({...p, angle_deg: (p.angle_deg + offset) % 360, ghost: true}));
+    }
+  });
+  return [...all, ...ghosts];
+}
+
+// ─── CONTROLS ─────────────────────────────────────────────────────────────────
+document.getElementById('el-angle').addEventListener('input', function() {
+  document.getElementById('angle-display').textContent = this.value + '°';
+  redraw();
+});
+document.getElementById('el-density').addEventListener('change', function() {
+  document.getElementById('density-display').textContent = this.value;
+});
+
+function angleToClock(deg) {
+  const h = ((deg / 30) % 12) || 12;
+  const m = Math.round((deg % 30) * 2);
+  return `${Math.floor(h)}:${m.toString().padStart(2,'0')}`;
+}
+
+function getQuadrant(deg) {
+  if (deg >= 0 && deg < 90) return 'NE';
+  if (deg >= 90 && deg < 180) return 'SE';
+  if (deg >= 180 && deg < 270) return 'SW';
+  return 'NW';
+}
+
+function addElement() {
+  const name = document.getElementById('el-name').value.trim() || `Element ${placements.length + 1}`;
+  const cat = document.getElementById('el-cat').value;
+  const radius = document.getElementById('el-radius').value;
+  const angle = parseInt(document.getElementById('el-angle').value);
+  const density = document.getElementById('el-density').value;
+  const stems = parseInt(document.getElementById('el-stems').value) || 1;
+  const size = parseInt(document.getElementById('wreath-size').value) || 24;
+
+  const rn = RADIUS_NORM[radius];
+  const rad = (angle - 90) * Math.PI / 180;
+  const r = (CENTER - 24);
+
+  const placement = {
+    id: 'pl_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+    element: name,
+    category: cat,
+    angle_deg: angle,
+    clock: angleToClock(angle),
+    radius,
+    radius_norm: rn,
+    density,
+    stem_count: stems,
+    quadrant: getQuadrant(angle),
+    wreath_size_in: size,
+    xy: {
+      x: parseFloat((CENTER + r * rn * Math.cos(rad)).toFixed(1)),
+      y: parseFloat((CENTER + r * rn * Math.sin(rad)).toFixed(1))
+    }
+  };
+
+  placements.push(placement);
+  document.getElementById('el-name').value = '';
+  updateUI();
+}
+
+function removeElement(id) {
+  placements = placements.filter(p => p.id !== id);
+  updateUI();
+}
+
+function clearAll() {
+  if (placements.length === 0) return;
+  if (!confirm(`Clear all ${placements.length} placement${placements.length !== 1 ? 's' : ''}?`)) return;
+  placements = [];
+  updateUI();
+}
+
+function setSymmetry(btn, mode) {
+  symmetryMode = mode;
+  document.querySelectorAll('.sym-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  redraw();
+}
+
+function zoomIn()   { zoom = Math.min(zoom + 0.15, 1.8); redraw(); }
+function zoomOut()  { zoom = Math.max(zoom - 0.15, 0.5); redraw(); }
+function resetZoom(){ zoom = 1; redraw(); }
+
+function switchTab(btn, tabId) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+  if (tabId === 'tab-export') updateJSON();
+}
+
+// ─── UI UPDATE ────────────────────────────────────────────────────────────────
+function updateUI() {
+  redraw();
+  updatePlacementList();
+  updateQuadrantMap();
+  updateJSON();
+  document.getElementById('placement-count').textContent =
+    placements.length + ' element' + (placements.length !== 1 ? 's' : '');
+}
+
+function updatePlacementList() {
+  const list = document.getElementById('placement-list');
+  const empty = document.getElementById('empty-placements');
+  list.innerHTML = '';
+  if (placements.length === 0) { empty.style.display = 'block'; return; }
+  empty.style.display = 'none';
+  placements.forEach(p => {
+    const item = document.createElement('div');
+    item.className = 'placement-item';
+    item.innerHTML = `
+      <div class="placement-dot" style="background:${CATEGORY_COLORS[p.category]};"></div>
+      <div class="placement-info">
+        <div class="placement-name">${p.element}</div>
+        <div class="placement-meta">${p.clock} · ${p.angle_deg}° · ${p.radius} · ${p.quadrant} · ${p.stem_count} stem${p.stem_count>1?'s':''} · ${p.density}</div>
+      </div>
+      <button class="placement-remove" onclick="removeElement('${p.id}')" title="Remove">✕</button>
+    `;
+    list.appendChild(item);
+  });
+}
+
+function updateQuadrantMap() {
+  const quads = { NE: [], SE: [], SW: [], NW: [] };
+  placements.forEach(p => quads[p.quadrant].push(p));
+
+  ['ne','se','sw','nw'].forEach(q => {
+    const QU = q.toUpperCase();
+    document.getElementById(`q-${q}-count`).textContent = quads[QU].length;
+    const cats = [...new Set(quads[QU].map(p => p.category))];
+    document.getElementById(`q-${q}-cats`).textContent = cats.length ? cats.join(', ') : '—';
+  });
+
+  const total = placements.length || 1;
+  const pcts = { NE: quads.NE.length/total, SE: quads.SE.length/total, SW: quads.SW.length/total, NW: quads.NW.length/total };
+  document.getElementById('bb-nw').style.width = (pcts.NW*100)+'%';
+  document.getElementById('bb-ne').style.width = (pcts.NE*100)+'%';
+  document.getElementById('bb-sw').style.width = (pcts.SW*100)+'%';
+  document.getElementById('bb-se').style.width = (pcts.SE*100)+'%';
+
+  if (placements.length > 0) {
+    const vals = Object.values(pcts);
+    const diff = Math.max(...vals) - Math.min(...vals);
+    document.getElementById('balance-note').textContent =
+      diff < 0.15 ? '✓ Well-balanced — visual mass distributed across quadrants.' :
+      diff < 0.35 ? '⚠ Slight imbalance — consider spreading elements further.' :
+      '✗ Heavy imbalance — redistribute for a natural composition.';
+  } else {
+    document.getElementById('balance-note').textContent = 'Place elements to see balance score.';
+  }
+
+  // Stem summary by category
+  const stemsByCat = {};
+  placements.forEach(p => {
+    stemsByCat[p.category] = (stemsByCat[p.category] || 0) + p.stem_count;
+  });
+  const total_stems = Object.values(stemsByCat).reduce((a,b)=>a+b,0);
+  if (placements.length > 0) {
+    const parts = Object.entries(stemsByCat).map(([cat, n]) => `${cat}: ${n}`).join('  ·  ');
+    document.getElementById('stem-summary').innerHTML =
+      `<strong>${total_stems} total stems</strong><br><span style="font-family:var(--ec-font-mono);font-size:0.6875rem;">${parts}</span>`;
+  } else {
+    document.getElementById('stem-summary').textContent = '—';
+  }
+}
+
+function updateJSON() {
+  if (placements.length === 0) {
+    document.getElementById('json-output').textContent = '// Add elements to generate blueprint JSON';
+    return;
+  }
+  const size = parseInt(document.getElementById('wreath-size').value) || 24;
+  const designName = document.getElementById('design-name').value.trim() || 'Untitled Blueprint';
+  const notes = document.getElementById('design-notes').value.trim();
+  const blueprint = {
+    wreath_id: `qacs_${Date.now()}`,
+    design_name: designName,
+    size_in: size,
+    element_count: placements.length,
+    symmetry_mode: symmetryMode,
+    notes,
+    placements: placements.map(p => ({
+      id: p.id,
+      element: p.element,
+      category: p.category,
+      angle_deg: p.angle_deg,
+      clock: p.clock,
+      quadrant: p.quadrant,
+      radius: p.radius,
+      radius_norm: p.radius_norm,
+      density: p.density,
+      stem_count: p.stem_count,
+      wreath_size_in: p.wreath_size_in,
+      xy: p.xy
+    }))
+  };
+  document.getElementById('json-output').textContent = JSON.stringify(blueprint, null, 2);
+}
+
+function copyJSON() {
+  const text = document.getElementById('json-output').textContent;
+  if (text.startsWith('//')) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-json-btn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '⎘ Copy JSON'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// ─── AI PLACEMENT (ATELIER) ───────────────────────────────────────────────────
+const AI_SYSTEM_PROMPT = `You are QACS — the Quadrant Arc Coordinate System for Evercrafted, a wreath-making SaaS platform.
+
+The user will describe where they want to place floral elements on a wreath in natural language. 
+You MUST respond with ONLY a raw JSON array (no markdown, no explanation, no backticks) of placement objects.
+
+The wreath uses polar coordinates:
+- angle_deg: 0–359, where 0° = 12:00, clockwise
+- radius: "inner" (0–33%), "mid" (33–66%), "outer" (66–100%)
+- category: "focal" | "greenery" | "filler" | "accent" | "base" | "ribbon"
+- density: "low" | "medium" | "high"
+- stem_count: integer 1–15
+
+Clock reference: 12:00=0°, 1:30=45°, 3:00=90°, 4:30=135°, 6:00=180°, 7:30=225°, 9:00=270°, 10:30=315°
+
+Return an array like:
+[
+  {
+    "element": "White Peony",
+    "category": "focal",
+    "angle_deg": 225,
+    "radius": "mid",
+    "density": "high",
+    "stem_count": 3
+  }
+]
+
+Only return the raw JSON array. No text before or after.`;
+
+async function runAIPlacement() {
+  if (!canAccess('atelier')) return;
+
+  const prompt = document.getElementById('ai-prompt').value.trim();
+  if (!prompt) return;
+
+  const btn = document.getElementById('ai-run-btn');
+  const status = document.getElementById('ai-status');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="animation:spin 1s linear infinite"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5" stroke-dasharray="20 10"/></svg> Interpreting…';
+  status.textContent = 'Claude is placing your elements…';
+
+  // Add spin animation
+  if (!document.getElementById('spin-style')) {
+    const s = document.createElement('style');
+    s.id = 'spin-style';
+    s.textContent = '@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}';
+    document.head.appendChild(s);
+  }
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: AI_SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    const raw = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const items = JSON.parse(clean);
+
+    if (!Array.isArray(items) || items.length === 0) throw new Error('No placements returned.');
+
+    const size = parseInt(document.getElementById('wreath-size').value) || 24;
+    let added = 0;
+
+    items.forEach(item => {
+      if (!item.angle_deg && item.angle_deg !== 0) return;
+      if (!item.radius) item.radius = 'mid';
+      if (!item.category) item.category = 'greenery';
+      if (!item.density) item.density = 'medium';
+      if (!item.stem_count) item.stem_count = 2;
+
+      const rn = RADIUS_NORM[item.radius];
+      const rad = (item.angle_deg - 90) * Math.PI / 180;
+      const r = CENTER - 24;
+
+      placements.push({
+        id: 'ai_' + Date.now() + '_' + Math.random().toString(36).slice(2,6),
+        element: item.element || 'AI Element',
+        category: item.category,
+        angle_deg: item.angle_deg,
+        clock: angleToClock(item.angle_deg),
+        radius: item.radius,
+        radius_norm: rn,
+        density: item.density,
+        stem_count: item.stem_count,
+        quadrant: getQuadrant(item.angle_deg),
+        wreath_size_in: size,
+        xy: {
+          x: parseFloat((CENTER + r * rn * Math.cos(rad)).toFixed(1)),
+          y: parseFloat((CENTER + r * rn * Math.sin(rad)).toFixed(1))
+        }
+      });
+      added++;
+    });
+
+    status.textContent = `✓ ${added} element${added !== 1 ? 's' : ''} placed by Claude.`;
+    document.getElementById('ai-prompt').value = '';
+    updateUI();
+    // Switch to placement list to show results
+    document.querySelector('.tab-btn').click();
+
+  } catch(err) {
+    status.textContent = '✗ Error: ' + (err.message || 'Could not parse response.');
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h4M7 5l2 2-2 2" stroke="currentColor" stroke-width="1.2"/></svg> Generate Placements';
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+updateTierGates();
+redraw();
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# ── Vercel deploy excludes ───────────────────────────────────────────────────
+# Keep deployments under Vercel's size limits. These are raw Midjourney/source
+# exports (thirty-plus 5–9 MB files, ~205 MB total) that the live site never
+# references — they stay in git as source material but are NOT shipped to Vercel.
+assets/bret_64130_*
+
+# …except the one interior clip the lookbook actually plays:
+!assets/bret_64130_Photorealistic_interior_photograph_of_a_luxury_fau_e130cc9f-6d63-4932-ac89-ee7ffc3f010f_1.mp4

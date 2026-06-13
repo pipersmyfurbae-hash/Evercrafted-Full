@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>About Bret — Evercrafted</title>
-<meta name="description" content="Evercrafted was built by Bret, a faux botanical artist and wreath maker based in Columbus, Ohio with 25 years of experience — because great design decisions were taking longer than the builds themselves.">
+<title>About Evercrafted — a creative intelligence studio</title>
+<meta name="description" content="Evercrafted is a creative intelligence studio built around emotion-driven design. The Evercrafted Engine transforms feelings, memories, and identity into manufacturable floral designs — beauty that feels personal again.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Dancing+Script:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Dancing+Script:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --white:#FFFFFF;--off:#F9F7F4;--paper:#F2EFE9;--warm:#EDE8E0;
@@ -14,8 +14,8 @@
   --green:#4A6741;--gl:#6B8F67;--gp:#EEF2ED;--gd:rgba(74,103,65,.10);
   --gold:#9A7A40;--goldl:#C4A06A;--goldp:#F5EFE4;
   --bd:#E4DFD8;--bdd:#CCC7BE;
-  --serif:'Cormorant Garamond',Georgia,serif;
-  --sans:'Jost',system-ui,sans-serif;
+  --serif:'Italiana',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
   --script:'Dancing Script',cursive;
   --sh:0 1px 4px rgba(0,0,0,.06);
   --sm:0 4px 20px rgba(0,0,0,.08);
@@ -53,7 +53,7 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .hero-split{display:grid;grid-template-columns:1fr 420px;gap:5rem;align-items:end;padding-bottom:5rem}
 @media(max-width:900px){.hero-split{grid-template-columns:1fr;gap:2.5rem;padding-bottom:3rem}}
 
-.hero-h1{font-family:var(--serif);font-size:clamp(3rem,6vw,5.2rem);font-weight:400;line-height:1.06;letter-spacing:-.02em;margin-bottom:1.5rem}
+.hero-h1{font-family:var(--serif);font-size:clamp(2.46rem, 4.2vw, 3.43rem);font-weight:400;line-height:1.06;letter-spacing:-.02em;margin-bottom:1.5rem}
 .hero-h1 em{font-style:italic;color:var(--green)}
 .hero-h1 .sc{font-family:var(--script);font-weight:600;font-size:1.05em;color:var(--gold);display:block;line-height:1.15}
 
@@ -134,10 +134,20 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .tl-body{font-size:14px;color:var(--ink);line-height:1.65;max-width:560px}
 
 /* VALUES BAND */
-.values-band{background:var(--black);padding:5rem 0}
+.fb-band{position:relative;min-height:70vh;display:flex;align-items:center;overflow:hidden;background:#e9e2d6}
+.fb-band>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.fb-band .fb-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(253,252,250,.94),rgba(253,252,250,.6) 38%,rgba(253,252,250,.08) 70%,rgba(253,252,250,0))}
+.fb-band .fb-inner{position:relative;z-index:2;max-width:760px;padding:0 clamp(20px,6vw,90px)}
+.fb-band .fb-ov{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.fb-band h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.8rem, 3.5vw, 2.64rem);line-height:1.08;letter-spacing:.01em;color:var(--charcoal,#2e2e2e)}
+.fb-band p{margin-top:1.2rem;max-width:30rem;color:var(--ink,#4a4a4a);font-size:1.05rem;line-height:1.7}
+.values-band{background:var(--black);padding:5rem 0;position:relative;overflow:hidden}
+.values-band::before{content:"";position:absolute;inset:0;background:url('/assets/compare-bg.png') center/cover no-repeat;opacity:.26;z-index:0}
+.values-band::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(22,20,16,.85),rgba(22,20,16,.93));z-index:0}
+.values-band > *{position:relative;z-index:1}
 .vb-inner{max-width:1100px;margin:0 auto;padding:0 2.5rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
 @media(max-width:768px){.vb-inner{grid-template-columns:1fr;gap:2.5rem;padding:0 1.25rem}}
-.vb-left h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--white);line-height:1.2;margin-bottom:1rem}
+.vb-left h2{font-family:var(--serif);font-size:clamp(1.64rem, 3.2vw, 2.4rem);font-weight:400;color:var(--white);line-height:1.2;margin-bottom:1rem}
 .vb-left h2 em{font-style:italic;color:var(--goldl)}
 .vb-left p{font-size:15px;color:rgba(255,255,255,.55);line-height:1.7;font-weight:300}
 .vb-right{display:flex;flex-direction:column;gap:1rem}
@@ -147,8 +157,11 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .vv-text strong{color:var(--white);font-weight:500;display:block;margin-bottom:.15rem}
 
 /* CTA */
-.cta-section{background:var(--green);padding:5.5rem 0;text-align:center}
-.cta-section h2{font-family:var(--serif);font-size:clamp(2.2rem,4vw,3.2rem);font-weight:400;color:var(--white);margin-bottom:.75rem;line-height:1.2}
+.cta-section{background:var(--green);padding:5.5rem 0;text-align:center;position:relative;overflow:hidden}
+.cta-section::before{content:"";position:absolute;inset:0;background:url('/assets/waitlist-bg.png') center/cover no-repeat;opacity:.22;z-index:0}
+.cta-section::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(58,85,50,.82),rgba(48,71,42,.93));z-index:0}
+.cta-section > *{position:relative;z-index:1}
+.cta-section h2{font-family:var(--serif);font-size:clamp(1.8rem, 3.2vw, 2.4rem);font-weight:400;color:var(--white);margin-bottom:.75rem;line-height:1.2}
 .cta-section p{font-size:16px;color:rgba(255,255,255,.7);max-width:480px;margin:0 auto 2rem;font-weight:300;line-height:1.65}
 .cta-links{display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap}
 .cta-btn{padding:13px 28px;border-radius:100px;font-family:var(--sans);font-size:13px;font-weight:500;letter-spacing:.05em;cursor:pointer;transition:all var(--tr);text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;border:1.5px solid transparent}
@@ -170,6 +183,13 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 .reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
 .reveal.vis{opacity:1;transform:none}
 .rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+
+/* full-bleed video hero */
+.hero{position:relative;overflow:hidden}
+.hero .hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.hero .hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .hero-scrim{position:absolute;inset:0;background:radial-gradient(ellipse 96% 88% at 50% 42%,rgba(242,239,233,.72),rgba(242,239,233,.93))}
+.hero .hero-inner{position:relative;z-index:2}
 </style>
 </head>
 <body>
@@ -187,29 +207,25 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-bg">
-    <div class="hb-ring hb-1"></div>
-    <div class="hb-ring hb-2"></div>
-  </div>
+  <div class="hero-bg"><video class="hero-vid" autoplay loop muted playsinline><source src="/assets/hero-about.mp4" type="video/mp4"></video><div class="hero-scrim"></div><div class="hb-ring hb-1"></div><div class="hb-ring hb-2"></div></div>
   <div class="hero-inner">
-    <div class="hero-overline">The maker behind the platform</div>
+    <div class="hero-overline">About Evercrafted</div>
     <div class="hero-split">
       <div class="reveal">
         <h1 class="hero-h1">
-          25 years making.<br>
-          Still losing time to <em>deciding.</em><br>
-          <span class="sc">Not anymore.</span>
+          Why do so many wreaths feel<br>
+          <em>decorative</em> —<br>
+          <span class="sc">but not meaningful?</span>
         </h1>
         <div class="hero-body">
-          <p>My name is Bret. I have been designing and building custom faux botanical wreaths for clients in Columbus, Ohio for over 25 years. I love the actual work — the layering, the balance, the moment a piece finally feels right.</p>
-          <p>What I did not love was how long it took to get there. Not the building. The deciding. Every commission started the same way — a client with a feeling they could not quite describe, and me trying to translate that into a wreath while staring at my inventory wondering where to begin.</p>
-          <p>Evercrafted is what I built when I got tired of that gap. It is a design tool that starts where the feeling starts — and handles everything between the memory and the build.</p>
+          <p>Evercrafted began with that question. Most handmade wreaths are built from trends, copied layouts, or seasonal formulas — beautiful, yes, but disconnected from memory, emotion, and story.</p>
+          <p>It was created to change that. At its core, Evercrafted is not just a wreath company or a design platform. It is a <strong>creative intelligence studio</strong> built around emotion-driven design.</p>
         </div>
         <div class="hero-sig">
-          <div class="sig-mark">Bret</div>
+          <div class="sig-mark">✦</div>
           <div class="sig-detail">
-            <strong>Bret — Founder, Evercrafted Studio</strong>
-            25 years · Faux botanical artist · Columbus, Ohio
+            <strong>Evercrafted Studio</strong>
+            Emotion-driven floral design intelligence
           </div>
         </div>
       </div>
@@ -217,15 +233,15 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
       <div class="reveal rd2">
         <div class="hero-portrait">
           <div class="portrait-frame">
-            <div class="portrait-fill">
-              <div class="portrait-initials">B</div>
-              <div style="font-size:11px;color:rgba(74,103,65,.4);letter-spacing:.08em;text-align:center">Photo coming soon</div>
+            <div class="portrait-fill" style="padding:30px;justify-content:center;gap:16px;text-align:center">
+              <div style="font-family:'Italiana',Georgia,serif;font-size:25px;line-height:1.28;color:#2E3F2A">A system that turns a <em>feeling</em> into something you can build.</div>
+              <div style="font-size:11px;color:rgba(74,103,65,.55);letter-spacing:.1em;text-transform:uppercase">Placement · texture · movement · color · asymmetry · symbolism</div>
             </div>
           </div>
           <div class="portrait-name-card">
-            <div class="pnc-name">Bret</div>
-            <div class="pnc-role">Founder · Evercrafted Studio</div>
-            <div class="pnc-loc">Columbus, Ohio · 25 years in faux botanicals</div>
+            <div class="pnc-name">The Evercrafted Engine</div>
+            <div class="pnc-role">A proprietary emotional blueprint system</div>
+            <div class="pnc-loc">Feelings & memories → manufacturable floral designs</div>
           </div>
         </div>
       </div>
@@ -236,8 +252,8 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 <!-- PULL QUOTE -->
 <div class="pull-quote-section">
   <div class="pull-quote-inner reveal">
-    <div class="pq-text">The building was never the hard part. It was all the time spent before the first stem went in — trying to figure out what a piece was supposed to say.</div>
-    <div class="pq-attr">Bret · Founder, Evercrafted</div>
+    <div class="pq-text">Every branch placement. Every negative space. Every curve of movement. Every material choice. <em>Intentional.</em></div>
+    <div class="pq-attr">The Evercrafted approach</div>
   </div>
 </div>
 
@@ -247,33 +263,32 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
     <div class="story-grid">
 
       <div class="reveal">
-        <div class="story-overline">The real problem</div>
-        <h2 class="story-h2">Every wreath maker faces<br>the same <em>invisible wall</em></h2>
+        <div class="story-overline">Where it comes from</div>
+        <h2 class="story-h2">What started as obsession<br>became <em>an engine</em></h2>
         <div class="story-body">
-          <p>You know how to build. After years in this craft — maybe a season, maybe a decade, maybe more — you have the materials, the taste, and the instincts. None of that is the problem.</p>
-          <p>The problem is the time between a client saying <em>"I want something that feels like my grandmother"</em> and the moment you actually pick up the first stem. That gap — where you are scrolling Pinterest, staring at your inventory, second-guessing every combination — is where the hours go.</p>
-          <p>It is not a skill problem. It is a translation problem. <strong>There was no system for moving from a feeling to a decision.</strong> Not after one year of making. Not after twenty-five. The gap between what a client describes and the moment you reach for the first stem does not close on its own — it just gets more familiar.</p>
-          <p>After 25 years of this work — hundreds of commissions, thousands of design decisions — I had enough of making those decisions slowly. I built a system that could do the translation for me. One that understood what a feeling looked like in physical materials and could tell me exactly what to reach for and why.</p>
-          <p>That system became Evercrafted.</p>
+          <p>What began as an obsession with floral composition slowly evolved into something much larger — a system that understands how placement, texture, movement, color, asymmetry, and emotional symbolism work together to create a feeling.</p>
+          <p>Evercrafted was built from months of studying wreath structure, emotional response, visual rhythm, interior styling, storytelling, and the psychology of memory.</p>
+          <p>The result became what we now call <strong>the Evercrafted Engine</strong> — a proprietary blueprint system that transforms feelings, memories, aesthetics, and personal identity into manufacturable floral designs.</p>
+          <p>Not a mood board. Not a color picker. A system that treats emotion as a real design input — and returns something you can actually build.</p>
         </div>
       </div>
 
       <div class="reveal rd2">
         <div class="story-aside">
           <div class="aside-card">
-            <div class="ac-num">25</div>
-            <div class="ac-label">Years working with faux botanicals</div>
-            <div class="ac-body">A quarter century of commissions taught me more about how clients describe what they want than any design course ever could.</div>
-          </div>
-          <div class="aside-card">
-            <div class="ac-num">100s</div>
-            <div class="ac-label">Of client conversations</div>
-            <div class="ac-body">Across 25 years of commissions — grief, joy, memory, celebration, the full range of what people want to mark. Every brief started with a feeling that needed to become something real and buildable.</div>
+            <div class="ac-num">6</div>
+            <div class="ac-label">Disciplines behind it</div>
+            <div class="ac-body">Wreath structure, emotional response, visual rhythm, interior styling, storytelling, and the psychology of memory — studied and built into one system.</div>
           </div>
           <div class="aside-card">
             <div class="ac-num">1</div>
-            <div class="ac-label">Core belief behind all of it</div>
-            <div class="ac-body">If the design decisions were easier to make, the work itself would be better — and the people making it would spend more time actually making.</div>
+            <div class="ac-label">Engine at the core</div>
+            <div class="ac-body">A proprietary blueprint system that transforms feelings, memories, aesthetics, and identity into manufacturable floral designs.</div>
+          </div>
+          <div class="aside-card">
+            <div class="ac-num">∞</div>
+            <div class="ac-label">Feelings it can hold</div>
+            <div class="ac-body">Grief, gratitude, nostalgia, celebration, healing — the full range of what a piece can be made to mean.</div>
           </div>
         </div>
       </div>
@@ -286,40 +301,55 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 <section class="philosophy-section">
   <div class="container">
     <div class="phil-intro reveal">
-      <div class="story-overline">Design philosophy</div>
-      <h2 class="story-h2">What I believe about<br><em>wreath design</em></h2>
-      <p style="font-size:16px;color:var(--ink);line-height:1.7;font-weight:300;max-width:540px">These are the principles I built into Evercrafted — because a tool should reflect the way good designers actually think.</p>
+      <div class="story-overline">What it can hold</div>
+      <h2 class="story-h2">A wreath can be more<br>than <em>décor</em></h2>
+      <p style="font-size:16px;color:var(--ink);line-height:1.7;font-weight:300;max-width:540px">We believe a wreath can carry a feeling — and keep carrying it, in a room, long after the moment has passed. It can represent:</p>
     </div>
     <div class="phil-grid">
       <div class="phil-card reveal">
         <div class="pc-accent"></div>
-        <div class="pc-title">Feeling before form</div>
-        <div class="pc-body">A great wreath starts with understanding what it is meant to say. The materials come after. If you reach for the flowers before you know the feeling, you are guessing — and it shows.</div>
+        <div class="pc-title">Grief &amp; gratitude</div>
+        <div class="pc-body">Holding loss and thankfulness in the same quiet arrangement.</div>
       </div>
       <div class="phil-card reveal rd1">
         <div class="pc-accent"></div>
-        <div class="pc-title">Asymmetry is the point</div>
-        <div class="pc-body">Nature is not symmetrical. The most compelling wreaths are not either. Tension, movement, and intentional negative space are what make a piece look alive instead of assembled.</div>
+        <div class="pc-title">A childhood memory</div>
+        <div class="pc-body">A color, a flower, a feeling from a room you still remember.</div>
       </div>
       <div class="phil-card reveal rd2">
         <div class="pc-accent"></div>
-        <div class="pc-title">The silence matters</div>
-        <div class="pc-body">Negative space is not empty — it is breathing room. A wreath that fills every inch gives the eye nowhere to rest. What you leave out is as important as what you put in.</div>
+        <div class="pc-title">A season of healing</div>
+        <div class="pc-body">Softness for a chapter that asked a lot of you.</div>
       </div>
       <div class="phil-card reveal">
         <div class="pc-accent"></div>
-        <div class="pc-title">Repetition is the enemy</div>
-        <div class="pc-body">Every design should bring something the last one did not. The moment your work starts to look familiar — even to you — it is time to change the way you are making decisions.</div>
+        <div class="pc-title">A homecoming</div>
+        <div class="pc-body">The warmth of being back where you belong.</div>
       </div>
       <div class="phil-card reveal rd1">
         <div class="pc-accent"></div>
-        <div class="pc-title">Inventory should work for you</div>
-        <div class="pc-body">Your collection of materials is not a storage problem. It is a design resource. The more you understand what each piece brings to a design, the faster and better your decisions get.</div>
+        <div class="pc-title">Nostalgia</div>
+        <div class="pc-body">The ache and comfort of something you almost forgot.</div>
       </div>
       <div class="phil-card reveal rd2">
         <div class="pc-accent"></div>
-        <div class="pc-title">Build what you decide</div>
-        <div class="pc-body">The hours are in the deciding, not the building. Get the design right on paper — or on screen — and the build becomes the enjoyable part it was always meant to be.</div>
+        <div class="pc-title">Celebration</div>
+        <div class="pc-body">Joy made visible, for the days that deserve marking.</div>
+      </div>
+      <div class="phil-card reveal">
+        <div class="pc-accent"></div>
+        <div class="pc-title">Softness</div>
+        <div class="pc-body">Gentleness, given a form you can hang on a door.</div>
+      </div>
+      <div class="phil-card reveal rd1">
+        <div class="pc-accent"></div>
+        <div class="pc-title">Identity</div>
+        <div class="pc-body">A piece that looks like the person it was made for.</div>
+      </div>
+      <div class="phil-card reveal rd2">
+        <div class="pc-accent"></div>
+        <div class="pc-title">Love that lingers</div>
+        <div class="pc-body">Affection that still fills a room, long after.</div>
       </div>
     </div>
   </div>
@@ -329,50 +359,61 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 <section class="timeline-section">
   <div class="container">
     <div class="tl-intro reveal">
-      <div class="story-overline">How we got here</div>
-      <h2 class="story-h2">From one maker's<br><em>frustration</em> to a platform</h2>
+      <div class="story-overline">What we're building</div>
+      <h2 class="story-h2">A new kind of<br><em>creative platform</em></h2>
+      <p style="font-size:16px;color:var(--ink);line-height:1.7;font-weight:300;max-width:560px;margin-top:14px">Evercrafted exists at the intersection of artistry and technology — a place where floral artists, designers, and makers can turn creativity into something real and lasting.</p>
     </div>
     <div class="timeline reveal rd1">
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">25 years ago</div>
-        <div class="tl-title">The first custom commissions</div>
-        <div class="tl-body">Started designing and building custom faux botanical wreaths in Columbus — a craft that became a career, and a career that became a calling. Even then, every client had a feeling they wanted the piece to hold, and turning that feeling into a design took far longer than the build itself.</div>
+        <div class="tl-year">Generate</div>
+        <div class="tl-title">Emotionally intelligent concepts</div>
+        <div class="tl-body">Turn a feeling, a memory, or an aesthetic into a wreath concept with real design reasoning behind every placement.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">Over two decades</div>
-        <div class="tl-title">The pattern became clear</div>
-        <div class="tl-body">Every commission followed the same arc. A conversation full of feeling and meaning, then a design process that felt like starting over every time. The building was fast. The deciding was slow. That ratio was wrong.</div>
+        <div class="tl-year">Create</div>
+        <div class="tl-title">Professional collections</div>
+        <div class="tl-body">Build cohesive, signature collections instead of one-off pieces — work that holds together and reads as yours.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">The turning point</div>
-        <div class="tl-title">Building a system that could translate</div>
-        <div class="tl-body">Started building what would become Evercrafted — a way to move from a client's words directly into design decisions. Not a mood board, not a color picker. A real tool that understood emotion as a design input.</div>
+        <div class="tl-year">Develop</div>
+        <div class="tl-title">Marketplace-ready products</div>
+        <div class="tl-body">Move from a concept to a sellable, manufacturable product — design, blueprint, and parts list in one place.</div>
       </div>
       <div class="tl-item">
         <div class="tl-dot"></div>
-        <div class="tl-year">Now</div>
-        <div class="tl-title">Opening it up to other makers</div>
-        <div class="tl-body">Evercrafted is the tool I built for my own practice — now being shaped into something other wreath artists can use. The waitlist is open. The platform is in development. The first makers get in before the public launch, with founding pricing that stays with them.</div>
+        <div class="tl-year">Build</div>
+        <div class="tl-title">Meaningful brands</div>
+        <div class="tl-body">Grow a brand around your creativity — not just a catalog of décor, but something with a point of view.</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- VALUES BAND -->
+<section class="fb-band">
+  <img src="/assets/band-interior.png" alt="A finished Evercrafted wreath in a room">
+  <div class="fb-scrim"></div>
+  <div class="fb-inner">
+    <div class="fb-ov">What it's really about</div>
+    <h2>Beauty that feels<br>personal again.</h2>
+    <p>Not mass-produced. Not trend-chasing. Not empty. Something with soul — something remembered.</p>
+  </div>
+</section>
+
 <div class="values-band">
   <div class="vb-inner">
     <div class="vb-left reveal">
-      <h2>Built on one<br><em>simple idea.</em></h2>
-      <p>The makers who care most about their work deserve tools that match that care. Evercrafted was built to give serious wreath artists the kind of design intelligence that used to take years to develop — and hours to apply.</p>
+      <h2>At the intersection of<br><em>artistry &amp; technology.</em></h2>
+      <p>Underneath all the systems, render engines, blueprints, and technology is something simple: we believe people want beauty that feels personal again.</p>
     </div>
     <div class="vb-right reveal rd2">
-      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Made by someone with 25 years in this craft</strong>Not a tech product trying to enter the faux floral space. A maker's tool built from the inside out, by someone who has been doing the work since before most of the current tools existed.</div></div>
-      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Designed around the client conversation</strong>Because that is where every wreath really starts — with a feeling that needs to become something real.</div></div>
-      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Built to respect your taste</strong>Evercrafted makes decisions faster — it does not make them for you. Every suggestion is yours to change.</div></div>
-      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Committed to the makers who show up first</strong>Founding members get pricing that never changes, and direct input on what gets built next.</div></div>
+      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Something with soul</strong>Designed to carry meaning, not just fill a space — beauty with a reason behind it.</div></div>
+      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Something remembered</strong>Built around memory, emotion, and story — the things that make a piece actually matter.</div></div>
+      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Nothing mass-produced</strong>Every design is intentional, down to the negative space. No trend-chasing, no empty décor.</div></div>
+      <div class="vv"><span class="vv-dot"></span><div class="vv-text"><strong>Made for makers</strong>A platform for floral artists and designers to build emotionally intelligent work — and meaningful brands around it.</div></div>
     </div>
   </div>
 </div>
@@ -380,28 +421,15 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 <!-- CTA -->
 <section class="cta-section">
   <div class="container reveal">
-    <h2>Come make something.</h2>
-    <p>Join the waitlist for early access, founding member pricing, and a direct line to what gets built next.</p>
+    <h2>Something Evercrafted.</h2>
+    <p>Beauty that feels personal again — with soul, and remembered. Join the waitlist for early access, founding pricing, and a direct line to what gets built next.</p>
     <div class="cta-links">
-      <a href="evercrafted-marketing-site.html#waitlist" class="cta-btn cta-btn-primary">Join the waitlist →</a>
+      <a href="evercrafted-try.html" class="cta-btn cta-btn-primary">Try a memory →</a>
+      <a href="evercrafted-marketing-site.html#waitlist" class="cta-btn cta-btn-ghost">Join the waitlist</a>
       <a href="evercrafted-how-it-works.html" class="cta-btn cta-btn-ghost">See how it works</a>
     </div>
   </div>
 </section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="foot-inner">
-    <div class="foot-logo">Ever<span>crafted</span></div>
-    <div class="foot-links">
-      <a href="evercrafted-marketing-site.html">Home</a>
-      <a href="evercrafted-how-it-works.html">How it works</a>
-      <a href="evercrafted-marketing-site.html#pricing">Pricing</a>
-      <a href="evercrafted-marketing-site.html#waitlist">Waitlist</a>
-    </div>
-    <div style="font-size:11px">© 2025 Evercrafted Studio</div>
-  </div>
-</footer>
 
 <script>
 const ro = new IntersectionObserver(entries => {
@@ -409,5 +437,6 @@ const ro = new IntersectionObserver(entries => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
 </script>
+<script src="/evercrafted-nav.js" defer></script>
 </body>
 </html>

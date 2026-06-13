@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Floral Emotion Tagger — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --ec-white:#FFFFFF; --ec-off-white:#F9F7F4; --ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A; --ec-charcoal:#2E2E2E; --ec-ink:#4A4A4A;
+  --ec-green:#4A6741; --ec-green-light:#6B8F67; --ec-green-pale:#EEF2ED; --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-gray-100:#F5F5F5; --ec-gray-200:#E8E8E8; --ec-gray-300:#D0D0D0; --ec-gray-400:#A8A8A8; --ec-gray-500:#787878;
+  --ec-warning:#C4922A; --ec-error:#B94040;
+  --ec-font-serif:'Cormorant Garamond',Georgia,serif;
+  --ec-font-sans:'Inter',system-ui,sans-serif;
+  --ec-font-script:'Dancing Script',cursive;
+  --ec-font-mono:'DM Mono',monospace;
+  --ec-radius-sm:4px; --ec-radius-md:8px; --ec-radius-lg:14px; --ec-radius-full:9999px;
+  --ec-shadow-sm:0 1px 3px rgba(0,0,0,0.06);
+  --ec-shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --ec-shadow-card:0 2px 8px rgba(0,0,0,0.06),0 0 0 1px var(--ec-gray-200);
+  --ec-transition:200ms ease;
+}
+body { font-family:var(--ec-font-sans); background:var(--ec-off-white); color:var(--ec-black); min-height:100vh; font-size:14px; }
+
+/* HEADER */
+.ec-header { background:var(--ec-white); border-bottom:1px solid var(--ec-gray-200); height:56px; display:flex; align-items:center; justify-content:space-between; padding:0 2rem; position:sticky; top:0; z-index:100; box-shadow:var(--ec-shadow-sm); }
+.ec-brand { display:flex; align-items:baseline; gap:.75rem; }
+.ec-script { font-family:var(--ec-font-script); font-size:1.25rem; color:var(--ec-green); font-weight:600; }
+.ec-app-name { font-size:.8125rem; color:var(--ec-gray-500); letter-spacing:.05em; }
+.ec-badge { font-size:.6875rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; padding:3px 10px; border-radius:var(--ec-radius-full); background:#EEF4F9; color:#4A6785; }
+
+/* LAYOUT */
+.ec-body { max-width:1100px; margin:0 auto; padding:2rem 1.5rem; }
+.ec-two-col { display:grid; grid-template-columns:420px 1fr; gap:1.5rem; align-items:start; }
+
+/* CARDS */
+.ec-card { background:var(--ec-white); border-radius:var(--ec-radius-lg); box-shadow:var(--ec-shadow-card); }
+.ec-card-header { padding:1.25rem 1.5rem; border-bottom:1px solid var(--ec-gray-200); display:flex; align-items:center; justify-content:space-between; }
+.ec-card-title { font-family:var(--ec-font-serif); font-size:1.125rem; font-weight:600; }
+.ec-card-body { padding:1.5rem; }
+
+/* PAGE TITLE */
+.ec-page-head { margin-bottom:1.5rem; }
+.ec-page-title { font-family:var(--ec-font-serif); font-size:2rem; font-weight:400; line-height:1.2; }
+.ec-page-sub { font-size:.875rem; color:var(--ec-ink); margin-top:.375rem; line-height:1.6; }
+
+/* TABS */
+.ec-tabs { display:flex; gap:2px; background:var(--ec-gray-100); border-radius:var(--ec-radius-md); padding:3px; margin-bottom:1.25rem; }
+.ec-tab { flex:1; padding:7px 12px; border:none; background:none; border-radius:6px; font-family:var(--ec-font-sans); font-size:.8125rem; font-weight:500; cursor:pointer; color:var(--ec-gray-500); transition:all var(--ec-transition); }
+.ec-tab.active { background:var(--ec-white); color:var(--ec-black); box-shadow:var(--ec-shadow-sm); }
+
+/* FORM */
+.ec-field { display:flex; flex-direction:column; gap:.375rem; margin-bottom:1rem; }
+.ec-label { font-size:.6875rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ec-gray-500); }
+.ec-input { width:100%; padding:9px 12px; background:var(--ec-white); border:1.5px solid var(--ec-gray-200); border-radius:var(--ec-radius-md); font-family:var(--ec-font-sans); font-size:.875rem; color:var(--ec-black); outline:none; transition:border-color var(--ec-transition); }
+.ec-input:focus { border-color:var(--ec-green); box-shadow:0 0 0 3px var(--ec-green-dim); }
+.ec-input::placeholder { color:var(--ec-gray-400); }
+select.ec-input { cursor:pointer; }
+.ec-textarea { width:100%; padding:10px 12px; background:var(--ec-white); border:1.5px solid var(--ec-gray-200); border-radius:var(--ec-radius-md); font-family:var(--ec-font-mono); font-size:.8125rem; color:var(--ec-black); outline:none; resize:vertical; min-height:120px; transition:border-color var(--ec-transition); line-height:1.6; }
+.ec-textarea:focus { border-color:var(--ec-green); box-shadow:0 0 0 3px var(--ec-green-dim); }
+.ec-field-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+
+/* BUTTONS */
+.ec-btn { display:inline-flex; align-items:center; gap:.5rem; padding:9px 1.5rem; border-radius:var(--ec-radius-md); font-family:var(--ec-font-sans); font-size:.8125rem; font-weight:500; cursor:pointer; border:none; transition:all var(--ec-transition); white-space:nowrap; }
+.ec-btn-primary { background:var(--ec-black); color:var(--ec-white); }
+.ec-btn-primary:hover { background:var(--ec-charcoal); transform:translateY(-1px); box-shadow:var(--ec-shadow-md); }
+.ec-btn-green { background:var(--ec-green); color:var(--ec-white); width:100%; justify-content:center; }
+.ec-btn-green:hover { background:var(--ec-green-light); transform:translateY(-1px); }
+.ec-btn-outline { background:transparent; color:var(--ec-black); border:1.5px solid var(--ec-gray-300); }
+.ec-btn-outline:hover { border-color:var(--ec-black); background:var(--ec-gray-100); }
+.ec-btn-ghost { background:none; border:none; padding:6px 10px; font-size:.75rem; color:var(--ec-gray-500); cursor:pointer; border-radius:var(--ec-radius-sm); transition:all var(--ec-transition); font-family:var(--ec-font-sans); }
+.ec-btn-ghost:hover { color:var(--ec-black); background:var(--ec-gray-100); }
+.ec-btn:disabled { opacity:.4; cursor:not-allowed; transform:none !important; box-shadow:none !important; }
+
+/* INVENTORY LIST */
+.ec-inv-list { display:flex; flex-direction:column; gap:.5rem; max-height:280px; overflow-y:auto; margin-bottom:1rem; }
+.ec-inv-item { display:flex; align-items:center; gap:.75rem; padding:.625rem .875rem; background:var(--ec-off-white); border-radius:var(--ec-radius-md); border:1px solid var(--ec-gray-200); }
+.ec-inv-dot { width:8px; height:8px; border-radius:50%; background:var(--ec-green); flex-shrink:0; }
+.ec-inv-name { flex:1; font-size:.875rem; font-weight:500; }
+.ec-inv-meta { font-size:.75rem; color:var(--ec-gray-500); font-family:var(--ec-font-mono); }
+.ec-inv-remove { width:24px; height:24px; display:flex; align-items:center; justify-content:center; background:none; border:none; cursor:pointer; color:var(--ec-gray-400); border-radius:var(--ec-radius-sm); transition:all var(--ec-transition); font-size:14px; }
+.ec-inv-remove:hover { color:var(--ec-error); background:var(--ec-gray-100); }
+
+/* EMOTION TOKENS */
+.ec-token { display:inline-flex; align-items:center; padding:3px 10px; border-radius:var(--ec-radius-full); font-size:.6875rem; font-weight:600; letter-spacing:.04em; white-space:nowrap; margin:2px; cursor:default; }
+/* Mood tokens */
+.tok-calm        { background:#EEF2ED; color:#3A5432; }
+.tok-nostalgic   { background:#F4EFE6; color:#7A5A2A; }
+.tok-romantic    { background:#F9EDF2; color:#8A3A5A; }
+.tok-tender      { background:#FDE8F0; color:#A03060; }
+.tok-joyful      { background:#FEF9E6; color:#8A6A00; }
+.tok-elegant     { background:#F0EDF9; color:#5A4A8A; }
+.tok-mysterious  { background:#EDE8F4; color:#5A3A8A; }
+.tok-dramatic    { background:#F4E8E8; color:#8A2A2A; }
+.tok-grounded    { background:#EDE8E0; color:#5A4A30; }
+.tok-resilient   { background:#EEF4EE; color:#2A5A2A; }
+.tok-abundant    { background:#F4F0E6; color:#6A5020; }
+.tok-serene      { background:#E8EFF9; color:#2A4A7A; }
+.tok-playful     { background:#FEF0E6; color:#8A4A00; }
+.tok-warm        { background:#FDF2E8; color:#8A4A18; }
+.tok-melancholic { background:#E8EDF9; color:#3A3A7A; }
+.tok-bold        { background:#F9E8E8; color:#8A1818; }
+.tok-whimsical   { background:#F4E8F9; color:#6A2A8A; }
+.tok-luxurious   { background:#2E2E2E; color:#F2EFE9; }
+/* Design intent tokens */
+.tok-elevated    { background:#1A1A1A; color:#F9F7F4; }
+.tok-rustic      { background:#E8E0D4; color:#5A4030; }
+.tok-structured  { background:#E8ECF4; color:#2A3A6A; }
+.tok-organic     { background:#E8F0E8; color:#2A4A2A; }
+.tok-festive     { background:#F9E8F0; color:#8A2A6A; }
+.tok-minimal     { background:#F2F2F2; color:#4A4A4A; }
+.tok-editorial   { background:#1A1A1A; color:#C4D4BF; }
+.tok-softened    { background:#F0EDE8; color:#6A6050; }
+/* Seasonal tokens */
+.tok-renewal     { background:#E6F4E8; color:#1A5A2A; }
+.tok-bloom       { background:#F9EEF2; color:#8A3050; }
+.tok-harvest     { background:#F9F0E6; color:#8A4A00; }
+.tok-wintry      { background:#E8EEF4; color:#2A4A6A; }
+.tok-autumnal    { background:#F4EAE0; color:#7A3A10; }
+.tok-verdant     { background:#E0F0E0; color:#1A5A1A; }
+
+/* PRIMARY badge */
+.ec-primary-tag { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:var(--ec-radius-full); font-size:.6875rem; font-weight:700; letter-spacing:.06em; background:var(--ec-black); color:var(--ec-white); }
+
+/* RESULT CARDS */
+.ec-results { display:flex; flex-direction:column; gap:1rem; }
+.ec-result-card { background:var(--ec-white); border-radius:var(--ec-radius-lg); box-shadow:var(--ec-shadow-card); overflow:hidden; }
+.ec-result-header { display:flex; align-items:center; justify-content:space-between; padding:.875rem 1.25rem; background:var(--ec-off-white); border-bottom:1px solid var(--ec-gray-200); }
+.ec-result-name { font-weight:600; font-size:.9375rem; }
+.ec-result-meta { font-size:.75rem; color:var(--ec-gray-500); font-family:var(--ec-font-mono); }
+.ec-result-body { padding:1rem 1.25rem; }
+.ec-result-row { display:flex; align-items:flex-start; gap:.75rem; margin-bottom:.75rem; }
+.ec-result-label { font-size:.6875rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--ec-gray-400); min-width:80px; padding-top:3px; flex-shrink:0; }
+.ec-result-tags { display:flex; flex-wrap:wrap; gap:2px; }
+.ec-confidence { display:inline-flex; align-items:center; gap:4px; font-size:.6875rem; font-family:var(--ec-font-mono); padding:2px 8px; border-radius:var(--ec-radius-full); }
+.conf-high { background:var(--ec-green-pale); color:var(--ec-green); }
+.conf-medium { background:#FEF9E6; color:#8A6A00; }
+.conf-low { background:#F9E8E8; color:#8A2A2A; }
+
+/* SUMMARY CARD */
+.ec-summary { background:var(--ec-black); border-radius:var(--ec-radius-lg); padding:1.5rem; color:var(--ec-off-white); margin-top:1.5rem; }
+.ec-summary-title { font-family:var(--ec-font-serif); font-size:1.25rem; font-weight:400; margin-bottom:1.25rem; color:rgba(248,245,239,.9); }
+.ec-summary-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+.ec-summary-block { background:rgba(255,255,255,.05); border-radius:var(--ec-radius-md); padding:.875rem 1rem; border:1px solid rgba(255,255,255,.08); }
+.ec-summary-block-label { font-size:.6875rem; letter-spacing:.1em; text-transform:uppercase; color:rgba(196,212,191,.6); margin-bottom:.5rem; }
+.ec-summary-tokens { display:flex; flex-wrap:wrap; gap:3px; }
+.ec-summary-intent { font-size:.8125rem; color:rgba(248,245,239,.6); line-height:1.7; padding:.875rem 1rem; background:rgba(255,255,255,.04); border-radius:var(--ec-radius-md); border:1px solid rgba(255,255,255,.06); margin-bottom:1rem; }
+.ec-gap-row { display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; }
+.ec-gap-label { font-size:.6875rem; letter-spacing:.08em; text-transform:uppercase; color:rgba(196,212,191,.5); }
+.ec-vocab-stamp { font-family:var(--ec-font-mono); font-size:.6875rem; color:rgba(248,245,239,.2); margin-top:1rem; text-align:right; }
+
+/* LOADING SPINNER */
+.ec-loading { display:flex; flex-direction:column; align-items:center; gap:1rem; padding:3rem; color:var(--ec-gray-500); }
+.ec-spinner { width:28px; height:28px; border:2px solid var(--ec-gray-200); border-top-color:var(--ec-green); border-radius:50%; animation:spin .7s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.ec-loading-label { font-size:.8125rem; letter-spacing:.04em; }
+
+/* EMPTY */
+.ec-empty { display:flex; flex-direction:column; align-items:center; gap:.875rem; padding:3rem 2rem; text-align:center; color:var(--ec-gray-500); }
+.ec-empty-icon { font-size:2.5rem; opacity:.6; }
+.ec-empty-title { font-family:var(--ec-font-serif); font-size:1.125rem; color:var(--ec-ink); }
+.ec-empty-sub { font-size:.8125rem; max-width:240px; line-height:1.6; }
+
+/* ERROR */
+.ec-error { background:#FDEAEA; border:1.5px solid rgba(185,64,64,.2); border-radius:var(--ec-radius-md); padding:.875rem 1rem; font-size:.8125rem; color:#8A2A2A; line-height:1.6; }
+
+/* DIVIDER */
+.ec-divider { display:flex; align-items:center; gap:1rem; margin:1.5rem 0; color:var(--ec-gray-300); font-size:.875rem; }
+.ec-divider::before, .ec-divider::after { content:''; flex:1; height:1px; background:var(--ec-gray-200); }
+
+/* TOAST */
+.ec-toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(8px); background:var(--ec-black); color:var(--ec-white); padding:10px 20px; border-radius:var(--ec-radius-md); font-size:.8125rem; opacity:0; pointer-events:none; transition:all 300ms ease; z-index:999; box-shadow:var(--ec-shadow-md); }
+.ec-toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* COPY JSON */
+.ec-json-block { background:var(--ec-black); border-radius:var(--ec-radius-md); padding:1rem; margin-top:1rem; position:relative; }
+.ec-json-block pre { font-family:var(--ec-font-mono); font-size:.75rem; color:#C4D4BF; white-space:pre-wrap; word-break:break-word; line-height:1.6; max-height:300px; overflow-y:auto; }
+.ec-copy-btn { position:absolute; top:.75rem; right:.75rem; padding:4px 10px; background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.15); border-radius:var(--ec-radius-sm); font-size:.6875rem; color:rgba(248,245,239,.6); cursor:pointer; font-family:var(--ec-font-sans); transition:all var(--ec-transition); }
+.ec-copy-btn:hover { background:rgba(255,255,255,.18); color:rgba(248,245,239,.9); }
+
+/* VOCAB REFERENCE PANEL */
+.ec-vocab-panel { margin-top:1.5rem; }
+.ec-vocab-section { margin-bottom:1rem; }
+.ec-vocab-section-title { font-size:.6875rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--ec-gray-500); margin-bottom:.5rem; }
+.ec-vocab-tokens { display:flex; flex-wrap:wrap; gap:4px; }
+
+/* PROGRESS STEPS */
+.ec-steps { display:flex; align-items:center; gap:.5rem; margin-bottom:1.5rem; }
+.ec-step { display:flex; align-items:center; gap:.375rem; font-size:.75rem; color:var(--ec-gray-400); }
+.ec-step.done { color:var(--ec-green); }
+.ec-step.active { color:var(--ec-black); font-weight:600; }
+.ec-step-dot { width:8px; height:8px; border-radius:50%; background:currentColor; flex-shrink:0; }
+.ec-step-line { flex:1; height:1px; background:var(--ec-gray-200); margin:0 .25rem; }
+
+@media (max-width:800px) {
+  .ec-two-col { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="ec-toast" id="toast"></div>
+
+<!-- HEADER -->
+<header class="ec-header">
+  <div class="ec-brand">
+    <span class="ec-script">Evercrafted</span>
+    <span class="ec-app-name">Floral Emotion Tagger</span>
+  </div>
+  <div class="ec-badge">Craft</div>
+</header>
+
+<!-- BODY -->
+<div class="ec-body">
+
+  <div class="ec-page-head">
+    <h1 class="ec-page-title">Tag your inventory <em style="font-style:italic;color:var(--ec-green)">with emotion.</em></h1>
+    <p class="ec-page-sub">Add items manually or paste a list — the AI tags each floral with canonical EC_EMOTION_VOCAB_V1 tokens for blueprint-ready output.</p>
+  </div>
+
+  <div class="ec-two-col">
+
+    <!-- LEFT: INPUT PANEL -->
+    <div>
+      <div class="ec-card">
+        <div class="ec-card-header">
+          <span class="ec-card-title">Inventory Input</span>
+          <button class="ec-btn-ghost" onclick="clearAll()">Clear all</button>
+        </div>
+        <div class="ec-card-body">
+
+          <!-- TABS -->
+          <div class="ec-tabs">
+            <button class="ec-tab active" id="tab-manual" onclick="switchTab('manual')">Manual Entry</button>
+            <button class="ec-tab" id="tab-paste" onclick="switchTab('paste')">Paste / CSV</button>
+          </div>
+
+          <!-- MANUAL ENTRY -->
+          <div id="panel-manual">
+            <div class="ec-field">
+              <label class="ec-label">Item Name</label>
+              <input class="ec-input" id="f-name" type="text" placeholder="e.g. Burgundy Dahlia Stem" onkeydown="if(event.key==='Enter')addItem()">
+            </div>
+            <div class="ec-field-row">
+              <div class="ec-field">
+                <label class="ec-label">Color</label>
+                <input class="ec-input" id="f-color" type="text" placeholder="e.g. dusty blue" onkeydown="if(event.key==='Enter')addItem()">
+              </div>
+              <div class="ec-field">
+                <label class="ec-label">Category</label>
+                <select class="ec-input" id="f-category">
+                  <option value="focal">Focal</option>
+                  <option value="filler">Filler</option>
+                  <option value="greenery">Greenery</option>
+                  <option value="accent">Accent</option>
+                  <option value="texture">Texture</option>
+                  <option value="base">Base</option>
+                  <option value="ribbon">Ribbon</option>
+                </select>
+              </div>
+            </div>
+            <div class="ec-field-row">
+              <div class="ec-field">
+                <label class="ec-label">Quantity (optional)</label>
+                <input class="ec-input" id="f-qty" type="number" min="1" placeholder="12">
+              </div>
+              <div class="ec-field">
+                <label class="ec-label">Unit (optional)</label>
+                <input class="ec-input" id="f-unit" type="text" placeholder="stems">
+              </div>
+            </div>
+            <button class="ec-btn ec-btn-outline" style="width:100%;justify-content:center" onclick="addItem()">+ Add to Inventory</button>
+          </div>
+
+          <!-- PASTE / CSV -->
+          <div id="panel-paste" style="display:none">
+            <div class="ec-field">
+              <label class="ec-label">Paste inventory — one item per line</label>
+              <textarea class="ec-textarea" id="f-paste" placeholder="12 ivory peony stems, focal
+8 sage eucalyptus, greenery
+4 burgundy dahlia, focal
+2 cream velvet ribbon, ribbon
+6 dried grass bundles, texture" rows="7"></textarea>
+            </div>
+            <p style="font-size:.75rem;color:var(--ec-gray-500);margin-bottom:.875rem;line-height:1.6">
+              Format: <code style="font-family:var(--ec-font-mono)">Name, Category</code> or plain prose.<br>
+              Quantity and color are detected automatically from the name.
+            </p>
+            <button class="ec-btn ec-btn-outline" style="width:100%;justify-content:center" onclick="parsePaste()">Import Pasted Items</button>
+          </div>
+
+          <!-- INVENTORY LIST -->
+          <div id="inv-section" style="display:none;margin-top:1.25rem">
+            <div class="ec-divider">inventory</div>
+            <div class="ec-inv-list" id="inv-list"></div>
+            <button class="ec-btn ec-btn-green" id="tag-btn" onclick="runTagger()">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 7L7 13M1 7H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Tag with Emotions
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- VOCAB REFERENCE -->
+      <div class="ec-card" style="margin-top:1rem">
+        <div class="ec-card-header">
+          <span class="ec-card-title" style="font-size:1rem">EC_EMOTION_VOCAB_V1</span>
+          <span style="font-family:var(--ec-font-mono);font-size:.6875rem;color:var(--ec-gray-500)">32 tokens</span>
+        </div>
+        <div class="ec-card-body">
+          <div class="ec-vocab-section">
+            <div class="ec-vocab-section-title">Mood Emotions — 18 tokens</div>
+            <div class="ec-vocab-tokens" id="vocab-mood"></div>
+          </div>
+          <div class="ec-vocab-section">
+            <div class="ec-vocab-section-title">Design Intent — 8 tokens</div>
+            <div class="ec-vocab-tokens" id="vocab-intent"></div>
+          </div>
+          <div class="ec-vocab-section">
+            <div class="ec-vocab-section-title">Seasonal Signals — 6 tokens</div>
+            <div class="ec-vocab-tokens" id="vocab-seasonal"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT: OUTPUT PANEL -->
+    <div>
+      <div class="ec-card">
+        <div class="ec-card-header">
+          <span class="ec-card-title">Tagged Output</span>
+          <div style="display:flex;gap:.5rem;align-items:center">
+            <span id="output-count" style="font-size:.75rem;color:var(--ec-gray-500)"></span>
+            <button class="ec-btn-ghost" id="copy-json-btn" onclick="copyJSON()" style="display:none">Copy JSON</button>
+            <button class="ec-btn-ghost" id="export-btn" onclick="exportJSON()" style="display:none">Export</button>
+          </div>
+        </div>
+        <div class="ec-card-body" id="output-area">
+          <div class="ec-empty">
+            <div class="ec-empty-icon">🌿</div>
+            <div class="ec-empty-title">Nothing tagged yet</div>
+            <div class="ec-empty-sub">Add inventory items on the left and hit "Tag with Emotions" to run the AI tagger.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ─── VOCAB ────────────────────────────────────────────────────────────
+const VOCAB = {
+  mood: ["calm","nostalgic","romantic","tender","joyful","elegant","mysterious","dramatic","grounded","resilient","abundant","serene","playful","warm","melancholic","bold","whimsical","luxurious"],
+  intent: ["elevated","rustic","structured","organic","festive","minimal","editorial","softened"],
+  seasonal: ["renewal","bloom","harvest","wintry","autumnal","verdant"]
+};
+const ALL_TOKENS = [...VOCAB.mood, ...VOCAB.intent, ...VOCAB.seasonal];
+
+// ─── INVENTORY STATE ──────────────────────────────────────────────────
+let inventory = [];
+let taggedResults = null;
+
+// ─── TAB SWITCH ───────────────────────────────────────────────────────
+function switchTab(t) {
+  document.getElementById('panel-manual').style.display = t === 'manual' ? 'block' : 'none';
+  document.getElementById('panel-paste').style.display  = t === 'paste'  ? 'block' : 'none';
+  document.querySelectorAll('.ec-tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + t).classList.add('active');
+}
+
+// ─── ADD ITEM MANUALLY ────────────────────────────────────────────────
+function addItem() {
+  const name     = document.getElementById('f-name').value.trim();
+  const color    = document.getElementById('f-color').value.trim();
+  const category = document.getElementById('f-category').value;
+  const qty      = parseInt(document.getElementById('f-qty').value) || null;
+  const unit     = document.getElementById('f-unit').value.trim() || 'stems';
+  if (!name) { showToast('Item name is required.'); return; }
+  inventory.push({ id: uid(), name, color: color || null, category, qty, unit });
+  ['f-name','f-color','f-qty','f-unit'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('f-name').focus();
+  renderInventory();
+}
+
+// ─── PARSE PASTE ──────────────────────────────────────────────────────
+function parsePaste() {
+  const raw = document.getElementById('f-paste').value.trim();
+  if (!raw) { showToast('Nothing to import.'); return; }
+  const lines = raw.split('\n').filter(l => l.trim());
+  let added = 0;
+  const cats = ['focal','filler','greenery','accent','texture','base','ribbon'];
+  for (const line of lines) {
+    const parts = line.split(',');
+    const name = parts[0].trim();
+    if (!name) continue;
+    const rawCat = (parts[1] || '').trim().toLowerCase();
+    const category = cats.find(c => c === rawCat) || 'focal';
+    inventory.push({ id: uid(), name, color: null, category, qty: null, unit: 'stems' });
+    added++;
+  }
+  document.getElementById('f-paste').value = '';
+  renderInventory();
+  showToast(`Added ${added} item${added !== 1 ? 's' : ''}.`);
+}
+
+// ─── RENDER INVENTORY ─────────────────────────────────────────────────
+function renderInventory() {
+  const section  = document.getElementById('inv-section');
+  const list     = document.getElementById('inv-list');
+  const tagBtn   = document.getElementById('tag-btn');
+  if (!inventory.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  list.innerHTML = inventory.map(item => `
+    <div class="ec-inv-item">
+      <div class="ec-inv-dot"></div>
+      <div class="ec-inv-name">${esc(item.name)}</div>
+      <div class="ec-inv-meta">${item.category}${item.qty ? ' · ' + item.qty + ' ' + item.unit : ''}</div>
+      <button class="ec-inv-remove" onclick="removeItem('${item.id}')" title="Remove">✕</button>
+    </div>
+  `).join('');
+  tagBtn.disabled = false;
+}
+
+function removeItem(id) {
+  inventory = inventory.filter(i => i.id !== id);
+  renderInventory();
+}
+
+function clearAll() {
+  inventory = [];
+  taggedResults = null;
+  renderInventory();
+  document.getElementById('output-area').innerHTML = `
+    <div class="ec-empty">
+      <div class="ec-empty-icon">🌿</div>
+      <div class="ec-empty-title">Nothing tagged yet</div>
+      <div class="ec-empty-sub">Add inventory items on the left and hit "Tag with Emotions" to run the AI tagger.</div>
+    </div>`;
+  document.getElementById('output-count').textContent = '';
+  document.getElementById('copy-json-btn').style.display = 'none';
+  document.getElementById('export-btn').style.display = 'none';
+}
+
+// ─── SYSTEM PROMPT ────────────────────────────────────────────────────
+const SYSTEM_PROMPT = `You are the Evercrafted Floral Emotion Tagger, a precision AI module within a professional wreath design platform.
+
+CRITICAL RULE — CLOSED VOCABULARY ONLY:
+You MUST use ONLY the following 32 tokens in ALL emotion output fields (emotion_tags[], primary_emotion, dominant_emotions[], emotion_gaps[]).
+These are the ONLY valid values. Never use any word not in this list — not "warmth", not "cozy", not "heartfelt", not "wabi-sabi", not "quiet beauty". Find the closest token from the list.
+
+EC_EMOTION_VOCAB_V1 — the only 32 valid tokens:
+calm, nostalgic, romantic, tender, joyful, elegant, mysterious, dramatic, grounded, resilient, abundant, serene, playful, warm, melancholic, bold, whimsical, luxurious, elevated, rustic, structured, organic, festive, minimal, editorial, softened, renewal, bloom, harvest, wintry, autumnal, verdant
+
+FLORAL EMOTION REFERENCE (use as primary guide):
+Rose → primary: romantic | pool: romantic, warm, elegant, abundant
+Peony → primary: nostalgic | pool: nostalgic, tender, abundant, bloom
+Hydrangea → primary: calm | pool: calm, serene, organic, softened
+Eucalyptus → primary: calm | pool: calm, organic, renewal, verdant
+Lavender → primary: serene | pool: serene, calm, whimsical, renewal
+Dahlia → primary: dramatic | pool: dramatic, elegant, bold, editorial
+Ranunculus → primary: joyful | pool: joyful, warm, romantic, bloom
+Anemone → primary: whimsical | pool: whimsical, bold, organic, mysterious
+Garden Rose → primary: nostalgic | pool: nostalgic, romantic, warm, elegant
+Magnolia → primary: elevated | pool: elevated, serene, editorial, structured
+Foxglove → primary: dramatic | pool: dramatic, bold, whimsical, mysterious
+Hellebore → primary: mysterious | pool: mysterious, melancholic, resilient, minimal
+Protea → primary: bold | pool: bold, resilient, dramatic, editorial
+Thistle → primary: resilient | pool: resilient, rustic, bold, grounded
+Fern → primary: organic | pool: organic, grounded, verdant, serene
+Moss → primary: grounded | pool: grounded, minimal, serene, wintry
+Cotton stem → primary: warm | pool: warm, tender, harvest, rustic
+Berry stem → primary: abundant | pool: abundant, harvest, joyful, festive
+Pinecone → primary: wintry | pool: wintry, grounded, structured, nostalgic
+Ribbon/Velvet → primary: elegant | pool: elegant, festive, luxurious, warm
+Twig/Branch → primary: structured | pool: structured, rustic, minimal, grounded
+Dried grass → primary: nostalgic | pool: nostalgic, organic, softened, autumnal
+Seed pod → primary: mysterious | pool: mysterious, structured, autumnal, harvest
+
+COLOR MODIFIERS (adjust emotion_tags based on color):
+White → add: serene, minimal, softened | remove: dramatic, bold
+Cream/Ivory → add: nostalgic, warm, elevated | soften: bold
+Blush/Light Pink → add: tender, romantic, renewal | soften: dramatic
+Deep Pink/Hot Pink → add: bold, playful, joyful | remove: serene, melancholic
+Burgundy/Wine → add: dramatic, luxurious, melancholic | remove: joyful, playful
+Red → add: romantic, bold, festive | remove: serene, minimal
+Peach/Coral → add: warm, joyful, bloom | soften: dramatic, mysterious
+Orange → add: harvest, abundant, playful | remove: serene, minimal
+Yellow/Gold → add: joyful, abundant, festive | remove: melancholic, mysterious
+Sage/Soft Green → add: calm, organic, renewal | soften: dramatic, bold
+Deep Green → add: grounded, verdant, wintry | remove: playful, joyful
+Dusty Blue → add: melancholic, serene, nostalgic | remove: bold, festive
+Navy/Deep Blue → add: mysterious, dramatic, elevated | remove: playful, tender
+Lavender/Lilac → add: whimsical, serene, renewal | soften: dramatic, bold
+Deep Purple/Plum → add: luxurious, mysterious, dramatic | remove: joyful, playful
+Charcoal/Black → add: editorial, dramatic, elegant | remove: tender, warm, playful
+Rust/Terracotta → add: harvest, autumnal, warm | remove: serene, renewal
+Taupe/Greige → add: softened, elevated, minimal | soften: all strong emotions
+Silver/Metallic → add: wintry, elegant, festive | remove: rustic, grounded
+Brown/Kraft → add: grounded, rustic, warm | remove: editorial, luxurious
+
+NEVER tag or process: cherry blossom, pussy willow, twig-blossom, or any twig-based blossom floralss.
+
+OUTPUT FORMAT — respond ONLY with valid JSON, no preamble, no backticks, no markdown:
+{
+  "items": [
+    {
+      "name": "string",
+      "floral_type": "string",
+      "color": "string",
+      "category": "string",
+      "quantity": number | null,
+      "emotion_tags": ["token1","token2","token3"],
+      "primary_emotion": "token",
+      "color_modifier_applied": ["token1","token2"],
+      "confidence": "high" | "medium" | "low",
+      "source": "reference_table" | "inferred"
+    }
+  ],
+  "collection_emotion_summary": {
+    "dominant_emotions": ["token1","token2","token3"],
+    "emotional_range": "string",
+    "design_intent_suggestion": "string",
+    "emotion_gaps": ["token1","token2"],
+    "vocab_version": "EC_EMOTION_VOCAB_V1"
+  }
+}
+
+Rules:
+- emotion_tags: minimum 2, maximum 4 tokens — ALL from EC_EMOTION_VOCAB_V1
+- primary_emotion: exactly ONE token from EC_EMOTION_VOCAB_V1
+- dominant_emotions: 3–5 tokens from EC_EMOTION_VOCAB_V1
+- No duplicate tags on the same item
+- Respond with ONLY the JSON object, nothing else`;
+
+// ─── RUN TAGGER ───────────────────────────────────────────────────────
+async function runTagger() {
+  if (!inventory.length) return;
+  const btn = document.getElementById('tag-btn');
+  btn.disabled = true;
+  btn.textContent = 'Tagging…';
+
+  // Show loading
+  document.getElementById('output-area').innerHTML = `
+    <div class="ec-loading">
+      <div class="ec-spinner"></div>
+      <div class="ec-loading-label">Tagging ${inventory.length} item${inventory.length !== 1 ? 's' : ''} with EC_EMOTION_VOCAB_V1…</div>
+    </div>`;
+  document.getElementById('output-count').textContent = '';
+  document.getElementById('copy-json-btn').style.display = 'none';
+  document.getElementById('export-btn').style.display = 'none';
+
+  // Build prompt
+  const itemsText = inventory.map(i => {
+    let line = i.name;
+    if (i.color) line = i.color + ' ' + i.name;
+    line += `, category: ${i.category}`;
+    if (i.qty) line += `, quantity: ${i.qty} ${i.unit}`;
+    return '- ' + line;
+  }).join('\n');
+  const userPrompt = `Tag the following floral inventory with EC_EMOTION_VOCAB_V1 tokens:\n\n${itemsText}\n\nReturn the full tagged JSON.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userPrompt }]
+      })
+    });
+
+    if (!response.ok) throw new Error(`API error ${response.status}`);
+    const data = await response.json();
+    const raw  = data.content[0].text;
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
+
+    // Validate tokens
+    validateAndClamp(result);
+    taggedResults = result;
+    renderOutput(result);
+  } catch (err) {
+    document.getElementById('output-area').innerHTML = `<div class="ec-error">⚠ ${err.message || 'Something went wrong. Check your items and try again.'}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1L13 7L7 13M1 7H13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Tag with Emotions`;
+  }
+}
+
+// ─── VALIDATE / CLAMP ─────────────────────────────────────────────────
+function validateAndClamp(result) {
+  for (const item of result.items || []) {
+    item.emotion_tags = (item.emotion_tags || []).filter(t => ALL_TOKENS.includes(t)).slice(0, 4);
+    if (!ALL_TOKENS.includes(item.primary_emotion)) item.primary_emotion = item.emotion_tags[0] || 'calm';
+    item.color_modifier_applied = (item.color_modifier_applied || []).filter(t => ALL_TOKENS.includes(t));
+    if (!['high','medium','low'].includes(item.confidence)) item.confidence = 'medium';
+  }
+  const summary = result.collection_emotion_summary || {};
+  summary.dominant_emotions = (summary.dominant_emotions || []).filter(t => ALL_TOKENS.includes(t)).slice(0, 5);
+  summary.emotion_gaps = (summary.emotion_gaps || []).filter(t => ALL_TOKENS.includes(t));
+  summary.vocab_version = 'EC_EMOTION_VOCAB_V1';
+}
+
+// ─── RENDER OUTPUT ────────────────────────────────────────────────────
+function renderOutput(result) {
+  const items   = result.items || [];
+  const summary = result.collection_emotion_summary || {};
+  const outArea = document.getElementById('output-area');
+  document.getElementById('output-count').textContent = items.length + ' item' + (items.length !== 1 ? 's' : '') + ' tagged';
+  document.getElementById('copy-json-btn').style.display = 'inline-flex';
+  document.getElementById('export-btn').style.display = 'inline-flex';
+
+  let html = '<div class="ec-results">';
+  for (const item of items) {
+    const confClass = 'conf-' + item.confidence;
+    html += `
+      <div class="ec-result-card">
+        <div class="ec-result-header">
+          <div>
+            <div class="ec-result-name">${esc(item.name)}</div>
+            <div class="ec-result-meta">${item.floral_type || '—'} · ${item.color || '—'} · ${item.category}${item.quantity ? ' · ' + item.quantity : ''}</div>
+          </div>
+          <span class="ec-confidence ${confClass}">${item.confidence}</span>
+        </div>
+        <div class="ec-result-body">
+          <div class="ec-result-row">
+            <div class="ec-result-label">Primary</div>
+            <div class="ec-result-tags">
+              <span class="ec-primary-tag">★ ${item.primary_emotion}</span>
+            </div>
+          </div>
+          <div class="ec-result-row">
+            <div class="ec-result-label">Tags</div>
+            <div class="ec-result-tags">
+              ${item.emotion_tags.map(t => `<span class="ec-token tok-${t}">${t}</span>`).join('')}
+            </div>
+          </div>
+          ${item.color_modifier_applied && item.color_modifier_applied.length ? `
+          <div class="ec-result-row">
+            <div class="ec-result-label">Color mod</div>
+            <div class="ec-result-tags">
+              ${item.color_modifier_applied.map(t => `<span class="ec-token tok-${t}" style="opacity:.75">+ ${t}</span>`).join('')}
+            </div>
+          </div>` : ''}
+          <div class="ec-result-row">
+            <div class="ec-result-label">Source</div>
+            <div style="font-size:.75rem;font-family:var(--ec-font-mono);color:var(--ec-gray-500)">${item.source || '—'}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+  html += '</div>';
+
+  // Collection summary
+  if (summary.dominant_emotions && summary.dominant_emotions.length) {
+    html += `
+      <div class="ec-summary">
+        <div class="ec-summary-title">Collection Emotion Summary</div>
+        <div class="ec-summary-grid">
+          <div class="ec-summary-block">
+            <div class="ec-summary-block-label">Dominant Emotions</div>
+            <div class="ec-summary-tokens">
+              ${summary.dominant_emotions.map(t => `<span class="ec-token tok-${t}" style="background:rgba(255,255,255,.1);color:rgba(248,245,239,.85)">${t}</span>`).join('')}
+            </div>
+          </div>
+          <div class="ec-summary-block">
+            <div class="ec-summary-block-label">Emotion Gaps</div>
+            <div class="ec-summary-tokens">
+              ${(summary.emotion_gaps || []).length
+                ? summary.emotion_gaps.map(t => `<span class="ec-token" style="background:rgba(255,255,255,.06);color:rgba(248,245,239,.4);border:1px dashed rgba(255,255,255,.15)">${t}</span>`).join('')
+                : '<span style="font-size:.75rem;color:rgba(248,245,239,.3)">No major gaps detected</span>'}
+            </div>
+          </div>
+        </div>
+        <div class="ec-summary-intent">${summary.design_intent_suggestion || ''}</div>
+        <div style="font-size:.8125rem;color:rgba(248,245,239,.45)">Emotional range: <strong style="color:rgba(248,245,239,.7)">${summary.emotional_range || '—'}</strong></div>
+        <div class="ec-vocab-stamp">EC_EMOTION_VOCAB_V1 · ${items.length} items tagged</div>
+      </div>`;
+  }
+
+  // JSON block
+  html += `
+    <div class="ec-json-block">
+      <button class="ec-copy-btn" onclick="copyJSON()">Copy JSON</button>
+      <pre id="json-pre">${esc(JSON.stringify(result, null, 2))}</pre>
+    </div>`;
+
+  outArea.innerHTML = html;
+}
+
+// ─── COPY / EXPORT ────────────────────────────────────────────────────
+function copyJSON() {
+  if (!taggedResults) return;
+  navigator.clipboard.writeText(JSON.stringify(taggedResults, null, 2)).then(() => showToast('JSON copied to clipboard.'));
+}
+function exportJSON() {
+  if (!taggedResults) return;
+  const blob = new Blob([JSON.stringify(taggedResults, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = 'evercrafted-emotion-tags.json'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('JSON exported.');
+}
+
+// ─── VOCAB REFERENCE RENDER ───────────────────────────────────────────
+function renderVocabRef() {
+  const render = (id, tokens) => {
+    document.getElementById(id).innerHTML = tokens.map(t =>
+      `<span class="ec-token tok-${t}" style="cursor:default">${t}</span>`
+    ).join('');
+  };
+  render('vocab-mood',     VOCAB.mood);
+  render('vocab-intent',   VOCAB.intent);
+  render('vocab-seasonal', VOCAB.seasonal);
+}
+
+// ─── UTILS ────────────────────────────────────────────────────────────
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+let _toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') clearAll(); });
+
+// ─── INIT ─────────────────────────────────────────────────────────────
+renderVocabRef();
+</script>
+</body>
+</html>

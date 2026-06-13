@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wreath Ecosystem Canon — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ec-white:#FFFFFF; --ec-off-white:#F9F7F4; --ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A; --ec-charcoal:#2E2E2E; --ec-ink:#4A4A4A;
+  --ec-green:#4A6741; --ec-green-light:#6B8F67; --ec-green-pale:#EEF2ED;
+  --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-gray-100:#F5F5F5; --ec-gray-200:#E8E8E8; --ec-gray-300:#D0D0D0;
+  --ec-gray-400:#A8A8A8; --ec-gray-500:#787878;
+  --ec-info:#4A6785; --ec-warning:#C4922A; --ec-error:#B94040;
+  --ec-border:var(--ec-gray-200); --ec-border-dark:var(--ec-gray-300);
+  --ec-font-serif:'Cormorant Garamond',Georgia,serif;
+  --ec-font-sans:'Inter',system-ui,sans-serif;
+  --ec-font-script:'Dancing Script',cursive;
+  --ec-font-mono:'DM Mono',monospace;
+  --ec-shadow-sm:0 1px 3px rgba(0,0,0,0.06);
+  --ec-shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --ec-shadow-lg:0 8px 32px rgba(0,0,0,0.10);
+  --ec-radius-md:8px; --ec-radius-lg:14px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--ec-font-sans);background:var(--ec-off-white);color:var(--ec-black);min-height:100vh}
+
+/* HEADER */
+.app-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 28px;background:var(--ec-white);
+  border-bottom:1px solid var(--ec-border);
+  position:sticky;top:0;z-index:100;
+}
+.wordmark{font-family:var(--ec-font-script);font-size:22px;color:var(--ec-green);line-height:1}
+.app-title{font-family:var(--ec-font-sans);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-gray-500);margin-top:2px}
+.tier-badge{
+  font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;
+  padding:4px 10px;border-radius:20px;
+  background:#1A1A1A;color:#F2EFE9;
+}
+
+/* LAYOUT */
+.app-shell{display:flex;height:calc(100vh - 57px)}
+.sidebar{
+  width:240px;flex-shrink:0;background:var(--ec-white);
+  border-right:1px solid var(--ec-border);
+  padding:20px 0;overflow-y:auto;
+}
+.main{flex:1;overflow-y:auto;padding:32px 40px}
+
+/* SIDEBAR NAV */
+.nav-group-label{
+  font-size:10px;letter-spacing:0.1em;text-transform:uppercase;
+  color:var(--ec-gray-400);padding:0 20px 8px;margin-top:16px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 20px;cursor:pointer;
+  font-size:13px;color:var(--ec-ink);
+  transition:background 150ms ease;
+  border-left:2px solid transparent;
+}
+.nav-item:hover{background:var(--ec-green-dim)}
+.nav-item.active{
+  background:var(--ec-green-dim);
+  border-left-color:var(--ec-green);
+  color:var(--ec-green);font-weight:600;
+}
+.nav-item .icon{font-size:15px;width:18px;text-align:center}
+.nav-item .lock{margin-left:auto;font-size:10px;color:var(--ec-gray-400)}
+
+/* DIVIDER */
+.ec-divider{
+  text-align:center;color:var(--ec-gray-400);
+  font-size:12px;letter-spacing:0.2em;padding:4px 0;
+}
+
+/* PANELS */
+.panel{display:none}
+.panel.active{display:block}
+
+.panel-title{
+  font-family:var(--ec-font-serif);font-size:32px;font-weight:400;
+  color:var(--ec-charcoal);line-height:1.2;margin-bottom:6px;
+}
+.panel-subtitle{font-size:14px;color:var(--ec-gray-500);margin-bottom:28px;line-height:1.6}
+
+/* CARDS */
+.card{
+  background:var(--ec-white);border:1px solid var(--ec-border);
+  border-radius:var(--ec-radius-lg);padding:24px;
+  box-shadow:var(--ec-shadow-sm);margin-bottom:16px;
+}
+.card-title{
+  font-family:var(--ec-font-serif);font-size:18px;
+  color:var(--ec-charcoal);margin-bottom:10px;
+}
+.card-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* INPUTS */
+.form-label{font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-gray-500);display:block;margin-bottom:6px}
+.form-input,.form-textarea,.form-select{
+  width:100%;border:1px solid var(--ec-border-dark);border-radius:var(--ec-radius-md);
+  padding:10px 14px;font-family:var(--ec-font-sans);font-size:14px;
+  background:var(--ec-white);color:var(--ec-black);outline:none;
+  transition:border-color 150ms ease;
+}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--ec-green)}
+.form-textarea{resize:vertical;min-height:90px;line-height:1.5}
+.form-group{margin-bottom:16px}
+
+/* BUTTONS */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;border-radius:var(--ec-radius-md);
+  font-family:var(--ec-font-sans);font-size:13px;font-weight:600;
+  cursor:pointer;border:none;transition:all 150ms ease;
+}
+.btn-primary{background:var(--ec-green);color:var(--ec-white)}
+.btn-primary:hover{background:var(--ec-green-light);transform:translateY(-1px)}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.btn-secondary{background:var(--ec-white);color:var(--ec-ink);border:1px solid var(--ec-border-dark)}
+.btn-secondary:hover{border-color:var(--ec-green);color:var(--ec-green)}
+
+/* AI OUTPUT */
+.ai-output{
+  background:var(--ec-paper);border:1px solid var(--ec-border);
+  border-radius:var(--ec-radius-md);padding:20px;
+  font-family:var(--ec-font-sans);font-size:14px;line-height:1.7;
+  color:var(--ec-charcoal);min-height:80px;
+  white-space:pre-wrap;word-break:break-word;
+}
+.ai-output.loading{color:var(--ec-gray-400);font-style:italic}
+.ai-output h3{font-family:var(--ec-font-serif);font-size:20px;margin-bottom:8px;margin-top:16px;color:var(--ec-green)}
+.ai-output h4{font-weight:600;margin-bottom:4px;margin-top:12px}
+.ai-output ul{padding-left:20px;margin:6px 0}
+.ai-output li{margin-bottom:4px}
+.ai-output strong{color:var(--ec-green)}
+
+/* BADGE CHIPS */
+.chip{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;
+  letter-spacing:0.05em;
+}
+.chip-green{background:var(--ec-green-pale);color:var(--ec-green)}
+.chip-blue{background:#EEF4F9;color:#4A6785}
+.chip-purple{background:#F5EEF4;color:#7A4A85}
+.chip-warm{background:#FEF5E7;color:#C4922A}
+
+/* MODULE GRID */
+.module-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:24px}
+.module-card{
+  background:var(--ec-white);border:1px solid var(--ec-border);
+  border-radius:var(--ec-radius-md);padding:16px;cursor:pointer;
+  transition:all 150ms ease;border-left:3px solid transparent;
+}
+.module-card:hover{border-color:var(--ec-green);box-shadow:var(--ec-shadow-md);transform:translateY(-2px)}
+.module-card.active-module{border-left-color:var(--ec-green);background:var(--ec-green-dim)}
+.module-num{font-family:var(--ec-font-mono);font-size:10px;color:var(--ec-gray-400);margin-bottom:4px}
+.module-name{font-size:13px;font-weight:600;color:var(--ec-charcoal);margin-bottom:2px}
+.module-desc{font-size:11px;color:var(--ec-gray-500);line-height:1.4}
+
+/* CANVAS */
+.wreath-canvas-wrap{
+  display:flex;align-items:center;justify-content:center;
+  background:var(--ec-paper);border:1px solid var(--ec-border);
+  border-radius:var(--ec-radius-lg);padding:16px;
+}
+canvas{border-radius:50%;box-shadow:var(--ec-shadow-lg)}
+
+/* EMOTION TAGS */
+.emotion-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+
+/* PIPELINE FLOW */
+.pipeline{display:flex;align-items:center;gap:0;overflow-x:auto;padding-bottom:8px}
+.pipeline-step{
+  flex-shrink:0;background:var(--ec-white);border:1px solid var(--ec-border);
+  border-radius:var(--ec-radius-md);padding:10px 14px;
+  font-size:12px;text-align:center;min-width:80px;
+}
+.pipeline-step.done{background:var(--ec-green-pale);border-color:var(--ec-green)}
+.pipeline-step .step-num{font-family:var(--ec-font-mono);font-size:10px;color:var(--ec-gray-400)}
+.pipeline-step .step-name{font-weight:600;font-size:11px;margin-top:2px;color:var(--ec-charcoal)}
+.pipeline-arrow{color:var(--ec-gray-300);font-size:18px;padding:0 4px;flex-shrink:0}
+
+/* GENOME DISPLAY */
+.genome-box{
+  font-family:var(--ec-font-mono);font-size:11px;
+  background:var(--ec-black);color:#A3C998;
+  border-radius:var(--ec-radius-md);padding:14px 18px;
+  line-height:1.8;word-break:break-all;
+}
+
+/* LOCK OVERLAY */
+.lock-wrap{position:relative;overflow:hidden}
+.lock-overlay{
+  position:absolute;inset:0;z-index:10;
+  backdrop-filter:blur(4px);
+  background:rgba(249,247,244,0.88);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-radius:inherit;gap:8px;
+}
+.lock-overlay .lock-icon{font-size:28px}
+.lock-overlay .lock-msg{font-size:13px;color:var(--ec-ink);font-weight:500}
+.lock-overlay .btn{font-size:12px;padding:8px 16px}
+
+/* STAT BAR */
+.stat-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--ec-radius-md);padding:16px}
+.stat-val{font-family:var(--ec-font-serif);font-size:28px;color:var(--ec-green)}
+.stat-label{font-size:11px;color:var(--ec-gray-500);margin-top:2px;letter-spacing:0.05em;text-transform:uppercase}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .main{padding:20px}
+  .card-grid,.card-grid-3,.module-grid,.stat-bar{grid-template-columns:1fr}
+}
+
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="app-header">
+  <div>
+    <div class="wordmark">Evercrafted</div>
+    <div class="app-title">Wreath Ecosystem Canon</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span style="font-size:12px;color:var(--ec-gray-500)">Studio Mode</span>
+    <span class="tier-badge">Atelier</span>
+  </div>
+</header>
+
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="nav-group-label">Pipeline</div>
+    <div class="nav-item active" onclick="showPanel('overview')"><span class="icon">🌿</span>Overview</div>
+    <div class="nav-item" onclick="showPanel('memory')"><span class="icon">✦</span>Memory → Intent</div>
+    <div class="nav-item" onclick="showPanel('emotion')"><span class="icon">🎨</span>Emotion Mapper</div>
+    <div class="nav-item" onclick="showPanel('blueprint')"><span class="icon">📐</span>Blueprint Engine</div>
+    <div class="nav-item" onclick="showPanel('visualizer')"><span class="icon">⭕</span>Visualizer</div>
+    <div class="nav-group-label">Tools</div>
+    <div class="nav-item" onclick="showPanel('genome')"><span class="icon">🧬</span>Genome System</div>
+    <div class="nav-item" onclick="showPanel('florist')"><span class="icon">💬</span>AI Florist</div>
+    <div class="nav-item" onclick="showPanel('scoring')"><span class="icon">⚖️</span>Scoring Engine<span class="lock">🔒</span></div>
+    <div class="nav-group-label">Export</div>
+    <div class="nav-item" onclick="showPanel('export')"><span class="icon">📄</span>Build Guide PDF<span class="lock">🔒</span></div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ===== OVERVIEW ===== -->
+    <div id="panel-overview" class="panel active">
+      <div class="panel-title">Wreath Ecosystem Canon</div>
+      <div class="panel-subtitle">A 10-module platform transforming client memories into emotionally resonant, manufacturable wreath blueprints.</div>
+
+      <div class="stat-bar">
+        <div class="stat"><div class="stat-val">10</div><div class="stat-label">Pipeline Modules</div></div>
+        <div class="stat"><div class="stat-val">5</div><div class="stat-label">FFLGA Roles</div></div>
+        <div class="stat"><div class="stat-val">24"</div><div class="stat-label">Base Wreath Size</div></div>
+        <div class="stat"><div class="stat-val">50–65</div><div class="stat-label">Stems (Med Density)</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Pipeline Flow</div>
+        <div style="margin-bottom:12px;font-size:13px;color:var(--ec-gray-500)">Every module reads and writes to a shared BlueprintJSON — the single source of truth.</div>
+        <div class="pipeline">
+          <div class="pipeline-step"><div class="step-num">01</div><div class="step-name">Memory</div></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step"><div class="step-num">02</div><div class="step-name">Intent</div></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step"><div class="step-num">03</div><div class="step-name">Florals</div></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step"><div class="step-num">04</div><div class="step-name">Layout</div></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step"><div class="step-num">05</div><div class="step-name">Symmetry</div></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step"><div class="step-num">06</div><div class="step-name">Score</div></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step"><div class="step-num">07</div><div class="step-name">JSON</div></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step"><div class="step-num">08</div><div class="step-name">PDF</div></div>
+        </div>
+      </div>
+
+      <div class="module-grid">
+        <div class="module-card" onclick="showPanel('memory')">
+          <div class="module-num">MODULE 01</div><div class="module-name">Memory-to-Masterpiece AI</div>
+          <div class="module-desc">Memory text → EmotionScore[], glyphs, BlueprintIntent</div>
+        </div>
+        <div class="module-card" onclick="showPanel('emotion')">
+          <div class="module-num">MODULE 02</div><div class="module-name">Emotional Floral Mapper</div>
+          <div class="module-desc">Emotions + glyphs → FloralRecipeDraft + palette</div>
+        </div>
+        <div class="module-card" onclick="showPanel('blueprint')">
+          <div class="module-num">MODULE 03–04</div><div class="module-name">Blueprint + Placement</div>
+          <div class="module-desc">Polar coordinate anchor engine, cluster templates</div>
+        </div>
+        <div class="module-card" onclick="showPanel('visualizer')">
+          <div class="module-num">MODULE 05</div><div class="module-name">Anchor Point Visualizer</div>
+          <div class="module-desc">Live canvas with radial grid and FFLGA layers</div>
+        </div>
+        <div class="module-card" onclick="showPanel('florist')">
+          <div class="module-num">MODULE 06</div><div class="module-name">AI Florist Assistant</div>
+          <div class="module-desc">Real-time floriography explanations per element</div>
+        </div>
+        <div class="module-card" onclick="showPanel('genome')">
+          <div class="module-num">MODULE 07</div><div class="module-name">Genome System</div>
+          <div class="module-desc">WGS pipe-delimited genome string — encode/decode/breed</div>
+        </div>
+        <div class="module-card">
+          <div class="module-num">MODULE 08</div><div class="module-name">Symmetry Engine</div>
+          <div class="module-desc">Bilateral/radial balance enforcement, optical weight</div>
+        </div>
+        <div class="module-card">
+          <div class="module-num">MODULE 09–10</div><div class="module-name">Scoring + Build Guide</div>
+          <div class="module-desc">GNN-based scoring → Story/Recipe/Blueprint PDF</div>
+        </div>
+      </div>
+
+      <div class="card" style="background:var(--ec-green-pale);border-color:var(--ec-green)">
+        <div style="display:flex;align-items:flex-start;gap:16px">
+          <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;margin-top:2px;color:var(--ec-green)">
+            <path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+            <path d="M16 18 C16 18 12 16 10 13" stroke="currentColor" stroke-width="1" fill="none"/>
+            <path d="M16 14 C16 14 20 12 22 9" stroke="currentColor" stroke-width="1" fill="none"/>
+          </svg>
+          <div>
+            <div style="font-family:var(--ec-font-serif);font-size:16px;color:var(--ec-green);margin-bottom:4px">Developer Handoff Mantra</div>
+            <div style="font-size:13px;color:var(--ec-charcoal);line-height:1.6;font-style:italic">"Start with <code style="font-family:var(--ec-font-mono);font-size:12px;background:rgba(0,0,0,0.06);padding:1px 4px;border-radius:3px">generateBlueprint(intent, recipe)</code> and a canvas that loads it. Wire LLM and analytics only after the core loop works end-to-end."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== MEMORY TO INTENT ===== -->
+    <div id="panel-memory" class="panel">
+      <div class="panel-title">Memory → Blueprint Intent</div>
+      <div class="panel-subtitle">Module 01 — Translate a client memory into emotional scores, glyphs, and a BlueprintIntent object.</div>
+
+      <div class="card">
+        <div class="card-title">Client Memory Input</div>
+        <div class="form-group">
+          <label class="form-label">Memory Text</label>
+          <textarea class="form-textarea" id="memory-input" placeholder="Describe a memory, feeling, or meaningful moment you want captured in this wreath. Be as specific or as abstract as you like..." style="min-height:120px"></textarea>
+        </div>
+        <div class="card-grid">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Wreath Size</label>
+            <select class="form-select" id="memory-size">
+              <option value="18">18" — Small</option>
+              <option value="24" selected>24" — Medium (Standard)</option>
+              <option value="30">30" — Large</option>
+              <option value="36">36" — Statement</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Season Anchor</label>
+            <select class="form-select" id="memory-season">
+              <option value="spring">Spring</option>
+              <option value="summer">Summer</option>
+              <option value="fall" selected>Fall / Autumn</option>
+              <option value="winter">Winter</option>
+              <option value="evergreen">Evergreen (no season)</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="runMemoryToIntent()" id="btn-memory">
+            <span id="btn-memory-text">✦ Analyze Memory</span>
+          </button>
+          <button class="btn btn-secondary" onclick="loadMemoryExample()">Load Example</button>
+        </div>
+      </div>
+
+      <div id="memory-output-wrap" style="display:none">
+        <div class="ec-divider">✦</div>
+        <div style="margin:12px 0 6px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-gray-500)">Blueprint Intent Output</div>
+        <div class="ai-output" id="memory-output"></div>
+      </div>
+    </div>
+
+    <!-- ===== EMOTION MAPPER ===== -->
+    <div id="panel-emotion" class="panel">
+      <div class="panel-title">Emotional Floral Mapper</div>
+      <div class="panel-subtitle">Module 02 — Map emotion chords to floral roles, palette bands, and FFLGA recipe.</div>
+
+      <div class="card">
+        <div class="card-title">Emotion Chord Input</div>
+        <div class="form-group">
+          <label class="form-label">Primary Emotions (select all that apply)</label>
+          <div class="emotion-row" id="emotion-tags">
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px"><input type="checkbox" value="grief"> Grief</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px"><input type="checkbox" value="gratitude"> Gratitude</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px"><input type="checkbox" value="peace"> Peace</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px"><input type="checkbox" value="joy"> Joy / Celebration</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px"><input type="checkbox" value="nostalgia"> Nostalgia</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px"><input type="checkbox" value="hope"> Hope</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px"><input type="checkbox" value="strength"> Quiet Strength</label>
+            <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px"><input type="checkbox" value="warmth"> Warmth</label>
+          </div>
+        </div>
+        <div class="card-grid">
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Active Glyphs</label>
+            <select class="form-select" id="glyph-select">
+              <option value="">Select a glyph</option>
+              <option value="quiet_strength">quiet_strength → structural greenery</option>
+              <option value="grief">grief → veil zone, trailing elements</option>
+              <option value="threshold">threshold → heavy base, upward lift</option>
+              <option value="circle_of_life">circle_of_life → even radial distribution</option>
+              <option value="journey">journey → strong directional arc</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Style</label>
+            <select class="form-select" id="style-select">
+              <option value="asymmetric_crescent">Asymmetric Crescent</option>
+              <option value="full_radial">Full Radial</option>
+              <option value="cascading_arc">Cascading Arc</option>
+              <option value="cluster_trio">Cluster Trio</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="runEmotionMapper()" id="btn-emotion" style="margin-top:16px">
+          <span id="btn-emotion-text">✦ Generate Floral Recipe</span>
+        </button>
+      </div>
+
+      <div id="emotion-output-wrap" style="display:none">
+        <div class="ec-divider">✦</div>
+        <div style="margin:12px 0 6px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-gray-500)">FloralRecipeDraft + Palette</div>
+        <div class="ai-output" id="emotion-output"></div>
+      </div>
+    </div>
+
+    <!-- ===== BLUEPRINT ENGINE ===== -->
+    <div id="panel-blueprint" class="panel">
+      <div class="panel-title">Blueprint Composition Engine</div>
+      <div class="panel-subtitle">Modules 03–05 — Generate mathematically structured placement coordinates using polar geometry.</div>
+
+      <div class="card-grid" style="margin-bottom:16px">
+        <div class="card">
+          <div class="card-title">Placement Parameters</div>
+          <div class="form-group">
+            <label class="form-label">Wreath Form</label>
+            <select class="form-select" id="bp-form">
+              <option value="full_round">Full Round — even radial</option>
+              <option value="asymmetric_crescent" selected>Asymmetric Crescent — 4–8 o'clock arc</option>
+              <option value="cascading">Cascading — weighted lower half</option>
+              <option value="top_heavy">Top Heavy — upper cluster focus</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Density</label>
+            <select class="form-select" id="bp-density">
+              <option value="light">Light (35–45 stems)</option>
+              <option value="medium" selected>Medium (50–65 stems)</option>
+              <option value="lush">Lush (70–90 stems)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin:0">
+            <label class="form-label">Symmetry Mode</label>
+            <select class="form-select" id="bp-symmetry">
+              <option value="bilateral">Bilateral</option>
+              <option value="radial" selected>Radial</option>
+              <option value="organic">Organic (golden angle)</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">FFLGA Stem Counts</div>
+          <div style="font-size:12px;color:var(--ec-gray-500);margin-bottom:12px">Based on 24" medium density standard</div>
+          <table style="width:100%;font-size:12px;border-collapse:collapse">
+            <tr style="border-bottom:1px solid var(--ec-border)">
+              <th style="text-align:left;padding:5px 0;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ec-gray-400)">Role</th>
+              <th style="text-align:center;padding:5px 0;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ec-gray-400)">Pieces</th>
+              <th style="text-align:center;padding:5px 0;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ec-gray-400)">Ring</th>
+              <th style="text-align:center;padding:5px 0;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ec-gray-400)">z</th>
+            </tr>
+            <tr><td style="padding:5px 0;font-weight:600">Focal</td><td style="text-align:center">7–11</td><td style="text-align:center">Outer+10px</td><td style="text-align:center">3</td></tr>
+            <tr><td style="padding:5px 0;font-weight:600">Secondary</td><td style="text-align:center">10–16</td><td style="text-align:center">Mid</td><td style="text-align:center">2</td></tr>
+            <tr><td style="padding:5px 0;font-weight:600">Filler</td><td style="text-align:center">10–18</td><td style="text-align:center">Mid-inner</td><td style="text-align:center">2</td></tr>
+            <tr><td style="padding:5px 0;font-weight:600">Greenery</td><td style="text-align:center">20–30</td><td style="text-align:center">Base</td><td style="text-align:center">1</td></tr>
+            <tr><td style="padding:5px 0;font-weight:600">Line</td><td style="text-align:center">0–6</td><td style="text-align:center">Radial</td><td style="text-align:center">1</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="runBlueprintEngine()" id="btn-blueprint">
+        <span id="btn-blueprint-text">✦ Generate Blueprint</span>
+      </button>
+
+      <div id="blueprint-output-wrap" style="display:none;margin-top:16px">
+        <div class="ec-divider">✦</div>
+        <div style="margin:12px 0 6px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-gray-500)">BlueprintJSON Output</div>
+        <div class="ai-output" id="blueprint-output"></div>
+      </div>
+    </div>
+
+    <!-- ===== VISUALIZER ===== -->
+    <div id="panel-visualizer" class="panel">
+      <div class="panel-title">Anchor Point Visualizer</div>
+      <div class="panel-subtitle">Module 05 — Live canvas rendering the wreath layout with FFLGA color layers on a polar coordinate grid.</div>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">Canvas Controls</div>
+          <div class="form-group">
+            <label class="form-label">Form Style</label>
+            <select class="form-select" id="vis-form" onchange="drawWreath()">
+              <option value="crescent">Asymmetric Crescent</option>
+              <option value="full">Full Round</option>
+              <option value="cascade">Cascading</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Density</label>
+            <select class="form-select" id="vis-density" onchange="drawWreath()">
+              <option value="light">Light</option>
+              <option value="medium" selected>Medium</option>
+              <option value="lush">Lush</option>
+            </select>
+          </div>
+          <div style="margin-top:8px">
+            <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:8px">FFLGA Legend</div>
+            <div style="display:flex;flex-direction:column;gap:5px;font-size:12px">
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:50%;background:#C0392B;flex-shrink:0"></span>Focal</div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:50%;background:#E67E22;flex-shrink:0"></span>Secondary</div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:50%;background:#F1C40F;flex-shrink:0"></span>Filler</div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:50%;background:#27AE60;flex-shrink:0"></span>Greenery</div>
+              <div style="display:flex;align-items:center;gap:8px"><span style="width:12px;height:12px;border-radius:50%;background:#8E44AD;flex-shrink:0"></span>Line</div>
+            </div>
+          </div>
+          <button class="btn btn-secondary" onclick="drawWreath()" style="width:100%;margin-top:16px">↻ Regenerate</button>
+        </div>
+        <div>
+          <div class="wreath-canvas-wrap">
+            <canvas id="wreathCanvas" width="320" height="320"></canvas>
+          </div>
+          <div style="text-align:center;margin-top:10px;font-family:var(--ec-font-mono);font-size:10px;color:var(--ec-gray-400)">600×600px canvas — 25px/in scale — center (300,300)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== GENOME SYSTEM ===== -->
+    <div id="panel-genome" class="panel">
+      <div class="panel-title">Wreath Genome System</div>
+      <div class="panel-subtitle">Encode any wreath into a compact WGS pipe-delimited string. Decode, breed, or mutate designs with full fidelity.</div>
+
+      <div class="card">
+        <div class="card-title">Genome Encoder / Decoder</div>
+        <div class="form-group">
+          <label class="form-label">Describe a Wreath Design</label>
+          <textarea class="form-textarea" id="genome-input" placeholder="e.g. 24-inch asymmetric crescent, dusty rose and sage, eucalyptus base, garden rose focal, cotton filler, fall season..."></textarea>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn btn-primary" onclick="runGenomeEncode()" id="btn-genome">
+            <span id="btn-genome-text">✦ Encode → Genome String</span>
+          </button>
+          <button class="btn btn-secondary" onclick="loadGenomeExample()">Load Example</button>
+        </div>
+      </div>
+
+      <div id="genome-output-wrap" style="display:none;margin-top:16px">
+        <div class="ec-divider">✦</div>
+        <div style="margin:12px 0 6px;font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-gray-500)">WGS Genome String</div>
+        <div class="genome-box" id="genome-output"></div>
+        <div style="margin-top:16px">
+          <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:8px">Decoded Blueprint</div>
+          <div class="ai-output" id="genome-decoded"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== AI FLORIST ===== -->
+    <div id="panel-florist" class="panel">
+      <div class="panel-title">AI Florist Assistant</div>
+      <div class="panel-subtitle">Module 06 — Real-time floriography, symbolism, and placement reasoning for any floral element.</div>
+
+      <div class="card">
+        <div class="form-group">
+          <label class="form-label">Ask the Florist</label>
+          <textarea class="form-textarea" id="florist-input" placeholder="e.g. 'What does eucalyptus symbolize in grief design?' or 'Why would I use dusty miller as a filler over lamb's ear?' or 'What's the right z-index for a garden rose focal cluster?'"></textarea>
+        </div>
+        <div id="florist-chat-history" style="margin-bottom:12px;display:none;max-height:300px;overflow-y:auto;border:1px solid var(--ec-border);border-radius:var(--ec-radius-md);padding:12px;background:var(--ec-paper)"></div>
+        <button class="btn btn-primary" onclick="askFlorist()" id="btn-florist">
+          <span id="btn-florist-text">💬 Ask Florist</span>
+        </button>
+      </div>
+
+      <div style="margin-top:16px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:12px">Quick Questions</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px">
+          <button class="btn btn-secondary" style="font-size:11px;padding:6px 12px" onclick="quickFlorist('What is floriography and how does it drive wreath design?')">What is floriography?</button>
+          <button class="btn btn-secondary" style="font-size:11px;padding:6px 12px" onclick="quickFlorist('Explain the FFLGA classification system for wreath florals')">Explain FFLGA</button>
+          <button class="btn btn-secondary" style="font-size:11px;padding:6px 12px" onclick="quickFlorist('What florals pair best with grief and quiet strength emotions?')">Grief + Strength florals</button>
+          <button class="btn btn-secondary" style="font-size:11px;padding:6px 12px" onclick="quickFlorist('Explain the golden angle placement rule for greenery')">Golden angle rule</button>
+          <button class="btn btn-secondary" style="font-size:11px;padding:6px 12px" onclick="quickFlorist('How do I create a focal cluster trio in polar coordinates?')">Focal cluster math</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCORING (LOCKED) ===== -->
+    <div id="panel-scoring" class="panel">
+      <div class="panel-title">Aesthetic Scoring Engine</div>
+      <div class="panel-subtitle">Module 10 — GNN-based scoring with improvement suggestions.</div>
+      <div class="card lock-wrap">
+        <div style="opacity:0.3">
+          <div class="card-title">Score Blueprint</div>
+          <p style="font-size:13px;color:var(--ec-gray-500)">Upload a blueprint JSON and receive an optical balance score, quadrant weight analysis, and improvement recommendations powered by our Graph Neural Network scoring model.</p>
+          <div class="form-group" style="margin-top:16px"><label class="form-label">Blueprint JSON</label><textarea class="form-textarea"></textarea></div>
+          <button class="btn btn-primary" disabled>✦ Score Blueprint</button>
+        </div>
+        <div class="lock-overlay">
+          <div class="lock-icon">🔒</div>
+          <div class="lock-msg">Atelier tier required to access Scoring Engine</div>
+          <button class="btn btn-primary" style="font-size:12px">Upgrade to Atelier</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== EXPORT (LOCKED) ===== -->
+    <div id="panel-export" class="panel">
+      <div class="panel-title">Build Guide PDF</div>
+      <div class="panel-subtitle">Module 07 — Export a Story/Recipe/Blueprint PDF for client delivery.</div>
+      <div class="card lock-wrap">
+        <div style="opacity:0.3">
+          <div class="card-title">Generate Build Guide</div>
+          <p style="font-size:13px;color:var(--ec-gray-500)">Transform your finalized blueprint into a beautifully formatted PDF containing the client story, floral recipe, placement guide, and step-by-step build instructions.</p>
+          <button class="btn btn-primary" style="margin-top:16px" disabled>✦ Export PDF</button>
+        </div>
+        <div class="lock-overlay">
+          <div class="lock-icon">🔒</div>
+          <div class="lock-msg">Studio or Atelier tier required for PDF export</div>
+          <button class="btn btn-primary" style="font-size:12px">Upgrade to Studio</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const TIER_RANK={bloom:1,craft:2,studio:3,atelier:4};
+const USER_TIER="atelier";
+function canAccess(r){return TIER_RANK[USER_TIER]>=TIER_RANK[r]}
+
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  event.currentTarget && event.currentTarget.classList.add('active');
+}
+
+// Claude API
+async function callClaude(messages,systemPrompt,maxTokens=1200){
+  const res=await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",max_tokens:maxTokens,
+      system:systemPrompt,messages
+    })
+  });
+  const data=await res.json();
+  if(data.error)throw new Error(data.error.message);
+  return data.content.filter(b=>b.type==="text").map(b=>b.text).join("\n");
+}
+
+function setLoading(btnId,textId,loading,text){
+  const btn=document.getElementById(btnId),span=document.getElementById(textId);
+  btn.disabled=loading;
+  span.innerHTML=loading?`<span class="spinner"></span> Processing…`:text;
+}
+
+// MODULE 1 — MEMORY TO INTENT
+async function runMemoryToIntent(){
+  const memory=document.getElementById('memory-input').value.trim();
+  const size=document.getElementById('memory-size').value;
+  const season=document.getElementById('memory-season').value;
+  if(!memory){alert('Please enter a client memory.');return}
+  setLoading('btn-memory','btn-memory-text',true,'✦ Analyze Memory');
+  document.getElementById('memory-output-wrap').style.display='none';
+  try{
+    const sys=`You are the Memory-to-Masterpiece AI module of the Evercrafted Wreath Ecosystem. 
+Your job: take a client memory and extract structured BlueprintIntent data.
+
+Return a structured response with these exact sections:
+## Emotion Scores
+List the top 3–4 detected emotions with percentage weights (must total 100%)
+
+## Active Glyphs  
+List 1–3 Fauxever Memories Lexicon glyphs (quiet_strength, grief, threshold, circle_of_life, journey) with 1-sentence spatial grammar meaning
+
+## Palette Intent
+Primary palette (60%): [color description]
+Secondary palette (30%): [color description]  
+Accent sparks (10%): [color description]
+Warm/cool balance: [description]
+
+## BlueprintIntent Object
+Wreath size: ${size}"  |  Season: ${season}
+Form: [recommended form style]
+Focal arc: [clock positions]
+Density: [light/medium/lush]
+Special notes: [any special placement guidance from the memory's emotional content]
+
+Keep your tone fluent in both emotional design language and technical spec language.`;
+    const res=await callClaude([{role:"user",content:`Client memory: "${memory}"\nWraith size: ${size}" | Season: ${season}`}],sys,1000);
+    const el=document.getElementById('memory-output');
+    el.innerHTML=res.replace(/## (.*)/g,'<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    document.getElementById('memory-output-wrap').style.display='block';
+  }catch(e){
+    document.getElementById('memory-output').textContent='Error: '+e.message;
+    document.getElementById('memory-output-wrap').style.display='block';
+  }
+  setLoading('btn-memory','btn-memory-text',false,'✦ Analyze Memory');
+}
+
+function loadMemoryExample(){
+  document.getElementById('memory-input').value="My grandmother had a garden full of dusty pink roses and lavender. Every Sunday morning she'd cut flowers and arrange them in a blue mason jar on the kitchen table. The smell of her garden felt like safety. She passed last spring and I want a wreath that holds that feeling — not sad, just quiet and full of her.";
+  document.getElementById('memory-season').value='spring';
+}
+
+// MODULE 2 — EMOTION MAPPER
+async function runEmotionMapper(){
+  const boxes=document.querySelectorAll('#emotion-tags input:checked');
+  const emotions=Array.from(boxes).map(b=>b.value);
+  const glyph=document.getElementById('glyph-select').value;
+  const style=document.getElementById('style-select').value;
+  if(emotions.length===0){alert('Select at least one emotion.');return}
+  setLoading('btn-emotion','btn-emotion-text',true,'✦ Generate Floral Recipe');
+  document.getElementById('emotion-output-wrap').style.display='none';
+  try{
+    const sys=`You are the Emotional Floral Mapper for Evercrafted. 
+Map emotion chords to a FloralRecipeDraft using the Evercrafted FFLGA system.
+
+Return:
+## Palette Bands
+Primary 60%: [colors] | Secondary 30%: [colors] | Accent 10%: [colors]
+
+## FloralRecipeDraft
+For each FFLGA role, list:
+- Role: Focal / Secondary / Filler / Greenery / Line
+- Suggested botanicals (2–3 options each)
+- Emotional rationale (1 sentence)
+- Estimated pieces (use medium 24" density)
+
+## Zone Mapping
+Base zone: [what emotions/florals go here]
+Upper/veil zone: [what emotions/florals go here]
+
+## Form Geometry
+Recommended style: ${style}
+Rationale: [why this style fits these emotions]
+
+Be specific with botanical names. Reference floriography meaning where relevant.`;
+    const res=await callClaude([{role:"user",content:`Emotions: ${emotions.join(', ')}\nActive glyph: ${glyph||'none'}\nDesired style: ${style}`}],sys,1000);
+    const el=document.getElementById('emotion-output');
+    el.innerHTML=res.replace(/## (.*)/g,'<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    document.getElementById('emotion-output-wrap').style.display='block';
+  }catch(e){
+    document.getElementById('emotion-output').textContent='Error: '+e.message;
+    document.getElementById('emotion-output-wrap').style.display='block';
+  }
+  setLoading('btn-emotion','btn-emotion-text',false,'✦ Generate Floral Recipe');
+}
+
+// MODULE 3 — BLUEPRINT ENGINE
+async function runBlueprintEngine(){
+  const form=document.getElementById('bp-form').value;
+  const density=document.getElementById('bp-density').value;
+  const symmetry=document.getElementById('bp-symmetry').value;
+  setLoading('btn-blueprint','btn-blueprint-text',true,'✦ Generate Blueprint');
+  document.getElementById('blueprint-output-wrap').style.display='none';
+  try{
+    const sys=`You are the Blueprint Composition Engine for Evercrafted. Generate a structured placement blueprint.
+
+Canvas: 600×600px, 25px/in, center (300,300), base ring radius ~250px for 24"
+Use polar coordinates (rNorm: 0–1, theta: 0–360°)
+
+Return:
+## Placement Clusters
+List 5–8 placement clusters as JSON objects:
+{ "id": "cluster_01", "role": "Focal|Secondary|Filler|Greenery|Line", "theta": [angle], "rNorm": [0.7-1.0 for focal, 0.5-0.8 for others], "count": [stems], "rotationDeg": [angle+90], "notes": "[brief design note]" }
+
+## Greenery Base Layer
+Describe golden angle distribution: angleDeg = (k * 137.5) % 360 for k=0..29
+
+## Focal Arc
+Clock positions: [e.g. 4–8 o'clock = 220°–320°]
+Cluster offsets: [-8°, 0°, +8°] with slight radius variation
+
+## Optical Balance Check
+Quadrant weights: Q1 [x]% | Q2 [x]% | Q3 [x]% | Q4 [x]%
+Status: [balanced/needs adjustment]
+
+Be precise. Use real degree values.`;
+    const res=await callClaude([{role:"user",content:`Form: ${form}\nDensity: ${density}\nSymmetry: ${symmetry}\nWreath size: 24"`}],sys,1200);
+    const el=document.getElementById('blueprint-output');
+    el.innerHTML=res.replace(/## (.*)/g,'<h3>$1</h3>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    document.getElementById('blueprint-output-wrap').style.display='block';
+  }catch(e){
+    document.getElementById('blueprint-output').textContent='Error: '+e.message;
+    document.getElementById('blueprint-output-wrap').style.display='block';
+  }
+  setLoading('btn-blueprint','btn-blueprint-text',false,'✦ Generate Blueprint');
+}
+
+// VISUALIZER
+function drawWreath(){
+  const canvas=document.getElementById('wreathCanvas');
+  const ctx=canvas.getContext('2d');
+  const W=320,H=320,cx=160,cy=160;
+  const form=document.getElementById('vis-form').value;
+  const density=document.getElementById('vis-density').value;
+  ctx.clearRect(0,0,W,H);
+
+  // BG
+  ctx.fillStyle='#F9F7F4';ctx.fillRect(0,0,W,H);
+
+  // Wreath ring guide
+  const scale=W/600;
+  const outerR=120,innerR=70;
+  ctx.beginPath();ctx.arc(cx,cy,outerR,0,Math.PI*2);ctx.strokeStyle='rgba(74,103,65,0.15)';ctx.lineWidth=1;ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,innerR,0,Math.PI*2);ctx.stroke();
+
+  // Ring fill
+  ctx.beginPath();ctx.arc(cx,cy,outerR,0,Math.PI*2);ctx.arc(cx,cy,innerR,0,Math.PI*2,true);
+  ctx.fillStyle='rgba(74,103,65,0.06)';ctx.fill();
+
+  const stemCounts={light:{f:7,s:10,fi:10,g:20,l:0},medium:{f:9,s:13,fi:14,g:25,l:3},lush:{f:11,s:16,fi:18,g:30,l:5}};
+  const counts=stemCounts[density];
+  const colors={focal:'#C0392B',secondary:'#E67E22',filler:'#F1C40F',greenery:'#27AE60',line:'#8E44AD'};
+
+  // Arc range for crescent form
+  let arcStart=220,arcEnd=320;
+  if(form==='full')arcStart=0,arcEnd=360;
+  if(form==='cascade')arcStart=160,arcEnd=380;
+
+  // Helper
+  function placeElements(role,count,rMin,rMax,angleStart,angleSpan,color,size){
+    for(let i=0;i<count;i++){
+      let angle,r;
+      if(role==='greenery'){
+        // Golden angle
+        angle=((i*137.5)%360)*(Math.PI/180);
+        r=rMin+(Math.random()*(rMax-rMin));
+      } else {
+        angle=(angleStart+(i/Math.max(1,count-1))*angleSpan)*(Math.PI/180)+(Math.random()-0.5)*0.12;
+        r=rMin+(Math.random()*(rMax-rMin));
+      }
+      const x=cx+Math.cos(angle)*r;
+      const y=cy+Math.sin(angle)*r;
+      const jitter=Math.random()*1.5;
+      ctx.beginPath();ctx.arc(x,y,size+jitter,0,Math.PI*2);
+      ctx.fillStyle=color+'CC';ctx.fill();
+      ctx.strokeStyle=color;ctx.lineWidth=0.5;ctx.stroke();
+    }
+  }
+
+  // Draw in z-order: greenery → line → filler → secondary → focal
+  placeElements('greenery',counts.g,innerR+4,outerR-4,0,360,colors.greenery,4);
+  if(counts.l>0)placeElements('line',counts.l,innerR,outerR,arcStart-20,arcEnd-arcStart+40,colors.line,2.5);
+  placeElements('filler',counts.fi,innerR+8,outerR-8,arcStart-30,arcEnd-arcStart+60,colors.filler,4.5);
+  placeElements('secondary',counts.s,innerR+10,outerR-6,arcStart-10,arcEnd-arcStart+20,colors.secondary,5.5);
+  placeElements('focal',counts.f,innerR+14,outerR-2,arcStart,arcEnd-arcStart,colors.focal,7);
+
+  // Center marker
+  ctx.beginPath();ctx.arc(cx,cy,2,0,Math.PI*2);ctx.fillStyle='rgba(74,103,65,0.4)';ctx.fill();
+
+  // Degree markers at 12/3/6/9
+  [{d:0,l:'12'},{d:90,l:'3'},{d:180,l:'6'},{d:270,l:'9'}].forEach(({d,l})=>{
+    const a=d*(Math.PI/180);
+    const mx=cx+Math.cos(a)*(outerR+12);
+    const my=cy+Math.sin(a)*(outerR+12);
+    ctx.fillStyle='rgba(74,103,65,0.4)';
+    ctx.font='9px Inter';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(l,mx,my);
+  });
+}
+
+// GENOME SYSTEM
+async function runGenomeEncode(){
+  const input=document.getElementById('genome-input').value.trim();
+  if(!input){alert('Describe a wreath design.');return}
+  setLoading('btn-genome','btn-genome-text',true,'✦ Encode → Genome String');
+  document.getElementById('genome-output-wrap').style.display='none';
+  try{
+    const sys=`You are the Wreath Genome System (WGS) encoder for Evercrafted.
+    
+Encode the wreath description into a WGS pipe-delimited genome string with these 15 fields:
+SIZE|FORM|DENSITY|SEASON|PALETTE_PRIMARY|PALETTE_SECONDARY|PALETTE_ACCENT|FOCAL_SKU|SECONDARY_SKU|FILLER_SKU|GREENERY_SKU|LINE_SKU|EMOTION_CHORD|GLYPH|STYLE_FLAGS
+
+Rules:
+- Use CAPS for field values
+- Multiple items within a field: use + separator
+- Emotion chord: top 2 emotions joined with +
+- Style flags: comma-separated tags like ASYM,CRESCENT,LUSH
+- End with hash suffix pattern like -EC_[6chars]
+
+Then decode it back into a human-readable blueprint summary.
+
+Format your response as:
+GENOME: [the actual genome string on one line]
+
+DECODED:
+[Plain English blueprint — size, form, florals, emotions, special notes]`;
+    const res=await callClaude([{role:"user",content:input}],sys,600);
+    const genomeMatch=res.match(/GENOME:\s*(.+)/);
+    const decodedMatch=res.match(/DECODED:\s*([\s\S]+)/);
+    if(genomeMatch){
+      document.getElementById('genome-output').textContent=genomeMatch[1].trim();
+    }
+    if(decodedMatch){
+      document.getElementById('genome-decoded').innerHTML=decodedMatch[1].trim().replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+    }
+    document.getElementById('genome-output-wrap').style.display='block';
+  }catch(e){
+    document.getElementById('genome-output').textContent='Error: '+e.message;
+    document.getElementById('genome-output-wrap').style.display='block';
+  }
+  setLoading('btn-genome','btn-genome-text',false,'✦ Encode → Genome String');
+}
+
+function loadGenomeExample(){
+  document.getElementById('genome-input').value='24-inch asymmetric crescent, dusty rose and sage green, eucalyptus and seeded eucalyptus base, garden rose focal, ranunculus secondary, cotton and dried wheat filler, fall-spring transitional, grief and gratitude emotion chord, quiet_strength glyph';
+}
+
+// AI FLORIST
+const floristHistory=[];
+async function askFlorist(){
+  const q=document.getElementById('florist-input').value.trim();
+  if(!q){alert('Ask something.');return}
+  setLoading('btn-florist','btn-florist-text',true,'💬 Ask Florist');
+  const histDiv=document.getElementById('florist-chat-history');
+  histDiv.style.display='block';
+  histDiv.innerHTML+=`<div style="margin-bottom:10px"><div style="font-size:11px;font-weight:600;color:var(--ec-gray-400);margin-bottom:3px">You</div><div style="font-size:13px;color:var(--ec-charcoal)">${q}</div></div>`;
+  floristHistory.push({role:"user",content:q});
+  document.getElementById('florist-input').value='';
+  try{
+    const sys=`You are the AI Florist Assistant for the Evercrafted wreath design platform.
+You are deeply knowledgeable in:
+- Floriography (the language of flowers)
+- FFLGA classification (Focal, Filler, Line, Greenery, Accent)
+- Polar coordinate placement on 600×600 wreath canvases
+- Emotion-to-design mapping (grief, gratitude, joy, peace, nostalgia, strength)
+- Evercrafted's blueprint pipeline and wreath genome system (WGS)
+- Practical wreath construction, stem counts, wire work, floral mechanics
+
+Speak fluently in both floral design language AND technical/developer language.
+Keep answers focused, warm, and authoritative. Max 200 words.`;
+    const res=await callClaude(floristHistory,sys,400);
+    floristHistory.push({role:"assistant",content:res});
+    histDiv.innerHTML+=`<div style="margin-bottom:12px;padding-left:12px;border-left:2px solid var(--ec-green)"><div style="font-size:11px;font-weight:600;color:var(--ec-green);margin-bottom:3px">AI Florist</div><div style="font-size:13px;color:var(--ec-charcoal);line-height:1.6">${res.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div></div>`;
+    histDiv.scrollTop=histDiv.scrollHeight;
+  }catch(e){
+    histDiv.innerHTML+=`<div style="color:var(--ec-error);font-size:13px">Error: ${e.message}</div>`;
+  }
+  setLoading('btn-florist','btn-florist-text',false,'💬 Ask Florist');
+}
+
+function quickFlorist(q){
+  document.getElementById('florist-input').value=q;
+  askFlorist();
+}
+
+// INIT
+window.addEventListener('load',()=>{
+  drawWreath();
+  // Set active nav from sidebar click
+  document.querySelectorAll('.nav-item').forEach(item=>{
+    item.addEventListener('click',function(){
+      document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+  document.querySelector('.nav-item').classList.add('active');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WreathlyAI — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest: #1B4332; --forest-mid: #2D6A4F; --forest-light: #40916C;
+  --ivory: #FAF3E0; --ivory-dark: #F0E6C8;
+  --rose: #D4A5A5; --gold: #C9A84C;
+  --dark: #0D2018; --text: #2C3E2D; --muted: #6B7C6E;
+  --bg: #F4EFE3; --sidebar: #0D2018;
+  --white: #fff; --border: rgba(27,67,50,0.1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);display:flex;min-height:100vh;font-size:14px;}
+
+/* SIDEBAR */
+.sidebar{width:220px;background:var(--sidebar);padding:28px 0;display:flex;flex-direction:column;flex-shrink:0;}
+.sidebar-logo{padding:0 24px 32px;font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--ivory);}
+.sidebar-logo span{color:var(--gold);}
+.sidebar-section{font-size:10px;letter-spacing:3px;color:rgba(250,243,224,0.25);text-transform:uppercase;padding:0 24px;margin-bottom:8px;margin-top:20px;}
+.sidebar-item{display:flex;align-items:center;gap:12px;padding:10px 24px;color:rgba(250,243,224,0.55);cursor:pointer;transition:all 0.15s;font-size:13px;}
+.sidebar-item:hover{background:rgba(250,243,224,0.06);color:var(--ivory);}
+.sidebar-item.active{background:rgba(201,168,76,0.1);color:var(--gold);border-left:2px solid var(--gold);}
+.sidebar-item .icon{width:16px;text-align:center;}
+.sidebar-spacer{flex:1;}
+.sidebar-user{padding:16px 24px;border-top:1px solid rgba(250,243,224,0.08);display:flex;align-items:center;gap:10px;}
+.user-avatar{width:32px;height:32px;background:var(--forest-mid);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--ivory);font-size:12px;font-weight:600;}
+.user-name{font-size:12px;color:rgba(250,243,224,0.7);}
+.user-plan{font-size:10px;color:var(--gold);}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+
+/* TOPBAR */
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 32px;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:24px;color:var(--dark);}
+.topbar-left p{font-size:12px;color:var(--muted);}
+.topbar-right{display:flex;align-items:center;gap:16px;}
+.topbar-search{background:var(--bg);border:1px solid var(--border);padding:8px 16px;font-family:'DM Sans';font-size:13px;color:var(--text);outline:none;width:200px;}
+.topbar-search::placeholder{color:var(--muted);}
+.btn-new{background:var(--forest);color:var(--ivory);padding:9px 20px;border:none;cursor:pointer;font-family:'DM Sans';font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px;}
+.notif{width:36px;height:36px;background:var(--bg);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.notif-dot{position:absolute;top:8px;right:8px;width:6px;height:6px;background:var(--rose);border-radius:50%;}
+
+/* CONTENT */
+.content{flex:1;padding:28px 32px;overflow-y:auto;}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--white);padding:20px 24px;border:1px solid var(--border);}
+.stat-card-label{font-size:11px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:8px;}
+.stat-card-val{font-family:'Cormorant Garamond',serif;font-size:36px;color:var(--dark);line-height:1;}
+.stat-card-val.gold{color:var(--gold);}
+.stat-card-val.green{color:var(--forest-mid);}
+.stat-card-change{font-size:12px;color:var(--forest-light);margin-top:6px;}
+.stat-card-change.down{color:var(--rose);}
+
+/* CONTENT GRID */
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px;}
+.panel{background:var(--white);border:1px solid var(--border);padding:24px;}
+.panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.panel-title{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--dark);}
+.panel-action{font-size:12px;color:var(--forest-light);cursor:pointer;text-decoration:underline;}
+
+/* DESIGN GRID */
+.design-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.design-thumb{background:var(--bg);aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer;overflow:hidden;border:2px solid transparent;transition:border-color 0.15s;}
+.design-thumb:hover{border-color:var(--gold);}
+.design-thumb svg{width:80%;height:80%;}
+.design-thumb-label{position:absolute;bottom:0;left:0;right:0;background:rgba(13,32,24,0.75);color:var(--ivory);font-size:10px;padding:5px 8px;opacity:0;transition:opacity 0.15s;}
+.design-thumb:hover .design-thumb-label{opacity:1;}
+.design-thumb.new-btn{border:1px dashed rgba(27,67,50,0.25);background:transparent;flex-direction:column;gap:8px;color:var(--muted);font-size:12px;}
+.design-thumb.new-btn .plus{font-size:28px;color:var(--gold);}
+
+/* ACTIVITY */
+.activity-list{display:flex;flex-direction:column;gap:12px;}
+.activity-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.activity-icon{width:32px;height:32px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;}
+.activity-text{flex:1;}
+.activity-text strong{color:var(--dark);display:block;font-size:13px;}
+.activity-text span{color:var(--muted);font-size:12px;}
+.activity-time{font-size:11px;color:var(--muted);}
+
+/* AI PROMPT BAR */
+.ai-bar{background:var(--dark);padding:20px 24px;margin-bottom:28px;display:flex;align-items:center;gap:16px;}
+.ai-bar-icon{width:36px;height:36px;background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.3);display:flex;align-items:center;justify-content:center;color:var(--gold);flex-shrink:0;}
+.ai-bar input{flex:1;background:transparent;border:none;color:var(--ivory);font-family:'DM Sans';font-size:14px;outline:none;}
+.ai-bar input::placeholder{color:rgba(250,243,224,0.35);}
+.ai-bar button{background:var(--gold);color:var(--dark);border:none;padding:9px 20px;cursor:pointer;font-family:'DM Sans';font-size:13px;font-weight:600;white-space:nowrap;}
+
+/* COST ESTIMATOR PANEL */
+.cost-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.cost-row:last-child{border-bottom:none;}
+.cost-row .label{color:var(--muted);}
+.cost-row .val{font-weight:500;color:var(--dark);}
+.cost-row .val.profit{color:var(--forest-light);font-family:'Cormorant Garamond',serif;font-size:22px;}
+.cost-row.total{margin-top:8px;padding-top:16px;border-top:2px solid var(--forest);}
+
+/* PROGRESS */
+.progress-track{background:var(--bg);height:6px;margin-top:8px;}
+.progress-fill{height:6px;background:var(--gold);}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sidebar-logo">Wreath<span>ly</span>AI</div>
+
+  <div class="sidebar-section">Workspace</div>
+  <div class="sidebar-item active"><span class="icon">◎</span> Dashboard</div>
+  <div class="sidebar-item"><span class="icon">✦</span> WreathCanvas™</div>
+  <div class="sidebar-item"><span class="icon">❋</span> My Designs</div>
+  <div class="sidebar-item"><span class="icon">◈</span> Element Library</div>
+
+  <div class="sidebar-section">Tools</div>
+  <div class="sidebar-item"><span class="icon">$</span> Cost Estimator</div>
+  <div class="sidebar-item"><span class="icon">↗</span> Export Suite</div>
+  <div class="sidebar-item"><span class="icon">◆</span> Variations</div>
+
+  <div class="sidebar-section">Account</div>
+  <div class="sidebar-item"><span class="icon">⬡</span> Brand Kit</div>
+  <div class="sidebar-item"><span class="icon">⚙</span> Settings</div>
+
+  <div class="sidebar-spacer"></div>
+  <div class="sidebar-user">
+    <div class="user-avatar">MT</div>
+    <div><div class="user-name">Maya T.</div><div class="user-plan">✦ Artisan</div></div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <h1>Good morning, Maya ✦</h1>
+      <p>You have 3 designs ready to export</p>
+    </div>
+    <div class="topbar-right">
+      <input class="topbar-search" placeholder="Search designs, elements…">
+      <div class="notif">🔔<div class="notif-dot"></div></div>
+      <button class="btn-new">+ New Design</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- AI BAR -->
+    <div class="ai-bar">
+      <div class="ai-bar-icon">✦</div>
+      <input type="text" placeholder="Describe a wreath… e.g. 'Rustic fall wreath with dried orange slices and cream ribbon'">
+      <button>Generate →</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-card-label">Designs This Month</div>
+        <div class="stat-card-val">28</div>
+        <div class="stat-card-change">↑ 12 vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Avg. Design Time</div>
+        <div class="stat-card-val green">2.4<span style="font-size:18px">min</span></div>
+        <div class="stat-card-change">↓ 18% faster</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Exports Completed</div>
+        <div class="stat-card-val">14</div>
+        <div class="stat-card-change">↑ 6 this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-label">Est. Revenue</div>
+        <div class="stat-card-val gold">$847</div>
+        <div class="stat-card-change">From listed designs</div>
+      </div>
+    </div>
+
+    <!-- GRID: DESIGNS + ACTIVITY -->
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Recent Designs</div>
+          <div class="panel-action">View all →</div>
+        </div>
+        <div class="design-grid">
+          <!-- Design thumbs (SVG wreaths) -->
+          <div class="design-thumb">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#2D6A4F" transform="rotate(0 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#1B4332" transform="rotate(30 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#40916C" transform="rotate(60 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#2D6A4F" transform="rotate(90 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#1B4332" transform="rotate(120 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#40916C" transform="rotate(150 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#2D6A4F" transform="rotate(180 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#1B4332" transform="rotate(210 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#40916C" transform="rotate(240 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#2D6A4F" transform="rotate(270 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#1B4332" transform="rotate(300 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="12" fill="#40916C" transform="rotate(330 50 50)"/>
+              <circle cx="50" cy="12" r="7" fill="#D4A5A5" transform="rotate(45 50 50)"/>
+              <circle cx="50" cy="12" r="7" fill="#D4A5A5" transform="rotate(165 50 50)"/>
+              <circle cx="50" cy="12" r="7" fill="#D4A5A5" transform="rotate(285 50 50)"/>
+              <circle cx="50" cy="12" r="4" fill="#C9A84C" transform="rotate(0 50 50)"/>
+              <circle cx="50" cy="12" r="4" fill="#C9A84C" transform="rotate(120 50 50)"/>
+              <circle cx="50" cy="12" r="4" fill="#C9A84C" transform="rotate(240 50 50)"/>
+            </svg>
+            <div class="design-thumb-label">Autumn Blush</div>
+          </div>
+          <div class="design-thumb">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="50" cy="8" rx="6" ry="14" fill="#1B4332" transform="rotate(0 50 50)"/>
+              <ellipse cx="50" cy="8" rx="6" ry="14" fill="#2D6A4F" transform="rotate(36 50 50)"/>
+              <ellipse cx="50" cy="8" rx="6" ry="14" fill="#40916C" transform="rotate(72 50 50)"/>
+              <ellipse cx="50" cy="8" rx="6" ry="14" fill="#1B4332" transform="rotate(108 50 50)"/>
+              <ellipse cx="50" cy="8" rx="6" ry="14" fill="#2D6A4F" transform="rotate(144 50 50)"/>
+              <ellipse cx="50" cy="8" rx="6" ry="14" fill="#40916C" transform="rotate(180 50 50)"/>
+              <ellipse cx="50" cy="8" rx="6" ry="14" fill="#1B4332" transform="rotate(216 50 50)"/>
+              <ellipse cx="50" cy="8" rx="6" ry="14" fill="#2D6A4F" transform="rotate(252 50 50)"/>
+              <ellipse cx="50" cy="8" rx="6" ry="14" fill="#40916C" transform="rotate(288 50 50)"/>
+              <ellipse cx="50" cy="8" rx="6" ry="14" fill="#1B4332" transform="rotate(324 50 50)"/>
+              <circle cx="50" cy="11" r="8" fill="#C8E6D4" transform="rotate(18 50 50)"/>
+              <circle cx="50" cy="11" r="8" fill="#EAF4EE" transform="rotate(198 50 50)"/>
+              <circle cx="50" cy="11" r="3" fill="#C9A84C" transform="rotate(90 50 50)"/>
+              <circle cx="50" cy="11" r="3" fill="#C9A84C" transform="rotate(270 50 50)"/>
+            </svg>
+            <div class="design-thumb-label">Nordic Frost</div>
+          </div>
+          <div class="design-thumb">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="50" cy="9" rx="8" ry="11" fill="#40916C" transform="rotate(0 50 50)"/>
+              <ellipse cx="50" cy="9" rx="8" ry="11" fill="#2D6A4F" transform="rotate(45 50 50)"/>
+              <ellipse cx="50" cy="9" rx="8" ry="11" fill="#1B4332" transform="rotate(90 50 50)"/>
+              <ellipse cx="50" cy="9" rx="8" ry="11" fill="#40916C" transform="rotate(135 50 50)"/>
+              <ellipse cx="50" cy="9" rx="8" ry="11" fill="#2D6A4F" transform="rotate(180 50 50)"/>
+              <ellipse cx="50" cy="9" rx="8" ry="11" fill="#1B4332" transform="rotate(225 50 50)"/>
+              <ellipse cx="50" cy="9" rx="8" ry="11" fill="#40916C" transform="rotate(270 50 50)"/>
+              <ellipse cx="50" cy="9" rx="8" ry="11" fill="#2D6A4F" transform="rotate(315 50 50)"/>
+              <circle cx="50" cy="10" r="9" fill="#E8C4C4" transform="rotate(22 50 50)"/>
+              <circle cx="50" cy="10" r="5" fill="#F0DADA" transform="rotate(22 50 50)"/>
+              <circle cx="50" cy="10" r="9" fill="#E8C4C4" transform="rotate(202 50 50)"/>
+              <circle cx="50" cy="10" r="5" fill="#F0DADA" transform="rotate(202 50 50)"/>
+              <circle cx="50" cy="10" r="4" fill="#C9A84C" transform="rotate(112 50 50)"/>
+              <circle cx="50" cy="10" r="4" fill="#C9A84C" transform="rotate(292 50 50)"/>
+            </svg>
+            <div class="design-thumb-label">Southern Magnolia</div>
+          </div>
+          <div class="design-thumb new-btn">
+            <div class="plus">+</div>
+            <span>New Design</span>
+          </div>
+          <div class="design-thumb" style="background:#1B4332;">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="50" cy="9" rx="6" ry="12" fill="#40916C" transform="rotate(0 50 50)"/>
+              <ellipse cx="50" cy="9" rx="6" ry="12" fill="#2D6A4F" transform="rotate(40 50 50)"/>
+              <ellipse cx="50" cy="9" rx="6" ry="12" fill="#52B788" transform="rotate(80 50 50)"/>
+              <ellipse cx="50" cy="9" rx="6" ry="12" fill="#40916C" transform="rotate(120 50 50)"/>
+              <ellipse cx="50" cy="9" rx="6" ry="12" fill="#2D6A4F" transform="rotate(160 50 50)"/>
+              <ellipse cx="50" cy="9" rx="6" ry="12" fill="#52B788" transform="rotate(200 50 50)"/>
+              <ellipse cx="50" cy="9" rx="6" ry="12" fill="#40916C" transform="rotate(240 50 50)"/>
+              <ellipse cx="50" cy="9" rx="6" ry="12" fill="#2D6A4F" transform="rotate(280 50 50)"/>
+              <ellipse cx="50" cy="9" rx="6" ry="12" fill="#52B788" transform="rotate(320 50 50)"/>
+              <circle cx="50" cy="11" r="7" fill="#C9A84C" transform="rotate(20 50 50)"/>
+              <circle cx="50" cy="11" r="3" fill="#E0C876" transform="rotate(20 50 50)"/>
+              <circle cx="50" cy="11" r="7" fill="#C9A84C" transform="rotate(140 50 50)"/>
+              <circle cx="50" cy="11" r="3" fill="#E0C876" transform="rotate(140 50 50)"/>
+              <circle cx="50" cy="11" r="7" fill="#C9A84C" transform="rotate(260 50 50)"/>
+            </svg>
+            <div class="design-thumb-label">Holiday Classic</div>
+          </div>
+          <div class="design-thumb">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+              <ellipse cx="50" cy="10" rx="7" ry="10" fill="#8FB8A0" transform="rotate(0 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="10" fill="#B5D0C2" transform="rotate(60 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="10" fill="#8FB8A0" transform="rotate(120 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="10" fill="#B5D0C2" transform="rotate(180 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="10" fill="#8FB8A0" transform="rotate(240 50 50)"/>
+              <ellipse cx="50" cy="10" rx="7" ry="10" fill="#B5D0C2" transform="rotate(300 50 50)"/>
+              <circle cx="50" cy="11" r="8" fill="#D4A5A5" transform="rotate(30 50 50)"/>
+              <circle cx="50" cy="11" r="4" fill="#EAC8C8" transform="rotate(30 50 50)"/>
+              <circle cx="50" cy="11" r="8" fill="#D4A5A5" transform="rotate(150 50 50)"/>
+              <circle cx="50" cy="11" r="4" fill="#EAC8C8" transform="rotate(150 50 50)"/>
+              <circle cx="50" cy="11" r="8" fill="#D4A5A5" transform="rotate(270 50 50)"/>
+            </svg>
+            <div class="design-thumb-label">Coastal Boho</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Recent Activity</div>
+          <div class="panel-action">View all →</div>
+        </div>
+        <div class="activity-list">
+          <div class="activity-item">
+            <div class="activity-icon">✦</div>
+            <div class="activity-text"><strong>AI Generated "Autumn Blush"</strong><span>From prompt: rustic fall with dried citrus</span></div>
+            <div class="activity-time">2m ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">↗</div>
+            <div class="activity-text"><strong>Exported "Nordic Frost"</strong><span>PNG + Etsy listing pack downloaded</span></div>
+            <div class="activity-time">1h ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">◈</div>
+            <div class="activity-text"><strong>4 Variations Generated</strong><span>Based on "Southern Magnolia"</span></div>
+            <div class="activity-time">3h ago</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">$</div>
+            <div class="activity-text"><strong>Cost Estimate Updated</strong><span>"Holiday Classic" — COGS $18.40, suggested $54</span></div>
+            <div class="activity-time">Yesterday</div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon">⬡</div>
+            <div class="activity-text"><strong>Brand Kit Updated</strong><span>New accent color added: Dusty Rose #D4A5A5</span></div>
+            <div class="activity-time">2 days ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW: COST ESTIMATOR + MONTHLY PROGRESS -->
+    <div class="content-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Cost Estimator — "Autumn Blush"</div>
+          <div class="panel-action">Edit materials →</div>
+        </div>
+        <div class="cost-row"><span class="label">Grapevine base (14")</span><span class="val">$4.20</span></div>
+        <div class="cost-row"><span class="label">Eucalyptus stems (×6)</span><span class="val">$3.60</span></div>
+        <div class="cost-row"><span class="label">Dried orange slices (×4)</span><span class="val">$2.80</span></div>
+        <div class="cost-row"><span class="label">Dusty rose peonies (×3)</span><span class="val">$4.50</span></div>
+        <div class="cost-row"><span class="label">Gold berry picks (×2)</span><span class="val">$1.40</span></div>
+        <div class="cost-row"><span class="label">Wired ribbon (2yd)</span><span class="val">$2.10</span></div>
+        <div class="cost-row"><span class="label">Labor estimate (45min)</span><span class="val">$11.25</span></div>
+        <div class="cost-row total"><span class="label" style="font-weight:600">Total COGS</span><span class="val" style="font-size:18px;font-weight:600">$29.85</span></div>
+        <div class="cost-row"><span class="label">Suggested Retail (65% margin)</span><span class="val profit">$85.00</span></div>
+        <div style="margin-top:16px;background:var(--forest);color:var(--ivory);padding:12px 20px;text-align:center;cursor:pointer;font-size:13px;">Export Price Sheet →</div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Monthly Progress</div>
+          <div class="panel-action">Full report →</div>
+        </div>
+        <div style="margin-bottom:20px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span style="color:var(--muted)">Designs created</span><span style="font-weight:600">28 / 50 goal</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:56%"></div></div>
+        </div>
+        <div style="margin-bottom:20px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span style="color:var(--muted)">Exports completed</span><span style="font-weight:600">14 / 20 goal</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:70%;background:var(--forest-mid)"></div></div>
+        </div>
+        <div style="margin-bottom:20px;">
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;"><span style="color:var(--muted)">Revenue from designs</span><span style="font-weight:600">$847 / $1,200 goal</span></div>
+          <div class="progress-track"><div class="progress-fill" style="width:71%;background:var(--rose)"></div></div>
+        </div>
+        <div style="padding:16px;background:rgba(27,67,50,0.05);border:1px solid rgba(27,67,50,0.1);margin-top:8px;">
+          <div style="font-size:12px;color:var(--forest);font-weight:500;margin-bottom:4px;">✦ AI Insight</div>
+          <div style="font-size:13px;color:var(--muted);line-height:1.5;">Your Coastal Boho designs sell 40% faster than average. Consider creating 3 more this week to hit your revenue goal.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

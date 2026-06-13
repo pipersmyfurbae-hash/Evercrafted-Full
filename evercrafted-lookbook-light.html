@@ -1,0 +1,306 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Evercrafted — the lookbook (light)</title>
+<meta name="description" content="Emotion, made into something you can hold. Describe a memory; Evercrafted reads what a piece should feel like and turns it into a wreath you can actually build.">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c1410;--bg2:#0f1a14;--cream:#ece5d6;--cream2:#c9c4b4;--mut:rgba(236,229,214,.62);--faint:rgba(236,229,214,.4);--gold:#c4a06a;--green:#8fb089;--line:rgba(236,229,214,.14);
+--serif:'Italiana',Georgia,serif;--sans:'Inter',system-ui,sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--cream);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.7}
+a{color:inherit;text-decoration:none}.serif{font-family:var(--serif)}
+/* top bar */
+.bar{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,5vw,56px);transition:background .4s,backdrop-filter .4s}
+.bar.solid{background:rgba(12,20,16,.7);backdrop-filter:blur(10px)}
+.bar .logo{font-family:var(--serif);font-size:1.35rem;letter-spacing:.05em;color:var(--cream)}
+.bar .logo span{color:var(--gold)}
+.bar nav{display:flex;align-items:center;gap:clamp(1rem,3vw,2rem)}
+.bar nav a{font-size:12px;letter-spacing:.06em;color:var(--mut);text-transform:uppercase}
+.bar nav a:hover{color:var(--cream)}
+.bar .cta{border:1px solid var(--gold);color:var(--gold)!important;padding:8px 18px;border-radius:100px;font-size:11px;letter-spacing:.1em}
+.bar .cta:hover{background:var(--gold);color:#0c1410!important}
+@media(max-width:720px){.bar nav .hide{display:none}}
+/* beat */
+.beat{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden;padding:clamp(5rem,12vh,9rem) clamp(20px,6vw,80px)}
+.beat .media{position:absolute;inset:0;z-index:0;overflow:hidden}
+.beat .media video,.beat .media img{width:100%;height:120%;object-fit:cover;position:absolute;top:-10%;left:0;will-change:transform}
+.beat .scrim{position:absolute;inset:0;z-index:1}
+.scrim.center{background:radial-gradient(ellipse 100% 90% at 50% 50%,rgba(12,20,16,.55),rgba(12,20,16,.92))}
+.scrim.left{background:linear-gradient(90deg,rgba(12,20,16,.97) 0%,rgba(12,20,16,.88) 38%,rgba(12,20,16,.55) 78%,rgba(12,20,16,.4) 100%)}
+.scrim.bottom{background:linear-gradient(180deg,rgba(12,20,16,.5) 0%,rgba(12,20,16,.7) 55%,rgba(12,20,16,.95) 100%)}
+.beat .inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.solidbeat{background:var(--bg2)}
+/* type */
+.ov{font-size:11px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.4rem}
+.h-xl{font-family:var(--serif);font-weight:400;font-size:clamp(2.6rem,7vw,5.2rem);line-height:1.02;letter-spacing:.01em}
+.h-lg{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4.6vw,3.4rem);line-height:1.1;letter-spacing:.01em}
+.lead{font-size:clamp(1.05rem,1.6vw,1.25rem);color:var(--cream2);max-width:36rem;margin-top:1.6rem;line-height:1.75;font-weight:300}
+.it{font-style:italic;color:var(--green)}
+/* rotator */
+.rot{display:inline-block;position:relative;color:var(--gold)}
+/* hero specifics */
+.hero-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto}
+.cta-row{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2.4rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:15px 32px;border-radius:100px;font-size:13px;font-weight:500;letter-spacing:.05em;border:1px solid transparent;transition:all .2s;cursor:pointer}
+.btn-p{background:var(--gold);color:#0c1410}.btn-p:hover{background:#d4b27e}
+.btn-g{border-color:var(--line);color:var(--cream)}.btn-g:hover{border-color:var(--cream)}
+.trust{display:flex;align-items:center;gap:.8rem;margin-top:2.6rem;color:var(--faint);font-size:12.5px;letter-spacing:.04em}
+.dots span{display:inline-flex;width:26px;height:26px;border-radius:50%;align-items:center;justify-content:center;font-size:11px;color:#0c1410;font-weight:600;margin-left:-8px;border:2px solid var(--bg)}
+.dots span:first-child{margin-left:0}
+.cue{position:absolute;left:50%;bottom:30px;transform:translateX(-50%);z-index:3;font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--faint);animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translate(-50%,0);opacity:.5}50%{transform:translate(-50%,7px);opacity:1}}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(1.2rem,3vw,2.6rem);margin-top:3rem}
+@media(max-width:820px){.steps{grid-template-columns:1fr;gap:1.6rem}}
+.step .n{font-family:var(--serif);font-size:2.4rem;color:var(--gold);opacity:.7;line-height:1}
+.step h3{font-family:var(--serif);font-weight:400;font-size:1.5rem;margin:.7rem 0 .5rem;color:var(--cream)}
+.step p{font-size:.98rem;color:var(--mut);line-height:1.7}
+/* deliverable cards */
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;margin-top:3rem}
+@media(max-width:900px){.three{grid-template-columns:1fr}}
+.dcard{border:1px solid var(--line);border-radius:18px;padding:1.8rem;background:rgba(236,229,214,.03);transition:border-color .25s,transform .25s}
+.dcard:hover{border-color:rgba(196,160,106,.5);transform:translateY(-4px)}
+.dcard .badge{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.dcard h3{font-family:var(--serif);font-weight:400;font-size:1.6rem;margin:.7rem 0 .6rem;color:var(--cream)}
+.dcard p{font-size:.96rem;color:var(--mut);line-height:1.7}
+.dcard .shot{width:100%;border-radius:12px;margin-top:1.2rem;border:1px solid var(--line)}
+/* quote */
+.quote-wrap{max-width:48rem}
+.quote{font-family:var(--serif);font-weight:400;font-size:clamp(1.6rem,3.6vw,2.7rem);line-height:1.32;color:var(--cream);font-style:italic}
+.qmark{font-family:var(--serif);font-size:4rem;color:var(--gold);opacity:.45;line-height:0;display:block;height:1.4rem}
+.qperson{display:flex;align-items:center;gap:.9rem;margin-top:2rem}
+.qav{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0c1410;font-weight:600}
+.qname{font-size:14px;color:var(--cream)}.qrole{font-size:12px;color:var(--faint)}
+.qdots{display:flex;gap:8px;margin-top:2.2rem}
+.qdot{width:8px;height:8px;border-radius:50%;background:var(--line);border:none;cursor:pointer;transition:background .2s}
+.qdot.on{background:var(--gold)}
+/* gallery */
+.gal{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:3rem}
+@media(max-width:820px){.gal{grid-template-columns:1fr 1fr}}
+.gal figure{position:relative;border-radius:14px;overflow:hidden;aspect-ratio:1/1}
+.gal img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.gal figure:hover img{transform:scale(1.05)}
+.gal figcaption{position:absolute;left:0;right:0;bottom:0;padding:1.2rem .9rem .7rem;font-family:var(--serif);font-size:1.05rem;color:var(--cream);background:linear-gradient(180deg,transparent,rgba(12,20,16,.85))}
+/* waitlist */
+.wl-form{display:flex;gap:.7rem;margin-top:2.2rem;max-width:30rem;flex-wrap:wrap}
+.wl-input{flex:1;min-width:200px;padding:15px 18px;border-radius:100px;border:1px solid var(--line);background:rgba(236,229,214,.05);color:var(--cream);font-family:var(--sans);font-size:15px;outline:none}
+.wl-input::placeholder{color:var(--faint)}.wl-input:focus{border-color:var(--gold)}
+.wl-stats{display:flex;gap:2.4rem;margin-top:2.4rem;flex-wrap:wrap}
+.wl-stats .s{font-size:12px;color:var(--faint);letter-spacing:.04em}
+.wl-stats .s b{display:block;font-family:var(--serif);font-size:1.5rem;color:var(--gold);font-weight:400;margin-bottom:.2rem}
+.wl-msg{margin-top:1rem;font-size:13px;min-height:1.1em}
+/* footer */
+.foot{padding:3rem clamp(20px,6vw,80px);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;background:var(--bg)}
+.foot .logo{font-family:var(--serif);font-size:1.2rem}.foot .logo span{color:var(--gold)}
+.foot-links{display:flex;gap:1.6rem}.foot-links a{font-size:12px;color:var(--mut)}
+.foot .cc{font-size:12px;color:var(--faint)}
+/* reveal */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.12s}.rv.d2{transition-delay:.24s}.rv.d3{transition-delay:.36s}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.cue{animation:none}.beat .media video,.beat .media img{height:100%;top:0}}
+
+/* ═══════════ LIGHT THEME OVERRIDE ═══════════ */
+:root{
+  --bg:#F4EEE3;--bg2:#FBF7F0;
+  --cream:#2b2a25;--cream2:#5a554c;
+  --mut:rgba(43,42,37,.66);--faint:rgba(43,42,37,.42);
+  --gold:#9A7A40;--green:#4a6741;--dust:#8a6f84;--blue:#52688c;
+  --line:rgba(43,42,37,.14);
+}
+.bar.solid{background:rgba(244,238,227,.82)}
+.rail-wrap{background:rgba(244,238,227,.85)}
+.scrim.center{background:radial-gradient(ellipse 100% 90% at 50% 50%,rgba(244,238,227,.6),rgba(244,238,227,.93))}
+.scrim.left{background:linear-gradient(90deg,rgba(244,238,227,.97) 0%,rgba(244,238,227,.9) 38%,rgba(244,238,227,.62) 78%,rgba(244,238,227,.42) 100%)}
+.scrim.right{background:linear-gradient(270deg,rgba(244,238,227,.97) 0%,rgba(244,238,227,.9) 38%,rgba(244,238,227,.62) 78%,rgba(244,238,227,.42) 100%)}
+.scrim.bottom{background:linear-gradient(180deg,rgba(244,238,227,.4) 0%,rgba(244,238,227,.72) 55%,rgba(244,238,227,.95) 100%)}
+.btn-p{color:#fff}
+.bar .cta:hover{color:#fff!important}
+.etab.on{color:#fff}
+.rail a.active .rn{color:#fff}
+.art{background:#fff;box-shadow:0 14px 44px rgba(43,42,37,.08)}
+.dcard{background:#fff;box-shadow:0 14px 44px rgba(43,42,37,.06)}
+.dcard:hover{box-shadow:0 22px 56px rgba(43,42,37,.1)}
+.memory{background:#faf6ef}
+.chip{background:#faf6ef}
+.promptbox{background:#f6f2ea}
+.wl-input{background:#fff}
+.plate{box-shadow:0 24px 50px rgba(43,42,37,.16)}
+.cmpcard.after{background:rgba(74,103,65,.06)}
+.gal figcaption{background:linear-gradient(180deg,transparent,rgba(43,42,37,.82))}
+</style></head><body>
+
+<div class="bar" id="bar">
+  <a class="logo" href="evercrafted-marketing-site.html">Ever<span>crafted</span></a>
+  <nav>
+    <a class="hide" href="evercrafted-how-it-works-lookbook-light.html">How it works</a>
+    <a class="hide" href="evercrafted-marketplace.html">Add-ons</a>
+    <a class="hide" href="evercrafted-about.html">About</a>
+    <a class="cta" href="#waitlist">Join waitlist</a>
+  </nav>
+</div>
+
+<!-- BEAT 1 — HERO -->
+<section class="beat" id="top">
+  <div class="media"><video data-parallax autoplay muted loop playsinline poster="/assets/hero-poster.png"><source src="/assets/wreath-hero.mp4" type="video/mp4"></video></div>
+  <div class="scrim left"></div>
+  <div class="hero-inner">
+    <div class="ov rv">Design intelligence for wreath artists</div>
+    <h1 class="h-xl rv d1">Emotion, made into<br>something you can<br><span class="rot" id="rot">hold</span>.</h1>
+    <p class="lead rv d2">Describe a memory — a person, a season, a feeling. Evercrafted reads what a piece should feel like and turns it into a wreath you can actually build.</p>
+    <div class="cta-row rv d3">
+      <a class="btn btn-p" href="evercrafted-try.html">Try a memory →</a>
+      <a class="btn btn-g" href="#waitlist">Join the waitlist</a>
+    </div>
+    <div class="trust rv d3"><div class="dots"><span style="background:#6B8F67">M</span><span style="background:#C4A06A">D</span><span style="background:#B08A7E">P</span></div><span>Loved by makers in studios worldwide</span></div>
+  </div>
+  <div class="cue">Scroll</div>
+</section>
+
+<!-- BEAT 2 — FROM FEELING TO BLUEPRINT -->
+<section class="beat">
+  <div class="media"><video data-parallax muted loop playsinline preload="none" poster="/assets/hero-poster.png"><source src="/assets/hero-home.mp4" type="video/mp4"></video></div>
+  <div class="scrim center"></div>
+  <div class="inner" style="text-align:center;max-width:1000px">
+    <div class="ov rv">From feeling to blueprint</div>
+    <h2 class="h-lg rv d1">You bring the memory.<br>We bring the design.</h2>
+    <p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">No style quizzes. No mood boards. You describe what a piece should feel like — Evercrafted does the rest, in a way that never looks like anything you've made before.</p>
+    <div class="steps">
+      <div class="step rv d1"><div class="n serif">01</div><h3>Speak the memory</h3><p>A garden in late September. A grandmother's hands. The warmth before the cold arrived.</p></div>
+      <div class="step rv d2"><div class="n serif">02</div><h3>We read the feeling</h3><p>The poem finds the emotion; the engine turns it into palette, movement, density — a full blueprint.</p></div>
+      <div class="step rv d3"><div class="n serif">03</div><h3>You build it</h3><p>True-to-scale placement, a sourcing list of exactly what to buy, and a hero render to sell it.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- BEAT 3 — WHAT EVERY MEMORY BECOMES -->
+<section class="beat solidbeat">
+  <div class="inner">
+    <div style="text-align:center;max-width:760px;margin:0 auto">
+      <div class="ov rv">What every memory becomes</div>
+      <h2 class="h-lg rv d1">One feeling. A complete plan.</h2>
+      <p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">Evercrafted doesn't hand you inspiration and wish you luck. Each memory returns three things — a blueprint, a build view, and a render.</p>
+    </div>
+    <div class="three">
+      <div class="dcard rv d1"><div class="badge">Designed to scale</div><h3>A plan drawn to the inch.</h3><p>Every memory returns as a true-to-scale blueprint — the exact diameter, the real colours of the flowers, each bloom placed where a designer would place it. Not inspiration. A map.</p></div>
+      <div class="dcard rv d2"><div class="badge">Build with confidence</div><h3>Every bloom, where it belongs.</h3><p>A soft, true-colour rendering of the finished arrangement shows density, movement and balance before you cut a single stem — so you build it once, and build it right.</p></div>
+      <div class="dcard rv d3"><div class="badge">Sell before you cut</div><h3>A hero image to list with.</h3><p>A finished, gallery-lit render you can put straight on the product page — so customers can fall in love with a custom piece before it physically exists.</p><img class="shot" src="/assets/render-product.png" alt="Finished Evercrafted wreath render" loading="lazy"></div>
+    </div>
+    <div style="text-align:center;margin-top:2.6rem" class="rv"><a class="btn btn-p" href="evercrafted-try.html">See how it works →</a></div>
+  </div>
+</section>
+
+<!-- BEAT 4 — TESTIMONIALS -->
+<section class="beat">
+  <div class="media"><video data-parallax muted loop playsinline preload="none" poster="/assets/hero-poster.png"><source src="/assets/bret_64130_Photorealistic_interior_photograph_of_a_luxury_fau_e130cc9f-6d63-4932-ac89-ee7ffc3f010f_1.mp4" type="video/mp4"></video></div>
+  <div class="scrim left"></div>
+  <div class="inner">
+    <div class="ov rv">Loved by makers</div>
+    <h2 class="h-lg rv d1" style="margin-bottom:2.4rem">Wreath artists, on<br>their first memory.</h2>
+    <div class="quote-wrap rv d2">
+      <span class="qmark">&ldquo;</span>
+      <p class="quote" id="q-text">It read the feeling I couldn't put into words — then handed me back something I could actually make. I've stopped staring at blank grapevine.</p>
+      <div class="qperson"><span class="qav" id="q-av" style="background:#6B8F67">M</span><div><div class="qname" id="q-name">Maren Whitlock</div><div class="qrole" id="q-role">Wreath artist, Fern &amp; Folk</div></div></div>
+      <div class="qdots" id="q-dots"><button class="qdot on" data-i="0"></button><button class="qdot" data-i="1"></button><button class="qdot" data-i="2"></button></div>
+    </div>
+  </div>
+</section>
+
+<!-- BEAT 5 — GALLERY -->
+<section class="beat solidbeat">
+  <div class="inner">
+    <div style="text-align:center;max-width:760px;margin:0 auto">
+      <div class="ov rv">A few, from feeling to finished</div>
+      <h2 class="h-lg rv d1">Every one, unrepeatable.</h2>
+      <p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">No two memories are alike — and no two wreaths should be. A glimpse of what Evercrafted has translated, from a single sentence.</p>
+    </div>
+    <div class="gal">
+      <figure class="rv d1"><img src="/assets/gallery-1.png" alt="Spring garden wreath" loading="lazy"><figcaption>Spring Garden</figcaption></figure>
+      <figure class="rv d1"><img src="/assets/gallery-2.png" alt="September warmth wreath" loading="lazy"><figcaption>September Warmth</figcaption></figure>
+      <figure class="rv d2"><img src="/assets/gallery-3.png" alt="Garden scatter wreath" loading="lazy"><figcaption>Garden Scatter</figcaption></figure>
+      <figure class="rv d2"><img src="/assets/gallery-4.png" alt="Quiet cream wreath" loading="lazy"><figcaption>Quiet Cream</figcaption></figure>
+      <figure class="rv d3"><img src="/assets/gallery-5.png" alt="White botanical wreath" loading="lazy"><figcaption>White Botanical</figcaption></figure>
+      <figure class="rv d3"><img src="/assets/gallery-6.png" alt="Heirloom white wreath" loading="lazy"><figcaption>Heirloom White</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- BEAT 6 — WAITLIST -->
+<section class="beat" id="waitlist">
+  <div class="media"><video data-parallax muted loop playsinline preload="none" poster="/assets/hero-poster.png"><source src="/assets/wreath-hero.mp4" type="video/mp4"></video></div>
+  <div class="scrim center"></div>
+  <div class="inner" style="text-align:center;max-width:760px">
+    <div class="ov rv">Early access</div>
+    <h2 class="h-lg rv d1">Be first when we launch.</h2>
+    <p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">Join the waitlist for early access, founding pricing, and a direct hand in what we build first.</p>
+    <form class="wl-form rv d2" id="wl-form" style="margin-left:auto;margin-right:auto">
+      <input class="wl-input" id="wl-email" type="email" placeholder="Your email address" required>
+      <button class="btn btn-p" type="submit">Join waitlist →</button>
+    </form>
+    <div class="wl-msg" id="wl-msg" style="margin-left:auto;margin-right:auto;max-width:30rem"></div>
+    <div class="wl-stats rv d3" style="justify-content:center">
+      <div class="s"><b>Founding</b>pricing locked for life</div>
+      <div class="s"><b>Early</b>access before public launch</div>
+      <div class="s"><b>A say</b>in what we build first</div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="logo">Ever<span>crafted</span></div>
+  <div class="foot-links"><a href="evercrafted-how-it-works-lookbook-light.html">How it works</a><a href="evercrafted-pricing.html">Pricing</a><a href="evercrafted-try.html">Try it</a><a href="#waitlist">Waitlist</a></div>
+  <div class="cc">© 2026 Evercrafted</div>
+</footer>
+
+<script>
+(function(){
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // bar solid on scroll
+  var bar=document.getElementById('bar');
+  addEventListener('scroll',function(){bar.classList.toggle('solid',scrollY>40)},{passive:true});
+
+  // reveal on scroll
+  var rio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');rio.unobserve(e.target);}})},{threshold:.18});
+  [].forEach.call(document.querySelectorAll('.rv'),function(el){rio.observe(el)});
+
+  // hero word rotator
+  var words=['hold','keep','treasure','pass down'],ri=0,rot=document.getElementById('rot');
+  if(rot&&!reduce){setInterval(function(){ri=(ri+1)%words.length;rot.style.opacity=0;setTimeout(function(){rot.textContent=words[ri];rot.style.opacity=1;},260);},2600);rot.style.transition='opacity .26s';}
+
+  // parallax (subtle) on beat media
+  var media=[].slice.call(document.querySelectorAll('[data-parallax]'));
+  if(!reduce){var ticking=false;addEventListener('scroll',function(){if(ticking)return;ticking=true;requestAnimationFrame(function(){media.forEach(function(v){var r=v.getBoundingClientRect();var off=(r.top+r.height/2-innerHeight/2)/innerHeight;v.style.transform='translateY('+(off*-6)+'%)';});ticking=false;});},{passive:true});}
+
+  // videos: play only on screen, unlock autoplay on first gesture
+  var vids=[].slice.call(document.querySelectorAll('.beat video'));
+  vids.forEach(function(v){v.muted=true;v.setAttribute('muted','');v.playsInline=true;});
+  if(reduce){vids.forEach(function(v){v.removeAttribute('autoplay');v.removeAttribute('loop');});}
+  else{
+    var vio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var p=e.target.play();if(p&&p.catch)p.catch(function(){});}else{e.target.pause();}})},{threshold:.25});
+    vids.forEach(function(v){vio.observe(v)});
+    ['scroll','pointerdown','touchstart','keydown'].forEach(function(ev){addEventListener(ev,function k(){vids.forEach(function(v){if(v.getBoundingClientRect().top<innerHeight&&v.getBoundingClientRect().bottom>0){var p=v.play();if(p&&p.catch)p.catch(function(){});}});},{once:true,passive:true})});
+  }
+
+  // testimonials
+  var T=[
+    {t:"It read the feeling I couldn't put into words — then handed me back something I could actually make. I've stopped staring at blank grapevine.",n:'Maren Whitlock',r:'Wreath artist, Fern & Folk',c:'#6B8F67',i:'M'},
+    {t:"Now every custom order starts with a blueprint instead of a guess. My consults are faster, my pieces are tighter, and clients say yes sooner.",n:'Daniela Reyes',r:'Floral designer, Casa Marigold',c:'#C4A06A',i:'D'},
+    {t:"My customers think I have a design team. It's just me and Evercrafted — and a render that sells the piece before I've touched a stem.",n:'Priya Anand',r:'Maker, The Wild Stem',c:'#B08A7E',i:'P'}
+  ];
+  var qt=document.getElementById('q-text'),qn=document.getElementById('q-name'),qr=document.getElementById('q-role'),qa=document.getElementById('q-av'),qd=document.getElementById('q-dots'),qi=0,qtimer;
+  function showQ(i){var x=T[i];qt.style.opacity=0;setTimeout(function(){qt.textContent=x.t;qn.textContent=x.n;qr.textContent=x.r;qa.textContent=x.i;qa.style.background=x.c;qt.style.opacity=1;},220);[].forEach.call(qd.children,function(b,j){b.classList.toggle('on',j===i)});qi=i;}
+  qt.style.transition='opacity .22s';
+  [].forEach.call(qd.children,function(b,j){b.addEventListener('click',function(){showQ(j);clearInterval(qtimer);qtimer=setInterval(function(){showQ((qi+1)%T.length)},6000);})});
+  qtimer=setInterval(function(){showQ((qi+1)%T.length)},6000);
+
+  // waitlist -> /api/waitlist (Supabase-backed, same origin)
+  var f=document.getElementById('wl-form'),em=document.getElementById('wl-email'),msg=document.getElementById('wl-msg'),btn=f.querySelector('button');
+  f.addEventListener('submit',function(e){e.preventDefault();var email=(em.value||'').trim();if(!email)return;btn.disabled=true;var o=btn.textContent;btn.textContent='Joining…';msg.textContent='';
+    fetch('/api/waitlist',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,source:'lookbook'})})
+    .then(function(r){return r.json().catch(function(){return{}})})
+    .then(function(j){if(j&&j.success){btn.textContent="You're on the list ✓";em.value='';msg.style.color='var(--green)';msg.textContent="Thank you — we'll be in touch before launch.";}else{throw new Error()}})
+    .catch(function(){btn.disabled=false;btn.textContent=o;msg.style.color='#e0a0a0';msg.textContent='Something went wrong — please try again.';});
+  });
+})();
+</script>
+</body></html>

@@ -1,0 +1,800 @@
+{
+  "C24PE-RE canonical (24\" lush crescent, 7:30)": {
+    "layout": {
+      "formula": "Crescent",
+      "layerCounts": [
+        [
+          "base",
+          1
+        ],
+        [
+          "eucalyptus",
+          20
+        ],
+        [
+          "sage",
+          6
+        ],
+        [
+          "hydrangea",
+          3
+        ],
+        [
+          "tulipWhite",
+          5
+        ],
+        [
+          "tulipMauve",
+          1
+        ],
+        [
+          "waxFlower",
+          7
+        ],
+        [
+          "berryNavy",
+          4
+        ],
+        [
+          "berryCream",
+          5
+        ],
+        [
+          "peony",
+          4
+        ]
+      ],
+      "coverageTarget": 65,
+      "bundles": 18,
+      "pole": 271.8,
+      "purchaseStems": {
+        "focal": 4,
+        "secondary": 9,
+        "filler": 12,
+        "greenery": 11
+      },
+      "adjustIterations": 3,
+      "clusters": [
+        {
+          "id": "C1",
+          "type": "focal",
+          "center_deg": 271.8,
+          "span_deg": 117
+        }
+      ]
+    },
+    "validation": {
+      "coverage": 73.9168,
+      "centralFrac": 93.4211,
+      "stackBloom": 1.4265,
+      "stackTotal": 2.922,
+      "asymScore": 0.3547,
+      "axisBalance": 0.3438,
+      "driftRatio": 0.5895,
+      "tightPairs": 11,
+      "texMax": 0.887,
+      "texAvg": 0.3872,
+      "texCV": 0.4572,
+      "texRuns": 1,
+      "depthAvg": 0.3696,
+      "depthVar": 0.0012,
+      "hollowCount": 0,
+      "accentSep": 0.1938,
+      "placements": {
+        "greenery": 26,
+        "secondary": 9,
+        "filler": 16,
+        "focal": 4
+      },
+      "purchase": {
+        "greenery": 9,
+        "secondary": 9,
+        "filler": 12,
+        "focal": 4
+      },
+      "checks": [
+        [
+          "Coverage (declared Lush Asymmetric)",
+          "pass"
+        ],
+        [
+          "Bloom nesting (R2)",
+          "pass"
+        ],
+        [
+          "Same-layer spacing (R6/R7)",
+          "flag"
+        ],
+        [
+          "Asymmetry score (R10)",
+          "warn"
+        ],
+        [
+          "Centroid coherence (R10)",
+          "pass"
+        ],
+        [
+          "Diagonal commitment (R13)",
+          "pass"
+        ],
+        [
+          "Lateral drift (R13)",
+          "warn"
+        ],
+        [
+          "Bloom-layer stacking (R7)",
+          "pass"
+        ],
+        [
+          "Total stacking incl. greenery (R7)",
+          "pass"
+        ],
+        [
+          "Texture density (R15)",
+          "warn"
+        ],
+        [
+          "Texture evenness (R15)",
+          "warn"
+        ],
+        [
+          "Texture alternation (R15)",
+          "warn"
+        ],
+        [
+          "Depth quality (R17)",
+          "flag"
+        ],
+        [
+          "Depth consistency (R17)",
+          "pass"
+        ],
+        [
+          "Negative-space counterweight (R18)",
+          "pass"
+        ],
+        [
+          "Hollow midspace (R18)",
+          "pass"
+        ],
+        [
+          "Color balance · warm (R16)",
+          "pass"
+        ],
+        [
+          "Color balance · cool (R16)",
+          "pass"
+        ],
+        [
+          "Color balance · neutral (R16)",
+          "warn"
+        ],
+        [
+          "Color group separation (R16)",
+          "pass"
+        ],
+        [
+          "Accent separation (R16)",
+          "warn"
+        ],
+        [
+          "Focal stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Secondary stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Filler stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Greenery stems (R5, purchase)",
+          "pass"
+        ]
+      ]
+    },
+    "tokens": "floral mass gathered left around 9 o'clock, asymmetric sweep from 3 to 12 o'clock, exposed grapevine arc from 12 to 3 o'clock as intentional negative space, lush layered density, gentle off-center composition"
+  },
+  "minimal side-sweep (22\", 10:00 swag)": {
+    "layout": {
+      "formula": "Side Sweep",
+      "layerCounts": [
+        [
+          "base",
+          1
+        ],
+        [
+          "eucalyptus",
+          15
+        ],
+        [
+          "sage",
+          4
+        ],
+        [
+          "hydrangea",
+          2
+        ],
+        [
+          "tulipWhite",
+          4
+        ],
+        [
+          "tulipMauve",
+          1
+        ],
+        [
+          "waxFlower",
+          5
+        ],
+        [
+          "berryNavy",
+          3
+        ],
+        [
+          "berryCream",
+          3
+        ],
+        [
+          "peony",
+          3
+        ]
+      ],
+      "coverageTarget": 26.8,
+      "bundles": 7,
+      "pole": 319.296,
+      "purchaseStems": {
+        "focal": 3,
+        "secondary": 7,
+        "filler": 9,
+        "greenery": 8
+      },
+      "adjustIterations": 0,
+      "clusters": [
+        {
+          "id": "C1",
+          "type": "focal",
+          "center_deg": 319.3,
+          "span_deg": 48.2
+        }
+      ]
+    },
+    "validation": {
+      "coverage": 38.193,
+      "centralFrac": 58.6207,
+      "stackBloom": 2.3066,
+      "stackTotal": 4.7146,
+      "asymScore": 0.5112,
+      "axisBalance": 0.7193,
+      "driftRatio": 0.0773,
+      "tightPairs": 8,
+      "texMax": 0.8336,
+      "texAvg": 0.5591,
+      "texCV": 0.2965,
+      "texRuns": 1,
+      "depthAvg": 0.3601,
+      "depthVar": 0.0005,
+      "hollowCount": 0,
+      "accentSep": 0.8167,
+      "placements": {
+        "greenery": 19,
+        "secondary": 7,
+        "filler": 11,
+        "focal": 3
+      },
+      "purchase": {
+        "greenery": 7,
+        "secondary": 7,
+        "filler": 9,
+        "focal": 3
+      },
+      "checks": [
+        [
+          "Coverage (declared Minimal Modern)",
+          "warn"
+        ],
+        [
+          "Bloom nesting (R2)",
+          "warn"
+        ],
+        [
+          "Same-layer spacing (R6/R7)",
+          "flag"
+        ],
+        [
+          "Asymmetry score (R10)",
+          "pass"
+        ],
+        [
+          "Centroid coherence (R10)",
+          "pass"
+        ],
+        [
+          "Diagonal commitment (R13)",
+          "pass"
+        ],
+        [
+          "Lateral drift (R13)",
+          "pass"
+        ],
+        [
+          "Bloom-layer stacking (R7)",
+          "flag"
+        ],
+        [
+          "Total stacking incl. greenery (R7)",
+          "flag"
+        ],
+        [
+          "Texture density (R15)",
+          "pass"
+        ],
+        [
+          "Texture evenness (R15)",
+          "pass"
+        ],
+        [
+          "Texture alternation (R15)",
+          "warn"
+        ],
+        [
+          "Depth quality (R17)",
+          "flag"
+        ],
+        [
+          "Depth consistency (R17)",
+          "pass"
+        ],
+        [
+          "Negative-space counterweight (R18)",
+          "pass"
+        ],
+        [
+          "Hollow midspace (R18)",
+          "pass"
+        ],
+        [
+          "Color balance · warm (R16)",
+          "warn"
+        ],
+        [
+          "Color balance · cool (R16)",
+          "warn"
+        ],
+        [
+          "Color balance · neutral (R16)",
+          "warn"
+        ],
+        [
+          "Color group separation (R16)",
+          "pass"
+        ],
+        [
+          "Accent separation (R16)",
+          "warn"
+        ],
+        [
+          "Focal stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Secondary stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Filler stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Greenery stems (R5, purchase)",
+          "pass"
+        ]
+      ]
+    },
+    "tokens": "floral mass gathered upper-left around 10 o'clock, asymmetric sweep from 8 to 12 o'clock, exposed grapevine arc from 12 to 8 o'clock as intentional negative space, lush layered density, gentle off-center composition"
+  },
+  "twin cluster (24\" lush)": {
+    "layout": {
+      "formula": "Twin Cluster",
+      "layerCounts": [
+        [
+          "base",
+          1
+        ],
+        [
+          "eucalyptus",
+          21
+        ],
+        [
+          "sage",
+          4
+        ],
+        [
+          "hydrangea",
+          2
+        ],
+        [
+          "tulipWhite",
+          6
+        ],
+        [
+          "tulipMauve",
+          1
+        ],
+        [
+          "waxFlower",
+          5
+        ],
+        [
+          "berryNavy",
+          6
+        ],
+        [
+          "berryCream",
+          3
+        ],
+        [
+          "peony",
+          4
+        ]
+      ],
+      "coverageTarget": 65,
+      "bundles": 18,
+      "pole": 263.376,
+      "purchaseStems": {
+        "focal": 4,
+        "secondary": 9,
+        "filler": 12,
+        "greenery": 11
+      },
+      "adjustIterations": 3,
+      "clusters": [
+        {
+          "id": "C1",
+          "type": "focal",
+          "center_deg": 263.4,
+          "span_deg": 95.9
+        },
+        {
+          "id": "C2",
+          "type": "minor",
+          "center_deg": 83.4,
+          "span_deg": 38.4
+        }
+      ]
+    },
+    "validation": {
+      "coverage": 84.8793,
+      "centralFrac": 8,
+      "stackBloom": 1.1658,
+      "stackTotal": 2.4114,
+      "asymScore": 0.2858,
+      "axisBalance": 0.2046,
+      "driftRatio": 0.1175,
+      "tightPairs": 8,
+      "texMax": 0.862,
+      "texAvg": 0.3312,
+      "texCV": 0.4752,
+      "texRuns": 2,
+      "depthAvg": 0.3758,
+      "depthVar": 0.0005,
+      "hollowCount": 0,
+      "accentSep": 0.4158,
+      "placements": {
+        "greenery": 25,
+        "secondary": 9,
+        "filler": 14,
+        "focal": 4
+      },
+      "purchase": {
+        "greenery": 9,
+        "secondary": 9,
+        "filler": 12,
+        "focal": 4
+      },
+      "checks": [
+        [
+          "Coverage (declared Lush Asymmetric)",
+          "flag"
+        ],
+        [
+          "Bloom nesting (R2)",
+          "flag"
+        ],
+        [
+          "Same-layer spacing (R6/R7)",
+          "flag"
+        ],
+        [
+          "Asymmetry score (R10)",
+          "flag"
+        ],
+        [
+          "Centroid coherence (R10)",
+          "pass"
+        ],
+        [
+          "Diagonal commitment (R13)",
+          "warn"
+        ],
+        [
+          "Lateral drift (R13)",
+          "pass"
+        ],
+        [
+          "Bloom-layer stacking (R7)",
+          "warn"
+        ],
+        [
+          "Total stacking incl. greenery (R7)",
+          "pass"
+        ],
+        [
+          "Texture density (R15)",
+          "warn"
+        ],
+        [
+          "Texture evenness (R15)",
+          "warn"
+        ],
+        [
+          "Texture alternation (R15)",
+          "flag"
+        ],
+        [
+          "Depth quality (R17)",
+          "flag"
+        ],
+        [
+          "Depth consistency (R17)",
+          "pass"
+        ],
+        [
+          "Negative-space counterweight (R18)",
+          "pass"
+        ],
+        [
+          "Hollow midspace (R18)",
+          "pass"
+        ],
+        [
+          "Color balance · warm (R16)",
+          "pass"
+        ],
+        [
+          "Color balance · cool (R16)",
+          "pass"
+        ],
+        [
+          "Color balance · neutral (R16)",
+          "pass"
+        ],
+        [
+          "Color group separation (R16)",
+          "pass"
+        ],
+        [
+          "Accent separation (R16)",
+          "warn"
+        ],
+        [
+          "Focal stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Secondary stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Filler stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Greenery stems (R5, purchase)",
+          "pass"
+        ]
+      ]
+    },
+    "tokens": "floral mass gathered lower-left around 8 o'clock, asymmetric sweep from 1 to 11 o'clock, exposed grapevine arc from 11 to 1 o'clock as intentional negative space, lush layered density, gentle off-center composition"
+  },
+  "high drama (26\", 4:30 lower-right)": {
+    "layout": {
+      "formula": "Crescent",
+      "layerCounts": [
+        [
+          "base",
+          1
+        ],
+        [
+          "eucalyptus",
+          31
+        ],
+        [
+          "sage",
+          10
+        ],
+        [
+          "hydrangea",
+          4
+        ],
+        [
+          "tulipWhite",
+          7
+        ],
+        [
+          "tulipMauve",
+          2
+        ],
+        [
+          "waxFlower",
+          11
+        ],
+        [
+          "berryNavy",
+          7
+        ],
+        [
+          "berryCream",
+          7
+        ],
+        [
+          "peony",
+          7
+        ]
+      ],
+      "coverageTarget": 72,
+      "bundles": 21,
+      "pole": 186.84,
+      "purchaseStems": {
+        "focal": 7,
+        "secondary": 13,
+        "filler": 19,
+        "greenery": 17
+      },
+      "adjustIterations": 0,
+      "clusters": [
+        {
+          "id": "C1",
+          "type": "focal",
+          "center_deg": 186.8,
+          "span_deg": 129.6
+        }
+      ]
+    },
+    "validation": {
+      "coverage": 82.2609,
+      "centralFrac": 66.1017,
+      "stackBloom": 1.838,
+      "stackTotal": 3.7902,
+      "asymScore": 0.3649,
+      "axisBalance": 0.2634,
+      "driftRatio": 0.9417,
+      "tightPairs": 17,
+      "texMax": 0.797,
+      "texAvg": 0.4991,
+      "texCV": 0.308,
+      "texRuns": 1,
+      "depthAvg": 0.4297,
+      "depthVar": 0.0128,
+      "hollowCount": 0,
+      "accentSep": 0.0351,
+      "placements": {
+        "greenery": 41,
+        "secondary": 13,
+        "filler": 25,
+        "focal": 7
+      },
+      "purchase": {
+        "greenery": 14,
+        "secondary": 13,
+        "filler": 20,
+        "focal": 7
+      },
+      "checks": [
+        [
+          "Coverage (declared Lush Asymmetric)",
+          "warn"
+        ],
+        [
+          "Bloom nesting (R2)",
+          "pass"
+        ],
+        [
+          "Same-layer spacing (R6/R7)",
+          "flag"
+        ],
+        [
+          "Asymmetry score (R10)",
+          "warn"
+        ],
+        [
+          "Centroid coherence (R10)",
+          "pass"
+        ],
+        [
+          "Diagonal commitment (R13)",
+          "pass"
+        ],
+        [
+          "Lateral drift (R13)",
+          "flag"
+        ],
+        [
+          "Bloom-layer stacking (R7)",
+          "warn"
+        ],
+        [
+          "Total stacking incl. greenery (R7)",
+          "flag"
+        ],
+        [
+          "Texture density (R15)",
+          "pass"
+        ],
+        [
+          "Texture evenness (R15)",
+          "pass"
+        ],
+        [
+          "Texture alternation (R15)",
+          "warn"
+        ],
+        [
+          "Depth quality (R17)",
+          "flag"
+        ],
+        [
+          "Depth consistency (R17)",
+          "pass"
+        ],
+        [
+          "Negative-space counterweight (R18)",
+          "pass"
+        ],
+        [
+          "Hollow midspace (R18)",
+          "pass"
+        ],
+        [
+          "Color balance · warm (R16)",
+          "pass"
+        ],
+        [
+          "Color balance · cool (R16)",
+          "pass"
+        ],
+        [
+          "Color balance · neutral (R16)",
+          "warn"
+        ],
+        [
+          "Color group separation (R16)",
+          "pass"
+        ],
+        [
+          "Accent separation (R16)",
+          "warn"
+        ],
+        [
+          "Focal stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Secondary stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Filler stems (R5, purchase)",
+          "pass"
+        ],
+        [
+          "Greenery stems (R5, purchase)",
+          "pass"
+        ]
+      ]
+    },
+    "tokens": "floral mass gathered bottom around 6 o'clock, asymmetric sweep from 12 to 9 o'clock, exposed grapevine arc from 9 to 12 o'clock as intentional negative space, lush layered density, gentle off-center composition"
+  }
+}

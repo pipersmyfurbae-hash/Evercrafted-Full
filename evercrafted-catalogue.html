@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catalogue → Inventory — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#F5F2ED; --surface:#FFFFFF; --ink:#1C1A17; --charcoal:#3A3530;
+  --stone:#7A736A; --faint:#A89F95; --line:#E4DDD3; --sage:#6B7C5C; --sage-pale:#EEF0EB;
+  --serif:'Cormorant Garamond',Georgia,serif; --sans:'Jost',system-ui,sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--cream);color:var(--ink);line-height:1.6;font-weight:300}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1200px;margin:0 auto;padding:0 1.5rem}
+.top{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 0;border-bottom:1px solid var(--line)}
+.logo{font-family:var(--serif);font-size:1.5rem}.logo span{color:var(--sage)}
+.top-links{display:flex;gap:1.5rem;align-items:center}
+.top-links a{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--stone)}
+.top-links a:hover{color:var(--ink)}
+.intro{padding:2rem 0 1rem}
+.eyebrow{font-size:10px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);margin-bottom:.5rem}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.1}
+.lead{color:var(--stone);max-width:620px;margin-top:.6rem;font-size:14px}
+/* sticky toolbar */
+.bar{position:sticky;top:0;z-index:20;background:rgba(245,242,237,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);padding:.75rem 0;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:.75rem;align-items:center}
+.bar input{flex:1;min-width:200px;padding:9px 12px;border:1px solid var(--line);border-radius:5px;background:var(--surface);font-family:var(--sans);font-size:13px;outline:none;font-weight:300}
+.bar input:focus{border-color:var(--sage)}
+.btn{padding:10px 18px;border:none;border-radius:100px;background:var(--ink);color:#fff;font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.05em;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--sage)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.bar .status{font-size:12px;color:var(--stone)}
+/* grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem;padding-bottom:5rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;overflow:hidden;position:relative;cursor:pointer;transition:border-color .15s}
+.card.sel{border-color:var(--sage);box-shadow:0 0 0 1px var(--sage)}
+.card.added{opacity:.6}
+.card-img{height:160px;background:#f3efe9;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.card-img img{width:100%;height:100%;object-fit:cover}
+.tick{position:absolute;top:8px;left:8px;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--faint);background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff}
+.card.sel .tick{background:var(--sage);border-color:var(--sage)}
+.flag{position:absolute;top:8px;right:8px;font-size:9px;letter-spacing:.05em;text-transform:uppercase;background:var(--sage-pale);color:var(--sage);padding:2px 8px;border-radius:20px}
+.card-body{padding:.6rem .7rem}
+.card-name{font-size:12px;font-weight:500;color:var(--charcoal);line-height:1.25;height:2.4em;overflow:hidden;margin-bottom:.35rem}
+.card-meta{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--faint)}
+.cur{font-size:9px;color:var(--faint);letter-spacing:.02em}
+.item-status{font-size:9px;margin-top:.3rem;min-height:1em}
+.item-status.ok{color:var(--sage)}.item-status.err{color:#9A5A5A}
+.muted{color:var(--faint);font-size:14px;padding:3rem 0}
+.spin{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:s .7s linear infinite;vertical-align:-1px}
+@keyframes s{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="logo">Ever<span>crafted</span></div>
+    <div class="top-links">
+      <a href="evercrafted-inventory-dashboard.html" onclick="return ecGoTo('dashboard','evercrafted-inventory-dashboard.html')">Inventory →</a>
+      <a href="evercrafted-marketing-site.html">Site</a>
+    </div>
+  </div>
+  <div class="intro">
+    <div class="eyebrow">Catalogue → Inventory</div>
+    <h1>Pick what you stock, tag it fresh</h1>
+    <p class="lead">Select the pieces you actually carry, and Evercrafted re-reads each one from its photo and description with the current schema — so every item is tagged correctly and consistently. Tagged pieces are added to your inventory and become what the design engine builds from.</p>
+  </div>
+
+  <div class="bar">
+    <input type="text" id="q" placeholder="Search the catalogue…" oninput="render()">
+    <span class="status" id="count">—</span>
+    <button class="btn" id="addBtn" onclick="tagSelected()" disabled>Tag &amp; add selected (0)</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
+function ecGoTo(tool, url) { if (window.parent && window.parent !== window) { window.parent.postMessage({ ecNav: tool }, '*'); return false; } location.href = url; return false; }
+let ITEMS = [];
+let ADDED = new Set();        // skus already in inventory
+const SELECTED = new Set();   // catalogue ids selected
+let working = false;
+
+function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+async function load(){
+  try{
+    const [cat, inv] = await Promise.all([
+      fetch(`${CONFIG.apiBase}/api/catalogue`).then(r=>r.json()),
+      fetch(`${CONFIG.apiBase}/api/inventory`).then(r=>r.json()).catch(()=>({success:false})),
+    ]);
+    ITEMS = cat.success ? cat.data : [];
+    if(inv && inv.success) ADDED = new Set(inv.data.map(i=>i.sku).filter(Boolean));
+  }catch(e){ ITEMS=[]; }
+  render();
+}
+
+function render(){
+  const q = document.getElementById('q').value.toLowerCase();
+  const list = q ? ITEMS.filter(i=>(i.name||'').toLowerCase().includes(q)) : ITEMS;
+  document.getElementById('count').textContent = `${list.length} of ${ITEMS.length} pieces`;
+  const grid = document.getElementById('grid');
+  if(!ITEMS.length){ grid.innerHTML='<p class="muted">Catalogue unavailable — is the server running?</p>'; return; }
+  grid.innerHTML = list.map(i=>{
+    const added = ADDED.has(i.sku);
+    const sel = SELECTED.has(i.id);
+    return `<div class="card ${sel?'sel':''} ${added?'added':''}" id="cat-${i.id}" onclick="toggle('${i.id}')">
+      <div class="card-img">${i.imageUrl?`<img src="${esc(i.imageUrl)}" alt="" loading="lazy" onerror="this.style.display='none'">`:''}</div>
+      <div class="tick">${sel?'✓':''}</div>
+      ${added?'<span class="flag">in inventory</span>':''}
+      <div class="card-body">
+        <div class="card-name" title="${esc(i.name)}">${esc(i.name)}</div>
+        <div class="card-meta"><span class="cur">now: ${i.currentRole||'—'}/${i.currentEp||'—'}</span><span>${i.price?'$'+i.price:''}</span></div>
+        <div class="item-status" id="st-${i.id}"></div>
+      </div>
+    </div>`;
+  }).join('');
+  updateBtn();
+}
+
+function toggle(id){
+  if(working) return;
+  if(SELECTED.has(id)) SELECTED.delete(id); else SELECTED.add(id);
+  const card=document.getElementById('cat-'+id);
+  if(card){ card.classList.toggle('sel',SELECTED.has(id)); card.querySelector('.tick').textContent=SELECTED.has(id)?'✓':''; }
+  updateBtn();
+}
+function updateBtn(){
+  const btn=document.getElementById('addBtn');
+  btn.textContent = `Tag & add selected (${SELECTED.size})`;
+  btn.disabled = working || SELECTED.size===0;
+}
+
+async function tagSelected(){
+  if(working || !SELECTED.size) return;
+  working = true; updateBtn();
+  const ids = [...SELECTED];
+  let done = 0, ok = 0;
+  for(const id of ids){
+    const item = ITEMS.find(x=>x.id===id);
+    const st = document.getElementById('st-'+id);
+    if(!item){ done++; continue; }
+    if(st){ st.className='item-status'; st.innerHTML='<span class="spin"></span> tagging…'; }
+    try{
+      const tagRes = await fetch(`${CONFIG.apiBase}/api/tag`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({catalogueId:id})});
+      const tagJson = await tagRes.json();
+      if(!tagJson.success) throw new Error(tagJson.error||'tag failed');
+      const t = tagJson.data;
+      const saveRes = await fetch(`${CONFIG.apiBase}/api/inventory`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+        name:item.name, sku:item.sku, price:item.price, imageUrl:item.imageUrl,
+        role:t.role, behavior:t.behavior, movement:t.movement, finish:t.finish, palette:t.palette,
+        ep:t.ep, es:t.es, intensity:t.intensity, colorHex:t.colorHex, colorName:t.colorName,
+        yield:t.yield, bloomSize:t.bloomSize, stemLength:t.stemLength, unit:t.unit, assetPrompt:t.assetPrompt, stock:0,
+      })});
+      const saveJson = await saveRes.json();
+      if(!saveJson.success) throw new Error(saveJson.error||'save failed');
+      ADDED.add(item.sku); SELECTED.delete(id); ok++;
+      const card=document.getElementById('cat-'+id);
+      if(card){ card.classList.remove('sel'); card.classList.add('added'); card.querySelector('.tick').textContent=''; if(!card.querySelector('.flag')){const f=document.createElement('span');f.className='flag';f.textContent='in inventory';card.appendChild(f);} }
+      if(st){ st.className='item-status ok'; st.textContent=`✓ ${t.role} · ${t.ep}${t.es?'/'+t.es:''} · ${t.movement}`; }
+    }catch(e){
+      if(st){ st.className='item-status err'; st.textContent='failed: '+e.message; }
+    }
+    done++;
+    document.getElementById('count').textContent = `tagging ${done}/${ids.length}…`;
+    await new Promise(r=>setTimeout(r,250)); // gentle pacing
+  }
+  working = false;
+  document.getElementById('count').textContent = `Done — ${ok} added.`;
+  updateBtn();
+}
+load();
+</script>
+<script src="/evercrafted-nav.js" defer></script>
+</body>
+</html>

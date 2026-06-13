@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Inventory Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#f5f3ef;--sf:#ffffff;--s2:#f0ede8;--s3:#e8e4de;
+  --bd:#ddd8d0;--bd2:#c8c2b8;
+  --tx:#2a2420;--mu:#6a6058;--fa:#9a9088;
+  --gold:#9a7a40;--gd:rgba(154,122,64,.09);
+  --sage:#4a6040;--sgd:rgba(74,96,64,.09);
+  --dust:#6a5a80;--dsd:rgba(106,90,128,.09);
+  --clay:#8a4a2e;--cld:rgba(138,74,46,.09);
+  --ok:#3a6a3c;--er:#8a3030;
+  --r:10px;--rsm:6px;--rlg:14px;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',system-ui,sans-serif;
+  --tr:180ms ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:13px;line-height:1.6}
+
+/* ── TOP NAV ── */
+.nav{background:var(--sf);border-bottom:1px solid var(--bd);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.nav-brand{font-family:var(--serif);font-size:1.2rem;font-weight:500;color:var(--tx);letter-spacing:.02em}
+.nav-brand span{color:var(--gold)}
+.nav-right{display:flex;align-items:center;gap:.75rem}
+.nav-btn{padding:5px 14px;border-radius:var(--rsm);border:1px solid var(--bd);background:var(--sf);color:var(--mu);font-family:var(--sans);font-size:11px;font-weight:500;cursor:pointer;transition:all var(--tr);text-decoration:none;display:inline-flex;align-items:center;gap:5px}
+.nav-btn:hover{border-color:var(--bd2);color:var(--tx);background:var(--s2)}
+.nav-btn.primary{background:var(--gold);border-color:var(--gold);color:#fff}
+.nav-btn.primary:hover{background:#7a6030;border-color:#7a6030}
+.inv-count-badge{background:var(--gold);color:#fff;font-size:9px;font-weight:600;padding:1px 6px;border-radius:20px}
+
+.app{max-width:1100px;margin:0 auto;padding:1.5rem 1.5rem 4rem}
+
+/* ── PAGE HEADER ── */
+.page-hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem}
+.page-hdr-left .eyebrow{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:.15rem}
+.page-hdr-left h1{font-family:var(--serif);font-size:1.7rem;font-weight:500;line-height:1.1}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem;margin-bottom:1.5rem}
+@media(max-width:700px){.stats-row{grid-template-columns:repeat(3,1fr)}}
+.stat-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);padding:.9rem 1rem;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.stat-v{font-family:var(--serif);font-size:1.8rem;font-weight:400;color:var(--gold);line-height:1}
+.stat-l{font-size:10px;color:var(--fa);margin-top:3px;letter-spacing:.05em;text-transform:uppercase;font-weight:600}
+
+/* ── TOOLBAR ── */
+.toolbar{display:flex;align-items:center;gap:.6rem;margin-bottom:1.1rem;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:160px;max-width:280px}
+.search-wrap i{position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--fa);pointer-events:none}
+.search-input{width:100%;padding:6px 10px 6px 28px;border:1px solid var(--bd);border-radius:var(--rsm);background:var(--sf);color:var(--tx);font-family:var(--sans);font-size:12px;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(154,122,64,.1)}
+.search-input::placeholder{color:var(--fa)}
+.filter-btn{padding:6px 12px;border-radius:var(--rsm);border:1px solid var(--bd);background:var(--sf);color:var(--mu);font-family:var(--sans);font-size:11px;font-weight:500;cursor:pointer;transition:all var(--tr);white-space:nowrap}
+.filter-btn:hover{background:var(--s2);border-color:var(--bd2);color:var(--tx)}
+.filter-btn.active{background:var(--gd);border-color:var(--gold);color:var(--gold)}
+.view-btns{display:flex;border:1px solid var(--bd);border-radius:var(--rsm);overflow:hidden;margin-left:auto}
+.view-btn{padding:6px 10px;border:none;background:var(--sf);color:var(--fa);cursor:pointer;font-size:14px;transition:all var(--tr);border-left:1px solid var(--bd)}
+.view-btn:first-child{border-left:none}
+.view-btn:hover{background:var(--s2);color:var(--mu)}
+.view-btn.active{background:var(--s2);color:var(--tx)}
+
+/* ── GRID VIEW ── */
+.inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}
+
+.inv-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);overflow:hidden;cursor:pointer;transition:all .2s ease;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.inv-card:hover{border-color:var(--bd2);box-shadow:0 4px 12px rgba(0,0,0,.08);transform:translateY(-1px)}
+.inv-card.selected{border-color:var(--gold);box-shadow:0 0 0 2px rgba(154,122,64,.2)}
+
+.card-img{aspect-ratio:1;overflow:hidden;background:var(--s2);position:relative;display:flex;align-items:center;justify-content:center}
+.card-img img{width:100%;height:100%;object-fit:cover;transition:transform .3s ease}
+.inv-card:hover .card-img img{transform:scale(1.03)}
+.card-img-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem}
+.card-img-placeholder .pip{width:36px;height:36px;border-radius:50%;border:1px solid var(--bd)}
+.card-img-placeholder .pip-label{font-size:10px;color:var(--fa)}
+.pass-pip{position:absolute;top:7px;left:7px;font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px}
+.pass-pip.p1{background:rgba(74,96,64,.9);color:#fff}
+.pass-pip.p2{background:rgba(106,90,128,.9);color:#fff}
+
+.card-body{padding:.75rem}
+.card-name{font-size:12px;font-weight:500;color:var(--tx);margin-bottom:.4rem;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-tags{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:.5rem}
+.ctag{font-size:9px;padding:1px 5px;border-radius:20px;font-weight:500}
+.ct-role{background:var(--sgd);color:var(--sage);border:1px solid rgba(74,96,64,.2)}
+.ct-emot{background:var(--dsd);color:var(--dust);border:1px solid rgba(106,90,128,.2)}
+.ct-arch{background:var(--gd);color:var(--gold);border:1px solid rgba(154,122,64,.2)}
+.ct-fin{background:var(--s2);color:var(--mu);border:1px solid var(--bd)}
+.card-meta{display:flex;justify-content:space-between;align-items:center;font-size:10px;color:var(--fa)}
+.stock-input{width:44px;padding:2px 5px;border:1px solid var(--bd);border-radius:4px;font-family:var(--sans);font-size:11px;font-weight:500;color:var(--tx);text-align:center;background:var(--s2);outline:none;transition:border-color .15s}
+.stock-input:focus{border-color:var(--gold)}
+
+/* ── LIST VIEW ── */
+.inv-list-wrap{display:none}
+.inv-list-wrap.active{display:block}
+.inv-grid-wrap{display:none}
+.inv-grid-wrap.active{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem}
+
+.list-header{display:grid;grid-template-columns:44px 1fr 90px 80px 80px 90px 80px 60px;gap:8px;align-items:center;padding:6px 12px;font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--fa);border-bottom:1px solid var(--bd);background:var(--s2);border-radius:var(--rsm) var(--rsm) 0 0}
+.list-row{display:grid;grid-template-columns:44px 1fr 90px 80px 80px 90px 80px 60px;gap:8px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--bd);background:var(--sf);transition:background .15s;cursor:pointer}
+.list-row:last-child{border-bottom:none;border-radius:0 0 var(--rsm) var(--rsm)}
+.list-row:hover{background:var(--s2)}
+.list-wrap{border:1px solid var(--bd);border-radius:var(--rsm);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.list-thumb{width:36px;height:36px;border-radius:var(--rsm);overflow:hidden;background:var(--s2);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.list-thumb img{width:100%;height:100%;object-fit:cover}
+.list-name{font-size:12px;font-weight:500;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-cell{font-size:11px;color:var(--mu)}
+.list-cell .ctag{font-size:9px}
+
+/* ── DETAIL DRAWER ── */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.18);z-index:200;opacity:0;pointer-events:none;transition:opacity .25s}
+.drawer-overlay.open{opacity:1;pointer-events:all}
+.drawer{position:fixed;right:0;top:0;bottom:0;width:380px;background:var(--sf);border-left:1px solid var(--bd);z-index:201;transform:translateX(100%);transition:transform .28s ease;overflow-y:auto;box-shadow:-4px 0 24px rgba(0,0,0,.08)}
+.drawer.open{transform:translateX(0)}
+.drawer-hdr{padding:1rem 1.1rem .75rem;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--sf);z-index:10}
+.drawer-title{font-family:var(--serif);font-size:1.15rem;font-weight:500;color:var(--tx);flex:1;margin-right:.75rem;line-height:1.2}
+.drawer-close{width:28px;height:28px;border-radius:var(--rsm);border:1px solid var(--bd);background:var(--sf);color:var(--mu);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:all var(--tr);flex-shrink:0}
+.drawer-close:hover{background:var(--s2);color:var(--tx)}
+.drawer-img{width:100%;aspect-ratio:1;background:var(--s2);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.drawer-img img{width:100%;height:100%;object-fit:contain}
+.drawer-body{padding:1rem 1.1rem}
+.drawer-section{margin-bottom:1rem}
+.drawer-section-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--fa);font-weight:600;margin-bottom:.5rem}
+.dtag-row{display:flex;flex-wrap:wrap;gap:5px}
+.dtag-full{font-size:11px;padding:4px 10px;border-radius:var(--rsm);font-weight:500;display:inline-flex;align-items:center;gap:5px}
+.dtag-full .dk{font-size:9px;color:var(--fa);font-weight:400}
+.field-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--bd);font-size:12px}
+.field-row:last-child{border:none}
+.field-key{color:var(--fa);font-weight:500}
+.field-val{color:var(--tx);font-weight:500;text-align:right}
+.int-vis{display:flex;gap:3px}
+.int-pip{width:14px;height:14px;border-radius:3px;background:var(--s3);border:1px solid var(--bd)}
+.int-pip.on{background:var(--gold);border-color:var(--gold)}
+.stock-row{display:flex;align-items:center;gap:.5rem;padding:.5rem 0}
+.stock-label{font-size:12px;color:var(--mu);font-weight:500}
+.stock-ctrl{display:flex;align-items:center;gap:.4rem;margin-left:auto}
+.stock-adj{width:26px;height:26px;border-radius:var(--rsm);border:1px solid var(--bd);background:var(--sf);color:var(--mu);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all var(--tr);font-family:var(--sans)}
+.stock-adj:hover{background:var(--s2);color:var(--tx);border-color:var(--bd2)}
+.stock-num{font-family:var(--serif);font-size:1.3rem;font-weight:400;color:var(--tx);min-width:28px;text-align:center}
+.drawer-actions{display:flex;gap:.5rem;padding:0 1.1rem 1.25rem;flex-wrap:wrap}
+.da-btn{flex:1;padding:9px;border-radius:var(--r);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;transition:all var(--tr);border:1px solid var(--bd);background:var(--sf);color:var(--mu);display:flex;align-items:center;justify-content:center;gap:5px}
+.da-btn:hover{background:var(--s2);color:var(--tx);border-color:var(--bd2)}
+.da-btn.danger{border-color:rgba(138,48,48,.3);color:var(--er)}
+.da-btn.danger:hover{background:rgba(138,48,48,.06)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--fa)}
+.empty-state i{font-size:36px;display:block;margin-bottom:1rem}
+.empty-state p{font-size:13px;margin-bottom:1.25rem;line-height:1.6;max-width:320px;margin-left:auto;margin-right:auto}
+.empty-state a{display:inline-flex;align-items:center;gap:5px;padding:9px 20px;border-radius:var(--r);background:var(--gold);color:#fff;font-family:var(--sans);font-size:12px;font-weight:500;text-decoration:none;transition:all var(--tr)}
+.empty-state a:hover{background:#7a6030}
+
+/* ── FILTER PILLS ── */
+.active-filters{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:.75rem}
+.af-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;background:var(--gd);border:1px solid rgba(154,122,64,.2);color:var(--gold);font-size:10px;font-weight:500}
+.af-pill button{background:none;border:none;cursor:pointer;color:var(--gold);font-size:11px;padding:0;line-height:1;margin-left:2px}
+
+/* sort select */
+select{padding:5px 10px;border:1px solid var(--bd);border-radius:var(--rsm);background:var(--sf);color:var(--mu);font-family:var(--sans);font-size:11px;outline:none;cursor:pointer}
+select:focus{border-color:var(--gold)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">Ever<span>crafted</span></div>
+  <div class="nav-right">
+    <span style="font-size:11px;color:var(--fa)" id="nav-count">0 items</span>
+    <a class="nav-btn primary" href="evercrafted-floral-tagger.html" onclick="return ecGoTo('tagger','evercrafted-floral-tagger.html')">
+      <i class="ti ti-plus" style="font-size:12px"></i> Add item
+    </a>
+  </div>
+</nav>
+
+<div class="app">
+
+  <div class="page-hdr">
+    <div class="page-hdr-left">
+      <div class="eyebrow">Evercrafted Studio · Inventory System</div>
+      <h1>Botanical Inventory</h1>
+    </div>
+    <div style="display:flex;gap:.5rem">
+      <button class="nav-btn" onclick="exportJSON()"><i class="ti ti-download" style="font-size:12px"></i> Export JSON</button>
+      <button class="nav-btn" onclick="exportCSV()"><i class="ti ti-file-spreadsheet" style="font-size:12px"></i> Export CSV</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row" id="stats-row"></div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input class="search-input" id="search" placeholder="Search items…" oninput="applyFilters()">
+    </div>
+
+    <select id="filter-role" onchange="applyFilters()">
+      <option value="">All roles</option>
+      <option>structural</option><option>focal</option><option>secondary</option>
+      <option>greenery</option><option>texture</option><option>accent</option><option>filler</option>
+    </select>
+
+    <select id="filter-pass" onchange="applyFilters()">
+      <option value="">Both passes</option>
+      <option value="1">Pass 1 — structural</option>
+      <option value="2">Pass 2 — textural</option>
+    </select>
+
+    <select id="filter-finish" onchange="applyFilters()">
+      <option value="">All finishes</option>
+      <option>matte</option><option>satin</option><option>metallic</option><option>gloss</option><option>raw</option>
+    </select>
+
+    <select id="filter-emot" onchange="applyFilters()">
+      <option value="">All emotions</option>
+      <option>peace</option><option>joy</option><option>sadness</option><option>grief</option>
+      <option>fear</option><option>trust</option><option>anticipation</option><option>nostalgia</option>
+      <option>longing</option><option>hope</option><option>reverence</option><option>awe</option>
+      <option>melancholy</option><option>romance</option>
+    </select>
+
+    <select id="sort-by" onchange="applyFilters()">
+      <option value="date">Newest first</option>
+      <option value="name">Name A–Z</option>
+      <option value="role">By role</option>
+      <option value="pass">By pass</option>
+      <option value="stock-low">Stock: low first</option>
+    </select>
+
+    <div class="view-btns">
+      <button class="view-btn active" id="vbtn-grid" onclick="setView('grid')" title="Grid view"><i class="ti ti-layout-grid"></i></button>
+      <button class="view-btn" id="vbtn-list" onclick="setView('list')" title="List view"><i class="ti ti-list"></i></button>
+    </div>
+  </div>
+
+  <!-- Active filter pills -->
+  <div class="active-filters" id="active-filters"></div>
+
+  <!-- Grid view -->
+  <div class="inv-grid-wrap active" id="grid-view"></div>
+
+  <!-- List view -->
+  <div class="inv-list-wrap" id="list-view">
+    <div class="list-wrap">
+      <div class="list-header">
+        <span></span>
+        <span>Name</span>
+        <span>Role</span>
+        <span>Movement</span>
+        <span>Finish</span>
+        <span>Emotion</span>
+        <span>Palette</span>
+        <span>Stock</span>
+      </div>
+      <div id="list-rows"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Detail drawer -->
+<div class="drawer-overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-hdr">
+    <div class="drawer-title" id="drawer-title">Item detail</div>
+    <button class="drawer-close" onclick="closeDrawer()"><i class="ti ti-x"></i></button>
+  </div>
+  <div class="drawer-img" id="drawer-img"></div>
+  <div class="drawer-body" id="drawer-body"></div>
+  <div class="drawer-actions" id="drawer-actions"></div>
+</div>
+
+<!-- Export output -->
+<div style="max-width:1100px;margin:0 auto;padding:0 1.5rem 2rem">
+  <pre id="export-out" style="display:none;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rsm);padding:1rem;font-size:10px;color:var(--mu);max-height:220px;overflow:auto;white-space:pre;line-height:1.6;margin-top:1rem"></pre>
+</div>
+
+<script>
+let inventory = [];
+let filtered = [];
+let currentView = 'grid';
+let activeItem = null;
+
+const PASS_COLORS = { 1: { bg:'rgba(74,96,64,.85)', text:'#fff' }, 2: { bg:'rgba(106,90,128,.85)', text:'#fff' } };
+const ROLE_COLORS = { structural:'#4a6040', focal:'#6a5a80', secondary:'#9a7a40', greenery:'#3a6040', texture:'#8a5a30', accent:'#6a7080', filler:'#7a7060' };
+const FINISH_LABELS = { matte:'Matte', satin:'Satin', metallic:'Metallic ✦', gloss:'Gloss', raw:'Raw' };
+
+// apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
+const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
+const PALETTE_SWATCH = {'neutral-light':'#EFE9DE','neutral-mid':'#C9B7A8','neutral-dark':'#4A3F38','botanical-green':'#7A8C6B','champagne':'#D7C49A','silver':'#C2C6C9'};
+// Navigate to another tool: switch the studio panel when embedded, else open the page
+function ecGoTo(tool, url) {
+  if (window.parent && window.parent !== window) { window.parent.postMessage({ ecNav: tool }, '*'); return false; }
+  location.href = url; return false;
+}
+const VOCAB = {
+  roles:['focal','secondary','greenery','accent','structural','texture','bridge'],
+  behaviors:['heavy','mid','light','wispy'],
+  movements:['weeping','reaching','sweeping','architectural','cascading','still'],
+  finishes:['matte','satin','metallic','raw','gloss'],
+  emotions:['nostalgia','grief','sadness','peace','joy','longing','warmth','trust','awe','tenderness','melancholy','reverence','anticipation'],
+};
+const SEL_STYLE = 'padding:4px 6px;border:1px solid var(--bd);border-radius:5px;background:var(--sf);font-family:var(--sans);font-size:11px;color:var(--tx);outline:none';
+function sel(id, opts, cur, blank) {
+  return `<select id="${id}" style="${SEL_STYLE}">${(blank?['']:[]).concat(opts).map(o=>`<option value="${o}" ${o===cur?'selected':''}>${o||'— none'}</option>`).join('')}</select>`;
+}
+function val(id) { const e = document.getElementById(id); return e ? e.value : ''; }
+async function saveTags() {
+  if (!activeItem) return;
+  const body = { role: val('e-role'), behavior: val('e-behavior'), movement: val('e-movement'), finish: val('e-finish'), ep: val('e-ep'), es: val('e-es') };
+  try {
+    const r = await fetch(`${CONFIG.apiBase}/api/inventory/${activeItem.id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const j = await r.json();
+    if (!j.success) throw new Error(j.error || 'save failed');
+    closeDrawer();
+    await loadInventory(); // refresh cards + Pass 1/2 stats
+  } catch (e) { alert('Save failed: ' + e.message); }
+}
+// Drag a box around part of a cutout and crop to it
+function cropTool(src) {
+  const ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px';
+  ov.innerHTML = `
+    <div style="color:#fff;font-size:13px;font-family:var(--sans)">Drag a box around just the part you want (e.g. one bloom), then Crop.</div>
+    <div id="crop-stage" style="position:relative;touch-action:none">
+      <img id="crop-img" src="${src}" draggable="false" style="max-width:80vw;max-height:70vh;display:block;background:repeating-conic-gradient(#ccc 0 25%,#fff 0 50%) 50%/20px 20px;border-radius:8px;user-select:none">
+      <div id="crop-rect" style="position:absolute;border:2px dashed #fff;box-shadow:0 0 0 9999px rgba(0,0,0,.5);display:none;pointer-events:none"></div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button id="crop-do" class="da-btn" style="background:var(--sage,#6b7c5c);color:#fff">Crop &amp; use</button>
+      <button id="crop-cancel" class="da-btn">Cancel</button>
+    </div>`;
+  document.body.appendChild(ov);
+  const img = ov.querySelector('#crop-img'), rect = ov.querySelector('#crop-rect');
+  let sx, sy, drawing = false, box = null;
+  const at = e => { const r = img.getBoundingClientRect(); const t = e.touches ? e.touches[0] : e; return { x: Math.max(0, Math.min(r.width, t.clientX - r.left)), y: Math.max(0, Math.min(r.height, t.clientY - r.top)) }; };
+  const down = e => { e.preventDefault(); const p = at(e); sx = p.x; sy = p.y; drawing = true; rect.style.display = 'block'; };
+  const move = e => {
+    if (!drawing) return;
+    const p = at(e), x = Math.min(sx, p.x), y = Math.min(sy, p.y), w = Math.abs(p.x - sx), h = Math.abs(p.y - sy);
+    rect.style.left = x + 'px'; rect.style.top = y + 'px'; rect.style.width = w + 'px'; rect.style.height = h + 'px';
+    box = { x, y, w, h, dispW: img.clientWidth, dispH: img.clientHeight };
+  };
+  const up = () => { drawing = false; };
+  img.addEventListener('mousedown', down); window.addEventListener('mousemove', move); window.addEventListener('mouseup', up);
+  img.addEventListener('touchstart', down); window.addEventListener('touchmove', move); window.addEventListener('touchend', up);
+  ov.querySelector('#crop-cancel').onclick = () => ov.remove();
+  ov.querySelector('#crop-do').onclick = () => {
+    if (!box || box.w < 8 || box.h < 8) { ov.remove(); return; }
+    const full = new Image();
+    full.onload = () => {
+      const sX = full.naturalWidth / box.dispW, sY = full.naturalHeight / box.dispH;
+      const c = document.createElement('canvas'); c.width = Math.round(box.w * sX); c.height = Math.round(box.h * sY);
+      c.getContext('2d').drawImage(full, box.x * sX, box.y * sY, box.w * sX, box.h * sY, 0, 0, c.width, c.height);
+      const cropped = c.toDataURL('image/png');
+      ov.remove();
+      pendingCutout = cropped;
+      document.getElementById('cutout-box').innerHTML =
+        `<div style="display:flex;align-items:flex-end;gap:.7rem;flex-wrap:wrap">
+          <img src="${cropped}" onclick="showZoom(this.src)" style="width:150px;height:150px;${CUTOUT_IMG}">
+          <button class="da-btn" onclick="cropTool(pendingCutout)">Crop again</button>
+          <button class="da-btn" style="background:var(--sage,#6b7c5c);color:#fff" onclick="saveCutout()">✓ Use this</button>
+        </div>`;
+      document.getElementById('cutout-msg').textContent = 'Cropped — “Use this” to keep it.';
+    };
+    full.src = src;
+  };
+}
+function mapServerItem(i){
+  return {
+    id:i.id, name:i.name, pass:i.pass, role:i.role, movement:i.movement,
+    finish:i.finish, palette:i.palette, contrast:'unified',
+    color: i.colorHex || PALETTE_SWATCH[i.palette] || '#ccc',
+    ep:i.ep, es:i.es, blend:'', intensity:i.intensity, weight:i.behavior,
+    stock:i.stock, taggedAt:'', imageDataUrl: i.imageUrl||'',
+    assetUrl: i.assetUrl||'', unit: i.unit||'sprig', bloomSize: i.bloomSize, yield: i.yield, stemLength: i.stemLength, colorName: i.colorName||'', assetPrompt: i.assetPrompt||''
+  };
+}
+
+async function loadInventory() {
+  try {
+    const res = await fetch(`${CONFIG.apiBase}/api/inventory`);
+    const json = await res.json();
+    if (!json || !json.success) throw new Error('load failed');
+    inventory = (json.data || []).map(mapServerItem);
+  } catch(e) {
+    inventory = getSampleInventory(); // offline / server unreachable → demo data
+  }
+  applyFilters();
+}
+
+function saveInventory() { /* server-backed now — no-op */ }
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const role = document.getElementById('filter-role').value;
+  const pass = document.getElementById('filter-pass').value;
+  const finish = document.getElementById('filter-finish').value;
+  const emot = document.getElementById('filter-emot').value;
+  const sort = document.getElementById('sort-by').value;
+
+  filtered = inventory.filter(i => {
+    if (q && !i.name.toLowerCase().includes(q) && !i.ep?.toLowerCase().includes(q) && !i.blend?.toLowerCase().includes(q) && !i.role?.toLowerCase().includes(q)) return false;
+    if (role && i.role !== role) return false;
+    if (pass && String(i.pass) !== pass) return false;
+    if (finish && i.finish !== finish) return false;
+    if (emot && i.ep !== emot && i.es !== emot && i.blend !== emot) return false;
+    return true;
+  });
+
+  filtered.sort((a,b) => {
+    if (sort === 'name') return a.name.localeCompare(b.name);
+    if (sort === 'role') return (a.role||'').localeCompare(b.role||'');
+    if (sort === 'pass') return (a.pass||2) - (b.pass||2);
+    if (sort === 'stock-low') return (a.stock||0) - (b.stock||0);
+    return 0;
+  });
+
+  renderActiveFilters({ q, role, pass, finish, emot });
+  renderStats();
+  renderGrid();
+  renderList();
+  document.getElementById('nav-count').textContent = inventory.length + ' item' + (inventory.length !== 1 ? 's' : '');
+}
+
+function renderStats() {
+  const p1 = inventory.filter(i=>i.pass===1).length;
+  const p2 = inventory.filter(i=>i.pass===2).length;
+  const lowStock = inventory.filter(i=>(i.stock||0) < 5).length;
+  const untagged = inventory.filter(i=>!i.ep).length;
+  const emotions = [...new Set(inventory.map(i=>i.blend||i.ep).filter(Boolean))].length;
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-v">${inventory.length}</div><div class="stat-l">Total items</div></div>
+    <div class="stat-card"><div class="stat-v">${p1}</div><div class="stat-l">Pass 1 structural</div></div>
+    <div class="stat-card"><div class="stat-v">${p2}</div><div class="stat-l">Pass 2 textural</div></div>
+    <div class="stat-card"><div class="stat-v" style="color:${lowStock>0?'var(--er)':'var(--ok)'}">${lowStock}</div><div class="stat-l">Low stock (&lt;5)</div></div>
+    <div class="stat-card"><div class="stat-v">${emotions}</div><div class="stat-l">Emotions covered</div></div>`;
+}
+
+function renderActiveFilters({ q, role, pass, finish, emot }) {
+  const af = document.getElementById('active-filters');
+  const pills = [];
+  if (q) pills.push({ label: `"${q}"`, clear: () => { document.getElementById('search').value=''; applyFilters(); } });
+  if (role) pills.push({ label: role, clear: () => { document.getElementById('filter-role').value=''; applyFilters(); } });
+  if (pass) pills.push({ label: 'Pass ' + pass, clear: () => { document.getElementById('filter-pass').value=''; applyFilters(); } });
+  if (finish) pills.push({ label: finish, clear: () => { document.getElementById('filter-finish').value=''; applyFilters(); } });
+  if (emot) pills.push({ label: emot, clear: () => { document.getElementById('filter-emot').value=''; applyFilters(); } });
+  if (!pills.length) { af.innerHTML = ''; return; }
+  af.innerHTML = pills.map((p,i) => `<span class="af-pill">${p.label}<button onclick="clearFilter(${i})">✕</button></span>`).join('');
+  window._filterClears = pills.map(p => p.clear);
+}
+
+function clearFilter(i) { window._filterClears[i](); }
+
+function renderGrid() {
+  const el = document.getElementById('grid-view');
+  if (!filtered.length) {
+    el.innerHTML = emptyStateHTML();
+    return;
+  }
+  el.innerHTML = filtered.map(item => {
+    const imgHtml = item.imageDataUrl
+      ? `<img src="${item.imageDataUrl}" alt="${item.name}">`
+      : `<div class="card-img-placeholder"><div class="pip" style="background:${item.color||'#ccc'}"></div><div class="pip-label">${item.palette||'no image'}</div></div>`;
+    const pc = PASS_COLORS[item.pass] || PASS_COLORS[2];
+    const emot = item.blend || item.ep || '—';
+    return `
+      <div class="inv-card" onclick="openDrawer('${item.id}')">
+        <div class="card-img">
+          ${imgHtml}
+          <span class="pass-pip p${item.pass}">P${item.pass}</span>
+        </div>
+        <div class="card-body">
+          <div class="card-name" title="${item.name}">${item.name}</div>
+          <div class="card-tags">
+            <span class="ctag ct-role">${item.role||'—'}</span>
+            <span class="ctag ct-emot">${emot}</span>
+            <span class="ctag ct-arch">${item.movement||'—'}</span>
+            <span class="ctag ct-fin">${item.finish||'—'}</span>
+          </div>
+          <div class="card-meta">
+            <span>${item.palette||'—'}</span>
+            <div style="display:flex;align-items:center;gap:4px" onclick="event.stopPropagation()">
+              <span style="font-size:10px;color:var(--fa)">stock</span>
+              <input class="stock-input" type="number" min="0" value="${item.stock||0}" onchange="updateStock('${item.id}',this.value)" title="Stock count">
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderList() {
+  const el = document.getElementById('list-rows');
+  if (!filtered.length) { el.innerHTML = ''; return; }
+  el.innerHTML = filtered.map(item => {
+    const imgHtml = item.imageDataUrl
+      ? `<img src="${item.imageDataUrl}" alt="${item.name}">`
+      : `<div style="width:100%;height:100%;background:${item.color||'#ddd'}"></div>`;
+    const emot = item.blend || item.ep || '—';
+    return `
+      <div class="list-row" onclick="openDrawer('${item.id}')">
+        <div class="list-thumb">${imgHtml}</div>
+        <div class="list-name">${item.name}</div>
+        <div class="list-cell"><span class="ctag ct-role">${item.role||'—'}</span></div>
+        <div class="list-cell">${item.movement||'—'}</div>
+        <div class="list-cell">${item.finish||'—'}</div>
+        <div class="list-cell"><span class="ctag ct-emot">${emot}</span></div>
+        <div class="list-cell">${item.palette||'—'}</div>
+        <div class="list-cell" onclick="event.stopPropagation()">
+          <input class="stock-input" type="number" min="0" value="${item.stock||0}" onchange="updateStock('${item.id}',this.value)">
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function emptyStateHTML() {
+  return `<div class="empty-state" style="grid-column:1/-1">
+    <i class="ti ti-leaf"></i>
+    <p>No items match your filters. Clear filters or tag new inventory to get started.</p>
+    <a href="evercrafted-floral-tagger.html" onclick="return ecGoTo('tagger','evercrafted-floral-tagger.html')"><i class="ti ti-plus" style="font-size:12px"></i> Tag your first item</a>
+  </div>`;
+}
+
+function setView(v) {
+  currentView = v;
+  document.getElementById('grid-view').className = 'inv-grid-wrap' + (v==='grid'?' active':'');
+  document.getElementById('list-view').className = 'inv-list-wrap' + (v==='list'?' active':'');
+  document.getElementById('vbtn-grid').classList.toggle('active', v==='grid');
+  document.getElementById('vbtn-list').classList.toggle('active', v==='list');
+}
+
+function openDrawer(id) {
+  activeItem = inventory.find(i => i.id === id);
+  if (!activeItem) return;
+  const item = activeItem;
+
+  document.getElementById('drawer-title').textContent = item.name;
+
+  const imgEl = document.getElementById('drawer-img');
+  imgEl.innerHTML = item.imageDataUrl
+    ? `<img src="${item.imageDataUrl}" alt="${item.name}">`
+    : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:.5rem"><div style="width:56px;height:56px;border-radius:50%;background:${item.color||'#ccc'};border:1px solid var(--bd)"></div><div style="font-size:11px;color:var(--fa)">${item.palette||'no image'}</div></div>`;
+
+  const emot = item.blend || item.ep || '—';
+  const intPips = [1,2,3].map(n => `<div class="int-pip ${n>=item.intensity?.[0]&&n<=item.intensity?.[1]?'on':''}"></div>`).join('');
+
+  document.getElementById('drawer-body').innerHTML = `
+    <div class="drawer-section">
+      <div class="drawer-section-label">Classification</div>
+      <div class="field-row"><span class="field-key">Role</span><span class="field-val"><span class="ctag ct-role">${item.role||'—'}</span></span></div>
+      <div class="field-row"><span class="field-key">Pass</span><span class="field-val"><span class="ctag" style="background:${item.pass===1?'rgba(74,96,64,.1)':'rgba(106,90,128,.1)'};color:${item.pass===1?'var(--sage)':'var(--dust)'};border:1px solid ${item.pass===1?'rgba(74,96,64,.2)':'rgba(106,90,128,.2)'}">Pass ${item.pass||2} — ${item.pass===1?'structural':'textural'}</span></span></div>
+      <div class="field-row"><span class="field-key">Movement</span><span class="field-val">${item.movement||'—'}</span></div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-label">Surface + palette</div>
+      <div class="field-row"><span class="field-key">Finish</span><span class="field-val">${FINISH_LABELS[item.finish]||item.finish||'—'}</span></div>
+      <div class="field-row"><span class="field-key">Palette</span><span class="field-val">${item.palette||'—'}</span></div>
+      <div class="field-row"><span class="field-key">Contrast</span><span class="field-val">${item.contrast||'—'}</span></div>
+      <div class="field-row"><span class="field-key">Color swatch</span><span class="field-val"><span style="display:inline-block;width:16px;height:16px;border-radius:3px;background:${item.color||'#ccc'};border:1px solid var(--bd);vertical-align:middle"></span></span></div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-label">Emotional tags</div>
+      <div class="field-row"><span class="field-key">Primary</span><span class="field-val"><span class="ctag ct-emot">${item.ep||'—'}</span></span></div>
+      <div class="field-row"><span class="field-key">Secondary</span><span class="field-val">${item.es&&item.es!=='none'?`<span class="ctag ct-emot">${item.es}</span>`:'—'}</span></div>
+      ${item.blend?`<div class="field-row"><span class="field-key">Blend</span><span class="field-val"><span class="ctag ct-emot" style="background:rgba(154,122,64,.1);color:var(--gold);border-color:rgba(154,122,64,.2)">${item.blend}</span></span></div>`:''}
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-label">Size + yield</div>
+      <div class="field-row"><span class="field-key">Weight</span><span class="field-val">${item.weight||'—'}</span></div>
+      <div class="field-row"><span class="field-key">Bloom size</span><span class="field-val">${item.bloomSize?item.bloomSize+'″':'—'}</span></div>
+      <div class="field-row"><span class="field-key">Yield</span><span class="field-val">${item.yield?item.yield+' '+(item.unit||'sprig')+(item.yield>1?'s':'')+' / stem':'—'}</span></div>
+      <div class="field-row"><span class="field-key">Stem length</span><span class="field-val">${item.stemLength?item.stemLength+'″':'—'}</span></div>
+      <div class="field-row"><span class="field-key">Intensity</span><span class="field-val"><div class="int-vis">${intPips}</div></span></div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-label">Edit tags — change &amp; save to re-classify (updates Pass)</div>
+      <div class="field-row"><span class="field-key">Role</span><span class="field-val">${sel('e-role', VOCAB.roles, item.role)}</span></div>
+      <div class="field-row"><span class="field-key">Weight</span><span class="field-val">${sel('e-behavior', VOCAB.behaviors, item.weight)}</span></div>
+      <div class="field-row"><span class="field-key">Movement</span><span class="field-val">${sel('e-movement', VOCAB.movements, item.movement)}</span></div>
+      <div class="field-row"><span class="field-key">Finish</span><span class="field-val">${sel('e-finish', VOCAB.finishes, item.finish)}</span></div>
+      <div class="field-row"><span class="field-key">Primary emotion</span><span class="field-val">${sel('e-ep', VOCAB.emotions, item.ep)}</span></div>
+      <div class="field-row"><span class="field-key">Secondary emotion</span><span class="field-val">${sel('e-es', VOCAB.emotions, item.es, true)}</span></div>
+      <button class="da-btn" style="margin-top:.6rem" onclick="saveTags()">Save tags</button>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-label">Cutout asset</div>
+      <div id="cutout-box" style="display:flex;align-items:center;gap:.6rem">
+        ${item.assetUrl?`<img src="${item.assetUrl}" alt="" onclick="showZoom(this.src)" style="width:130px;height:130px;${CUTOUT_IMG}">`:'<span style="font-size:11px;color:var(--fa)">No cutout yet — shown as a styled shape in Build View.</span>'}
+      </div>
+      <label style="display:block;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);font-weight:600;margin:.7rem 0 .3rem">Asset prompt — edit to fine-tune what "Generate sprig" makes</label>
+      <textarea id="asset-prompt" placeholder="A single isolated high-end luxury silk … bloom head, no stem, … overhead flat-lay, studio lighting, pure white background" style="width:100%;min-height:70px;padding:8px 10px;border:1px solid var(--bd);border-radius:6px;background:var(--s2);font-family:var(--sans);font-size:11px;line-height:1.5;color:var(--tx);outline:none;resize:vertical">${(item.assetPrompt||'').replace(/</g,'&lt;')}</textarea>
+      <div style="display:flex;gap:.4rem;margin-top:.5rem;flex-wrap:wrap">
+        <button class="da-btn" style="background:var(--sage,#6b7c5c);color:#fff;border-color:var(--sage,#6b7c5c)" onclick="makeCutout('photo')">From photo (free)</button>
+        <button class="da-btn" onclick="makeCutout('generate')">Generate (1 credit)</button>
+        <button class="da-btn" onclick="savePrompt()">Save prompt</button>
+      </div>
+      <div style="font-size:10px;color:var(--fa);margin-top:.4rem;line-height:1.4">“From photo” cuts out your real product — most accurate &amp; free. “Generate” is best when the photo is a busy multi-stem spray and you want one clean piece.</div>
+      <div id="cutout-msg" style="font-size:10px;color:var(--fa);margin-top:.35rem;min-height:1em"></div>
+    </div>
+    <div class="drawer-section">
+      <div class="drawer-section-label">Stock</div>
+      <div class="stock-row">
+        <span class="stock-label">Units on hand</span>
+        <div class="stock-ctrl">
+          <button class="stock-adj" onclick="adjustStock(-1)">−</button>
+          <div class="stock-num" id="drawer-stock">${item.stock||0}</div>
+          <button class="stock-adj" onclick="adjustStock(1)">+</button>
+        </div>
+      </div>
+      ${item.taggedAt?`<div style="font-size:10px;color:var(--fa);margin-top:.25rem">Tagged ${item.taggedAt}</div>`:''}
+    </div>`;
+
+  document.getElementById('drawer-actions').innerHTML = `
+    <button class="da-btn danger" onclick="deleteItem('${item.id}')"><i class="ti ti-trash" style="font-size:13px"></i> Remove</button>`;
+
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+  activeItem = null;
+}
+
+function adjustStock(delta) {
+  if (!activeItem) return;
+  const item = inventory.find(i => i.id === activeItem.id);
+  if (!item) return;
+  item.stock = Math.max(0, (item.stock||0) + delta);
+  document.getElementById('drawer-stock').textContent = item.stock;
+  fetch(`${CONFIG.apiBase}/api/inventory/${item.id}`, {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({stock:item.stock})}).catch(()=>{});
+  applyFilters();
+}
+
+function updateStock(id, val) {
+  const item = inventory.find(i => i.id === id);
+  if (!item) return;
+  item.stock = Math.max(0, parseInt(val)||0);
+  fetch(`${CONFIG.apiBase}/api/inventory/${id}`, {method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({stock:item.stock})}).catch(()=>{});
+}
+
+async function deleteItem(id) {
+  if (!confirm('Remove this item from inventory?')) return;
+  try { await fetch(`${CONFIG.apiBase}/api/inventory/${id}`, {method:'DELETE'}); } catch(e) {}
+  closeDrawer();
+  await loadInventory();
+}
+
+// Detect the real background colour from the corners, knock it out with a soft
+// edge, then trim to the subject's bounding box → a clean, tight cutout.
+function removeWhiteBackground(dataUrl) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      try {
+        const W = img.width, H = img.height;
+        const c = document.createElement('canvas'); c.width = W; c.height = H;
+        const ctx = c.getContext('2d', { willReadFrequently: true }); ctx.drawImage(img, 0, 0);
+        const id = ctx.getImageData(0, 0, W, H); const d = id.data;
+        // background colour = average of the four corners
+        const corners = [0, (W - 1) * 4, (H - 1) * W * 4, (H * W - 1) * 4];
+        let br = 0, bgc = 0, bb = 0;
+        corners.forEach(o => { br += d[o]; bgc += d[o + 1]; bb += d[o + 2]; });
+        br /= 4; bgc /= 4; bb /= 4;
+        const tol = 46, soft = tol * 1.8;
+        let minX = W, minY = H, maxX = 0, maxY = 0;
+        for (let y = 0; y < H; y++) {
+          for (let x = 0; x < W; x++) {
+            const i = (y * W + x) * 4;
+            const dist = Math.sqrt((d[i] - br) ** 2 + (d[i + 1] - bgc) ** 2 + (d[i + 2] - bb) ** 2);
+            if (dist < tol) { d[i + 3] = 0; }
+            else if (dist < soft) { d[i + 3] = Math.round(255 * (dist - tol) / (soft - tol)); }
+            if (d[i + 3] > 12) { if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y; }
+          }
+        }
+        ctx.putImageData(id, 0, 0);
+        if (maxX > minX && maxY > minY) {
+          const pad = Math.round(Math.max(W, H) * 0.04);
+          minX = Math.max(0, minX - pad); minY = Math.max(0, minY - pad);
+          maxX = Math.min(W - 1, maxX + pad); maxY = Math.min(H - 1, maxY + pad);
+          const tw = maxX - minX + 1, th = maxY - minY + 1;
+          const t = document.createElement('canvas'); t.width = tw; t.height = th;
+          t.getContext('2d').drawImage(c, minX, minY, tw, th, 0, 0, tw, th);
+          return resolve(t.toDataURL('image/png'));
+        }
+        resolve(c.toDataURL('image/png'));
+      } catch (err) { reject(err); }
+    };
+    img.onerror = () => reject(new Error('image load failed'));
+    img.src = dataUrl;
+  });
+}
+// Click-to-enlarge any cutout (checkered bg shows transparency)
+function showZoom(src) {
+  const o = document.createElement('div');
+  o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:400;display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:2rem';
+  o.innerHTML = `<img src="${src}" style="max-width:88vw;max-height:88vh;object-fit:contain;border-radius:10px;background:repeating-conic-gradient(#e8e8e8 0% 25%, #fff 0% 50%) 50% / 22px 22px">`;
+  o.onclick = () => o.remove();
+  document.body.appendChild(o);
+}
+const CUTOUT_IMG = 'object-fit:contain;border:1px solid var(--bd);border-radius:8px;cursor:zoom-in;background:repeating-conic-gradient(#ececec 0% 25%, #fff 0% 50%) 50% / 14px 14px';
+
+async function savePrompt() {
+  if (!activeItem) return;
+  const val = (document.getElementById('asset-prompt').value || '').trim();
+  const msg = document.getElementById('cutout-msg');
+  msg.textContent = 'Saving prompt…';
+  try {
+    const r = await fetch(`${CONFIG.apiBase}/api/inventory/${activeItem.id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ assetPrompt: val }) });
+    const j = await r.json();
+    if (!j.success) throw new Error(j.error || 'save failed');
+    activeItem.assetPrompt = val;
+    const inv = inventory.find(x => x.id === activeItem.id); if (inv) inv.assetPrompt = val;
+    msg.textContent = '✓ Prompt saved.';
+  } catch (e) { msg.textContent = 'Save failed: ' + e.message; }
+}
+
+let pendingCutout = null;
+async function makeCutout(mode) {
+  if (!activeItem) return;
+  const item = activeItem;
+  const msg = document.getElementById('cutout-msg');
+  pendingCutout = null;
+  msg.textContent = mode === 'generate' ? 'Generating a single sprig… (~15s)' : 'Cutting out from the photo…';
+  try {
+    const promptEl = document.getElementById('asset-prompt');
+    const livePrompt = promptEl ? promptEl.value.trim() : (item.assetPrompt || '');
+    const body = mode === 'generate'
+      ? { assetPrompt: livePrompt, name: item.name, colorName: item.colorName, color: item.color, unit: item.unit }
+      : { sourceImageUrl: item.imageDataUrl };
+    const aRes = await fetch(`${CONFIG.apiBase}/api/asset`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+    const aJson = await aRes.json();
+    if (!aJson.success) throw new Error(aJson.error || 'asset failed');
+    let png = aJson.image;
+    if (!aJson.transparent) png = await removeWhiteBackground(png);
+    pendingCutout = png;
+    // Preview only — nothing is saved (and the current cutout is untouched) until "Use this"
+    document.getElementById('cutout-box').innerHTML =
+      `<div style="display:flex;align-items:flex-end;gap:.7rem;flex-wrap:wrap">
+        <img src="${png}" alt="" onclick="showZoom(this.src)" style="width:150px;height:150px;${CUTOUT_IMG}">
+        <button class="da-btn" onclick="cropTool(pendingCutout)">✂ Crop to bloom</button>
+        <button class="da-btn" style="background:var(--sage,#6b7c5c);color:#fff" onclick="saveCutout()">✓ Use this</button>
+      </div>`;
+    msg.textContent = 'Preview — “Crop to bloom” to isolate one flower, then “Use this”' + (item.assetUrl ? ' (replaces current).' : '.');
+  } catch (e) {
+    msg.textContent = 'Failed: ' + e.message;
+  }
+}
+async function saveCutout() {
+  if (!pendingCutout || !activeItem) return;
+  const item = activeItem;
+  const msg = document.getElementById('cutout-msg');
+  msg.textContent = 'Saving…';
+  try {
+    const cRes = await fetch(`${CONFIG.apiBase}/api/cutout`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ image: pendingCutout, inventoryId: item.id }) });
+    const cJson = await cRes.json();
+    if (!cJson.success) throw new Error(cJson.error || 'store failed');
+    item.assetUrl = cJson.url;
+    const inv = inventory.find(x => x.id === item.id); if (inv) inv.assetUrl = cJson.url;
+    document.getElementById('cutout-box').innerHTML = `<img src="${cJson.url}" alt="" onclick="showZoom(this.src)" style="width:130px;height:130px;${CUTOUT_IMG}">`;
+    msg.textContent = '✓ Cutout saved — it will composite in the Build View.';
+    pendingCutout = null;
+  } catch (e) { msg.textContent = 'Save failed: ' + e.message; }
+}
+
+function exportJSON() {
+  const out = JSON.stringify(inventory, null, 2);
+  const el = document.getElementById('export-out');
+  el.textContent = out;
+  el.style.display = 'block';
+  try { navigator.clipboard.writeText(out); } catch(e) {}
+  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function exportCSV() {
+  const keys = ['id','name','pass','role','movement','finish','palette','contrast','color','ep','es','blend','intensity','weight','stock','taggedAt'];
+  const rows = [keys.join(','), ...inventory.map(item =>
+    keys.map(k => {
+      const v = item[k];
+      return Array.isArray(v) ? `"[${v.join(',')}]"` : `"${v??''}"`;
+    }).join(',')
+  )];
+  const el = document.getElementById('export-out');
+  el.textContent = rows.join('\n');
+  el.style.display = 'block';
+  try { navigator.clipboard.writeText(rows.join('\n')); } catch(e) {}
+  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+/* ── SAMPLE DATA for first load ── */
+function getSampleInventory() {
+  return [
+    {id:'SAMPLE-001',name:'Matte Charcoal Manzanita Branch',pass:1,role:'structural',movement:'architectural',finish:'matte',palette:'neutral-dark',contrast:'stark',color:'#3a3832',ep:'sadness',es:'grief',blend:'',intensity:[2,3],weight:'heavy',stock:8,taggedAt:'Sample data',imageDataUrl:''},
+    {id:'SAMPLE-002',name:'Weeping Silver Eucalyptus Spray',pass:1,role:'structural',movement:'weeping',finish:'matte',palette:'neutral-light',contrast:'unified',color:'#8a9a8a',ep:'peace',es:'reflective',blend:'',intensity:[1,2],weight:'mid',stock:20,taggedAt:'Sample data',imageDataUrl:''},
+    {id:'SAMPLE-003',name:'Champagne-Dusted Faux Fern',pass:1,role:'structural',movement:'reaching',finish:'metallic',palette:'champagne',contrast:'unified',color:'#c8b87a',ep:'joy',es:'hope',blend:'',intensity:[1,2],weight:'mid',stock:15,taggedAt:'Sample data',imageDataUrl:''},
+    {id:'SAMPLE-004',name:'Dusty Mauve Peony',pass:1,role:'focal',movement:'still',finish:'matte',palette:'neutral-mid',contrast:'unified',color:'#c4a0a0',ep:'nostalgia',es:'sadness',blend:'nostalgia',intensity:[1,2],weight:'heavy',stock:12,taggedAt:'Sample data',imageDataUrl:''},
+    {id:'SAMPLE-005',name:'Matte Silver-Leaf Spray',pass:2,role:'secondary',movement:'sweeping',finish:'metallic',palette:'silver',contrast:'unified',color:'#b0b8b8',ep:'reflective',es:'peace',blend:'',intensity:[1,2],weight:'light',stock:22,taggedAt:'Sample data',imageDataUrl:''},
+    {id:'SAMPLE-006',name:'Dried Thistle Head',pass:2,role:'texture',movement:'still',finish:'matte',palette:'neutral-dark',contrast:'unified',color:'#686070',ep:'melancholy',es:'sadness',blend:'melancholy',intensity:[1,2],weight:'light',stock:18,taggedAt:'Sample data',imageDataUrl:''},
+    {id:'SAMPLE-007',name:'Pale Champagne Berry Cluster',pass:2,role:'accent',movement:'still',finish:'metallic',palette:'champagne',contrast:'unified',color:'#d4c090',ep:'hope',es:'joy',blend:'',intensity:[1,2],weight:'wispy',stock:3,taggedAt:'Sample data',imageDataUrl:''},
+    {id:'SAMPLE-008',name:'Matte Sage Seeded Eucalyptus',pass:2,role:'greenery',movement:'sweeping',finish:'matte',palette:'botanical-green',contrast:'unified',color:'#7a8a6a',ep:'peace',es:'trust',blend:'',intensity:[1,1],weight:'light',stock:30,taggedAt:'Sample data',imageDataUrl:''},
+  ];
+}
+
+loadInventory();
+</script>
+<script src="/evercrafted-nav.js" defer></script>
+</body>
+</html>

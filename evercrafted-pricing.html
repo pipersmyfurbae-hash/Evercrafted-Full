@@ -6,7 +6,7 @@
 <title>Pricing — Evercrafted</title>
 <meta name="description" content="Start free with Bloom. Grow into Craft, Studio, or Atelier. Every tier lets you design from memory — higher tiers give you the tools to go further.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Dancing+Script:wght@500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Dancing+Script:wght@500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --white:#FFFFFF;--off:#F9F7F4;--paper:#F2EFE9;--warm:#EDE8E0;
@@ -16,8 +16,8 @@
   --blue:#4A6785;--bluep:#EEF4F9;
   --dust:#7A5A80;--dustp:#F5EEF4;
   --bd:#E4DFD8;--bdd:#CCC7BE;
-  --serif:'Cormorant Garamond',Georgia,serif;
-  --sans:'Jost',system-ui,sans-serif;
+  --serif:'Italiana',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
   --script:'Dancing Script',cursive;
   --sh:0 1px 4px rgba(0,0,0,.06);
   --sm:0 4px 20px rgba(0,0,0,.08);
@@ -49,7 +49,7 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .hero-inner{max-width:680px;margin:0 auto;padding:0 2rem;position:relative}
 .hero-overline{font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:1rem;display:flex;align-items:center;justify-content:center;gap:.6rem}
 .hero-overline::before,.hero-overline::after{content:'';height:1px;width:20px;background:var(--green);opacity:.5}
-.hero-h1{font-family:var(--serif);font-size:clamp(2.8rem,5.5vw,4.5rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;margin-bottom:1.1rem}
+.hero-h1{font-family:var(--serif);font-size:clamp(2.3rem, 3.8vw, 2.97rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;margin-bottom:1.1rem}
 .hero-h1 em{font-style:italic;color:var(--green)}
 .hero-lead{font-size:17px;color:var(--ink);line-height:1.7;max-width:520px;margin:0 auto 2rem;font-weight:300}
 .billing-toggle{display:inline-flex;align-items:center;gap:0;background:var(--white);border:1px solid var(--bd);border-radius:100px;padding:4px;margin-bottom:.5rem}
@@ -166,8 +166,18 @@ body{font-family:var(--sans);background:var(--off);color:var(--black);line-heigh
 .gb-body{font-size:13px;color:var(--muted);line-height:1.55}
 
 /* CTA BAND */
-.cta-band{background:var(--green);padding:5rem 0;text-align:center}
-.cta-band h2{font-family:var(--serif);font-size:clamp(2rem,4vw,3rem);font-weight:400;color:var(--white);margin-bottom:.75rem;line-height:1.2}
+.fb-band{position:relative;min-height:66vh;display:flex;align-items:center;overflow:hidden;background:#e9e2d6}
+.fb-band>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.fb-band .fb-scrim{position:absolute;inset:0;z-index:1;background:linear-gradient(100deg,rgba(253,252,250,.94),rgba(253,252,250,.6) 38%,rgba(253,252,250,.08) 70%,rgba(253,252,250,0))}
+.fb-band .fb-inner{position:relative;z-index:2;max-width:760px;padding:0 clamp(20px,6vw,90px)}
+.fb-band .fb-ov{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:1rem}
+.fb-band h2{font-family:var(--serif);font-weight:400;font-size:clamp(1.8rem, 3.5vw, 2.64rem);line-height:1.08;letter-spacing:.01em;color:var(--charcoal,#2e2e2e)}
+.fb-band p{margin-top:1.2rem;max-width:30rem;color:var(--ink,#4a4a4a);font-size:1.05rem;line-height:1.7}
+.cta-band{background:var(--green);padding:5rem 0;text-align:center;position:relative;overflow:hidden}
+.cta-band::before{content:"";position:absolute;inset:0;background:url('/assets/waitlist-bg.png') center/cover no-repeat;opacity:.22;z-index:0}
+.cta-band::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(58,85,50,.82),rgba(48,71,42,.93));z-index:0}
+.cta-band > *{position:relative;z-index:1}
+.cta-band h2{font-family:var(--serif);font-size:clamp(1.64rem, 3.2vw, 2.4rem);font-weight:400;color:var(--white);margin-bottom:.75rem;line-height:1.2}
 .cta-band p{font-size:16px;color:rgba(255,255,255,.7);max-width:480px;margin:0 auto 2rem;font-weight:300}
 .cta-form{display:flex;gap:.6rem;max-width:420px;margin:0 auto;flex-wrap:wrap;justify-content:center}
 .cta-input{flex:1;min-width:200px;padding:13px 20px;border-radius:100px;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:var(--white);font-family:var(--sans);font-size:14px;outline:none;-webkit-appearance:none}
@@ -188,6 +198,13 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
 .reveal.vis{opacity:1;transform:none}
 .rd1{transition-delay:.1s}.rd2{transition-delay:.2s}.rd3{transition-delay:.3s}
+
+/* full-bleed video hero */
+.hero{position:relative;overflow:hidden}
+.hero .hero-bg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.hero .hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .hero-scrim{position:absolute;inset:0;background:radial-gradient(ellipse 96% 88% at 50% 42%,rgba(242,239,233,.72),rgba(242,239,233,.93))}
+.hero .hero-inner{position:relative;z-index:2}
 </style>
 </head>
 <body>
@@ -206,7 +223,7 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 
 <!-- HERO -->
 <div class="hero">
-  <div class="hero-bg"><div class="hb-ring hb-1"></div><div class="hb-ring hb-2"></div></div>
+  <div class="hero-bg"><video class="hero-vid" autoplay loop muted playsinline><source src="/assets/hero-pricing.mp4" type="video/mp4"></video><div class="hero-scrim"></div><div class="hb-ring hb-1"></div><div class="hb-ring hb-2"></div></div>
   <div class="hero-inner">
     <div class="hero-overline">Simple, honest pricing</div>
     <h1 class="hero-h1">Start free.<br><em>Build from there.</em></h1>
@@ -408,6 +425,16 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
 </section>
 
 <!-- WAITLIST CTA -->
+<section class="fb-band">
+  <img src="/assets/band-interior.png" alt="A finished Evercrafted wreath in a room">
+  <div class="fb-scrim"></div>
+  <div class="fb-inner">
+    <div class="fb-ov">Made by makers, for makers</div>
+    <h2>The tool behind<br>the pieces.</h2>
+    <p>Every plan turns a feeling into something real — at whatever tier fits the way you work.</p>
+  </div>
+</section>
+
 <section class="cta-band" id="waitlist">
   <div class="container">
     <h2>Lock in your founding price.</h2>
@@ -417,22 +444,9 @@ footer{background:var(--black);color:rgba(255,255,255,.5);padding:2.5rem 0}
       <button class="cta-btn" type="submit">Join waitlist →</button>
     </form>
     <div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:.9rem" id="wl-msg">No spam. Unsubscribe anytime.</div>
+    <div style="margin-top:1.25rem"><a href="evercrafted-try.html" style="color:rgba(255,255,255,.9);font-size:13px;font-weight:500;letter-spacing:.04em;border-bottom:1px solid rgba(255,255,255,.4);padding-bottom:2px">Or try a memory of your own first →</a></div>
   </div>
 </section>
-
-<!-- FOOTER -->
-<footer>
-  <div class="foot-inner">
-    <div class="foot-logo">Ever<span>crafted</span></div>
-    <div class="foot-links">
-      <a href="evercrafted-marketing-site.html">Home</a>
-      <a href="evercrafted-how-it-works.html">How it works</a>
-      <a href="evercrafted-about.html">About</a>
-      <a href="#">Privacy</a>
-    </div>
-    <div style="font-size:11px">© 2025 Evercrafted Studio</div>
-  </div>
-</footer>
 
 <script>
 // Reveal
@@ -527,13 +541,23 @@ function toggleFaq(btn) {
   if (!wasOpen) item.classList.add('open');
 }
 
-function handleWaitlist(e) {
+async function handleWaitlist(e) {
   e.preventDefault();
   const email = document.getElementById('wl-email').value;
+  // apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
+  const apiBase = (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '';
+  try {
+    await fetch(`${apiBase}/api/waitlist`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, source: 'pricing' }),
+    });
+  } catch (err) { console.warn('Waitlist:', err.message); }
   document.getElementById('wl-msg').textContent = `${email} is on the list. Founding pricing locked in.`;
   document.getElementById('wl-msg').style.color = 'rgba(255,255,255,.85)';
   document.getElementById('wl-email').value = '';
 }
 </script>
+<script src="/evercrafted-nav.js" defer></script>
 </body>
 </html>
