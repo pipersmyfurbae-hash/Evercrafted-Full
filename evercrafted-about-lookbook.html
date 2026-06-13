@@ -1,0 +1,255 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>About Evercrafted — the lookbook</title>
+<meta name="description" content="A creative intelligence studio built around emotion-driven design. The Evercrafted Engine turns feelings, memories, and identity into manufacturable floral designs.">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c1410;--bg2:#0f1a14;--cream:#ece5d6;--cream2:#c9c4b4;--mut:rgba(236,229,214,.62);--faint:rgba(236,229,214,.4);--gold:#c4a06a;--green:#8fb089;--dust:#b79bb0;--line:rgba(236,229,214,.14);
+--serif:'Italiana',Georgia,serif;--sans:'Inter',system-ui,sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--cream);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.7}
+a{color:inherit;text-decoration:none}.serif{font-family:var(--serif)}.it{font-style:italic;color:var(--green)}
+.bar{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,5vw,56px);transition:background .4s,backdrop-filter .4s}
+.bar.solid{background:rgba(12,20,16,.7);backdrop-filter:blur(10px)}
+.bar .logo{font-family:var(--serif);font-size:1.35rem;letter-spacing:.05em}.bar .logo span{color:var(--gold)}
+.bar nav{display:flex;align-items:center;gap:clamp(1rem,3vw,2rem)}
+.bar nav a{font-size:12px;letter-spacing:.06em;color:var(--mut);text-transform:uppercase}.bar nav a:hover{color:var(--cream)}
+.bar .cta{border:1px solid var(--gold);color:var(--gold)!important;padding:8px 18px;border-radius:100px;font-size:11px;letter-spacing:.1em}
+.bar .cta:hover{background:var(--gold);color:#0c1410!important}
+@media(max-width:720px){.bar nav .hide{display:none}}
+.beat{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden;padding:clamp(5rem,12vh,8rem) clamp(20px,6vw,80px)}
+.beat.auto{min-height:auto;padding-top:clamp(4rem,9vh,6rem);padding-bottom:clamp(4rem,9vh,6rem)}
+.beat .media{position:absolute;inset:0;z-index:0;overflow:hidden}
+.beat .media video,.beat .media img{width:100%;height:120%;object-fit:cover;position:absolute;top:-10%;left:0;will-change:transform}
+.beat .scrim{position:absolute;inset:0;z-index:1}
+.scrim.center{background:radial-gradient(ellipse 100% 90% at 50% 50%,rgba(12,20,16,.6),rgba(12,20,16,.93))}
+.scrim.left{background:linear-gradient(90deg,rgba(12,20,16,.97) 0%,rgba(12,20,16,.88) 38%,rgba(12,20,16,.6) 78%,rgba(12,20,16,.45) 100%)}
+.beat .inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.solidbeat{background:var(--bg2)}
+.ov{font-size:11px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.3rem}
+.h-xl{font-family:var(--serif);font-weight:400;font-size:clamp(2.4rem,6vw,4.4rem);line-height:1.05}
+.h-lg{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4.6vw,3.3rem);line-height:1.12}
+.lead{font-size:clamp(1.02rem,1.5vw,1.2rem);color:var(--cream2);max-width:38rem;margin-top:1.5rem;line-height:1.78}
+.lead p{margin-bottom:1rem}.lead p:last-child{margin-bottom:0}.lead strong{color:var(--cream);font-weight:500}
+.hero-inner{position:relative;z-index:2;max-width:1180px;margin:0 auto}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:14px 28px;border-radius:100px;font-size:13px;font-weight:500;letter-spacing:.05em;border:1px solid transparent;cursor:pointer;transition:all .2s}
+.btn-p{background:var(--gold);color:#0c1410}.btn-p:hover{background:#d4b27e}
+.btn-g{border-color:var(--line);color:var(--cream)}.btn-g:hover{border-color:var(--cream)}
+/* hero split */
+.hsplit{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+@media(max-width:900px){.hsplit{grid-template-columns:1fr;gap:2.4rem}}
+.sig{display:flex;align-items:center;gap:.9rem;margin-top:2rem}
+.sig .mark{font-size:1.6rem;color:var(--green)}
+.sig .d strong{display:block;font-size:13px;color:var(--cream)}.sig .d{font-size:12px;color:var(--faint)}
+.engine-card{border:1px solid var(--line);border-radius:18px;background:rgba(236,229,214,.035);padding:1.8rem;text-align:center}
+.engine-card .q{font-family:var(--serif);font-size:1.45rem;line-height:1.3;color:var(--cream)}
+.engine-card .meta{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:1rem}
+.engine-card .nm{border-top:1px solid var(--line);margin-top:1.4rem;padding-top:1.2rem}
+.engine-card .nm b{font-family:var(--serif);font-size:1.2rem;font-weight:400;color:var(--cream);display:block}
+.engine-card .nm span{font-size:12px;color:var(--mut);display:block;margin-top:.2rem}
+/* pull quote */
+.pq{text-align:center;max-width:860px;margin:0 auto}
+.pq .t{font-family:var(--serif);font-size:clamp(1.7rem,3.6vw,2.7rem);line-height:1.32;color:var(--cream)}
+.pq .a{margin-top:1.6rem;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+/* story grid */
+.sgrid{display:grid;grid-template-columns:1.2fr .9fr;gap:clamp(2rem,5vw,4rem);align-items:start}
+@media(max-width:840px){.sgrid{grid-template-columns:1fr;gap:2.4rem}}
+.aside{display:flex;flex-direction:column;gap:1.1rem;margin-top:.4rem}
+.acard{border:1px solid var(--line);border-radius:14px;padding:1.3rem 1.5rem;background:rgba(236,229,214,.03)}
+.acard .num{font-family:var(--serif);font-size:2.2rem;color:var(--gold);line-height:1}
+.acard .lb{font-size:13px;color:var(--cream);margin:.3rem 0 .25rem;font-weight:500}
+.acard .bd{font-size:13px;color:var(--mut);line-height:1.6}
+/* philosophy grid */
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:2.6rem}
+@media(max-width:820px){.pgrid{grid-template-columns:1fr 1fr}}@media(max-width:520px){.pgrid{grid-template-columns:1fr}}
+.pcard{border:1px solid var(--line);border-radius:14px;padding:1.4rem;background:rgba(236,229,214,.03);transition:border-color .25s,transform .25s}
+.pcard:hover{border-color:rgba(196,160,106,.45);transform:translateY(-3px)}
+.pcard .ac{width:26px;height:2px;background:var(--gold);margin-bottom:.9rem}
+.pcard .ti{font-family:var(--serif);font-size:1.3rem;color:var(--cream)}
+.pcard .bd{font-size:.92rem;color:var(--mut);margin-top:.4rem;line-height:1.6}
+/* timeline */
+.tl{display:grid;grid-template-columns:repeat(4,1fr);gap:1.4rem;margin-top:2.6rem}
+@media(max-width:820px){.tl{grid-template-columns:1fr 1fr}}@media(max-width:480px){.tl{grid-template-columns:1fr}}
+.tlitem{position:relative;padding-top:1.4rem;border-top:1px solid var(--line)}
+.tlitem .dot{position:absolute;top:-5px;left:0;width:9px;height:9px;border-radius:50%;background:var(--gold)}
+.tlitem .yr{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold)}
+.tlitem .ti{font-family:var(--serif);font-size:1.25rem;color:var(--cream);margin:.5rem 0 .4rem}
+.tlitem .bd{font-size:.92rem;color:var(--mut);line-height:1.6}
+/* values */
+.vgrid{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(2rem,5vw,4rem);align-items:center}
+@media(max-width:840px){.vgrid{grid-template-columns:1fr;gap:2rem}}
+.vv{display:flex;gap:.85rem;padding:1rem 0;border-bottom:1px solid var(--line)}
+.vv:last-child{border-bottom:none}.vv::before{content:'';flex-shrink:0;width:7px;height:7px;border-radius:50%;background:var(--gold);margin-top:.5rem}
+.vv strong{display:block;color:var(--cream);font-weight:500;margin-bottom:.2rem}.vv span{font-size:.94rem;color:var(--mut);line-height:1.65}
+/* cta */
+.cta-links{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-top:2.2rem}
+.foot{padding:3rem clamp(20px,6vw,80px);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;background:var(--bg)}
+.foot .logo{font-family:var(--serif);font-size:1.2rem}.foot .logo span{color:var(--gold)}
+.foot-links{display:flex;gap:1.6rem;flex-wrap:wrap}.foot-links a{font-size:12px;color:var(--mut)}.foot .cc{font-size:12px;color:var(--faint)}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.beat .media video,.beat .media img{height:100%;top:0}}
+</style></head><body>
+
+<div class="bar" id="bar">
+  <a class="logo" href="evercrafted-lookbook.html">Ever<span>crafted</span></a>
+  <nav>
+    <a class="hide" href="evercrafted-how-it-works-lookbook.html">How it works</a>
+    <a class="hide" href="evercrafted-pricing-lookbook.html">Pricing</a>
+    <a class="cta" href="evercrafted-lookbook.html#waitlist">Join waitlist</a>
+  </nav>
+</div>
+
+<!-- HERO -->
+<section class="beat" id="top">
+  <div class="media"><video data-parallax autoplay muted loop playsinline poster="/assets/wreath-poster.jpg"><source src="/assets/hero-about.mp4" type="video/mp4"></video></div>
+  <div class="scrim left"></div>
+  <div class="hero-inner"><div class="hsplit">
+    <div>
+      <div class="ov rv">About Evercrafted</div>
+      <h1 class="h-xl rv d1">Why do so many wreaths feel <span class="it">decorative</span> —<br>but not meaningful?</h1>
+      <div class="lead rv d2">
+        <p>Evercrafted began with that question. Most handmade wreaths are built from trends, copied layouts, or seasonal formulas — beautiful, yes, but disconnected from memory, emotion, and story.</p>
+        <p>It was created to change that. At its core, Evercrafted is not just a wreath company or a design platform. It is a <strong>creative intelligence studio</strong> built around emotion-driven design.</p>
+      </div>
+      <div class="sig rv d2"><div class="mark">✦</div><div class="d"><strong>Evercrafted Studio</strong>Emotion-driven floral design intelligence</div></div>
+    </div>
+    <div class="rv d2"><div class="engine-card">
+      <div class="q">A system that turns a <span class="it">feeling</span> into something you can build.</div>
+      <div class="meta">Placement · texture · movement · color · asymmetry · symbolism</div>
+      <div class="nm"><b>The Evercrafted Engine</b><span>A proprietary emotional blueprint system</span><span>Feelings &amp; memories → manufacturable floral designs</span></div>
+    </div></div>
+  </div></div>
+</section>
+
+<!-- PULL QUOTE -->
+<section class="beat auto solidbeat">
+  <div class="inner"><div class="pq">
+    <div class="t rv">Every branch placement. Every negative space. Every curve of movement. Every material choice. <span class="it">Intentional.</span></div>
+    <div class="a rv d1">The Evercrafted approach</div>
+  </div></div>
+</section>
+
+<!-- STORY -->
+<section class="beat auto">
+  <div class="inner"><div class="sgrid">
+    <div>
+      <div class="ov rv">Where it comes from</div>
+      <h2 class="h-lg rv d1">What started as obsession<br>became <span class="it">an engine.</span></h2>
+      <div class="lead rv d2" style="max-width:none">
+        <p>What began as an obsession with floral composition slowly evolved into something much larger — a system that understands how placement, texture, movement, color, asymmetry, and emotional symbolism work together to create a feeling.</p>
+        <p>Evercrafted was built from months of studying wreath structure, emotional response, visual rhythm, interior styling, storytelling, and the psychology of memory.</p>
+        <p>The result became what we now call <strong>the Evercrafted Engine</strong> — a proprietary blueprint system that transforms feelings, memories, aesthetics, and personal identity into manufacturable floral designs.</p>
+        <p>Not a mood board. Not a color picker. A system that treats emotion as a real design input — and returns something you can actually build.</p>
+      </div>
+    </div>
+    <div class="aside rv d2">
+      <div class="acard"><div class="num">6</div><div class="lb">Disciplines behind it</div><div class="bd">Wreath structure, emotional response, visual rhythm, interior styling, storytelling, and the psychology of memory — studied and built into one system.</div></div>
+      <div class="acard"><div class="num">1</div><div class="lb">Engine at the core</div><div class="bd">A proprietary blueprint system that transforms feelings, memories, aesthetics, and identity into manufacturable floral designs.</div></div>
+      <div class="acard"><div class="num">∞</div><div class="lb">Feelings it can hold</div><div class="bd">Grief, gratitude, nostalgia, celebration, healing — the full range of what a piece can be made to mean.</div></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- PHILOSOPHY -->
+<section class="beat auto solidbeat">
+  <div class="inner">
+    <div style="max-width:560px">
+      <div class="ov rv">What it can hold</div>
+      <h2 class="h-lg rv d1">A wreath can be more<br>than <span class="it">décor.</span></h2>
+      <p class="lead rv d2">We believe a wreath can carry a feeling — and keep carrying it, in a room, long after the moment has passed. It can represent:</p>
+    </div>
+    <div class="pgrid">
+      <div class="pcard rv"><div class="ac"></div><div class="ti">Grief &amp; gratitude</div><div class="bd">Holding loss and thankfulness in the same quiet arrangement.</div></div>
+      <div class="pcard rv d1"><div class="ac"></div><div class="ti">A childhood memory</div><div class="bd">A color, a flower, a feeling from a room you still remember.</div></div>
+      <div class="pcard rv d2"><div class="ac"></div><div class="ti">A season of healing</div><div class="bd">Softness for a chapter that asked a lot of you.</div></div>
+      <div class="pcard rv"><div class="ac"></div><div class="ti">A homecoming</div><div class="bd">The warmth of being back where you belong.</div></div>
+      <div class="pcard rv d1"><div class="ac"></div><div class="ti">Nostalgia</div><div class="bd">The ache and comfort of something you almost forgot.</div></div>
+      <div class="pcard rv d2"><div class="ac"></div><div class="ti">Celebration</div><div class="bd">Joy made visible, for the days that deserve marking.</div></div>
+      <div class="pcard rv"><div class="ac"></div><div class="ti">Softness</div><div class="bd">Gentleness, given a form you can hang on a door.</div></div>
+      <div class="pcard rv d1"><div class="ac"></div><div class="ti">Identity</div><div class="bd">A piece that looks like the person it was made for.</div></div>
+      <div class="pcard rv d2"><div class="ac"></div><div class="ti">Love that lingers</div><div class="bd">Affection that still fills a room, long after.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="beat auto">
+  <div class="inner">
+    <div style="max-width:580px">
+      <div class="ov rv">What we're building</div>
+      <h2 class="h-lg rv d1">A new kind of<br><span class="it">creative platform.</span></h2>
+      <p class="lead rv d2">Evercrafted exists at the intersection of artistry and technology — a place where floral artists, designers, and makers can turn creativity into something real and lasting.</p>
+    </div>
+    <div class="tl">
+      <div class="tlitem rv"><div class="dot"></div><div class="yr">Generate</div><div class="ti">Emotionally intelligent concepts</div><div class="bd">Turn a feeling, a memory, or an aesthetic into a wreath concept with real design reasoning behind every placement.</div></div>
+      <div class="tlitem rv d1"><div class="dot"></div><div class="yr">Create</div><div class="ti">Professional collections</div><div class="bd">Build cohesive, signature collections instead of one-off pieces — work that holds together and reads as yours.</div></div>
+      <div class="tlitem rv d2"><div class="dot"></div><div class="yr">Develop</div><div class="ti">Marketplace-ready products</div><div class="bd">Move from a concept to a sellable, manufacturable product — design, blueprint, and parts list in one place.</div></div>
+      <div class="tlitem rv d3"><div class="dot"></div><div class="yr">Build</div><div class="ti">Meaningful brands</div><div class="bd">Grow a brand around your creativity — not just a catalog of décor, but something with a point of view.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FB BAND -->
+<section class="beat" style="text-align:center">
+  <div class="media"><img data-parallax src="/assets/band-interior.png" alt="A finished Evercrafted wreath in a room" loading="lazy"></div>
+  <div class="scrim center"></div>
+  <div class="inner" style="max-width:760px">
+    <div class="ov rv" style="text-align:center">What it's really about</div>
+    <h2 class="h-lg rv d1">Beauty that feels<br><span class="it">personal again.</span></h2>
+    <p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">Not mass-produced. Not trend-chasing. Not empty. Something with soul — something remembered.</p>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="beat auto solidbeat">
+  <div class="inner"><div class="vgrid">
+    <div>
+      <h2 class="h-lg rv">At the intersection of<br><span class="it">artistry &amp; technology.</span></h2>
+      <p class="lead rv d1">Underneath all the systems, render engines, blueprints, and technology is something simple: we believe people want beauty that feels personal again.</p>
+    </div>
+    <div class="rv d2">
+      <div class="vv"><div><strong>Something with soul</strong><span>Designed to carry meaning, not just fill a space — beauty with a reason behind it.</span></div></div>
+      <div class="vv"><div><strong>Something remembered</strong><span>Built around memory, emotion, and story — the things that make a piece actually matter.</span></div></div>
+      <div class="vv"><div><strong>Nothing mass-produced</strong><span>Every design is intentional, down to the negative space. No trend-chasing, no empty décor.</span></div></div>
+      <div class="vv"><div><strong>Made for makers</strong><span>A platform for floral artists and designers to build emotionally intelligent work — and meaningful brands around it.</span></div></div>
+    </div>
+  </div></div>
+</section>
+
+<!-- CTA -->
+<section class="beat" style="text-align:center">
+  <div class="media"><img data-parallax src="/assets/compare-bg.png" alt="" loading="lazy"></div>
+  <div class="scrim center"></div>
+  <div class="inner" style="max-width:680px">
+    <div class="ov rv" style="text-align:center">Early access</div>
+    <h2 class="h-lg rv d1">Something <span class="it">Evercrafted.</span></h2>
+    <p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">Beauty that feels personal again — with soul, and remembered. Join the waitlist for early access, founding pricing, and a direct line to what gets built next.</p>
+    <div class="cta-links rv d3">
+      <a class="btn btn-p" href="evercrafted-try.html">Try a memory →</a>
+      <a class="btn btn-g" href="evercrafted-lookbook.html#waitlist">Join the waitlist</a>
+      <a class="btn btn-g" href="evercrafted-how-it-works-lookbook.html">See how it works</a>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="logo">Ever<span>crafted</span></div>
+  <div class="foot-links"><a href="evercrafted-lookbook.html">Home</a><a href="evercrafted-how-it-works-lookbook.html">How it works</a><a href="evercrafted-pricing-lookbook.html">Pricing</a><a href="evercrafted-try.html">Try it</a></div>
+  <div class="cc">© 2026 Evercrafted</div>
+</footer>
+
+<script>
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var bar=document.getElementById('bar');addEventListener('scroll',function(){bar.classList.toggle('solid',scrollY>40)},{passive:true});
+  var rio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');rio.unobserve(e.target);}})},{threshold:.12});
+  [].forEach.call(document.querySelectorAll('.rv'),function(el){rio.observe(el)});
+  var media=[].slice.call(document.querySelectorAll('[data-parallax]'));
+  if(!reduce){var t=false;addEventListener('scroll',function(){if(t)return;t=true;requestAnimationFrame(function(){media.forEach(function(v){var r=v.getBoundingClientRect();var o=(r.top+r.height/2-innerHeight/2)/innerHeight;v.style.transform='translateY('+(o*-6)+'%)';});t=false;});},{passive:true});}
+  var vids=[].slice.call(document.querySelectorAll('.beat video'));vids.forEach(function(v){v.muted=true;v.playsInline=true;});
+  if(reduce){vids.forEach(function(v){v.removeAttribute('autoplay');v.removeAttribute('loop');});}
+  else{var vio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var p=e.target.play();if(p&&p.catch)p.catch(function(){});}else{e.target.pause();}})},{threshold:.25});vids.forEach(function(v){vio.observe(v)});}
+})();
+</script>
+</body></html>
