@@ -883,7 +883,9 @@ function renderPrompt(){
 
   // Inventory lock — the exact bill of materials, so the render can't drop,
   // simplify, or invent stems (mirrors the BRC realism pass's INVENTORY LOCK).
-  const bom=r.all.filter(s=>s.item).map(s=>s.stemCount+'× '+s.item.name).join(', ');
+  const bomMap=new Map();
+  r.all.filter(s=>s.item).forEach(s=>{bomMap.set(s.item.name,(bomMap.get(s.item.name)||0)+s.stemCount);});
+  const bom=[...bomMap].map(([name,n])=>n+'× '+name).join(', ');
   const lock=bom?'Built from exactly: '+bom+'. ':'';
 
   const prompt=`Luxury faux botanical wreath, ${f?.label.toLowerCase()} composition, ${r.diam}-inch grapevine base. Emotional tone: ${r.emotions.join(', ')}. ${composition}Structural foundation: ${str(r.p1.filter(s=>s.role==='structural'||s.role==='focal'))} — ${arch} forms, placed in the ${f?.arc} foundational arc. Secondary textural layer: ${str(r.p2)}. Finish palette: ${finishes.join(', ')}. Color palette: ${palettes.join(', ')}. Intensity expression: ${intLabel}. ${lock}Premium silk and preserved botanicals — no fresh flowers, no plastic, no craft-store aesthetic. Editorial product photography, shallow depth of field, warm diffused natural light from upper left, matte aged plaster wall, luxury handcrafted decor. --ar 4:5 --style raw --s 150 --q 2 --v 6.1`;
