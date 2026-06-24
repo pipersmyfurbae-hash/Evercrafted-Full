@@ -948,13 +948,23 @@ function renderWatercolorConcept(r){
   // stable seed from the design → same design renders the same painting
   let seed=r.diam*131+r.intensityLevel*17; r.emotions.forEach(e=>{for(const c of e)seed=(Math.imul(seed,31)+c.charCodeAt(0))>>>0;});
   const layout=watercolorLayout(r.formula,r.diam,drama,seed); if(!layout) return;
-  // tint the two accent species to the design's two dominant emotion colors
-  const ecol=r.emotions.map(id=>{const e=EMOTIONS.find(x=>x.id===id);return e&&e.col;}).filter(Boolean);
-  const primary=ecol[0], secondary=ecol[1]||ecol[0];
+  // #1 — paint with the design's ACTUAL materials: pool each item's real color
+  // by role, then hand the renderer the true colors per placement so the concept
+  // reflects the specific bill of materials, not just the formula + mood.
+  const byRole={};
+  r.all.filter(s=>s.item&&s.item.color).forEach(s=>{(byRole[s.role]=byRole[s.role]||[]).push(s.item.color);});
+  const poolFor=roles=>{for(const ro of roles){if(byRole[ro]&&byRole[ro].length)return byRole[ro];}return null;};
+  const pools={
+    focal:     poolFor(['focal','structural','secondary']),
+    secondary: poolFor(['secondary','focal','texture']),
+    filler:    poolFor(['texture','secondary','accent']),
+    greenery:  poolFor(['greenery','structural']),
+    accent:    poolFor(['accent','texture','secondary'])
+  };
+  const ctr={};
   const colorFor=(key,role,def)=>{
-    if(key==='berryNavy'&&secondary) return secondary;
-    if(key==='tulipMauve'&&primary) return primary;
-    return def;
+    const pool=pools[role]; if(!pool||!pool.length) return def;
+    const i=(ctr[key]=(ctr[key]||0)+1)-1; return pool[i%pool.length];
   };
   WC.render(cv, layout, {seed, colorFor});
 }
