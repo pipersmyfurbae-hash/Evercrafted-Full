@@ -1171,7 +1171,7 @@ function escapeHtml(str) {
 }
 
 // ── BUILD BASE PROMPT ──
-function buildBaseText() {
+function buildBaseText(bgOverride, angleOverride) {
   var diameter = document.getElementById('diameter').value;
   var base = document.getElementById('baseType').value;
   var form = getActive('formPills');
@@ -1181,8 +1181,11 @@ function buildBaseText() {
   var foliage = document.getElementById('foliage').value.trim();
   var florals = document.getElementById('florals').value.trim();
   var accents = document.getElementById('accents').value.trim();
-  var bg = getActive('bgPills');
-  var angle = getActive('anglePills');
+  // Catalog passes per-shot background/angle here. Falling back to the pills means
+  // the 4-shot set forces each shot's framing regardless of the user's selection
+  // (the old string-replace silently failed unless the pills were on defaults).
+  var bg = bgOverride || getActive('bgPills');
+  var angle = angleOverride || getActive('anglePills');
   // Wreath Prompt Studio grammar — validated high-performance anatomy
   var negSpace = composition.indexOf('7:30') >= 0 ? '30-40%' : '20-30%';
   return 'Editorial product photograph of a handcrafted luxury faux botanical ' + season + ' wreath on natural ' + base + ' base, ' + form + ', stems radiating along the ring, never converging to a center point. ' +
@@ -1208,12 +1211,17 @@ function getParams() {
   };
 }
 
+// MJ_TAIL — the standardized version + quality flags every wreath prompt must
+// carry. --style raw only exists on v6/v7, so an explicit --v is required;
+// without it the prompt rides the user's default version and --style raw is
+// silently dropped on older defaults.
+var MJ_TAIL = ' --q 2 --v 6.1';
 function buildV1(p, text) {
-  return '/imagine ' + text + ' --ar ' + p.ar + ' --style raw --chaos 12 --s 150' + (p.seed ? ' --seed ' + p.seed : '');
+  return '/imagine ' + text + ' --ar ' + p.ar + ' --style raw --chaos 12 --s 150' + MJ_TAIL + (p.seed ? ' --seed ' + p.seed : '');
 }
 function buildV2(p, text) {
   var prefix = p.blueprint ? p.blueprint + ' ' : '';
-  return '/imagine ' + prefix + text + ' --iw 1.5 --ar ' + p.ar + ' --style raw --chaos 5 --s 150' + (p.seed ? ' --seed ' + p.seed : '');
+  return '/imagine ' + prefix + text + ' --iw 1.5 --ar ' + p.ar + ' --style raw --chaos 5 --s 150' + MJ_TAIL + (p.seed ? ' --seed ' + p.seed : '');
 }
 function buildV3(p, text) {
   var discord = document.getElementById('discordMode').checked;
@@ -1222,11 +1230,11 @@ function buildV3(p, text) {
     var sw = document.getElementById('swDiscord').value;
     var prefix = p.blueprint ? p.blueprint + ' ' : '';
     var srefPart = srefUrl ? ' --sref ' + srefUrl + ' --sw ' + sw + ' --sv 4' : '';
-    return '/imagine ' + prefix + text + srefPart + ' --iw ' + p.iw + ' --ar ' + p.ar + ' --style raw --chaos ' + p.chaos + ' --s ' + p.s + (p.seed ? ' --seed ' + p.seed : '');
+    return '/imagine ' + prefix + text + srefPart + ' --iw ' + p.iw + ' --ar ' + p.ar + ' --style raw --chaos ' + p.chaos + ' --s ' + p.s + MJ_TAIL + (p.seed ? ' --seed ' + p.seed : '');
   } else {
     var bwPart = p.hero ? p.hero + ' ' : '';
     var prefix2 = p.blueprint ? p.blueprint + ' ' : '';
-    return '/imagine ' + bwPart + prefix2 + text + ' --iw ' + p.iw + ' --ar ' + p.ar + ' --style raw --chaos ' + p.chaos + ' --s ' + p.s + (p.seed ? ' --seed ' + p.seed : '');
+    return '/imagine ' + bwPart + prefix2 + text + ' --iw ' + p.iw + ' --ar ' + p.ar + ' --style raw --chaos ' + p.chaos + ' --s ' + p.s + MJ_TAIL + (p.seed ? ' --seed ' + p.seed : '');
   }
 }
 
@@ -1264,7 +1272,6 @@ document.getElementById('btnGenerate').addEventListener('click', function() { ge
 // ── 4-SHOT CATALOG ──
 function generateCatalogSet() {
   var p = getParams();
-  var text = buildBaseText();
   var shots = [
     { key: 'c1', color: '#a5d6a7', title: 'SHOT 1 — Hero Front View', bg: 'neutral plaster background', angle: 'flat-lay straight-on product view, entire wreath fully visible', ar: '4:5' },
     { key: 'c2', color: '#80cbc4', title: 'SHOT 2 — Lifestyle (Front Door)', bg: 'hanging on a dark stained wooden front door with black hardware, natural outdoor daylight', angle: 'straight-on at eye level', ar: '4:5' },
@@ -1274,8 +1281,8 @@ function generateCatalogSet() {
   var html = '<div class="tag-row"><span class="tag tag-green">✓ 4-Shot Catalog Set</span><span class="tag tag-green">✓ Layout ref on all shots</span></div>';
   shots.forEach(function(shot) {
     var bwPart = p.hero ? p.hero + ' ' : '';
-    var t2 = text.replace('neutral plaster background', shot.bg).replace('flat-lay straight-on product view, entire wreath fully visible, minimal distortion', shot.angle);
-    var prompt = '/imagine ' + bwPart + t2 + ' --iw 1.5 --ar ' + shot.ar + ' --style raw --chaos 5 --s 150' + (p.seed ? ' --seed ' + p.seed : '');
+    var t2 = buildBaseText(shot.bg, shot.angle);
+    var prompt = '/imagine ' + bwPart + t2 + ' --iw 1.5 --ar ' + shot.ar + ' --style raw --chaos 5 --s 150' + MJ_TAIL + (p.seed ? ' --seed ' + p.seed : '');
     html += '<div class="prompt-wrap" id="wrap-' + shot.key + '"><div class="prompt-header"><span class="prompt-label" style="color:' + shot.color + '">' + shot.title + '</span><div class="prompt-actions"><button class="refine-btn" onclick="refinePrompt(\'' + shot.key + '\')">✦ AI Refine</button><button class="copy-btn" onclick="copyPrompt(this)">Copy</button></div></div><div class="prompt-block" id="block-' + shot.key + '">' + escapeHtml(prompt) + '</div></div>';
   });
   document.getElementById('output').innerHTML = html;
@@ -1537,7 +1544,7 @@ function injectNameIntoPrompts(idx) {
     : d.baseText;
   var exploreEl = document.getElementById('slot-explore-' + idx);
   if (exploreEl && exploreEl.textContent && exploreEl.textContent !== 'Generate collection to see prompt') {
-    exploreEl.textContent = '/imagine ' + namedBase + ' --ar 4:5 --style raw --chaos 12 --s 150';
+    exploreEl.textContent = '/imagine ' + namedBase + ' --ar 4:5 --style raw --chaos 12 --s 150' + MJ_TAIL;
   }
   rebuildProductionPrompt(idx, namedBase);
 }
@@ -1555,7 +1562,7 @@ function rebuildProductionPrompt(idx, overrideBase) {
   var refUrl   = document.getElementById('collectionRefUrl').value.trim();
   var refPart  = refUrl ? refUrl + ' ' : '';
   var seedPart = seed ? ' --seed ' + seed : '';
-  var prod = '/imagine ' + refPart + base + ' --iw 1.5 --ar 4:5 --style raw --chaos 5 --s 150' + seedPart;
+  var prod = '/imagine ' + refPart + base + ' --iw 1.5 --ar 4:5 --style raw --chaos 5 --s 150' + MJ_TAIL + seedPart;
   var block = document.getElementById('slot-prompt-'+idx);
   if (block) block.textContent = prod;
 }
@@ -1699,7 +1706,7 @@ document.getElementById('btnCollectionGenerate').addEventListener('click', async
         ? baseText.replace('professional product photograph of a 24 inch luxury faux botanical',
             'professional product photograph of a 24 inch luxury faux botanical wreath titled "' + wrName + '",')
         : baseText;
-      var explore = '/imagine ' + namedBase + ' --ar 4:5 --style raw --chaos 12 --s 150';
+      var explore = '/imagine ' + namedBase + ' --ar 4:5 --style raw --chaos 12 --s 150' + MJ_TAIL;
       var exploreBlock = document.getElementById('slot-explore-'+i);
       if (exploreBlock) exploreBlock.textContent = explore;
 
@@ -1709,7 +1716,7 @@ document.getElementById('btnCollectionGenerate').addEventListener('click', async
       var activeSeed = slotSeed || sharedSeed;
       var refPart = refUrl ? refUrl + ' ' : '';
       var seedPart = activeSeed ? ' --seed ' + activeSeed : '';
-      var prod = '/imagine ' + refPart + namedBase + ' --iw 1.5 --ar 4:5 --style raw --chaos 5 --s 150' + seedPart;
+      var prod = '/imagine ' + refPart + namedBase + ' --iw 1.5 --ar 4:5 --style raw --chaos 5 --s 150' + MJ_TAIL + seedPart;
       var prodBlock = document.getElementById('slot-prompt-'+i);
       if (prodBlock) prodBlock.textContent = prod;
     });

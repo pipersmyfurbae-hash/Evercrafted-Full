@@ -348,6 +348,20 @@ function showOutput(r){
   r.render_surface=r.render_surface||'';
   r.render_prompt=r.render_prompt||'';
 
+  // Deterministic safety net: the model is asked to fill these tokens, but if any
+  // leak through literally we substitute them from the structured fields we
+  // already have — the render prompt must never ship with raw [brackets]. Also
+  // guarantee a --v version flag (without it --style raw is silently dropped).
+  if(r.render_prompt){
+    r.render_prompt=r.render_prompt
+      .replace(/\[formula\]/gi, (r.formula||'crescent').toLowerCase())
+      .replace(/\[render_surface\]/gi, r.render_surface||'neutral plaster wall, soft daylight')
+      .replace(/\[season\]/gi, answers.season||'seasonal')
+      .replace(/\[palette_words\]/gi, (r.palette_words||[]).join(', '))
+      .replace(/\[[^\]]+\]/g,'').replace(/\s{2,}/g,' ').trim();
+    if(!/--v\s*\d/.test(r.render_prompt)) r.render_prompt+=' --v 6.1';
+  }
+
   document.getElementById('formula-badge').textContent=`${r.formula} · ${answers.season}`;
   document.getElementById('concept-brief').innerHTML=r.brief;
   document.getElementById('emchips').innerHTML=(r.emotions||[]).map(e=>`<span class="emchip" style="${emotionStyle(e)}">${e}</span>`).join('');
