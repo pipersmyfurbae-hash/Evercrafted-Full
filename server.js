@@ -159,6 +159,7 @@ app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'evercrafted-marke
 app.get('/evercrafted-schema.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-schema.js')));
 app.get('/engine.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'engine.js')));
 app.get('/evercrafted-nav.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-nav.js')));
+app.get('/evercrafted-watercolor.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-watercolor.js')));
 app.get('/evercrafted-tier-gate.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-tier-gate.js')));
 app.get('/evercrafted-auth.js', (_q, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-auth.js')));
 // Entitlements — which tier + packs the current user has. DEMO: query overrides

@@ -295,6 +295,13 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
           <button onclick="saveDesign()" style="padding:8px 18px;border-radius:100px;border:none;background:var(--sage,#687859);color:#fff;font-family:var(--sans,system-ui,sans-serif);font-size:11px;font-weight:600;letter-spacing:.05em;cursor:pointer">Save this design</button>
           <span id="save-msg" style="font-size:11px;color:var(--fa)"></span>
         </div>
+        <div style="margin-top:1.1rem;border-top:1px solid var(--bd,#ddd8d0);padding-top:1rem">
+          <div class="cl" style="margin-bottom:.5rem">Watercolor concept · deterministic, on-brand</div>
+          <canvas id="wc-canvas" style="width:100%;max-width:340px;aspect-ratio:1;display:block;margin:0 auto;border-radius:8px;box-shadow:0 6px 22px rgba(0,0,0,.10)"></canvas>
+          <div style="text-align:center;margin-top:.6rem">
+            <button onclick="downloadWatercolor()" style="padding:7px 16px;border-radius:100px;border:1px solid var(--bd,#ddd8d0);background:transparent;color:var(--mu,#6a6058);font-family:var(--sans,system-ui,sans-serif);font-size:11px;cursor:pointer">Download concept</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -304,6 +311,7 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
 </div>
 
 <script src="/engine.js"></script>
+<script src="/evercrafted-watercolor.js"></script>
 <script>
 /* ─── EMOTION DATA ─── */
 const EMOTIONS = [
@@ -913,6 +921,46 @@ function renderPrompt(){
   }
   document.getElementById('ptext').textContent=prompt;
   document.getElementById('pmeta').innerHTML=`<strong style="color:var(--mu)">ID:</strong> ${id} &nbsp;·&nbsp; <strong style="color:var(--mu)">Formula:</strong> ${f?.label} &nbsp;·&nbsp; <strong style="color:var(--mu)">Intensity:</strong> ${r.intensityLevel}/3 &nbsp;·&nbsp; ${metaTail}`;
+  renderWatercolorConcept(r);
+}
+
+/* ─── WATERCOLOR CONCEPT ─── deterministic painterly render of the design's
+   formula, tinted to its emotional palette. v2 stores formula + items (no
+   per-element geometry), so we map the formula to an engine layout and paint
+   that — a beautiful on-brand concept alongside the Midjourney prompt. */
+function watercolorLayout(formulaId,D,drama,seed){
+  const E=window.EvercraftedEngine; if(!E) return null;
+  const gen=(style,anchor,asym,formula)=>E.generateLayout({D,style,drama,seed,anchor,asym,formula:formula||'crescent'});
+  switch(formulaId){
+    case 'classic-balanced': case 'garden-scatter': return E.LAYOUTS.classicBalanced;
+    case 'bottom-heavy': case 'half-ring': return E.LAYOUTS.bottomHeavy;
+    case 'side-sweep': return gen('minimal','10:00 swag',0.45);
+    case 'diagonal': case 'wild-asymmetry': return gen('classic','4:30 lower-right',0.55);
+    case 'twin-cluster': return gen('lush','7:30 classic',0.7,'twin');
+    case 'focal-burst': case 'spiral-flow': return gen('lush','7:30 classic',0.62);
+    case 'crescent': default: return E.LAYOUTS.crescent;
+  }
+}
+function renderWatercolorConcept(r){
+  const WC=window.EvercraftedWatercolor, cv=document.getElementById('wc-canvas');
+  if(!WC||!cv||!r) return;
+  const drama=r.intensityLevel>=3?'high':r.intensityLevel>=2?'med':'low';
+  // stable seed from the design → same design renders the same painting
+  let seed=r.diam*131+r.intensityLevel*17; r.emotions.forEach(e=>{for(const c of e)seed=(Math.imul(seed,31)+c.charCodeAt(0))>>>0;});
+  const layout=watercolorLayout(r.formula,r.diam,drama,seed); if(!layout) return;
+  // tint the two accent species to the design's two dominant emotion colors
+  const ecol=r.emotions.map(id=>{const e=EMOTIONS.find(x=>x.id===id);return e&&e.col;}).filter(Boolean);
+  const primary=ecol[0], secondary=ecol[1]||ecol[0];
+  const colorFor=(key,role,def)=>{
+    if(key==='berryNavy'&&secondary) return secondary;
+    if(key==='tulipMauve'&&primary) return primary;
+    return def;
+  };
+  WC.render(cv, layout, {seed, colorFor});
+}
+function downloadWatercolor(){
+  const cv=document.getElementById('wc-canvas'); if(!cv) return;
+  const a=document.createElement('a'); a.download='evercrafted-watercolor-concept.png'; a.href=cv.toDataURL('image/png'); a.click();
 }
 
 function switchTab(id,el){
