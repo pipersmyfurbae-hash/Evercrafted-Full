@@ -996,7 +996,11 @@ function compositionTokens(v, layout) {
   }
   if (layout.meta?.symmetry !== "full") {
     parts.push(`asymmetric sweep from ${degToClock(v.arcStartDeg)} to ${degToClock(v.arcEndDeg)} o'clock`);
-    parts.push(`exposed grapevine arc from ${degToClock(v.arcEndDeg)} to ${degToClock(v.arcStartDeg)} o'clock as intentional negative space`);
+    // silence-arc % (handoff R11: coverage → "revealing X% of grapevine"). The
+    // bare fraction is the angular span outside the mass arc, normalized to 360.
+    const coveredSpan = ((((v.arcEndDeg - v.arcStartDeg) % 360) + 360) % 360) || 360;
+    const silencePct = clamp(Math.round(((360 - coveredSpan) / 360) * 100), 0, 95);
+    parts.push(`exposed grapevine arc from ${degToClock(v.arcEndDeg)} to ${degToClock(v.arcStartDeg)} o'clock revealing ${silencePct}% of the base as intentional negative space`);
   }
   const density = v.stackTotal >= 2.2 ? "lush layered density" : v.stackTotal >= 1.7 ? "balanced handcrafted density" : "airy minimal density";
   parts.push(density);
@@ -1004,6 +1008,100 @@ function compositionTokens(v, layout) {
     parts.push(v.asymScore > 0.6 ? "strong diagonal visual flow" : "gentle off-center composition");
   }
   return parts.join(", ");
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  WREATH_STYLE_DNA + EC_PROMPT_V1 compiler + PCValidator (handoff §7/§8/§11).
+//  These make engine.js the single source of truth for the geometry→language
+//  pass: compileWreathPrompt() ASSEMBLES the canonical prompt (Style DNA + R11
+//  composition tokens + locked negatives + locked params) and validatePrompt()
+//  is the SAME module's checker — so the generator is the validator's reference.
+// ════════════════════════════════════════════════════════════════════════════
+const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+
+// §7 — the 13 locked constants. Injected verbatim into every compiled prompt.
+const WREATH_STYLE_DNA = {
+  IDENTITY:     "luxury faux botanical wreath",
+  MATERIALS:    "high-end faux silk botanicals, indistinguishable from real blooms",
+  PETALS:       "soft matte petals, natural texture, complete absence of plastic sheen",
+  FOLIAGE:      "semi-gloss fabric leaves with visible vein structure",
+  CONSTRUCTION: "stems inserted into the grapevine base, intentional styled composition",
+  STYLE:        "editorial and breathing, significant negative space where density calls for it",
+  PHOTOGRAPHY:  "photorealistic professional product photograph",
+  LENS:         "85mm lens, shallow controlled depth of field, minimal lens distortion",
+  LIGHTING:     "soft neutral studio illumination, gentle grounded shadows, no hotspots",
+  ENVIRONMENT:  "controlled studio environment, cool gray plaster background",
+  FRAMING:      "entire wreath visible in frame, true-to-life scale accuracy",
+  INTENT:       "gallery-quality product documentation, not creative art, not illustration, not romanticized",
+};
+// "Not creative art / illustration / romanticized" intentionally live only in
+// INTENT (below) to avoid duplicating semantic weight (handoff Failure Mode 1).
+const STYLE_DNA_NEGATIVES = "No fresh flowers. No dew. No water droplets. No wild garden look. No overly organic irregularity. No outdoor field styling.";
+// §7/§18 — locked params. ar defaults to the portrait product variant (4:5);
+// pass ar:'5:4' for the canonical landscape or '1:1' for square catalog.
+const MJ_PARAMS = { ar: "4:5", style: "raw", s: 150, q: 2, v: 7 };
+const mjParamString = (ar) => `--ar ${ar || MJ_PARAMS.ar} --style ${MJ_PARAMS.style} --s ${MJ_PARAMS.s} --q ${MJ_PARAMS.q} --v ${MJ_PARAMS.v}`;
+
+// EC_PROMPT_V1 — assemble the human-facing prompt. `composition` should be the
+// compositionTokens() string (carries clock position + silence %); `florals` is
+// the variable species/inventory block. Output passes validatePrompt by design.
+function compileWreathPrompt(spec) {
+  const s = spec || {};
+  const size = s.sizeIn || 24;
+  const base = s.base || "natural grapevine base";
+  const mood = s.moodAdjective || "quiet and intentional";
+  const D = WREATH_STYLE_DNA;
+  const sent = [];
+  sent.push(`${cap(D.PHOTOGRAPHY)} of a ${size}-inch ${D.IDENTITY} on a ${base}, designed with quiet editorial restraint.`);
+  if (s.composition) sent.push(cap(s.composition) + ".");
+  sent.push(`Feels ${mood}, never busy or ornate.`);
+  if (s.florals) sent.push(String(s.florals).trim());
+  sent.push(`${cap(D.MATERIALS)}; ${D.PETALS}; ${D.FOLIAGE}; ${D.CONSTRUCTION}.`);
+  sent.push(cap(D.STYLE) + ".");
+  sent.push(STYLE_DNA_NEGATIVES);
+  sent.push(`${cap(D.LENS)}, ${D.LIGHTING}, ${D.ENVIRONMENT}.`);
+  sent.push(`${cap(D.FRAMING)}. ${cap(D.INTENT)}.`);
+  const seedPart = (s.seed !== undefined && s.seed !== null && s.seed !== "") ? ` --seed ${s.seed}` : "";
+  return `${sent.join(" ")}\n${mjParamString(s.ar)}${seedPart}`;
+}
+
+// §11 Fix 1 — Prompt Constitution Validator. Checks every required phrase + the
+// 1500-char budget. Block dispatch on FAIL; WARN is advisory; PASS proceeds.
+const PCV_REQUIRED = [
+  { name: "photography_intent", pattern: /photorealistic professional product photograph/i },
+  { name: "identity", pattern: /luxury faux botanical wreath/i },
+  { name: "silk_materials", pattern: /high-end faux silk/i },
+  { name: "matte_petals", pattern: /soft matte petals/i },
+  { name: "no_plastic_sheen", pattern: /complete absence of plastic sheen/i },
+  { name: "semi_gloss_foliage", pattern: /semi-gloss fabric/i },
+  { name: "studio_environment", pattern: /controlled studio environment/i },
+  { name: "lens_85mm", pattern: /85mm lens/i },
+  { name: "framing", pattern: /entire wreath visible in frame/i },
+  { name: "gallery_intent", pattern: /gallery-quality product documentation/i },
+  { name: "not_romanticized", pattern: /not romanticized/i },
+  { name: "no_fresh_flowers", pattern: /no fresh flowers/i },
+  { name: "clock_position", pattern: /o'clock/i },
+  { name: "silence_arc", pattern: /(silence arc|completely bare|revealing \d)/i },
+  { name: "params_style_raw", pattern: /--style raw/i },
+  { name: "params_s_150", pattern: /--s 150/i },
+  { name: "params_v7", pattern: /--v 7/i },
+];
+const PCV_MAX_LENGTH = 1500;
+function validatePrompt(prompt) {
+  const p = String(prompt == null ? "" : prompt);
+  const checks = PCV_REQUIRED.map((c) => ({
+    name: c.name,
+    status: c.pattern.test(p) ? "PASS" : "FAIL",
+    note: c.pattern.test(p) ? "found" : `missing: ${c.name}`,
+  }));
+  checks.push({
+    name: "prompt_length",
+    status: p.length <= PCV_MAX_LENGTH ? "PASS" : "WARN",
+    note: `${p.length} chars (limit ${PCV_MAX_LENGTH})`,
+  });
+  const fails = checks.filter((c) => c.status === "FAIL").length;
+  const warns = checks.filter((c) => c.status === "WARN").length;
+  return { status: fails ? "FAIL" : warns ? "WARN" : "PASS", checks, summary: `${fails} failures, ${warns} warnings` };
 }
 
 // ─── Geometry & transforms ───────────────────────────────────────────────────
@@ -1024,5 +1122,6 @@ function placementTransform(slot, pos, pi, adjust, override) {
   if (override?.flip) flip = !flip;
   return { rot, flip };
 }
-  return { C, SLOTS, SLOT_MAP, ROLE_FACTOR, ROLE_TEX, colorGroupOf, GROUP_COLORS, COVERAGE_CLASSES, TOTAL_STACK_BANDS, BLOOM_STACK_BAND, BASE_WIDTHS, SIZE_TABLE, ARC_ANCHORS, rWorkIn, degPerInch, clamp, degToClock, out, ccw, cw, LAYOUTS, mulberry32, pickInBand, sampleClusterAngles, visualWeight, computeCentroid, angDist, generateLayout, computeValidation, compositionTokens, toCart, placementTransform };
+  return { C, SLOTS, SLOT_MAP, ROLE_FACTOR, ROLE_TEX, colorGroupOf, GROUP_COLORS, COVERAGE_CLASSES, TOTAL_STACK_BANDS, BLOOM_STACK_BAND, BASE_WIDTHS, SIZE_TABLE, ARC_ANCHORS, rWorkIn, degPerInch, clamp, degToClock, out, ccw, cw, LAYOUTS, mulberry32, pickInBand, sampleClusterAngles, visualWeight, computeCentroid, angDist, generateLayout, computeValidation, compositionTokens, toCart, placementTransform,
+    WREATH_STYLE_DNA, STYLE_DNA_NEGATIVES, MJ_PARAMS, mjParamString, compileWreathPrompt, validatePrompt };
 });
