@@ -988,13 +988,18 @@ function computeValidation(layout, slotAttrs) {
 // ─── R11: composition → prompt tokens (geometry generates language) ─────────
 function compositionTokens(v, layout) {
   if (!v) return "";
+  const full = !!(layout && layout.meta && layout.meta.symmetry === "full");
   const parts = [];
-  if (v.centroid) {
+  if (full) {
+    // Full-ring (e.g. classic-balanced): no single centroid or silence arc —
+    // describe the even distribution instead so the sentence still reads.
+    parts.push("even balanced full-ring composition, botanical mass distributed evenly around the full circumference");
+  } else if (v.centroid) {
     const cl = degToClock(v.centroid.angle);
     const region = cl >= 7 && cl <= 8 ? "lower-left" : cl >= 4 && cl <= 5 ? "lower-right" : cl >= 10 && cl <= 11 ? "upper-left" : cl >= 1 && cl <= 2 ? "upper-right" : cl === 6 ? "bottom" : cl === 12 ? "top" : cl === 9 ? "left" : "right";
     parts.push(`floral mass gathered ${region} around ${cl} o'clock`);
   }
-  if (layout.meta?.symmetry !== "full") {
+  if (!full) {
     parts.push(`asymmetric sweep from ${degToClock(v.arcStartDeg)} to ${degToClock(v.arcEndDeg)} o'clock`);
     // silence-arc % (handoff R11: coverage → "revealing X% of grapevine"). The
     // bare fraction is the angular span outside the mass arc, normalized to 360.
@@ -1086,18 +1091,31 @@ const PCV_REQUIRED = [
   { name: "params_s_150", pattern: /--s 150/i },
   { name: "params_v7", pattern: /--v 7/i },
 ];
-const PCV_MAX_LENGTH = 1500;
-function validatePrompt(prompt) {
+// Budget raised from the doc's original 1500: that number predates mandatory
+// Style DNA injection (~640 fixed chars). With Style DNA + R11 + a real
+// inventory lock, 1500 is unreachable without dropping the lock — which the doc
+// itself forbids (never silently cap). 1800 fits the full canonical prompt;
+// override per-call via opts.maxLength.
+const PCV_MAX_LENGTH = 1800;
+// opts: { maxLength, fullRing }. Full-ring compositions (classic-balanced,
+// garden-scatter) legitimately have no clock position or silence arc, so those
+// two checks are marked N/A rather than FAIL when fullRing is set.
+function validatePrompt(prompt, opts) {
+  const o = opts || {};
+  const maxLength = o.maxLength || PCV_MAX_LENGTH;
+  const fullRing = !!o.fullRing;
   const p = String(prompt == null ? "" : prompt);
-  const checks = PCV_REQUIRED.map((c) => ({
-    name: c.name,
-    status: c.pattern.test(p) ? "PASS" : "FAIL",
-    note: c.pattern.test(p) ? "found" : `missing: ${c.name}`,
-  }));
+  const checks = PCV_REQUIRED.map((c) => {
+    if (fullRing && (c.name === "clock_position" || c.name === "silence_arc")) {
+      return { name: c.name, status: "N/A", note: "not applicable to full-ring composition" };
+    }
+    const ok = c.pattern.test(p);
+    return { name: c.name, status: ok ? "PASS" : "FAIL", note: ok ? "found" : `missing: ${c.name}` };
+  });
   checks.push({
     name: "prompt_length",
-    status: p.length <= PCV_MAX_LENGTH ? "PASS" : "WARN",
-    note: `${p.length} chars (limit ${PCV_MAX_LENGTH})`,
+    status: p.length <= maxLength ? "PASS" : "WARN",
+    note: `${p.length} chars (limit ${maxLength})`,
   });
   const fails = checks.filter((c) => c.status === "FAIL").length;
   const warns = checks.filter((c) => c.status === "WARN").length;

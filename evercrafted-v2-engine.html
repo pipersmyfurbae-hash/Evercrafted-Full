@@ -866,12 +866,12 @@ function renderPrompt(){
   // positions, asymmetric sweep, negative space, density) instead of a generic
   // "asymmetric crescent" that ignores the actual layout.
   const E=window.EvercraftedEngine;
-  let compTokens='';
+  let compTokens='', fullRing=false;
   if(f&&E&&E.compositionTokens){
     const nums=(f.arc.match(/\d+/g)||[]).map(Number);
     const aStart=nums.length?nums[0]:0, aEnd=nums.length>1?nums[1]:360;
     const span=((aEnd-aStart)%360+360)%360;
-    const fullRing=span===0||span>=355;
+    fullRing=span===0||span>=355;
     const mid=(aStart+span/2)%360;
     const stackTotal=r.intensityLevel>=3?2.3:r.intensityLevel>=2?1.9:1.5;
     const moving=['traveling','draping','expansive'].indexOf(f.dir)>=0;
@@ -898,11 +898,11 @@ function renderPrompt(){
     const moods={1:'quiet and restrained',2:'composed and intentional',3:'bold and resolved'};
     // Concise florals: name the focal mass + structural movement + finish/palette,
     // and let the inventory lock carry the full species list (no double-listing,
-    // which keeps the compiled prompt inside the 1500-char budget).
+    // which keeps the compiled prompt inside the char budget).
     const focal=[...new Set(r.p1.filter(s=>s.role==='focal'&&s.item).map(s=>s.item.name))].join(', ')||str(r.p1.filter(s=>s.role==='structural'));
     const florals=`Emotional tone: ${r.emotions.join(', ')}. ${arch} structural forms anchor the ${f?.arc} arc with ${focal} as focal mass; ${finishes.join('/')} finish, ${palettes.join(', ')} palette, ${intLabel}. ${lock}`;
     prompt=E.compileWreathPrompt({sizeIn:r.diam, base:'natural grapevine base', composition:compTokens, florals, moodAdjective:moods[r.intensityLevel]||'composed and intentional', ar:'4:5'});
-    const val=E.validatePrompt(prompt);
+    const val=E.validatePrompt(prompt,{fullRing});
     const col=val.status==='PASS'?'#687859':val.status==='WARN'?'#9a7a40':'#a8584f';
     const bad=val.checks.filter(c=>c.status!=='PASS').map(c=>c.name);
     metaTail=`<strong style="color:${col}">Constitution: ${val.status}</strong>${bad.length?' · '+bad.join(', '):''} &nbsp;·&nbsp; ${prompt.length} chars`;
