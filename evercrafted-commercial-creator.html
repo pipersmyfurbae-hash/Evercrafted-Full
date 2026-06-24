@@ -359,7 +359,7 @@ function showOutput(r){
       .replace(/\[season\]/gi, answers.season||'seasonal')
       .replace(/\[palette_words\]/gi, (r.palette_words||[]).join(', '))
       .replace(/\[[^\]]+\]/g,'').replace(/\s{2,}/g,' ').trim();
-    if(!/--v\s*\d/.test(r.render_prompt)) r.render_prompt+=' --v 6.1';
+    if(!/--v\s*\d/.test(r.render_prompt)) r.render_prompt+=' --v 7';
   }
 
   document.getElementById('formula-badge').textContent=`${r.formula} · ${answers.season}`;

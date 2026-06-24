@@ -1215,7 +1215,7 @@ function getParams() {
 // carry. --style raw only exists on v6/v7, so an explicit --v is required;
 // without it the prompt rides the user's default version and --style raw is
 // silently dropped on older defaults.
-var MJ_TAIL = ' --q 2 --v 6.1';
+var MJ_TAIL = ' --q 2 --v 7';
 function buildV1(p, text) {
   return '/imagine ' + text + ' --ar ' + p.ar + ' --style raw --chaos 12 --s 150' + MJ_TAIL + (p.seed ? ' --seed ' + p.seed : '');
 }
@@ -1229,7 +1229,10 @@ function buildV3(p, text) {
     var srefUrl = document.getElementById('srefUrl').value.trim();
     var sw = document.getElementById('swDiscord').value;
     var prefix = p.blueprint ? p.blueprint + ' ' : '';
-    var srefPart = srefUrl ? ' --sref ' + srefUrl + ' --sw ' + sw + ' --sv 4' : '';
+    // No --sv pin: V7 rewrote the style-reference system (June 2025). --sv 4 is
+    // the legacy algorithm, only correct for pre-2025 sref *codes*; for a pasted
+    // image URL we let V7 use its current default sref algorithm.
+    var srefPart = srefUrl ? ' --sref ' + srefUrl + ' --sw ' + sw : '';
     return '/imagine ' + prefix + text + srefPart + ' --iw ' + p.iw + ' --ar ' + p.ar + ' --style raw --chaos ' + p.chaos + ' --s ' + p.s + MJ_TAIL + (p.seed ? ' --seed ' + p.seed : '');
   } else {
     var bwPart = p.hero ? p.hero + ' ' : '';
