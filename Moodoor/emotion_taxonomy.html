@@ -1,0 +1,197 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans,sans-serif);background:transparent;color:var(--color-text-primary)}
+.tax-root{padding:1rem 0}
+.tier-label{font-size:11px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;padding-left:4px}
+.cluster{margin-bottom:20px}
+.cluster-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px}
+.mood-pill{display:inline-flex;flex-direction:column;border-radius:var(--border-radius-lg,12px);padding:10px 14px;border:0.5px solid;cursor:pointer;min-width:110px;transition:opacity .15s}
+.mood-pill:hover{opacity:.8}
+.mood-pill .m-name{font-size:13px;font-weight:500}
+.mood-pill .m-meta{font-size:11px;margin-top:3px;opacity:.75}
+.sub-row{display:flex;flex-wrap:wrap;gap:6px;padding-left:12px;margin-bottom:4px}
+.sub-pill{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:5px 10px;border:0.5px solid;cursor:pointer;font-size:12px;transition:opacity .15s}
+.sub-pill:hover{opacity:.75}
+.sub-pill .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tags-row{display:flex;flex-wrap:wrap;gap:6px;padding-left:24px;margin-bottom:12px}
+.tag{font-size:11px;padding:3px 8px;border-radius:20px;border:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.detail-panel{display:none;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;margin:8px 0 12px;font-size:13px}
+.detail-panel.open{display:block}
+.detail-panel h4{font-size:13px;font-weight:500;margin-bottom:8px}
+.detail-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.detail-row:last-child{border-bottom:none}
+.detail-row span:last-child{color:var(--color-text-primary);text-align:right;max-width:60%}
+.w-bar{display:inline-block;height:8px;border-radius:4px;vertical-align:middle;margin-right:6px}
+
+/* color ramps */
+.calm  {background:#E1F5EE;border-color:#9FE1CB;color:#085041}
+.calm-s{background:#E1F5EE40;border-color:#9FE1CB;color:#085041}
+.calm-d{background:#9FE1CB40;border-color:#5DCAA5;color:#085041}
+.joyful{background:#FAEEDA;border-color:#FAC775;color:#412402}
+.joyful-s{background:#FAEEDA40;border-color:#FAC775;color:#412402}
+.joyful-d{background:#FAC77540;border-color:#EF9F27;color:#412402}
+.romantic{background:#FBEAF0;border-color:#F4C0D1;color:#4B1528}
+.romantic-s{background:#FBEAF040;border-color:#F4C0D1;color:#4B1528}
+.romantic-d{background:#F4C0D140;border-color:#ED93B1;color:#4B1528}
+.seasonal{background:#EEEDFE;border-color:#CECBF6;color:#26215C}
+.seasonal-s{background:#EEEDFE40;border-color:#CECBF6;color:#26215C}
+.seasonal-d{background:#CECBF640;border-color:#AFA9EC;color:#26215C}
+.moment{background:#FAECE7;border-color:#F5C4B3;color:#4A1B0C}
+.moment-s{background:#FAECE740;border-color:#F5C4B3;color:#4A1B0C}
+.moment-d{background:#F5C4B340;border-color:#F0997B;color:#4A1B0C}
+@media(prefers-color-scheme:dark){
+.calm  {background:#085041;border-color:#0F6E56;color:#9FE1CB}
+.calm-s{background:#04342C60;border-color:#0F6E56;color:#9FE1CB}
+.calm-d{background:#04342C80;border-color:#0F6E56;color:#5DCAA5}
+.joyful{background:#412402;border-color:#854F0B;color:#FAC775}
+.joyful-s{background:#41240260;border-color:#854F0B;color:#FAC775}
+.joyful-d{background:#41240280;border-color:#854F0B;color:#EF9F27}
+.romantic{background:#4B1528;border-color:#993556;color:#F4C0D1}
+.romantic-s{background:#4B152860;border-color:#993556;color:#F4C0D1}
+.romantic-d{background:#4B152880;border-color:#993556;color:#ED93B1}
+.seasonal{background:#26215C;border-color:#534AB7;color:#CECBF6}
+.seasonal-s{background:#26215C60;border-color:#534AB7;color:#CECBF6}
+.seasonal-d{background:#26215C80;border-color:#534AB7;color:#AFA9EC}
+.moment{background:#4A1B0C;border-color:#993C1D;color:#F5C4B3}
+.moment-s{background:#4A1B0C60;border-color:#993C1D;color:#F5C4B3}
+.moment-d{background:#4A1B0C80;border-color:#993C1D;color:#F0997B}
+}
+</style>
+</head>
+<body>
+<div class="tax-root">
+
+<div id="active-detail" class="detail-panel"></div>
+
+<div class="cluster">
+<div class="tier-label">Cluster 1 — Calm</div>
+<div class="cluster-row">
+  <div class="mood-pill calm" onclick="showDetail('serene')"><span class="m-name">Serene</span><span class="m-meta">still · undisturbed</span></div>
+  <div class="mood-pill calm" onclick="showDetail('grounded')"><span class="m-name">Grounded</span><span class="m-meta">earthy · rooted</span></div>
+  <div class="mood-pill calm" onclick="showDetail('softwelcome')"><span class="m-name">Soft welcome</span><span class="m-meta">gentle · understated</span></div>
+</div>
+<div class="sub-row">
+  <span class="sub-pill calm-s"><span class="dot calm-d" style="background:#1D9E75"></span>Eucalyptus + neutral linen</span>
+  <span class="sub-pill calm-s"><span class="dot" style="background:#B4B2A9;border-radius:50%"></span>Muted stone palettes</span>
+  <span class="sub-pill calm-s"><span class="dot" style="background:#97C459;border-radius:50%"></span>Air plants, moss</span>
+</div>
+<div class="tags-row">
+  <span class="tag">low maintenance</span><span class="tag">rental-friendly</span><span class="tag">year-round</span><span class="tag">minimalist</span><span class="tag">sensory-sensitive</span>
+</div>
+</div>
+
+<div class="cluster">
+<div class="tier-label">Cluster 2 — Joyful</div>
+<div class="cluster-row">
+  <div class="mood-pill joyful" onclick="showDetail('celebratory')"><span class="m-name">Celebratory</span><span class="m-meta">festive · expansive</span></div>
+  <div class="mood-pill joyful" onclick="showDetail('playful')"><span class="m-name">Playful</span><span class="m-meta">bright · spirited</span></div>
+  <div class="mood-pill joyful" onclick="showDetail('brightwelcome')"><span class="m-name">Bright welcome</span><span class="m-meta">warm · energetic</span></div>
+</div>
+<div class="sub-row">
+  <span class="sub-pill joyful-s"><span class="dot" style="background:#EF9F27;border-radius:50%"></span>Citrus + sunflower accents</span>
+  <span class="sub-pill joyful-s"><span class="dot" style="background:#D4537E;border-radius:50%"></span>Bold ribbon, texture</span>
+  <span class="sub-pill joyful-s"><span class="dot" style="background:#639922;border-radius:50%"></span>Full seasonal blooms</span>
+</div>
+<div class="tags-row">
+  <span class="tag">high visual impact</span><span class="tag">seasonal refresh</span><span class="tag">gift-ready</span><span class="tag">social-shareable</span>
+</div>
+</div>
+
+<div class="cluster">
+<div class="tier-label">Cluster 3 — Romantic</div>
+<div class="cluster-row">
+  <div class="mood-pill romantic" onclick="showDetail('intimate')"><span class="m-name">Intimate</span><span class="m-meta">tender · close</span></div>
+  <div class="mood-pill romantic" onclick="showDetail('warmglow')"><span class="m-name">Warm glow</span><span class="m-meta">candlelit · inviting</span></div>
+</div>
+<div class="sub-row">
+  <span class="sub-pill romantic-s"><span class="dot" style="background:#ED93B1;border-radius:50%"></span>Dried rose, pampas</span>
+  <span class="sub-pill romantic-s"><span class="dot" style="background:#EF9F27;border-radius:50%"></span>Lantern + taper accents</span>
+  <span class="sub-pill romantic-s"><span class="dot" style="background:#F09995;border-radius:50%"></span>Blush + burgundy tones</span>
+</div>
+<div class="tags-row">
+  <span class="tag">evening-oriented</span><span class="tag">couples</span><span class="tag">anniversary</span><span class="tag">date-night hosting</span>
+</div>
+</div>
+
+<div class="cluster">
+<div class="tier-label">Cluster 4 — Seasonal</div>
+<div class="cluster-row">
+  <div class="mood-pill seasonal" onclick="showDetail('harvest')"><span class="m-name">Harvest</span><span class="m-meta">amber · abundant</span></div>
+  <div class="mood-pill seasonal" onclick="showDetail('holidayhosting')"><span class="m-name">Holiday hosting</span><span class="m-meta">rich · layered</span></div>
+  <div class="mood-pill seasonal" onclick="showDetail('springrenewal')"><span class="m-name">Spring renewal</span><span class="m-meta">fresh · emerging</span></div>
+  <div class="mood-pill seasonal" onclick="showDetail('winterhush')"><span class="m-name">Winter hush</span><span class="m-meta">quiet · crystalline</span></div>
+</div>
+<div class="sub-row">
+  <span class="sub-pill seasonal-s"><span class="dot" style="background:#534AB7;border-radius:50%"></span>Drop-timed assortments</span>
+  <span class="sub-pill seasonal-s"><span class="dot" style="background:#AFA9EC;border-radius:50%"></span>Strict inventory windows</span>
+  <span class="sub-pill seasonal-s"><span class="dot" style="background:#7F77DD;border-radius:50%"></span>Shipping cutoff rules</span>
+</div>
+<div class="tags-row">
+  <span class="tag">time-limited</span><span class="tag">drop-model</span><span class="tag">high aov</span><span class="tag">gifting peak</span><span class="tag">pre-order eligible</span>
+</div>
+</div>
+
+<div class="cluster">
+<div class="tier-label">Cluster 5 — Life moment</div>
+<div class="cluster-row">
+  <div class="mood-pill moment" onclick="showDetail('newlynested')"><span class="m-name">Newly nested</span><span class="m-meta">hopeful · fresh start</span></div>
+  <div class="mood-pill moment" onclick="showDetail('newbaby')"><span class="m-name">New baby</span><span class="m-meta">tender · wonder</span></div>
+  <div class="mood-pill moment" onclick="showDetail('hostingguests')"><span class="m-name">Hosting guests</span><span class="m-meta">welcoming · prepared</span></div>
+  <div class="mood-pill moment" onclick="showDetail('remembrance')"><span class="m-name">Remembrance</span><span class="m-meta">quiet · honorable</span></div>
+</div>
+<div class="sub-row">
+  <span class="sub-pill moment-s"><span class="dot" style="background:#D85A30;border-radius:50%"></span>Identity-anchored copy</span>
+  <span class="sub-pill moment-s"><span class="dot" style="background:#F5C4B3;border-radius:50%"></span>Giftable bundles</span>
+  <span class="sub-pill moment-s"><span class="dot" style="background:#993C1D;border-radius:50%"></span>High repeat intent</span>
+</div>
+<div class="tags-row">
+  <span class="tag">high emotional weight</span><span class="tag">gifting</span><span class="tag">referral trigger</span><span class="tag">personalisation</span>
+</div>
+</div>
+
+</div>
+
+<script>
+const details = {
+  serene:{name:"Serene",cluster:"Calm",products:["Eucalyptus wreath (dried)","Neutral linen door mat","White pampas stem bundle","Concrete planter"],copy:"'A door that breathes.'",constraints:["no bright color","avoid faux flora","low maintenance preferred"],weight:{mood:0.90,style:0.85,margin:0.72}},
+  grounded:{name:"Grounded",cluster:"Calm",products:["Twig + berry wreath","Terracotta planter","Natural fiber mat","Olive branch stems"],copy:"'Roots before anything else.'",constraints:["earthy palette only","natural materials","outdoor-rated"],weight:{mood:0.88,style:0.80,margin:0.78}},
+  softwelcome:{name:"Soft welcome",cluster:"Calm",products:["Preserved moss wreath","Woven seagrass basket","Cotton ribbon accent","Air plant trio"],copy:"'Come in. Stay a while.'",constraints:["allergy-check moss","no strong scent","rental-safe hardware"],weight:{mood:0.82,style:0.78,margin:0.70}},
+  celebratory:{name:"Celebratory",cluster:"Joyful",products:["Full bloom seasonal wreath","Striped door mat","Metallic lantern pair","Ribbon bundle — festive"],copy:"'Every arrival is an occasion.'",constraints:["must ship before event date","high visual impact","weather-check fresh"],weight:{mood:0.92,style:0.75,margin:0.82}},
+  playful:{name:"Playful",cluster:"Joyful",products:["Citrus + sunflower wreath","Bold color door mat","Painted terracotta set","Whimsical stem picks"],copy:"'Smiles start at the door.'",constraints:["UV-stable colors","kid-friendly","no breakables"],weight:{mood:0.85,style:0.72,margin:0.80}},
+  brightwelcome:{name:"Bright welcome",cluster:"Joyful",products:["Mixed bloom wreath (large)","Woven stripe mat","Planter + soil kit","Seasonal stem assortment"],copy:"'A door they'll remember.'",constraints:["fresh bloom logistics","seasonal availability","shipping window"],weight:{mood:0.87,style:0.79,margin:0.76}},
+  intimate:{name:"Intimate",cluster:"Romantic",products:["Dried rose + eucalyptus wreath","Black iron lantern","Taper candle set","Blush ribbon spool"],copy:"'Before you even walk in.'",constraints:["flame safety note","allergy check rose","evening-first styling"],weight:{mood:0.88,style:0.83,margin:0.74}},
+  warmglow:{name:"Warm glow",cluster:"Romantic",products:["Pampas + dried lavender wreath","Pillar candle trio","Amber glass lantern","Velvet ribbon"],copy:"'Warmth that starts at the threshold.'",constraints:["outdoor candle safety","no fresh flora (humidity)","evening photography"],weight:{mood:0.84,style:0.80,margin:0.77}},
+  harvest:{name:"Harvest",cluster:"Seasonal",products:["Wheat + dried corn husk wreath","Pumpkin planter set","Amber lantern pair","Rust ribbon bundle"],copy:"'Abundance at your door.'",constraints:["Sep–Nov window","pre-order recommended","pumpkin perishable"],weight:{mood:0.90,style:0.85,margin:0.88}},
+  holidayhosting:{name:"Holiday hosting",cluster:"Seasonal",products:["Evergreen + berry wreath (large)","Plaid door mat","Cedar stem bundle","Gold ribbon + hanger"],copy:"'Let them feel it before they ring the bell.'",constraints:["Nov–Jan window","shipping cutoff critical","scent note (cedar)"],weight:{mood:0.93,style:0.88,margin:0.91}},
+  springrenewal:{name:"Spring renewal",cluster:"Seasonal",products:["Tulip + greenery wreath","Terracotta planter set","Moss mat","Pastel stem assortment"],copy:"'Begin again, beautifully.'",constraints:["Mar–May window","fresh logistics","color palette approval"],weight:{mood:0.86,style:0.80,margin:0.79}},
+  winterhush:{name:"Winter hush",cluster:"Seasonal",products:["White eucalyptus + pine wreath","Frosted lantern","Cream ribbon","Twig spray bundle"],copy:"'Quiet on the outside. Warm within.'",constraints:["Dec–Feb window","cold-weather outdoor rating","no fresh flora"],weight:{mood:0.87,style:0.82,margin:0.83}},
+  newlynested:{name:"Newly nested",cluster:"Life moment",products:["Neutral welcome wreath","Personalized door mat","Starter planter kit","Welcome home stems"],copy:"'A home begins here.'",constraints:["giftable packaging","blank name mat option","address confirmation"],weight:{mood:0.91,style:0.76,margin:0.80}},
+  newbaby:{name:"New baby",cluster:"Life moment",products:["Soft bloom wreath (pastel)","Garden planter + bulbs","Blush + sage ribbon","Baby's breath stem bundle"],copy:"'New life, new door.'",constraints:["no strong scent","allergen check","gift-note included"],weight:{mood:0.94,style:0.74,margin:0.78}},
+  hostingguests:{name:"Hosting guests",cluster:"Life moment",products:["Full seasonal wreath","Classic stripe mat","Planter pair","Stem + ribbon refresh kit"],copy:"'First impressions start outside.'",constraints:["arrival-date shipping","high availability SKUs","quick-swap friendly"],weight:{mood:0.88,style:0.82,margin:0.84}},
+  remembrance:{name:"Remembrance",cluster:"Life moment",products:["White rose + eucalyptus wreath","Cream candle lantern","Dried lavender bundle","Stone-finish planter"],copy:"'A quiet presence at the door.'",constraints:["subdued palette only","no celebratory framing","gift note sensitivity"],weight:{mood:0.92,style:0.80,margin:0.65}},
+};
+
+let openId = null;
+function showDetail(id){
+  const panel = document.getElementById('active-detail');
+  if(openId===id){panel.classList.remove('open');panel.innerHTML='';openId=null;return;}
+  openId=id;
+  const d=details[id];
+  const bar=(v)=>`<span class="w-bar" style="width:${Math.round(v*60)}px;background:var(--color-border-secondary)"></span>${(v*100).toFixed(0)}%`;
+  panel.innerHTML=`<h4>${d.name} <span style="font-weight:400;color:var(--color-text-secondary)">· ${d.cluster}</span></h4>
+<div class="detail-row"><span>Anchor copy</span><span><em>${d.copy}</em></span></div>
+<div class="detail-row"><span>Core SKUs</span><span>${d.products.slice(0,3).join(' · ')}</span></div>
+<div class="detail-row"><span>Constraints</span><span>${d.constraints.join(', ')}</span></div>
+<div class="detail-row"><span>Mood match weight</span><span>${bar(d.weight.mood)}</span></div>
+<div class="detail-row"><span>Style similarity</span><span>${bar(d.weight.style)}</span></div>
+<div class="detail-row"><span>Margin score</span><span>${bar(d.weight.margin)}</span></div>`;
+  panel.classList.add('open');
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Humanizer — Strip the AI out of your writing</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1612;
+    --paper: #f5f0e8;
+    --cream: #ede8dc;
+    --accent: #c0392b;
+    --accent-dark: #922b21;
+    --muted: #7a7068;
+    --border: #ccc5b5;
+    --highlight: #fef9e7;
+    --green: #1e8449;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Subtle paper texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding: 2rem 0 1.5rem;
+    margin-bottom: 3rem;
+    position: relative;
+  }
+
+  .masthead {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    letter-spacing: -1px;
+    line-height: 1;
+  }
+
+  .logo em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .tagline {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    border-left: 2px solid var(--border);
+    padding-left: 1rem;
+    line-height: 1.5;
+  }
+
+  /* Columns */
+  .workspace {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  @media (max-width: 720px) {
+    .workspace { grid-template-columns: 1fr; }
+  }
+
+  .pane {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .pane-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .pane-label .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .pane-label .dot.green { background: var(--green); }
+
+  textarea {
+    width: 100%;
+    min-height: 360px;
+    padding: 1.25rem;
+    border: 1.5px solid var(--border);
+    border-radius: 2px;
+    background: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--ink);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  textarea:focus { border-color: var(--ink); }
+
+  textarea::placeholder { color: var(--border); }
+
+  .output-box {
+    width: 100%;
+    min-height: 360px;
+    padding: 1.25rem;
+    border: 1.5px solid var(--border);
+    border-radius: 2px;
+    background: var(--highlight);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--ink);
+    white-space: pre-wrap;
+    position: relative;
+    overflow: auto;
+  }
+
+  .output-box.loading {
+    background: var(--cream);
+  }
+
+  .output-placeholder {
+    color: var(--border);
+    font-style: italic;
+  }
+
+  /* Loading animation */
+  .typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--accent);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 0.7s infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  /* Action row */
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-humanize {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    padding: 0.85rem 2rem;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: background 0.15s, transform 0.1s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-humanize:hover:not(:disabled) {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+  }
+
+  .btn-humanize:active:not(:disabled) { transform: translateY(0); }
+
+  .btn-humanize:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn-copy {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--muted);
+    border: 1.5px solid var(--border);
+    padding: 0.8rem 1.5rem;
+    cursor: pointer;
+    border-radius: 1px;
+    transition: all 0.15s;
+  }
+
+  .btn-copy:hover { border-color: var(--ink); color: var(--ink); }
+
+  .btn-clear {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    padding: 0.8rem 0.5rem;
+    cursor: pointer;
+    transition: color 0.15s;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .btn-clear:hover { color: var(--accent); }
+
+  .status-msg {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-left: auto;
+  }
+
+  /* Audit section */
+  .audit {
+    border: 1.5px solid var(--border);
+    border-radius: 2px;
+    background: white;
+    margin-bottom: 3rem;
+    overflow: hidden;
+    display: none;
+  }
+
+  .audit.visible { display: block; }
+
+  .audit-header {
+    padding: 0.75rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .audit-body {
+    padding: 1.25rem;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--ink);
+    white-space: pre-wrap;
+  }
+
+  .audit-body .ai-tag {
+    display: inline-block;
+    background: #fdecea;
+    color: var(--accent-dark);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 2px;
+    margin: 0 2px;
+    vertical-align: middle;
+  }
+
+  /* Examples */
+  .examples-row {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.75rem;
+  }
+
+  .example-chip {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.05em;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    cursor: pointer;
+    background: white;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+
+  .example-chip:hover { border-color: var(--ink); color: var(--ink); background: var(--cream); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--border);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  /* Error */
+  .error-msg {
+    background: #fdecea;
+    border: 1px solid #e8a09a;
+    border-radius: 2px;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: var(--accent-dark);
+    display: none;
+  }
+
+  .error-msg.visible { display: block; }
+
+  /* Char counter */
+  .char-counter {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--border);
+    text-align: right;
+    margin-top: -0.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="masthead">
+      <div class="logo">H<em>u</em>manizer</div>
+      <div class="tagline">Strip the AI out of your writing<br>Powered by Claude</div>
+    </div>
+  </header>
+
+  <div class="examples-row">
+    <span style="font-family:'IBM Plex Mono',monospace;font-size:0.65rem;color:var(--muted);letter-spacing:0.08em;align-self:center;">TRY AN EXAMPLE →</span>
+    <button class="example-chip" onclick="loadExample('marketing')">Marketing copy</button>
+    <button class="example-chip" onclick="loadExample('bio')">Author bio</button>
+    <button class="example-chip" onclick="loadExample('blog')">Blog intro</button>
+    <button class="example-chip" onclick="loadExample('email')">Work email</button>
+  </div>
+
+  <div class="workspace">
+    <div class="pane">
+      <div class="pane-label"><span class="dot"></span> AI-generated text</div>
+      <textarea id="inputText" placeholder="Paste your AI-generated text here. The more, the better — the tool works best on full paragraphs, blog posts, emails, or bios."></textarea>
+      <div class="char-counter" id="charCounter">0 characters</div>
+    </div>
+    <div class="pane">
+      <div class="pane-label"><span class="dot green"></span> Humanized output</div>
+      <div class="output-box" id="outputBox">
+        <span class="output-placeholder">Your humanized text will appear here…</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="btn-humanize" id="humanizeBtn" onclick="humanize()">✦ Humanize</button>
+    <button class="btn-copy" id="copyBtn" onclick="copyOutput()" style="display:none">Copy output</button>
+    <button class="btn-clear" onclick="clearAll()">Clear</button>
+    <span class="status-msg" id="statusMsg"></span>
+  </div>
+
+  <div class="error-msg" id="errorMsg"></div>
+
+  <div class="audit" id="auditSection">
+    <div class="audit-header">
+      ⚑ &nbsp;AI pattern audit — what was fixed
+    </div>
+    <div class="audit-body" id="auditBody"></div>
+  </div>
+
+  <footer>
+    <span>Humanizer · Based on Wikipedia's Signs of AI Writing guide</span>
+    <span>Powered by Claude Sonnet 4</span>
+  </footer>
+</div>
+
+<script>
+const EXAMPLES = {
+  marketing: `Great news! Our groundbreaking platform nestled at the intersection of innovation and performance is transforming how businesses connect with their customers. Boasting a rich feature set and breathtaking user experience, it serves as a vital catalyst for growth in today's rapidly evolving digital landscape. Industry observers have noted that companies leveraging our platform see significant improvements across all key metrics, highlighting the intrinsic value of our commitment to excellence. Whether you're a scrappy startup or a seasoned enterprise, our solution stands as a testament to what's possible when cutting-edge technology meets human-centered design. The future has never looked brighter.`,
+
+  bio: `Dr. Sarah Chen is a renowned thought leader and visionary researcher whose groundbreaking work at the forefront of computational neuroscience has made an indelible mark on the field. Nestled within the vibrant academic community at MIT, she has cultivated a unique approach to studying neural networks that underscores the profound connection between biological and artificial intelligence. Her research has been featured in Nature, Science, and The New York Times, and she maintains an active social media presence with over 200,000 followers. Dr. Chen's work serves as a testament to the transformative potential of interdisciplinary collaboration, contributing to a richer understanding of cognition that will shape the future of both medicine and AI.`,
+
+  blog: `In today's rapidly evolving digital landscape, content creators are facing unprecedented challenges that underscore the vital importance of authenticity. As AI-generated content continues to proliferate across the web, highlighting deeper questions about creativity and human expression, the need for genuine connection with audiences has never been more crucial. This pivotal moment in the evolution of online communication represents both a challenge and an opportunity — serving as a reminder that while technology can streamline our workflows, it cannot replace the nuanced, deeply-rooted human perspectives that truly resonate. In this article, we'll explore groundbreaking strategies that showcase how writers can leverage AI tools while maintaining their authentic voice, cultivating engagement that goes beyond mere clicks.`,
+
+  email: `Hi Team! I hope this message finds you well. I wanted to reach out to touch base regarding the upcoming Q3 planning cycle. As we navigate the complexities of our evolving strategic priorities, it's important to note that alignment across all stakeholders will be crucial to ensuring we are positioned to deliver optimal outcomes. Due to the fact that our timeline is accelerating, I wanted to make sure we are all on the same page moving forward. At this point in time, it would be beneficial to schedule a synergy session to leverage our collective expertise and ideate around potential solutions. Please don't hesitate to reach out if you have any questions or concerns. Looking forward to connecting!`
+};
+
+function loadExample(key) {
+  document.getElementById('inputText').value = EXAMPLES[key];
+  updateCounter();
+}
+
+function updateCounter() {
+  const len = document.getElementById('inputText').value.length;
+  document.getElementById('charCounter').textContent = `${len.toLocaleString()} character${len !== 1 ? 's' : ''}`;
+}
+
+document.getElementById('inputText').addEventListener('input', updateCounter);
+
+function clearAll() {
+  document.getElementById('inputText').value = '';
+  document.getElementById('outputBox').innerHTML = '<span class="output-placeholder">Your humanized text will appear here…</span>';
+  document.getElementById('auditSection').classList.remove('visible');
+  document.getElementById('copyBtn').style.display = 'none';
+  document.getElementById('errorMsg').classList.remove('visible');
+  document.getElementById('statusMsg').textContent = '';
+  updateCounter();
+}
+
+function copyOutput() {
+  const text = document.getElementById('outputBox').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy output', 1800);
+  });
+}
+
+async function humanize() {
+  const input = document.getElementById('inputText').value.trim();
+  if (!input) { alert('Please paste some text first.'); return; }
+
+  const btn = document.getElementById('humanizeBtn');
+  const outputBox = document.getElementById('outputBox');
+  const statusMsg = document.getElementById('statusMsg');
+  const errorMsg = document.getElementById('errorMsg');
+  const auditSection = document.getElementById('auditSection');
+  const auditBody = document.getElementById('auditBody');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Working…';
+  outputBox.className = 'output-box loading';
+  outputBox.innerHTML = '<span class="typing-cursor"></span>';
+  auditSection.classList.remove('visible');
+  document.getElementById('copyBtn').style.display = 'none';
+  errorMsg.classList.remove('visible');
+  statusMsg.textContent = 'Analyzing AI patterns…';
+
+  const systemPrompt = `You are a writing editor that identifies and removes signs of AI-generated text to make writing sound natural and human. You follow these rules precisely:
+
+PATTERNS TO FIX:
+1. Significance inflation: remove "stands as", "serves as", "testament to", "pivotal moment", "evolving landscape", "vital role", "marks a shift", "indelible mark"
+2. Promotional language: remove "nestled", "breathtaking", "groundbreaking", "boasts", "vibrant", "renowned", "stunning", "must-visit"
+3. Superficial -ing phrases: rewrite endings like "highlighting...", "underscoring...", "reflecting...", "contributing to..."
+4. Vague attributions: replace "industry observers", "experts argue", "some critics" with specific sources or cut them
+5. Rule of three / synonym cycling: flatten lists of near-synonyms
+6. Em dash overuse: replace — with simpler punctuation
+7. Negative parallelism: cut "It's not just X; it's Y" constructions
+8. Chatbot artifacts: remove "Great question!", "I hope this helps!", "Let me know if..."
+9. Generic conclusions: replace "the future looks bright" with something concrete or cut it
+10. Filler phrases: cut "in order to", "at this point in time", "it is important to note that", "due to the fact that"
+11. Excessive hedging: simplify "could potentially possibly be argued that"
+12. Copula avoidance: replace "serves as a catalyst" with "is a catalyst" or just restructure
+
+PERSONALITY RULES:
+- Add genuine voice. Have opinions. Vary sentence rhythm. Short ones. Then longer ones.
+- Use "I" when natural. Let some mess in. Be specific about feelings when relevant.
+- Don't be sterile or neutral — that's just a different kind of AI tell.
+
+OUTPUT FORMAT — respond with a JSON object with exactly two keys:
+{
+  "humanized": "the rewritten text here",
+  "audit": "brief bullet list of the main AI patterns you fixed, e.g.:\\n• Removed 'serves as a testament'\\n• Replaced vague attribution..."
+}
+
+Return only valid JSON. No markdown code fences. No preamble.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: `Humanize this text:\n\n${input}` }]
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || `API error ${response.status}`);
+    }
+
+    const raw = data.content?.map(b => b.text || '').join('');
+    let parsed;
+    try {
+      const cleaned = raw.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(cleaned);
+    } catch {
+      // fallback: just show raw text
+      parsed = { humanized: raw, audit: '' };
+    }
+
+    outputBox.className = 'output-box';
+    outputBox.textContent = parsed.humanized || '(no output)';
+    document.getElementById('copyBtn').style.display = 'inline-block';
+    statusMsg.textContent = '';
+
+    if (parsed.audit) {
+      auditBody.textContent = parsed.audit;
+      auditSection.classList.add('visible');
+    }
+
+  } catch (err) {
+    outputBox.className = 'output-box';
+    outputBox.innerHTML = '<span class="output-placeholder">Something went wrong. See error below.</span>';
+    errorMsg.textContent = `Error: ${err.message}`;
+    errorMsg.classList.add('visible');
+    statusMsg.textContent = '';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '✦ Humanize';
+  }
+}
+</script>
+</body>
+</html>

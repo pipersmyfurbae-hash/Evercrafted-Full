@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Build your Evercrafted — the lookbook</title>
+<meta name="description" content="Start with the studio. Add what your business needs — run your stock, sell your pieces, or turn your craft into a second income.">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c1410;--bg2:#0f1a14;--cream:#ece5d6;--cream2:#c9c4b4;--mut:rgba(236,229,214,.62);--faint:rgba(236,229,214,.4);--gold:#c4a06a;--green:#8fb089;--dust:#b79bb0;--line:rgba(236,229,214,.14);
+--serif:'Italiana',Georgia,serif;--sans:'Inter',system-ui,sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--cream);font-weight:300;-webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.7}
+a{color:inherit;text-decoration:none}.serif{font-family:var(--serif)}.it{font-style:italic;color:var(--green)}
+.bar{position:fixed;top:0;left:0;right:0;z-index:80;display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,5vw,56px);transition:background .4s,backdrop-filter .4s}
+.bar.solid{background:rgba(12,20,16,.7);backdrop-filter:blur(10px)}
+.bar .logo{font-family:var(--serif);font-size:1.35rem;letter-spacing:.05em}.bar .logo span{color:var(--gold)}
+.bar nav{display:flex;align-items:center;gap:clamp(1rem,3vw,2rem)}
+.bar nav a{font-size:12px;letter-spacing:.06em;color:var(--mut);text-transform:uppercase}.bar nav a:hover{color:var(--cream)}
+.bar .cta{border:1px solid var(--gold);color:var(--gold)!important;padding:8px 18px;border-radius:100px;font-size:11px;letter-spacing:.1em}
+.bar .cta:hover{background:var(--gold);color:#0c1410!important}
+@media(max-width:720px){.bar nav .hide{display:none}}
+.beat{position:relative;min-height:100svh;display:flex;align-items:center;overflow:hidden;padding:clamp(5rem,12vh,8rem) clamp(20px,6vw,80px)}
+.beat.auto{min-height:auto;padding-top:clamp(4rem,9vh,6rem);padding-bottom:clamp(4rem,9vh,6rem)}
+.beat .media{position:absolute;inset:0;z-index:0;overflow:hidden}
+.beat .media video,.beat .media img{width:100%;height:120%;object-fit:cover;position:absolute;top:-10%;left:0;will-change:transform}
+.beat .scrim{position:absolute;inset:0;z-index:1}
+.scrim.center{background:radial-gradient(ellipse 100% 90% at 50% 50%,rgba(12,20,16,.58),rgba(12,20,16,.93))}
+.beat .inner{position:relative;z-index:2;width:100%;max-width:1180px;margin:0 auto}
+.solidbeat{background:var(--bg2)}
+.ov{font-size:11px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin-bottom:1.3rem}
+.h-xl{font-family:var(--serif);font-weight:400;font-size:clamp(2.4rem,6vw,4.4rem);line-height:1.05}
+.h-lg{font-family:var(--serif);font-weight:400;font-size:clamp(1.9rem,4.2vw,3rem);line-height:1.12}
+.lead{font-size:clamp(1.02rem,1.5vw,1.2rem);color:var(--cream2);max-width:38rem;margin-top:1.5rem;line-height:1.75}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:13px 26px;border-radius:100px;font-size:13px;font-weight:500;letter-spacing:.05em;border:1px solid transparent;cursor:pointer;transition:all .2s}
+.btn-p{background:var(--gold);color:#0c1410}.btn-p:hover{background:#d4b27e}
+/* core card */
+.core{border:1px solid rgba(143,176,137,.35);background:rgba(143,176,137,.07);border-radius:18px;padding:1.8rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1.5rem;flex-wrap:wrap}
+.core .tag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--green)}
+.core h3{font-family:var(--serif);font-weight:400;font-size:1.7rem;color:var(--cream);margin:.2rem 0 .4rem}
+.core p{font-size:.95rem;color:var(--mut);max-width:36rem}
+.core .price{font-family:var(--serif);font-size:1.3rem;color:var(--gold);white-space:nowrap}
+/* packs */
+.packs{display:grid;grid-template-columns:repeat(3,1fr);gap:1.3rem;margin-top:1rem}
+@media(max-width:900px){.packs{grid-template-columns:1fr}}
+.pack{border:1px solid var(--line);border-radius:18px;padding:1.7rem;display:flex;flex-direction:column;background:rgba(236,229,214,.03);transition:all .2s}
+.pack.on{border-color:rgba(143,176,137,.55);box-shadow:0 16px 44px rgba(0,0,0,.35)}
+.pack .ptag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+.pack h3{font-family:var(--serif);font-weight:400;font-size:1.6rem;color:var(--cream)}
+.pack .who{font-size:.92rem;color:var(--mut);font-style:italic;margin:.3rem 0 1.1rem}
+.pack ul{list-style:none;display:flex;flex-direction:column;gap:.7rem;margin-bottom:1.3rem;flex:1}
+.pack li{font-size:.94rem;color:var(--cream2);display:flex;gap:.55rem;align-items:flex-start;line-height:1.5}
+.pack li::before{content:'✦';color:var(--green);font-size:.8rem;margin-top:.25rem;flex-shrink:0}
+.pack li a{color:var(--cream);border-bottom:1px solid rgba(196,160,106,.5)}
+.pack li small{color:var(--faint)}
+.pack-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:1.1rem}
+.pack-price{font-family:var(--serif);font-size:1.5rem;color:var(--cream)}.pack-price small{font-family:var(--sans);font-size:.85rem;color:var(--mut)}
+.add{display:inline-flex;align-items:center;gap:.5rem;padding:9px 18px;border-radius:100px;border:1.5px solid var(--green);background:transparent;color:var(--green);font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:all .18s}
+.add.on{background:var(--green);color:#0c1410}
+/* pro row */
+.pro-row{display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;align-items:center;background:rgba(236,229,214,.04);border:1px solid var(--line);border-radius:16px;padding:1.3rem 1.6rem;margin-top:1.2rem}
+.pro-row .lbl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-right:.5rem}
+.pro-chip{display:inline-flex;align-items:center;gap:.5rem;padding:9px 16px;border-radius:100px;border:1.5px solid var(--line);background:transparent;color:var(--cream2);font-size:13px;cursor:pointer;transition:all .18s;font-family:var(--sans)}
+.pro-chip.on{border-color:var(--gold);color:var(--gold);background:rgba(196,160,106,.1)}
+.pro-chip small{color:var(--faint)}
+.note{text-align:center;font-size:12px;color:var(--faint);max-width:600px;margin:1.4rem auto 0}
+/* app grid */
+.appgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-top:2.6rem}
+@media(max-width:1000px){.appgrid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.appgrid{grid-template-columns:1fr}}
+.app-card{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:rgba(236,229,214,.03);transition:all .2s}
+.app-card:hover{transform:translateY(-3px);border-color:rgba(143,176,137,.45);box-shadow:0 18px 44px rgba(0,0,0,.35)}
+.app-shot{aspect-ratio:16/10;overflow:hidden;background:#0a110d;border-bottom:1px solid var(--line)}
+.app-shot img{width:100%;height:100%;object-fit:cover;object-position:top}
+.app-body{padding:1.1rem 1.2rem 1.3rem;display:flex;flex-direction:column;gap:.35rem;flex:1}
+.app-badge{align-self:flex-start;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;border:1px solid var(--line);color:var(--mut)}
+.app-name{font-family:var(--serif);font-size:1.2rem;color:var(--cream);margin-top:.2rem}
+.app-tag{font-size:.92rem;color:var(--mut);flex:1}.app-more{font-size:13px;font-weight:500;color:var(--green);margin-top:.5rem}
+/* sticky stack */
+.stack{position:sticky;bottom:0;z-index:60;background:rgba(10,16,13,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+.stack-inner{max-width:1180px;margin:0 auto;padding:1.1rem clamp(20px,5vw,64px);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.stack-l{font-size:.95rem;color:var(--mut)}.stack-l b{font-family:var(--serif);font-size:1.5rem;color:var(--gold)}
+.stack-l .items{font-size:.85rem;color:var(--faint);display:block}
+.stack-form{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.stack-form input{padding:11px 18px;border-radius:100px;border:1px solid var(--line);background:rgba(236,229,214,.05);color:var(--cream);font-family:var(--sans);font-size:14px;min-width:240px;outline:none}
+.stack-form input::placeholder{color:var(--faint)}.stack-form input:focus{border-color:var(--gold)}
+.stack-btn{padding:11px 26px;border-radius:100px;background:var(--gold);color:#0c1410;font-family:var(--sans);font-size:13px;font-weight:600;border:none;cursor:pointer}
+.foot{padding:3rem clamp(20px,6vw,80px);border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;background:var(--bg)}
+.foot .logo{font-family:var(--serif);font-size:1.2rem}.foot .logo span{color:var(--gold)}
+.foot-links{display:flex;gap:1.6rem;flex-wrap:wrap}.foot-links a{font-size:12px;color:var(--mut)}.foot .cc{font-size:12px;color:var(--faint)}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.1s}.rv.d2{transition-delay:.2s}.rv.d3{transition-delay:.3s}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.beat .media video,.beat .media img{height:100%;top:0}}
+</style></head><body>
+
+<div class="bar" id="bar">
+  <a class="logo" href="evercrafted-lookbook.html">Ever<span>crafted</span></a>
+  <nav>
+    <a class="hide" href="evercrafted-how-it-works-lookbook.html">How it works</a>
+    <a class="hide" href="evercrafted-pricing-lookbook.html">Pricing</a>
+    <a class="cta" href="evercrafted-lookbook.html#waitlist">Join waitlist</a>
+  </nav>
+</div>
+
+<!-- HERO -->
+<section class="beat" style="text-align:center">
+  <div class="media"><video data-parallax autoplay muted loop playsinline poster="/assets/wreath-poster.jpg"><source src="/assets/hero-marketplace.mp4" type="video/mp4"></video></div>
+  <div class="scrim center"></div>
+  <div class="inner" style="max-width:840px">
+    <div class="ov rv" style="text-align:center">Build your Evercrafted</div>
+    <h1 class="h-xl rv d1">Start with the studio.<br>Add what your business <span class="it">needs.</span></h1>
+    <p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">Every plan includes the design studio. From there, add the packs that fit how <em>you</em> work — run your stock, sell your pieces, or turn your craft into a second income.</p>
+  </div>
+</section>
+
+<!-- CORE + PACKS -->
+<section class="beat auto solidbeat">
+  <div class="inner">
+    <div class="core rv">
+      <div><span class="tag">The core · always included</span><h3 class="serif">The Design Studio</h3><p>Describe a memory → a true-to-scale blueprint, the build view, and a hero render. The heart of Evercrafted, in every plan.</p></div>
+      <div class="price">Included</div>
+    </div>
+
+    <div style="text-align:center;margin-top:3rem"><div class="ov rv">Explore the apps</div><h2 class="h-lg rv d1">Choose your packs.</h2><p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">Three ways to grow — add any to any plan, monthly.</p></div>
+
+    <div class="packs" id="packs">
+      <div class="pack rv" data-pack="ops" data-price="12">
+        <div class="ptag">Studio &amp; Ops</div><h3>Run your studio</h3>
+        <div class="who">"Keep my stock straight and design within it."</div>
+        <ul>
+          <li><div><a href="evercrafted-app-inventory-weaver.html"><strong>Inventory Weaver</strong></a> <small>— track every stem, low-stock alerts, auto-deduct as you build</small></div></li>
+          <li><div><a href="evercrafted-app-design-with-what-you-have.html"><strong>Design With What You Have</strong></a> <small>— design constrained to your actual inventory</small></div></li>
+        </ul>
+        <div class="pack-foot"><div class="pack-price">$12<small>/mo</small></div><button class="add" data-add>Add to stack</button></div>
+      </div>
+      <div class="pack rv d1" data-pack="sell" data-price="15">
+        <div class="ptag">Sell &amp; Market</div><h3>Sell your work</h3>
+        <div class="who">"List it, price it, get paid for it."</div>
+        <ul>
+          <li><div><a href="evercrafted-app-pricing-calculator.html"><strong>Pricing Calculator</strong></a> <small>— real cost &amp; margin, the price you should charge</small></div></li>
+          <li><div><a href="evercrafted-app-etsy-listing-builder.html"><strong>Etsy Listing Builder</strong></a> <small>— title, copy, and 13 tags from a design</small></div></li>
+          <li><div><a href="evercrafted-app-client-portal.html"><strong>Client Portal</strong></a> <small>— present the design package to your client</small></div></li>
+        </ul>
+        <div class="pack-foot"><div class="pack-price">$15<small>/mo</small></div><button class="add" data-add>Add to stack</button></div>
+      </div>
+      <div class="pack rv d2" data-pack="grow" data-price="19">
+        <div class="ptag">Grow &amp; Teach</div><h3>Sell your knowledge</h3>
+        <div class="who">"Make income that doesn't need my hands."</div>
+        <ul>
+          <li><div><a href="evercrafted-app-academy.html"><strong>Wreath Academy Builder</strong></a> <small>— turn a design into a sellable course: lessons, video scripts, listing</small></div></li>
+          <li><div><strong>Course tools</strong> <small>— pricing, materials list, and export, ready to sell anywhere</small></div></li>
+        </ul>
+        <div class="pack-foot"><div class="pack-price">$19<small>/mo</small></div><button class="add" data-add>Add to stack</button></div>
+      </div>
+    </div>
+
+    <div class="pro-row rv">
+      <span class="lbl">Pro tools · à la carte</span>
+      <button class="pro-chip" data-pack="prompt" data-price="8">Prompt Studio <small>· $8/mo</small></button>
+      <button class="pro-chip" data-pack="parametric" data-price="8">Parametric Lab <small>· $8/mo</small></button>
+      <button class="pro-chip" data-pack="brc" data-price="12">Render Compositor <small>· $12/mo</small></button>
+    </div>
+    <p class="note rv">Prices are founding-member placeholders — pick what you'd actually pay for and tell us. Your stack helps us decide what to build and price first.</p>
+  </div>
+</section>
+
+<!-- APP GRID -->
+<section class="beat auto">
+  <div class="inner">
+    <div style="text-align:center"><div class="ov rv">Explore the apps</div><h2 class="h-lg rv d1">Every tool, one click away.</h2><p class="lead rv d2" style="margin-left:auto;margin-right:auto;text-align:center">Screenshots, what each does, and how it fits — tap any app.</p></div>
+    <div class="appgrid">
+      <a class="app-card rv" href="evercrafted-app-inventory-weaver.html"><div class="app-shot"><img src="/assets/shots/inventory-weaver.png" alt="Inventory Weaver" loading="lazy"></div><div class="app-body"><span class="app-badge">Studio &amp; Ops</span><div class="app-name">Inventory Weaver</div><div class="app-tag">Know exactly what you have.</div><div class="app-more">Learn more →</div></div></a>
+      <a class="app-card rv" href="evercrafted-app-design-with-what-you-have.html"><div class="app-shot"><img src="/assets/shots/design-with-what-you-have.png" alt="Design With What You Have" loading="lazy"></div><div class="app-body"><span class="app-badge">Studio &amp; Ops</span><div class="app-name">Design With What You Have</div><div class="app-tag">Design from your actual stock.</div><div class="app-more">Learn more →</div></div></a>
+      <a class="app-card rv d1" href="evercrafted-app-pricing-calculator.html"><div class="app-shot"><img src="/assets/shots/pricing-calculator.png" alt="Pricing Calculator" loading="lazy"></div><div class="app-body"><span class="app-badge">Sell &amp; Market</span><div class="app-name">Pricing Calculator</div><div class="app-tag">Price your wreaths to actually profit.</div><div class="app-more">Learn more →</div></div></a>
+      <a class="app-card rv d1" href="evercrafted-app-etsy-listing-builder.html"><div class="app-shot"><img src="/assets/shots/etsy-listing-builder.png" alt="Etsy Listing Builder" loading="lazy"></div><div class="app-body"><span class="app-badge">Sell &amp; Market</span><div class="app-name">Etsy Listing Builder</div><div class="app-tag">Turn a design into a sellable listing.</div><div class="app-more">Learn more →</div></div></a>
+      <a class="app-card rv d2" href="evercrafted-app-client-portal.html"><div class="app-shot"><img src="/assets/shots/client-portal.png" alt="Client Portal" loading="lazy"></div><div class="app-body"><span class="app-badge">Sell &amp; Market</span><div class="app-name">Client Portal</div><div class="app-tag">Present the design to your client.</div><div class="app-more">Learn more →</div></div></a>
+      <a class="app-card rv d2" href="evercrafted-app-academy.html"><div class="app-shot"><img src="/assets/shots/academy.png" alt="Wreath Academy Builder" loading="lazy"></div><div class="app-body"><span class="app-badge">Grow &amp; Teach</span><div class="app-name">Wreath Academy Builder</div><div class="app-tag">Turn your craft into a course.</div><div class="app-more">Learn more →</div></div></a>
+      <a class="app-card rv d3" href="evercrafted-app-prompt-studio.html"><div class="app-shot"><img src="/assets/shots/prompt-studio.png" alt="Prompt Studio" loading="lazy"></div><div class="app-body"><span class="app-badge">Pro tool</span><div class="app-name">Prompt Studio</div><div class="app-tag">Craft render prompts with control.</div><div class="app-more">Learn more →</div></div></a>
+      <a class="app-card rv d3" href="evercrafted-app-parametric-lab.html"><div class="app-shot"><img src="/assets/shots/parametric-lab.png" alt="Parametric Lab" loading="lazy"></div><div class="app-body"><span class="app-badge">Pro tool</span><div class="app-name">Parametric Lab</div><div class="app-tag">Shape from mood.</div><div class="app-more">Learn more →</div></div></a>
+      <a class="app-card rv" href="evercrafted-app-brc.html"><div class="app-shot"><img src="/assets/shots/brc.svg" alt="Blueprint-to-Render Compositor" loading="lazy"></div><div class="app-body"><span class="app-badge">Pro tool</span><div class="app-name">Blueprint-to-Render Compositor</div><div class="app-tag">Render the real parts list.</div><div class="app-more">Learn more →</div></div></a>
+    </div>
+  </div>
+</section>
+
+<div class="stack">
+  <div class="stack-inner">
+    <div class="stack-l">Your stack: <b id="total">$0</b><small>/mo</small><span class="items" id="items">core only — add packs above</span></div>
+    <form class="stack-form" id="stackForm" onsubmit="return submitStack(event)">
+      <input type="email" id="email" placeholder="Email — tell us what you'd pay for" required>
+      <button class="stack-btn" type="submit" id="stackBtn">Send my stack →</button>
+    </form>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="logo">Ever<span>crafted</span></div>
+  <div class="foot-links"><a href="evercrafted-lookbook.html">Home</a><a href="evercrafted-how-it-works-lookbook.html">How it works</a><a href="evercrafted-pricing-lookbook.html">Pricing</a><a href="evercrafted-about-lookbook.html">About</a></div>
+  <div class="cc">© 2026 Evercrafted</div>
+</footer>
+
+<script>
+(function(){
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var bar=document.getElementById('bar');addEventListener('scroll',function(){bar.classList.toggle('solid',scrollY>40)},{passive:true});
+  var rio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');rio.unobserve(e.target);}})},{threshold:.12});
+  [].forEach.call(document.querySelectorAll('.rv'),function(el){rio.observe(el)});
+  var media=[].slice.call(document.querySelectorAll('[data-parallax]'));
+  if(!reduce){var t=false;addEventListener('scroll',function(){if(t)return;t=true;requestAnimationFrame(function(){media.forEach(function(v){var r=v.getBoundingClientRect();var o=(r.top+r.height/2-innerHeight/2)/innerHeight;v.style.transform='translateY('+(o*-6)+'%)';});t=false;});},{passive:true});}
+  var vids=[].slice.call(document.querySelectorAll('.beat video'));vids.forEach(function(v){v.muted=true;v.playsInline=true;});
+  if(reduce){vids.forEach(function(v){v.removeAttribute('autoplay');v.removeAttribute('loop');});}
+  else{var vio=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var p=e.target.play();if(p&&p.catch)p.catch(function(){});}else{e.target.pause();}})},{threshold:.25});vids.forEach(function(v){vio.observe(v)});}
+
+  // stack builder
+  var selected={},PRICES={},NAMES={};
+  function refresh(){var total=0,names=[];Object.keys(selected).forEach(function(k){if(selected[k]){total+=PRICES[k];names.push(NAMES[k]);}});document.getElementById('total').textContent='$'+total;document.getElementById('items').textContent=names.length?'+ '+names.join(' · '):'core only — add packs above';}
+  [].forEach.call(document.querySelectorAll('.pack'),function(card){var k=card.dataset.pack;PRICES[k]=+card.dataset.price;NAMES[k]=card.querySelector('h3').textContent;var btn=card.querySelector('[data-add]');btn.addEventListener('click',function(){selected[k]=!selected[k];card.classList.toggle('on',selected[k]);btn.classList.toggle('on',selected[k]);btn.textContent=selected[k]?'Added ✓':'Add to stack';refresh();});});
+  [].forEach.call(document.querySelectorAll('.pro-chip'),function(chip){var k=chip.dataset.pack;PRICES[k]=+chip.dataset.price;NAMES[k]=chip.childNodes[0].textContent.trim();chip.addEventListener('click',function(){selected[k]=!selected[k];chip.classList.toggle('on',selected[k]);refresh();});});
+  window.submitStack=function(e){e.preventDefault();var packs=Object.keys(selected).filter(function(k){return selected[k];});var email=document.getElementById('email').value;var btn=document.getElementById('stackBtn');if(!packs.length){btn.textContent='Pick a pack first';setTimeout(function(){btn.textContent='Send my stack →';},1600);return false;}btn.textContent='Sending…';
+    fetch('/api/pack-interest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({packs:packs,email:email,source:'marketplace-lookbook'})})
+      .then(function(){document.getElementById('stackForm').innerHTML='<div style="font-family:var(--serif);font-size:1.2rem;color:var(--green)">Thank you — your stack is noted ✓</div>';})
+      .catch(function(){btn.textContent='Try again';});
+    return false;};
+})();
+</script>
+</body></html>

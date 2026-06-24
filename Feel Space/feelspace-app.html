@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FeelSpace — App</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1C1208;
+  --cream: #F8F3EA;
+  --parchment: #EFE8D8;
+  --mist: #E2DAC8;
+  --stone: #8A7E6E;
+  --rust: #B84C2B;
+  --amber: #D4863A;
+  --sage: #5A7A5A;
+  --warm-white: #FDFAF5;
+  --deep: #110C04;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--ink); overflow-x: hidden; }
+
+/* TOPBAR */
+.topbar {
+  height: 56px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 1.5rem;
+  background: var(--warm-white);
+  border-bottom: 1px solid var(--mist);
+  position: sticky; top: 0; z-index: 50;
+}
+.topbar-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; letter-spacing: -0.01em; }
+.topbar-logo span { color: var(--rust); font-style: italic; }
+.topbar-right { display: flex; gap: 0.75rem; align-items: center; }
+.topbar-plan { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); padding: 0.3rem 0.7rem; border: 1px solid var(--mist); border-radius: 2px; }
+.topbar-avatar { width: 30px; height: 30px; border-radius: 50%; background: rgba(184,76,43,0.12); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 500; color: var(--rust); cursor: pointer; }
+
+/* LAYOUT */
+.app-layout { display: flex; height: calc(100vh - 56px); }
+
+/* SIDEBAR */
+.sidebar {
+  width: 300px; min-width: 300px;
+  background: var(--warm-white);
+  border-right: 1px solid var(--mist);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+}
+.sidebar-section { padding: 1.25rem 1.25rem 0; }
+.sidebar-section:last-of-type { padding-bottom: 1.25rem; flex: 1; }
+.sidebar-label {
+  font-size: 0.65rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--stone); margin-bottom: 0.75rem;
+}
+
+/* Mood input */
+.mood-textarea {
+  width: 100%; resize: none;
+  background: var(--parchment);
+  border: 1px solid var(--mist);
+  border-radius: 3px;
+  padding: 0.85rem 1rem;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.5;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.mood-textarea:focus { border-color: var(--amber); }
+.mood-textarea::placeholder { color: var(--stone); opacity: 0.7; }
+
+/* Mood chips */
+.mood-chips { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 1rem; }
+.mood-chip {
+  padding: 4px 10px; font-size: 0.72rem; font-weight: 400;
+  border: 1px solid var(--mist); border-radius: 1px;
+  background: var(--cream); color: var(--stone);
+  cursor: pointer; transition: all 0.15s;
+  white-space: nowrap;
+}
+.mood-chip:hover { border-color: var(--amber); color: var(--amber); }
+.mood-chip.active { background: var(--rust); border-color: var(--rust); color: white; }
+
+/* Sliders */
+.slider-block { margin-bottom: 1rem; }
+.slider-head { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--stone); margin-bottom: 6px; }
+.slider-val { color: var(--amber); font-weight: 500; }
+input[type=range] { width: 100%; accent-color: var(--amber); }
+
+/* Season pills */
+.season-row { display: flex; gap: 6px; margin-bottom: 1rem; }
+.season-btn {
+  flex: 1; padding: 6px 0; font-size: 0.72rem; font-weight: 500;
+  text-align: center; border-radius: 2px; cursor: pointer;
+  border: 1px solid var(--mist); background: var(--cream); color: var(--stone);
+  transition: all 0.15s; font-family: 'Jost', sans-serif;
+}
+.season-btn.active { background: var(--ink); border-color: var(--ink); color: var(--cream); }
+
+/* Generate */
+.gen-btn {
+  width: 100%; padding: 0.9rem;
+  font-family: 'Jost', sans-serif;
+  font-size: 0.88rem; font-weight: 500;
+  background: var(--rust); color: white;
+  border: none; border-radius: 2px; cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  letter-spacing: 0.03em;
+  margin-top: auto;
+}
+.gen-btn:hover { background: #A03A1F; }
+.gen-btn:active { transform: scale(0.99); }
+.gen-btn:disabled { background: var(--mist); color: var(--stone); cursor: not-allowed; }
+
+/* MAIN */
+.main-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+/* Tabs */
+.main-tabs {
+  display: flex; border-bottom: 1px solid var(--mist);
+  background: var(--warm-white); padding: 0 1.5rem;
+  gap: 0;
+}
+.tab-btn {
+  padding: 0.85rem 1.25rem;
+  font-size: 0.8rem; font-weight: 500;
+  color: var(--stone); background: none; border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all 0.15s;
+  font-family: 'Jost', sans-serif;
+  margin-bottom: -1px;
+}
+.tab-btn.active { color: var(--ink); border-bottom-color: var(--rust); }
+.tab-btn:hover:not(.active) { color: var(--ink); }
+
+/* Tab panes */
+.tab-pane { display: none; flex: 1; overflow-y: auto; }
+.tab-pane.active { display: flex; flex-direction: column; flex: 1; overflow-y: auto; }
+
+/* Scene panel */
+.scene-panel { flex: 1; display: flex; gap: 0; }
+.scene-left { flex: 1; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; min-width: 0; }
+.scene-right { width: 280px; min-width: 280px; border-left: 1px solid var(--mist); padding: 1.25rem; overflow-y: auto; background: var(--warm-white); }
+
+/* Scene SVG area */
+.scene-canvas {
+  background: var(--parchment);
+  border: 1px solid var(--mist);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+}
+.scene-canvas svg { width: 100%; display: block; }
+
+.scene-mood-chip {
+  position: absolute; top: 12px; left: 12px;
+  background: rgba(253,250,245,0.92);
+  border: 1px solid var(--mist);
+  border-radius: 2px;
+  font-size: 0.7rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--rust); padding: 0.3rem 0.75rem;
+}
+
+/* Hotspot */
+.hs {
+  cursor: pointer;
+  animation: hsPulse 2.5s ease-in-out infinite;
+}
+.hs:nth-child(2) { animation-delay: 0.5s; }
+.hs:nth-child(3) { animation-delay: 1s; }
+.hs:nth-child(4) { animation-delay: 1.5s; }
+.hs:nth-child(5) { animation-delay: 2s; }
+@keyframes hsPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.08); }
+}
+
+/* Product strip */
+.product-strip {
+  display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px;
+}
+.product-strip::-webkit-scrollbar { height: 3px; }
+.product-strip::-webkit-scrollbar-track { background: var(--mist); }
+.product-strip::-webkit-scrollbar-thumb { background: var(--amber); }
+
+.prod-card {
+  min-width: 150px; flex-shrink: 0;
+  background: var(--warm-white);
+  border: 1px solid var(--mist);
+  border-radius: 3px;
+  padding: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.prod-card:hover { border-color: var(--amber); transform: translateY(-2px); }
+.prod-card.selected { border-color: var(--rust); }
+.prod-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+.prod-name { font-size: 0.78rem; font-weight: 500; color: var(--ink); margin-bottom: 0.2rem; line-height: 1.3; }
+.prod-price { font-family: 'Cormorant Garamond', serif; font-size: 1rem; color: var(--amber); }
+
+/* Cart sidebar */
+.cart-title { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; margin-bottom: 1rem; color: var(--ink); }
+.cart-items { display: flex; flex-direction: column; gap: 8px; margin-bottom: 1rem; }
+.cart-item {
+  background: var(--cream); border: 1px solid var(--mist); border-radius: 2px;
+  padding: 0.6rem 0.75rem;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 0.5rem;
+}
+.cart-item-name { font-size: 0.78rem; color: var(--ink); font-weight: 500; flex: 1; }
+.cart-item-price { font-size: 0.78rem; color: var(--amber); white-space: nowrap; }
+.cart-item-remove { font-size: 12px; color: var(--stone); cursor: pointer; background: none; border: none; font-family: 'Jost',sans-serif; }
+.cart-item-remove:hover { color: var(--rust); }
+.cart-divider { border: none; border-top: 1px solid var(--mist); margin: 0.75rem 0; }
+.cart-total-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; }
+.cart-total-label { color: var(--stone); }
+.cart-total-val { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; color: var(--ink); font-weight: 600; }
+.checkout-btn {
+  width: 100%; margin-top: 1rem; padding: 0.8rem;
+  background: var(--ink); color: var(--cream);
+  border: none; border-radius: 2px; font-family: 'Jost',sans-serif;
+  font-size: 0.82rem; font-weight: 500; cursor: pointer;
+  transition: background 0.2s; letter-spacing: 0.03em;
+}
+.checkout-btn:hover { background: var(--rust); }
+.share-btn {
+  width: 100%; margin-top: 0.5rem; padding: 0.7rem;
+  background: transparent; color: var(--stone);
+  border: 1px solid var(--mist); border-radius: 2px; font-family: 'Jost',sans-serif;
+  font-size: 0.78rem; cursor: pointer; transition: all 0.15s;
+}
+.share-btn:hover { border-color: var(--amber); color: var(--amber); }
+
+.empty-cart {
+  text-align: center; padding: 2rem 1rem;
+  color: var(--stone); font-size: 0.82rem; line-height: 1.6;
+}
+.empty-cart-icon { font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.4; }
+
+/* Scene placeholder */
+.scene-placeholder {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 4rem 2rem; text-align: center; gap: 1rem;
+  flex: 1;
+}
+.scene-placeholder-icon { font-size: 3rem; opacity: 0.2; }
+.scene-placeholder-text { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-style: italic; color: var(--stone); }
+.scene-placeholder-sub { font-size: 0.82rem; color: var(--stone); opacity: 0.7; max-width: 280px; line-height: 1.6; }
+
+/* Drops tab */
+.drops-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1px; background: var(--mist);
+  padding: 1.5rem; gap: 1rem; background: none;
+}
+.drop-card {
+  background: var(--warm-white);
+  border: 1px solid var(--mist);
+  border-radius: 3px; overflow: hidden;
+  cursor: pointer; transition: transform 0.2s, box-shadow 0.2s;
+}
+.drop-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(28,18,8,0.08); }
+.drop-cover { height: 140px; display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+.drop-body { padding: 1rem; }
+.drop-tag { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--rust); margin-bottom: 0.35rem; }
+.drop-name { font-family: 'Cormorant Garamond', serif; font-size: 1.15rem; color: var(--ink); margin-bottom: 0.3rem; }
+.drop-desc { font-size: 0.78rem; color: var(--stone); line-height: 1.5; margin-bottom: 0.75rem; }
+.drop-meta { display: flex; justify-content: space-between; align-items: center; }
+.drop-items { font-size: 0.72rem; color: var(--stone); }
+.drop-price { font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; color: var(--amber); }
+
+/* Analytics tab */
+.analytics-grid {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 1px;
+  background: var(--mist); border: 1px solid var(--mist);
+  margin: 1.5rem; border-radius: 3px; overflow: hidden;
+}
+.metric-card {
+  background: var(--warm-white); padding: 1.5rem;
+}
+.metric-label { font-size: 0.7rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); margin-bottom: 0.5rem; }
+.metric-val { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--ink); line-height: 1; margin-bottom: 0.25rem; }
+.metric-change { font-size: 0.72rem; color: var(--sage); }
+
+.chart-area { margin: 0 1.5rem 1.5rem; background: var(--warm-white); border: 1px solid var(--mist); border-radius: 3px; padding: 1.5rem; }
+.chart-title { font-size: 0.78rem; font-weight: 500; color: var(--ink); margin-bottom: 1rem; }
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; height: 120px; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
+.bar { width: 100%; border-radius: 2px 2px 0 0; background: var(--amber); transition: background 0.2s; cursor: pointer; min-height: 4px; }
+.bar:hover { background: var(--rust); }
+.bar-label { font-size: 0.62rem; color: var(--stone); white-space: nowrap; }
+
+/* Catalog tab */
+.catalog-toolbar {
+  padding: 1rem 1.5rem; border-bottom: 1px solid var(--mist);
+  display: flex; gap: 0.75rem; align-items: center;
+  background: var(--warm-white);
+}
+.catalog-search {
+  flex: 1; padding: 0.55rem 0.9rem;
+  border: 1px solid var(--mist); border-radius: 2px;
+  background: var(--cream); color: var(--ink);
+  font-family: 'Jost',sans-serif; font-size: 0.82rem; outline: none;
+}
+.catalog-search:focus { border-color: var(--amber); }
+.upload-btn {
+  padding: 0.55rem 1.1rem;
+  background: var(--ink); color: var(--cream);
+  border: none; border-radius: 2px; font-family: 'Jost',sans-serif;
+  font-size: 0.78rem; font-weight: 500; cursor: pointer; white-space: nowrap;
+  transition: background 0.2s;
+}
+.upload-btn:hover { background: var(--rust); }
+.catalog-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem; padding: 1.5rem; flex: 1; align-content: start;
+}
+.catalog-item {
+  background: var(--warm-white); border: 1px solid var(--mist); border-radius: 3px;
+  padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem;
+  cursor: pointer; transition: border-color 0.15s;
+}
+.catalog-item:hover { border-color: var(--amber); }
+.catalog-item-icon { font-size: 2.2rem; }
+.catalog-item-name { font-size: 0.8rem; font-weight: 500; color: var(--ink); }
+.catalog-item-tag {
+  font-size: 0.65rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--rust); background: rgba(184,76,43,0.08); padding: 0.2rem 0.5rem; border-radius: 1px; align-self: flex-start;
+}
+.catalog-item-price { font-size: 0.8rem; color: var(--amber); font-family: 'Cormorant Garamond',serif; }
+
+/* Loading overlay */
+.loading-overlay {
+  position: absolute; inset: 0; background: rgba(248,243,234,0.9);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; z-index: 10;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.loading-overlay.active { opacity: 1; pointer-events: all; }
+.loading-ring {
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 2px solid var(--mist); border-top-color: var(--rust);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text { font-family: 'Cormorant Garamond',serif; font-style: italic; color: var(--stone); font-size: 1rem; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--ink); color: var(--cream);
+  padding: 0.75rem 1.25rem; border-radius: 3px;
+  font-size: 0.82rem; z-index: 100;
+  transform: translateY(80px); opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--cream); }
+::-webkit-scrollbar-thumb { background: var(--mist); border-radius: 2px; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .sidebar { width: 240px; min-width: 240px; }
+  .scene-right { width: 220px; min-width: 220px; }
+  .analytics-grid { grid-template-columns: repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-logo">Feel<span>Space</span></div>
+  <div class="topbar-right">
+    <div class="topbar-plan">Grow Plan</div>
+    <div class="topbar-avatar">JL</div>
+  </div>
+</div>
+
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section" style="padding-top:1.25rem;">
+      <div class="sidebar-label">How do you want to feel?</div>
+      <textarea class="mood-textarea" id="moodText" rows="3" placeholder="e.g. warm autumn welcome, calm minimalist entry...">warm fall welcome</textarea>
+    </div>
+
+    <div class="sidebar-section" style="padding-top:1rem;">
+      <div class="sidebar-label">Quick moods</div>
+      <div class="mood-chips">
+        <span class="mood-chip active" onclick="setChip(this,'warm fall welcome')">Warm autumn</span>
+        <span class="mood-chip" onclick="setChip(this,'calm minimalist entry')">Calm minimal</span>
+        <span class="mood-chip" onclick="setChip(this,'festive winter joy')">Festive winter</span>
+        <span class="mood-chip" onclick="setChip(this,'bright spring happiness')">Spring joy</span>
+        <span class="mood-chip" onclick="setChip(this,'cozy cottage morning')">Cozy cottage</span>
+        <span class="mood-chip" onclick="setChip(this,'modern garden calm')">Garden calm</span>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Season</div>
+      <div class="season-row">
+        <button class="season-btn" onclick="setSeason(this)">Spring</button>
+        <button class="season-btn active" onclick="setSeason(this)">Fall</button>
+        <button class="season-btn" onclick="setSeason(this)">Winter</button>
+        <button class="season-btn" onclick="setSeason(this)">Summer</button>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Tune the vibe</div>
+      <div class="slider-block">
+        <div class="slider-head"><span>Cool</span><span>Warm <span class="slider-val" id="warmthVal">70</span></span></div>
+        <input type="range" min="0" max="100" value="70" id="warmth" oninput="updateSlider('warmth','warmthVal',this.value)">
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span>Minimal</span><span>Lush <span class="slider-val" id="lushVal">55</span></span></div>
+        <input type="range" min="0" max="100" value="55" id="lush" oninput="updateSlider('lush','lushVal',this.value)">
+      </div>
+      <div class="slider-block">
+        <div class="slider-head"><span>Modern</span><span>Natural <span class="slider-val" id="naturalVal">65</span></span></div>
+        <input type="range" min="0" max="100" value="65" id="natural" oninput="updateSlider('natural','naturalVal',this.value)">
+      </div>
+    </div>
+
+    <div class="sidebar-section" style="padding-bottom:1.25rem;">
+      <button class="gen-btn" id="genBtn" onclick="generateScene()">✦ Generate scene</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main-area">
+    <div class="main-tabs">
+      <button class="tab-btn active" onclick="switchTab('scene',this)">Scene</button>
+      <button class="tab-btn" onclick="switchTab('drops',this)">Seasonal Drops</button>
+      <button class="tab-btn" onclick="switchTab('catalog',this)">My Catalog</button>
+      <button class="tab-btn" onclick="switchTab('analytics',this)">Analytics</button>
+    </div>
+
+    <!-- SCENE TAB -->
+    <div class="tab-pane active" id="tab-scene">
+      <div class="scene-panel">
+        <div class="scene-left">
+          <div class="scene-canvas" id="sceneCanvas">
+            <div class="loading-overlay" id="loadingOverlay">
+              <div class="loading-ring"></div>
+              <div class="loading-text" id="loadingText">Reading the mood...</div>
+            </div>
+            <div id="sceneContent">
+              <div class="scene-placeholder">
+                <div class="scene-placeholder-icon">🏡</div>
+                <div class="scene-placeholder-text">Your scene will appear here</div>
+                <div class="scene-placeholder-sub">Describe a feeling on the left, then click "Generate scene" to create a shoppable entryway.</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="productStrip" style="display:none;">
+            <div class="sidebar-label">Products in this scene — click to add to cart</div>
+            <div class="product-strip" id="productStripInner"></div>
+          </div>
+        </div>
+
+        <!-- CART -->
+        <div class="scene-right">
+          <div class="cart-title">Your scene cart</div>
+          <div id="cartItems">
+            <div class="empty-cart">
+              <div class="empty-cart-icon">🛒</div>
+              <div>Generate a scene and click products to build your cart</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DROPS TAB -->
+    <div class="tab-pane" id="tab-drops">
+      <div class="drops-grid" id="dropsGrid"></div>
+    </div>
+
+    <!-- CATALOG TAB -->
+    <div class="tab-pane" id="tab-catalog">
+      <div class="catalog-toolbar">
+        <input class="catalog-search" placeholder="Search catalog items..." id="catalogSearch" oninput="filterCatalog()">
+        <button class="upload-btn" onclick="showToast('Upload feature available on Grow plan')">+ Upload products</button>
+      </div>
+      <div class="catalog-grid" id="catalogGrid"></div>
+    </div>
+
+    <!-- ANALYTICS TAB -->
+    <div class="tab-pane" id="tab-analytics">
+      <div class="analytics-grid">
+        <div class="metric-card"><div class="metric-label">Scenes generated</div><div class="metric-val">1,247</div><div class="metric-change">↑ 18% this week</div></div>
+        <div class="metric-card"><div class="metric-label">Avg basket value</div><div class="metric-val">$127</div><div class="metric-change">↑ 3.4× vs browse</div></div>
+        <div class="metric-card"><div class="metric-label">Scene share rate</div><div class="metric-val">68%</div><div class="metric-change">↑ 12% from last mo</div></div>
+        <div class="metric-card"><div class="metric-label">Revenue this month</div><div class="metric-val">$8.4k</div><div class="metric-change">↑ 41% MoM</div></div>
+      </div>
+      <div class="chart-area">
+        <div class="chart-title">Daily scene revenue (last 7 days)</div>
+        <div class="bar-chart" id="barChart"></div>
+      </div>
+      <div class="chart-area">
+        <div class="chart-title">Top moods this week</div>
+        <div id="moodRanking" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DATA ───
+const sceneData = {
+  "warm fall welcome": {
+    bg:"#F0E4CE", ground:"#C8A87A", door:"#7B4A2D", trim:"#5C3318", accent:"#D4863A",
+    label:"Warm fall welcome",
+    products:[
+      {id:"wreath",icon:"🍁",name:"Maple Leaf Wreath",price:48,tag:"seasonal"},
+      {id:"mums",icon:"🌼",name:"Amber Mums Planter",price:34,tag:"plants"},
+      {id:"mums2",icon:"🌻",name:"Rust Mums Planter",price:34,tag:"plants"},
+      {id:"lantern",icon:"🕯️",name:"Copper Lantern",price:56,tag:"lighting"},
+      {id:"mat",icon:"🟫",name:"Woven Jute Doormat",price:29,tag:"textiles"},
+    ]
+  },
+  "calm minimalist entry": {
+    bg:"#EEECEA", ground:"#D6D3CC", door:"#4A4A45", trim:"#333330", accent:"#888780",
+    label:"Calm minimal",
+    products:[
+      {id:"wreath",icon:"🫒",name:"Olive Branch Wreath",price:52,tag:"seasonal"},
+      {id:"plant",icon:"🪴",name:"Eucalyptus Pot",price:41,tag:"plants"},
+      {id:"mat",icon:"⬜",name:"Stone Grey Doormat",price:32,tag:"textiles"},
+      {id:"vase",icon:"🏺",name:"Ceramic Bud Vase",price:27,tag:"decor"},
+    ]
+  },
+  "festive winter joy": {
+    bg:"#E4EBF2", ground:"#C5D8E8", door:"#1E3A5F", trim:"#122540", accent:"#B5171E",
+    label:"Festive winter",
+    products:[
+      {id:"wreath",icon:"🎄",name:"Pine & Berry Wreath",price:64,tag:"seasonal"},
+      {id:"lantern",icon:"🕯️",name:"Frosted Lantern",price:48,tag:"lighting"},
+      {id:"garland",icon:"🌿",name:"Cedar Garland 6ft",price:38,tag:"seasonal"},
+      {id:"mat",icon:"🟦",name:"Plaid Wool Doormat",price:45,tag:"textiles"},
+      {id:"lights",icon:"✨",name:"Warm White Lights",price:22,tag:"lighting"},
+    ]
+  },
+  "bright spring happiness": {
+    bg:"#EBF5E4", ground:"#B8D89A", door:"#3B6D11", trim:"#27500A", accent:"#D4B83A",
+    label:"Bright spring",
+    products:[
+      {id:"wreath",icon:"🌸",name:"Wildflower Wreath",price:44,tag:"seasonal"},
+      {id:"pots",icon:"🌷",name:"Yellow Ceramic Pots",price:36,tag:"plants"},
+      {id:"pots2",icon:"💜",name:"Lavender Planter",price:36,tag:"plants"},
+      {id:"mat",icon:"🟩",name:"Striped Jute Mat",price:31,tag:"textiles"},
+    ]
+  },
+  "cozy cottage morning": {
+    bg:"#F2EDE6", ground:"#C9B89A", door:"#6B4226", trim:"#4D2E19", accent:"#A0784A",
+    label:"Cozy cottage",
+    products:[
+      {id:"wreath",icon:"💐",name:"Dried Lavender Wreath",price:42,tag:"seasonal"},
+      {id:"basket",icon:"🧺",name:"Wicker Plant Basket",price:38,tag:"decor"},
+      {id:"bench",icon:"🪑",name:"Teak Entry Bench",price:129,tag:"furniture"},
+      {id:"mat",icon:"🟤",name:"Striped Cotton Mat",price:33,tag:"textiles"},
+    ]
+  },
+  "modern garden calm": {
+    bg:"#E6EEE8", ground:"#B0C9C2", door:"#2C4A42", trim:"#1A302B", accent:"#4A8070",
+    label:"Modern garden",
+    products:[
+      {id:"wreath",icon:"🔵",name:"Geometric Moss Wreath",price:58,tag:"seasonal"},
+      {id:"agave",icon:"🌵",name:"Agave Planter",price:72,tag:"plants"},
+      {id:"agave2",icon:"🌱",name:"Sculptural Succulent",price:49,tag:"plants"},
+      {id:"mat",icon:"⬛",name:"Concrete-Look Mat",price:37,tag:"textiles"},
+    ]
+  }
+};
+
+const dropsData = [
+  {cover:"🍂",tag:"This week",name:"Autumn Calm Drop",desc:"Muted terracottas, dried botanicals, woven textures. The softer side of fall.",items:5,total:196,bg:"#F5EAD4"},
+  {cover:"❄️",tag:"Coming soon",name:"Frost & Glow Drop",desc:"White pine, candlelight, frosted ceramics. Winter made intimate.",items:4,total:158,bg:"#E4EBF2"},
+  {cover:"🌿",tag:"Evergreen",name:"Evergreen Minimal",desc:"Olive, eucalyptus, linen. A scene that works year-round.",items:4,total:152,bg:"#E8F0EA"},
+  {cover:"🌸",tag:"Pre-order",name:"Spring First Light",desc:"Wildflowers, citrus pots, pastel linens. Pure seasonal joy.",items:5,total:179,bg:"#F0EBF5"},
+  {cover:"🪨",tag:"New",name:"Natural & Raw Drop",desc:"Stone, slate, raw wood, moss. Earthy and grounding.",items:4,total:211,bg:"#EDEAE6"},
+  {cover:"🕯️",tag:"Limited",name:"Golden Hour Drop",desc:"Amber lanterns, honey-glazed ceramics, warm botanicals.",items:6,total:287,bg:"#F5EDD4"},
+];
+
+const catalogItems = [
+  {icon:"🍁",name:"Maple Leaf Wreath",price:48,tag:"wreath"},
+  {icon:"🫒",name:"Olive Branch Wreath",price:52,tag:"wreath"},
+  {icon:"🎄",name:"Pine & Berry Wreath",price:64,tag:"wreath"},
+  {icon:"🌸",name:"Wildflower Wreath",price:44,tag:"wreath"},
+  {icon:"💐",name:"Dried Lavender Wreath",price:42,tag:"wreath"},
+  {icon:"🌼",name:"Amber Mums Planter",price:34,tag:"planter"},
+  {icon:"🪴",name:"Eucalyptus Pot",price:41,tag:"planter"},
+  {icon:"🌷",name:"Yellow Ceramic Pots",price:36,tag:"planter"},
+  {icon:"🌵",name:"Agave Planter",price:72,tag:"planter"},
+  {icon:"🧺",name:"Wicker Plant Basket",price:38,tag:"decor"},
+  {icon:"🕯️",name:"Copper Lantern",price:56,tag:"lighting"},
+  {icon:"🕯️",name:"Frosted Lantern",price:48,tag:"lighting"},
+  {icon:"✨",name:"Warm White Lights",price:22,tag:"lighting"},
+  {icon:"🟫",name:"Woven Jute Doormat",price:29,tag:"doormat"},
+  {icon:"⬜",name:"Stone Grey Doormat",price:32,tag:"doormat"},
+  {icon:"🟦",name:"Plaid Wool Doormat",price:45,tag:"doormat"},
+  {icon:"🏺",name:"Ceramic Bud Vase",price:27,tag:"decor"},
+  {icon:"🪑",name:"Teak Entry Bench",price:129,tag:"furniture"},
+];
+
+// ─── STATE ───
+let cart = [];
+let currentScene = null;
+
+// ─── UI HELPERS ───
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+function setChip(el, mood) {
+  document.querySelectorAll('.mood-chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('moodText').value = mood;
+}
+
+function setSeason(el) {
+  document.querySelectorAll('.season-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function updateSlider(id, valId, val) {
+  document.getElementById(valId).textContent = val;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+// ─── SCENE GENERATION ───
+const loadingMessages = [
+  "Reading the mood...",
+  "Mapping colors to feeling...",
+  "Composing the scene...",
+  "Placing products...",
+  "Almost ready..."
+];
+
+function generateScene() {
+  const mood = document.getElementById('moodText').value.trim().toLowerCase();
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  btn.textContent = '⟳ Generating...';
+
+  const overlay = document.getElementById('loadingOverlay');
+  overlay.classList.add('active');
+
+  let msgI = 0;
+  const msgInt = setInterval(()=>{
+    document.getElementById('loadingText').textContent = loadingMessages[msgI % loadingMessages.length];
+    msgI++;
+  }, 600);
+
+  setTimeout(()=>{
+    clearInterval(msgInt);
+    overlay.classList.remove('active');
+    btn.disabled = false;
+    btn.textContent = '✦ Generate scene';
+
+    // Find best match
+    const key = findSceneKey(mood);
+    currentScene = sceneData[key];
+    renderScene(currentScene);
+    renderProductStrip(currentScene.products);
+    showToast(`Scene ready: "${currentScene.label}"`);
+  }, 2800);
+}
+
+function findSceneKey(mood) {
+  const keys = Object.keys(sceneData);
+  for (const k of keys) if (mood.includes(k.split(' ')[0]) || k.includes(mood.split(' ')[0])) return k;
+  // fuzzy
+  if (mood.includes('winter') || mood.includes('snow') || mood.includes('festive')) return 'festive winter joy';
+  if (mood.includes('spring') || mood.includes('flower') || mood.includes('bright')) return 'bright spring happiness';
+  if (mood.includes('calm') || mood.includes('minimal') || mood.includes('quiet')) return 'calm minimalist entry';
+  if (mood.includes('cottage') || mood.includes('cozy') || mood.includes('lavender')) return 'cozy cottage morning';
+  if (mood.includes('garden') || mood.includes('modern') || mood.includes('succulent')) return 'modern garden calm';
+  return 'warm fall welcome';
+}
+
+function renderScene(scene) {
+  const canvas = document.getElementById('sceneContent');
+  const lush = parseInt(document.getElementById('lush').value) / 100;
+  const prods = scene.products;
+
+  // hotspot positions indexed to product array
+  const hPos = [
+    {x:'49%',y:'28%'}, // wreath on door
+    {x:'28%',y:'62%'}, // left planter
+    {x:'72%',y:'62%'}, // right planter
+    {x:'49%',y:'82%'}, // doormat
+    {x:'20%',y:'52%'}, // lantern
+  ];
+
+  canvas.innerHTML = `
+    <div class="scene-mood-chip">${scene.label}</div>
+    <svg viewBox="0 0 560 300" xmlns="http://www.w3.org/2000/svg">
+      <!-- Sky -->
+      <rect width="560" height="300" fill="${scene.bg}"/>
+      <!-- Ground -->
+      <rect x="0" y="230" width="560" height="70" fill="${scene.ground}"/>
+      <!-- Siding hints -->
+      <rect x="0" y="0" width="175" height="230" fill="${scene.trim}" opacity="0.12"/>
+      <rect x="385" y="0" width="175" height="230" fill="${scene.trim}" opacity="0.12"/>
+      <!-- Door frame -->
+      <rect x="205" y="50" width="150" height="185" rx="4" fill="${scene.trim}"/>
+      <!-- Door -->
+      <rect x="213" y="58" width="134" height="171" rx="3" fill="${scene.door}"/>
+      <!-- Panels -->
+      <rect x="220" y="66" width="54" height="68" rx="2" fill="rgba(0,0,0,0.11)"/>
+      <rect x="286" y="66" width="54" height="68" rx="2" fill="rgba(0,0,0,0.11)"/>
+      <rect x="220" y="142" width="120" height="78" rx="2" fill="rgba(0,0,0,0.08)"/>
+      <!-- Knob -->
+      <circle cx="220" cy="182" r="5" fill="${scene.accent}"/>
+      <!-- Wreath base -->
+      <circle cx="280" cy="88" r="26" fill="none" stroke="${scene.trim}" stroke-width="9" opacity="0.8"/>
+      <circle cx="280" cy="88" r="26" fill="none" stroke="${scene.accent}" stroke-width="5" stroke-dasharray="5 4" opacity="0.7"/>
+      <!-- Wreath details -->
+      <circle cx="280" cy="62" r="6" fill="${scene.accent}" opacity="0.9"/>
+      <circle cx="300" cy="72" r="5" fill="${scene.door}" opacity="0.9"/>
+      <circle cx="306" cy="94" r="6" fill="${scene.accent}" opacity="0.8"/>
+      <circle cx="294" cy="112" r="5" fill="${scene.door}" opacity="0.85"/>
+      <circle cx="266" cy="112" r="5" fill="${scene.accent}" opacity="0.85"/>
+      <circle cx="254" cy="94" r="6" fill="${scene.door}" opacity="0.8"/>
+      <circle cx="260" cy="72" r="5" fill="${scene.accent}" opacity="0.9"/>
+      <!-- Left planter -->
+      <rect x="132" y="208" width="46" height="28" rx="3" fill="${scene.accent}" opacity="0.75"/>
+      <rect x="134" y="200" width="42" height="12" rx="2" fill="${scene.trim}" opacity="0.5"/>
+      <ellipse cx="155" cy="200" rx="22" ry="16" fill="${scene.sage||'#5A7A3A'}" opacity="0.8"/>
+      ${lush > 0.4 ? `<ellipse cx="146" cy="194" rx="13" ry="10" fill="${scene.accent}" opacity="0.85"/>` : ''}
+      ${lush > 0.4 ? `<ellipse cx="165" cy="192" rx="13" ry="10" fill="${scene.door}" opacity="0.8"/>` : ''}
+      <!-- Right planter -->
+      <rect x="382" y="208" width="46" height="28" rx="3" fill="${scene.accent}" opacity="0.75"/>
+      <rect x="384" y="200" width="42" height="12" rx="2" fill="${scene.trim}" opacity="0.5"/>
+      <ellipse cx="405" cy="200" rx="22" ry="16" fill="${scene.sage||'#5A7A3A'}" opacity="0.8"/>
+      ${lush > 0.4 ? `<ellipse cx="396" cy="194" rx="13" ry="10" fill="${scene.accent}" opacity="0.85"/>` : ''}
+      ${lush > 0.4 ? `<ellipse cx="415" cy="192" rx="13" ry="10" fill="${scene.door}" opacity="0.8"/>` : ''}
+      <!-- Lantern left -->
+      <rect x="110" y="168" width="20" height="34" rx="3" fill="${scene.accent}" opacity="0.8"/>
+      <rect x="112" y="162" width="16" height="8" rx="2" fill="${scene.trim}" opacity="0.6"/>
+      <rect x="113" y="170" width="14" height="24" rx="1" fill="#FFDD88" opacity="0.45"/>
+      <!-- Doormat -->
+      <rect x="228" y="230" width="104" height="18" rx="3" fill="${scene.trim}" opacity="0.6"/>
+      ${[0,1,2,3,4,5,6,7].map(i=>`<line x1="${238+i*12}" y1="230" x2="${238+i*12}" y2="248" stroke="${scene.bg}" stroke-width="1" opacity="0.5"/>`).join('')}
+    </svg>
+    ${prods.slice(0, hPos.length).map((p, i) => `
+      <div class="hs" onclick="addToCart(${JSON.stringify(p).replace(/"/g,'&quot;')})" title="${p.name} — $${p.price}"
+        style="position:absolute;left:${hPos[i].x};top:${hPos[i].y};transform:translate(-50%,-50%);
+          width:24px;height:24px;border-radius:50%;
+          background:rgba(253,250,245,0.92);border:2px solid ${currentScene.accent||'#D4863A'};
+          display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;
+          color:${currentScene.accent||'#D4863A'};z-index:5;box-shadow:0 2px 8px rgba(0,0,0,0.12);">+</div>
+    `).join('')}
+  `;
+}
+
+function renderProductStrip(products) {
+  const strip = document.getElementById('productStrip');
+  const inner = document.getElementById('productStripInner');
+  strip.style.display = 'block';
+  inner.innerHTML = products.map(p => `
+    <div class="prod-card" id="pc-${p.id}" onclick="addToCart(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+      <div class="prod-icon">${p.icon}</div>
+      <div class="prod-name">${p.name}</div>
+      <div class="prod-price">$${p.price}</div>
+    </div>
+  `).join('');
+}
+
+// ─── CART ───
+function addToCart(product) {
+  if (cart.find(i=>i.id===product.id)) {
+    showToast(`${product.name} already in cart`);
+    return;
+  }
+  cart.push(product);
+  const card = document.getElementById('pc-'+product.id);
+  if (card) card.classList.add('selected');
+  renderCart();
+  showToast(`Added: ${product.name}`);
+}
+
+function removeFromCart(id) {
+  cart = cart.filter(i=>i.id!==id);
+  const card = document.getElementById('pc-'+id);
+  if (card) card.classList.remove('selected');
+  renderCart();
+}
+
+function renderCart() {
+  const el = document.getElementById('cartItems');
+  if (cart.length === 0) {
+    el.innerHTML = `<div class="empty-cart"><div class="empty-cart-icon">🛒</div><div>Generate a scene and click products to build your cart</div></div>`;
+    return;
+  }
+  const total = cart.reduce((s,i)=>s+i.price, 0);
+  el.innerHTML = `
+    <div class="cart-items">${cart.map(i=>`
+      <div class="cart-item">
+        <span style="font-size:1.1rem;">${i.icon}</span>
+        <span class="cart-item-name">${i.name}</span>
+        <span class="cart-item-price">$${i.price}</span>
+        <button class="cart-item-remove" onclick="removeFromCart('${i.id}')">✕</button>
+      </div>
+    `).join('')}</div>
+    <hr class="cart-divider">
+    <div class="cart-total-row">
+      <span class="cart-total-label">${cart.length} items</span>
+      <span class="cart-total-val">$${total}</span>
+    </div>
+    <button class="checkout-btn" onclick="showToast('Checkout flow — connect your payment provider')">Shop this scene</button>
+    <button class="share-btn" onclick="showToast('Share card generated! Ready to post.')">Share this scene ↗</button>
+  `;
+}
+
+// ─── DROPS ───
+function renderDrops() {
+  const g = document.getElementById('dropsGrid');
+  g.innerHTML = dropsData.map(d=>`
+    <div class="drop-card" onclick="showToast('Loading ${d.name}...')">
+      <div class="drop-cover" style="background:${d.bg}">${d.cover}</div>
+      <div class="drop-body">
+        <div class="drop-tag">${d.tag}</div>
+        <div class="drop-name">${d.name}</div>
+        <div class="drop-desc">${d.desc}</div>
+        <div class="drop-meta">
+          <span class="drop-items">${d.items} items</span>
+          <span class="drop-price">from $${d.total}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ─── CATALOG ───
+function renderCatalog(filter='') {
+  const g = document.getElementById('catalogGrid');
+  const items = catalogItems.filter(i=>!filter || i.name.toLowerCase().includes(filter.toLowerCase()) || i.tag.includes(filter));
+  g.innerHTML = items.map(i=>`
+    <div class="catalog-item" onclick="showToast('${i.name} — emotional tags: warm, seasonal, natural')">
+      <div class="catalog-item-icon">${i.icon}</div>
+      <div class="catalog-item-name">${i.name}</div>
+      <div class="catalog-item-tag">${i.tag}</div>
+      <div class="catalog-item-price">$${i.price}</div>
+    </div>
+  `).join('');
+}
+
+function filterCatalog() {
+  renderCatalog(document.getElementById('catalogSearch').value);
+}
+
+// ─── ANALYTICS ───
+function renderAnalytics() {
+  const data = [320, 480, 390, 610, 520, 780, 640];
+  const labels = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const max = Math.max(...data);
+  const chart = document.getElementById('barChart');
+  chart.innerHTML = data.map((v,i)=>`
+    <div class="bar-col">
+      <div class="bar" style="height:${Math.round(v/max*100)}%" title="$${v}"></div>
+      <div class="bar-label">${labels[i]}</div>
+    </div>
+  `).join('');
+
+  const moods = [
+    {name:'Warm autumn',pct:34},
+    {name:'Festive winter',pct:24},
+    {name:'Cozy cottage',pct:18},
+    {name:'Spring joy',pct:14},
+    {name:'Calm minimal',pct:10},
+  ];
+  document.getElementById('moodRanking').innerHTML = moods.map(m=>`
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="font-size:0.78rem;color:var(--stone);width:120px;flex-shrink:0;">${m.name}</div>
+      <div style="flex:1;height:6px;background:var(--mist);border-radius:2px;overflow:hidden;">
+        <div style="height:100%;width:${m.pct}%;background:var(--amber);border-radius:2px;"></div>
+      </div>
+      <div style="font-size:0.75rem;color:var(--stone);width:30px;text-align:right;">${m.pct}%</div>
+    </div>
+  `).join('');
+}
+
+// ─── INIT ───
+renderDrops();
+renderCatalog();
+renderAnalytics();
+</script>
+</body>
+</html>

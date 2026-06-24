@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial Guide — Learn Wreath Making Step by Step | Evercrafted</title>
+<meta name="description" content="Step-by-step wreath-making lessons with progress tracking, seasonal filters, and skill-level browsing. Included in every Evercrafted plan from $19/mo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Dancing+Script:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS (copied from shell) ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --white:#FFFFFF; --off-white:#F9F7F4; --paper:#F2EFE9; --parchment:#EAE4DA;
+  --black:#1A1A1A; --charcoal:#2E2E2E; --ink:#4A4A4A;
+  --green:#4A6741; --green-light:#6B8F67; --green-pale:#EEF2ED; --green-dim:rgba(74,103,65,0.10);
+  --gray-200:#E8E8E8; --gray-300:#D0D0D0; --gray-400:#A8A8A8; --gray-500:#787878;
+  --bloom:#4A6741; --bloom-pale:#EEF2ED;
+  --craft-c:#4A6785; --craft-pale:#EEF1F6;
+  --studio-c:#7A4A85; --studio-pale:#F3EEF6;
+  --atelier-c:#1A1A1A; --atelier-pale:#F0EDE8;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --script:'Dancing Script',cursive;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+html,body { font-family:var(--sans); background:var(--off-white); color:var(--black); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+/* ── SCROLL REVEAL ── */
+.reveal,.reveal-left,.reveal-right { opacity:0; transition:opacity 0.85s var(--ease),transform 0.85s var(--ease); }
+.reveal { transform:translateY(28px); }
+.reveal-left { transform:translateX(-24px); }
+.reveal-right { transform:translateX(24px); }
+.reveal.visible,.reveal-left.visible,.reveal-right.visible { opacity:1; transform:none; }
+.d1{transition-delay:.08s}.d2{transition-delay:.16s}.d3{transition-delay:.24s}.d4{transition-delay:.32s}.d5{transition-delay:.40s}
+
+/* ── NAV ── */
+.mkt-nav { position:fixed; top:0; left:0; right:0; z-index:100; height:64px; display:flex; align-items:center; justify-content:space-between; padding:0 56px; background:rgba(249,247,244,0.90); backdrop-filter:blur(16px) saturate(1.3); border-bottom:1px solid transparent; transition:border-color 0.3s; }
+.mkt-nav.scrolled { border-color:var(--gray-200); }
+.nav-logo { font-family:var(--script); font-size:1.5rem; font-weight:700; color:var(--green); text-decoration:none; }
+.nav-center { position:absolute; left:50%; transform:translateX(-50%); display:flex; gap:32px; list-style:none; }
+.nav-center a { font-size:0.72rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink); text-decoration:none; transition:color 0.2s; }
+.nav-center a:hover { color:var(--green); }
+.nav-right { display:flex; align-items:center; gap:16px; }
+.nav-tier-pill { font-size:0.58rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:4px 10px; border-radius:100px; background:var(--bloom-pale); color:var(--bloom); border:1px solid rgba(74,103,65,0.18); }
+.nav-signin { font-size:0.72rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-500); text-decoration:none; }
+.nav-signin:hover { color:var(--black); }
+.nav-cta { font-size:0.7rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; background:var(--black); color:var(--white); padding:9px 22px; border-radius:2px; text-decoration:none; transition:background 0.2s; }
+.nav-cta:hover { background:var(--green); }
+
+/* ── SECTION LABEL ── */
+.section-label { display:flex; align-items:center; gap:14px; margin-bottom:22px; }
+.section-label::before { content:''; width:28px; height:1px; background:var(--green); flex-shrink:0; }
+.section-label span { font-size:0.64rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--green); }
+
+/* ── BUTTONS ── */
+.btn { display:inline-flex; align-items:center; gap:8px; font-family:var(--sans); font-weight:500; letter-spacing:0.08em; text-transform:uppercase; border:none; cursor:pointer; border-radius:2px; transition:all 0.22s; text-decoration:none; white-space:nowrap; }
+.btn-lg { font-size:0.72rem; padding:15px 36px; }
+.btn-md { font-size:0.70rem; padding:12px 28px; }
+.btn-dark { background:var(--black); color:var(--white); }
+.btn-dark:hover { background:var(--green); transform:translateY(-2px); box-shadow:0 8px 24px rgba(74,103,65,0.25); }
+.btn-outline { background:transparent; color:var(--black); border:1.5px solid var(--gray-300); }
+.btn-outline:hover { border-color:var(--black); }
+.btn-ghost { background:transparent; color:var(--ink); display:inline-flex; align-items:center; gap:8px; }
+.btn-ghost:hover { color:var(--green); }
+.btn svg { transition:transform 0.22s; }
+.btn:hover svg { transform:translateX(4px); }
+
+/* ════════════════════════════════════════
+   1. HERO
+════════════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 55% 45%;
+  padding-top: 64px;
+  overflow: hidden;
+}
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 64px 80px 56px;
+}
+.hero-left::after {
+  content: '';
+  position: absolute;
+  right: 45%;
+  top: 15%; bottom: 15%;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--gray-200) 30%, var(--gray-200) 70%, transparent);
+}
+.hero-eyebrow { display:flex; align-items:center; gap:12px; margin-bottom:32px; opacity:0; transform:translateY(12px); animation:fadeUp 0.7s var(--ease) 0.15s forwards; }
+.eyebrow-pill { display:flex; align-items:center; gap:7px; background:var(--bloom-pale); border:1px solid rgba(74,103,65,0.18); border-radius:100px; padding:5px 14px 5px 8px; }
+.eyebrow-dot { width:7px; height:7px; border-radius:50%; background:var(--green); animation:pulse 2.4s ease-in-out infinite; }
+.eyebrow-text { font-size:0.64rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--green); }
+
+.hero-kicker { font-family:var(--script); font-size:1.4rem; color:var(--green); display:block; margin-bottom:8px; font-weight:600; opacity:0; transform:translateY(16px); animation:fadeUp 0.8s var(--ease) 0.28s forwards; }
+.hero-title { font-family:var(--serif); font-size:clamp(3rem,5vw,5.5rem); font-weight:300; line-height:1.04; letter-spacing:-0.025em; color:var(--black); opacity:0; transform:translateY(20px); animation:fadeUp 0.9s var(--ease) 0.4s forwards; }
+.hero-title em { font-style:italic; color:var(--green); }
+.hero-body { font-size:1.05rem; line-height:1.82; color:var(--ink); font-weight:300; max-width:440px; margin:28px 0 44px; opacity:0; transform:translateY(14px); animation:fadeUp 0.8s var(--ease) 0.6s forwards; }
+.hero-actions { display:flex; align-items:center; gap:24px; opacity:0; transform:translateY(14px); animation:fadeUp 0.8s var(--ease) 0.72s forwards; }
+.hero-proof { display:flex; align-items:center; gap:16px; margin-top:48px; padding-top:28px; border-top:1px solid var(--gray-200); opacity:0; animation:fadeIn 0.6s ease 0.9s forwards; }
+.proof-avatars { display:flex; }
+.proof-av { width:30px; height:30px; border-radius:50%; border:2px solid var(--off-white); margin-right:-9px; font-size:0.6rem; font-weight:600; display:flex; align-items:center; justify-content:center; color:var(--white); }
+.proof-text { margin-left:16px; }
+.proof-stars { font-size:0.68rem; color:#C4922A; margin-bottom:3px; }
+.proof-copy { font-size:0.7rem; color:var(--gray-500); font-weight:300; }
+.proof-copy strong { color:var(--ink); font-weight:500; }
+
+/* Hero right — app mockup */
+.hero-right { background:var(--paper); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; opacity:0; animation:fadeIn 1.1s var(--ease) 0.3s forwards; }
+.hero-right-rings { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+.hr-ring { position:absolute; border-radius:50%; border:1px solid var(--parchment); }
+.hr-ring-1 { width:500px; height:500px; animation:slowSpin 80s linear infinite; }
+.hr-ring-2 { width:340px; height:340px; border-style:dashed; border-color:var(--gray-300); animation:slowSpin 55s linear infinite reverse; }
+
+/* Tutorial card mockup */
+.tutorial-mockup {
+  position:relative; z-index:5;
+  background:var(--white);
+  border-radius:4px;
+  box-shadow:0 4px 40px rgba(0,0,0,0.09), 0 1px 0 var(--gray-200);
+  width:300px;
+  overflow:hidden;
+}
+.tm-header { background:var(--green); padding:16px 20px; }
+.tm-header-label { font-size:0.58rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.6); margin-bottom:4px; }
+.tm-header-title { font-family:var(--serif); font-size:1.15rem; font-weight:400; color:var(--white); line-height:1.2; }
+.tm-progress-bar { height:3px; background:rgba(255,255,255,0.2); margin-top:12px; border-radius:100px; overflow:hidden; }
+.tm-progress-fill { height:100%; width:60%; background:rgba(255,255,255,0.7); border-radius:100px; animation:progressGrow 2s var(--ease) 1.2s both; }
+.tm-body { padding:0; }
+.tm-step { display:flex; gap:12px; padding:14px 20px; border-bottom:1px solid var(--gray-200); align-items:flex-start; cursor:default; transition:background 0.15s; }
+.tm-step:hover { background:var(--off-white); }
+.tm-step:last-child { border-bottom:none; }
+.tm-step-check { width:18px; height:18px; border-radius:50%; border:1.5px solid var(--gray-300); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.tm-step-check.done { background:var(--green); border-color:var(--green); }
+.tm-step-check.done svg { display:block; }
+.tm-step-check svg { display:none; }
+.tm-step-content {}
+.tm-step-num { font-size:0.58rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-400); margin-bottom:2px; }
+.tm-step-name { font-size:0.78rem; font-weight:500; color:var(--black); margin-bottom:2px; }
+.tm-step-meta { font-size:0.65rem; color:var(--gray-400); }
+.tm-step.active .tm-step-name { color:var(--green); }
+.tm-step.active .tm-step-check { border-color:var(--green); background:var(--green-pale); }
+.tm-footer { padding:14px 20px; border-top:1px solid var(--gray-200); display:flex; align-items:center; justify-content:space-between; }
+.tm-season-chips { display:flex; gap:5px; }
+.tm-chip { font-size:0.58rem; font-weight:500; padding:3px 8px; border-radius:100px; border:1px solid var(--gray-200); color:var(--gray-500); }
+.tm-chip.active { background:var(--green-pale); color:var(--green); border-color:rgba(74,103,65,0.2); }
+
+/* Floating chips near mockup */
+.mockup-chip { position:absolute; background:var(--white); border-radius:3px; box-shadow:0 2px 16px rgba(0,0,0,0.10); padding:9px 13px; display:flex; align-items:center; gap:9px; z-index:10; opacity:0; animation:chipIn 0.7s var(--ease) forwards; }
+.chip-left  { left:-16px; top:28%; animation-delay:1.2s; }
+.chip-right { right:-12px; bottom:24%; animation-delay:1.4s; }
+.chip-icon  { width:28px; height:28px; border-radius:2px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.chip-icon-green { background:var(--green-pale); }
+.chip-icon-amber { background:#FEF3E2; }
+.chip-val { font-family:var(--serif); font-size:1rem; font-weight:400; color:var(--black); line-height:1; margin-bottom:2px; }
+.chip-lbl { font-size:0.58rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--gray-400); }
+
+/* ════════════════════════════════════════
+   2. STORY / ORIGIN
+════════════════════════════════════════ */
+.story-section {
+  background: var(--black);
+  padding: 100px 64px;
+  position: relative;
+  overflow: hidden;
+}
+.story-watermark {
+  position: absolute;
+  right: -40px; top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.035;
+  pointer-events: none;
+}
+.story-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.story-left .section-label::before { background:var(--green-light); }
+.story-left .section-label span { color:var(--green-light); }
+.story-headline {
+  font-family:var(--serif);
+  font-size:clamp(2.4rem,3.5vw,4rem);
+  font-weight:300;
+  line-height:1.08;
+  letter-spacing:-0.02em;
+  color:var(--white);
+}
+.story-headline em { font-style:italic; color:var(--green-light); }
+.story-right { display:flex; flex-direction:column; gap:24px; }
+.story-pullquote {
+  border-left:2px solid var(--green);
+  padding:4px 0 4px 24px;
+}
+.story-pullquote p {
+  font-family:var(--serif);
+  font-size:1.2rem;
+  font-style:italic;
+  line-height:1.65;
+  color:rgba(255,255,255,0.7);
+}
+.story-body { font-size:0.92rem; line-height:1.85; color:rgba(255,255,255,0.45); font-weight:300; }
+.story-stats { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:rgba(255,255,255,0.06); border-radius:3px; overflow:hidden; margin-top:8px; }
+.story-stat { background:rgba(255,255,255,0.03); padding:20px; }
+.story-stat-num { font-family:var(--serif); font-size:2rem; font-weight:300; color:var(--white); line-height:1; margin-bottom:5px; }
+.story-stat-num span { color:var(--green-light); }
+.story-stat-lbl { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.3); }
+
+/* ════════════════════════════════════════
+   3. FEATURES GRID
+════════════════════════════════════════ */
+.features-section {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 100px 64px;
+}
+.features-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: end;
+  margin-bottom: 64px;
+}
+.features-header h2 {
+  font-family:var(--serif);
+  font-size:clamp(2rem,3vw,3rem);
+  font-weight:300;
+  line-height:1.15;
+}
+.features-header p {
+  font-size:0.92rem;
+  line-height:1.8;
+  color:var(--ink);
+  font-weight:300;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.feature-card {
+  background:var(--white);
+  border:none;
+  padding:36px 30px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  transition:transform 0.28s var(--ease), box-shadow 0.28s;
+  position:relative;
+  overflow:hidden;
+}
+.feature-card::after {
+  content:'';
+  position:absolute;
+  bottom:0; left:0; right:0;
+  height:2px;
+  background:var(--green);
+  transform:scaleX(0);
+  transform-origin:left;
+  transition:transform 0.3s var(--ease);
+}
+.feature-card:hover { transform:translateY(-4px); box-shadow:0 16px 48px rgba(0,0,0,0.08); z-index:2; }
+.feature-card:hover::after { transform:scaleX(1); }
+.feature-card--dark { background:var(--black); }
+.feature-card--dark::after { background:rgba(255,255,255,0.2); }
+.feature-card--dark .feat-title { color:var(--white); }
+.feature-card--dark .feat-desc { color:rgba(255,255,255,0.45); }
+.feature-card--green { background:var(--green); }
+.feature-card--green::after { background:rgba(255,255,255,0.3); }
+.feature-card--green .feat-title { color:var(--white); }
+.feature-card--green .feat-desc { color:rgba(255,255,255,0.65); }
+.feat-icon { width:44px; height:44px; border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; }
+.fi-bloom { background:var(--bloom-pale); }
+.feature-card--dark .feat-icon { background:rgba(255,255,255,0.07); }
+.feature-card--green .feat-icon { background:rgba(255,255,255,0.12); }
+.feat-num { font-family:var(--serif); font-size:3.5rem; font-weight:300; color:var(--gray-200); line-height:1; display:block; }
+.feature-card--dark .feat-num { color:rgba(255,255,255,0.07); }
+.feature-card--green .feat-num { color:rgba(255,255,255,0.15); }
+.feat-title { font-family:var(--serif); font-size:1.2rem; font-weight:400; color:var(--black); line-height:1.3; }
+.feat-desc { font-size:0.82rem; line-height:1.75; color:var(--gray-500); font-weight:300; flex:1; }
+.feat-tag { display:inline-flex; align-items:center; gap:5px; font-size:0.58rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:3px 9px; border-radius:100px; background:var(--bloom-pale); color:var(--bloom); border:1px solid rgba(74,103,65,0.15); width:fit-content; margin-top:4px; }
+.feature-card--dark .feat-tag { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.5); border-color:rgba(255,255,255,0.1); }
+.feature-card--green .feat-tag { background:rgba(255,255,255,0.12); color:rgba(255,255,255,0.8); border-color:rgba(255,255,255,0.2); }
+
+/* ════════════════════════════════════════
+   4. DEMO PREVIEW
+════════════════════════════════════════ */
+.demo-section {
+  background: var(--paper);
+  border-top: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200);
+  padding: 100px 64px;
+}
+.demo-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  gap: 80px;
+  align-items: center;
+}
+.demo-left h2 { font-family:var(--serif); font-size:clamp(2rem,2.8vw,2.8rem); font-weight:300; line-height:1.15; margin-bottom:20px; }
+.demo-left p { font-size:0.92rem; line-height:1.82; color:var(--ink); font-weight:300; max-width:420px; margin-bottom:36px; }
+.demo-features { display:flex; flex-direction:column; gap:14px; }
+.demo-feature { display:flex; align-items:flex-start; gap:14px; }
+.demo-feature-dot { width:8px; height:8px; border-radius:50%; background:var(--green); flex-shrink:0; margin-top:6px; }
+.demo-feature-text {}
+.demo-feature-title { font-size:0.82rem; font-weight:500; color:var(--black); margin-bottom:2px; }
+.demo-feature-desc { font-size:0.75rem; color:var(--gray-500); line-height:1.5; font-weight:300; }
+
+/* Tutorial browser mockup */
+.browser-mockup { background:var(--white); border-radius:4px; box-shadow:0 4px 40px rgba(0,0,0,0.09); overflow:hidden; }
+.bm-topbar { background:var(--black); padding:10px 16px; display:flex; align-items:center; gap:6px; }
+.bm-dot { width:10px; height:10px; border-radius:50%; }
+.bm-url { flex:1; background:rgba(255,255,255,0.08); border-radius:3px; padding:4px 12px; font-size:0.62rem; color:rgba(255,255,255,0.4); margin:0 10px; }
+.bm-body { padding:20px; }
+.bm-search { display:flex; align-items:center; gap:8px; border:1.5px solid var(--gray-200); border-radius:3px; padding:9px 14px; margin-bottom:14px; }
+.bm-search-placeholder { font-size:0.75rem; color:var(--gray-400); flex:1; }
+.bm-filter-chips { display:flex; gap:6px; margin-bottom:16px; flex-wrap:wrap; }
+.bm-chip { font-size:0.62rem; font-weight:500; padding:4px 12px; border-radius:100px; border:1px solid var(--gray-200); color:var(--gray-500); cursor:pointer; }
+.bm-chip.active { background:var(--green-pale); color:var(--green); border-color:rgba(74,103,65,0.2); }
+.bm-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.bm-card { background:var(--off-white); border-radius:3px; overflow:hidden; border:1px solid var(--gray-200); }
+.bm-card-thumb { height:72px; display:flex; align-items:center; justify-content:center; }
+.bm-card-body { padding:10px 12px; }
+.bm-card-title { font-family:var(--serif); font-size:0.82rem; font-weight:400; color:var(--black); margin-bottom:3px; }
+.bm-card-meta { display:flex; justify-content:space-between; align-items:center; }
+.bm-card-level { font-size:0.58rem; padding:2px 7px; border-radius:100px; background:var(--green-pale); color:var(--green); border:1px solid rgba(74,103,65,0.15); }
+.bm-card-time { font-size:0.6rem; color:var(--gray-400); }
+.bm-progress { height:2px; background:var(--gray-200); border-radius:100px; margin-top:7px; overflow:hidden; }
+.bm-progress-fill { height:100%; background:var(--green); border-radius:100px; }
+
+/* ════════════════════════════════════════
+   5. TESTIMONIALS
+════════════════════════════════════════ */
+.testimonials-section {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 100px 64px;
+}
+.testimonials-header { text-align:center; margin-bottom:56px; }
+.testimonials-header h2 { font-family:var(--serif); font-size:clamp(2rem,2.8vw,2.8rem); font-weight:300; margin-bottom:12px; }
+.testimonials-header p { font-size:0.88rem; color:var(--gray-500); font-weight:300; max-width:400px; margin:0 auto; }
+.testimonials-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.testimonial-card { background:var(--white); padding:28px; display:flex; flex-direction:column; gap:14px; transition:transform 0.25s var(--ease); }
+.testimonial-card:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,0.07); z-index:2; }
+.testimonial-card--dark { background:var(--black); }
+.t-stars { font-size:0.75rem; color:#C4922A; letter-spacing:0.05em; }
+.t-quote { font-family:var(--serif); font-size:1.03rem; font-style:italic; line-height:1.65; color:var(--charcoal); flex:1; }
+.testimonial-card--dark .t-quote { color:rgba(255,255,255,0.75); }
+.t-author { display:flex; align-items:center; gap:12px; padding-top:14px; border-top:1px solid var(--gray-200); }
+.testimonial-card--dark .t-author { border-color:rgba(255,255,255,0.08); }
+.t-avatar { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:600; color:var(--white); flex-shrink:0; }
+.t-name { font-size:0.75rem; font-weight:500; color:var(--black); margin-bottom:2px; }
+.testimonial-card--dark .t-name { color:var(--white); }
+.t-role { font-size:0.65rem; color:var(--gray-400); }
+
+/* ════════════════════════════════════════
+   6. FAQ
+════════════════════════════════════════ */
+.faq-section {
+  background: var(--white);
+  border-top: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200);
+  padding: 100px 64px;
+}
+.faq-inner { max-width:1160px; margin:0 auto; display:grid; grid-template-columns:360px 1fr; gap:80px; align-items:start; }
+.faq-left h2 { font-family:var(--serif); font-size:clamp(1.8rem,2.5vw,2.6rem); font-weight:300; line-height:1.2; margin-bottom:16px; }
+.faq-left p { font-size:0.88rem; color:var(--ink); line-height:1.75; font-weight:300; margin-bottom:28px; }
+.faq-list { display:flex; flex-direction:column; }
+.faq-item { border-bottom:1px solid var(--gray-200); }
+.faq-item:first-child { border-top:1px solid var(--gray-200); }
+.faq-q { width:100%; background:none; border:none; padding:20px 0; display:flex; align-items:center; justify-content:space-between; gap:20px; cursor:pointer; text-align:left; font-family:var(--serif); font-size:1.05rem; font-weight:400; color:var(--black); line-height:1.3; transition:color 0.2s; }
+.faq-q:hover { color:var(--green); }
+.faq-chevron { width:22px; height:22px; border:1px solid var(--gray-300); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform 0.3s var(--ease),background 0.2s,border-color 0.2s; }
+.faq-item.open .faq-chevron { transform:rotate(180deg); background:var(--green); border-color:var(--green); }
+.faq-item.open .faq-chevron svg path { stroke:white; }
+.faq-a { max-height:0; overflow:hidden; transition:max-height 0.45s var(--ease); }
+.faq-a-inner { padding:0 0 20px; font-size:0.88rem; line-height:1.8; color:var(--ink); font-weight:300; }
+.faq-item.open .faq-a { max-height:300px; }
+
+/* ════════════════════════════════════════
+   7. PRICING
+════════════════════════════════════════ */
+.pricing-section { max-width:1160px; margin:0 auto; padding:100px 64px; }
+.pricing-header { text-align:center; margin-bottom:56px; }
+.pricing-header h2 { font-family:var(--serif); font-size:clamp(2rem,2.8vw,2.8rem); font-weight:300; margin-bottom:12px; }
+.pricing-header p { font-size:0.88rem; color:var(--gray-500); font-weight:300; max-width:440px; margin:0 auto; line-height:1.7; }
+.pricing-note { text-align:center; margin-top:12px; font-size:0.72rem; color:var(--gray-400); display:flex; align-items:center; justify-content:center; gap:8px; }
+.pricing-note-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 2.4s ease-in-out infinite; }
+.pricing-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; margin-bottom:16px; }
+.pc { background:var(--white); padding:32px 24px; display:flex; flex-direction:column; position:relative; transition:transform 0.25s var(--ease); }
+.pc:hover { transform:translateY(-4px); box-shadow:0 14px 40px rgba(0,0,0,0.08); z-index:2; }
+.pc--featured { background:var(--black); transform:translateY(-8px); box-shadow:0 20px 56px rgba(0,0,0,0.18); z-index:3; }
+.pc--featured:hover { transform:translateY(-12px); }
+.pc-popular { position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:var(--green); color:var(--white); font-size:0.55rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; padding:5px 14px; border-radius:0 0 4px 4px; }
+.pc-name { font-family:var(--script); font-size:1.35rem; font-weight:600; color:var(--green); margin-bottom:2px; }
+.pc--featured .pc-name { color:var(--green-light); }
+.pc-sub { font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-400); margin-bottom:22px; }
+.pc--featured .pc-sub { color:rgba(255,255,255,0.3); }
+.pc-price-row { display:flex; align-items:baseline; gap:3px; margin-bottom:4px; }
+.pc-sym { font-family:var(--serif); font-size:1rem; font-weight:300; color:var(--gray-400); margin-top:5px; }
+.pc-val { font-family:var(--serif); font-size:2.6rem; font-weight:300; letter-spacing:-0.02em; color:var(--black); line-height:1; }
+.pc--featured .pc-val { color:var(--white); }
+.pc--featured .pc-sym { color:rgba(255,255,255,0.35); }
+.pc-per { font-size:0.68rem; color:var(--gray-400); align-self:flex-end; margin-bottom:3px; }
+.pc--featured .pc-per { color:rgba(255,255,255,0.3); }
+.pc-txn { font-size:0.65rem; color:var(--gray-400); margin-bottom:20px; }
+.pc--featured .pc-txn { color:rgba(255,255,255,0.3); }
+.pc-txn span { color:var(--green); font-weight:500; }
+.pc--featured .pc-txn span { color:var(--green-light); }
+.pc-hr { height:1px; background:var(--gray-200); margin-bottom:18px; }
+.pc--featured .pc-hr { background:rgba(255,255,255,0.1); }
+.pc-features { display:flex; flex-direction:column; gap:8px; flex:1; margin-bottom:22px; }
+.pc-feature { display:flex; align-items:flex-start; gap:7px; font-size:0.75rem; color:var(--ink); font-weight:300; line-height:1.4; }
+.pc--featured .pc-feature { color:rgba(255,255,255,0.55); }
+.pc-check { color:var(--green); font-size:0.68rem; font-weight:600; flex-shrink:0; margin-top:2px; }
+.pc--featured .pc-check { color:var(--green-light); }
+.pc-this-app { display:flex; align-items:center; gap:6px; font-size:0.65rem; font-weight:600; color:var(--green); background:var(--green-pale); padding:5px 12px; border-radius:100px; border:1px solid rgba(74,103,65,0.15); margin-bottom:14px; }
+.pc--featured .pc-this-app { color:var(--green-light); background:rgba(107,143,103,0.12); border-color:rgba(107,143,103,0.2); }
+.pc-btn { display:flex; align-items:center; justify-content:center; gap:6px; padding:12px; border-radius:2px; font-family:var(--sans); font-size:0.7rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; border:1.5px solid var(--gray-300); background:transparent; color:var(--black); transition:all 0.2s; text-decoration:none; }
+.pc-btn:hover { border-color:var(--black); }
+.pc-btn--solid { background:var(--white); color:var(--black); border-color:transparent; }
+.pc-btn--solid:hover { background:var(--green-pale); }
+
+/* ════════════════════════════════════════
+   8. CLOSING CTA
+════════════════════════════════════════ */
+.closing-cta {
+  background: var(--green);
+  padding: 96px 64px;
+  position: relative;
+  overflow: hidden;
+}
+.closing-cta::before { content:''; position:absolute; right:-60px; top:-60px; width:500px; height:500px; border-radius:50%; border:1px solid rgba(255,255,255,0.07); pointer-events:none; }
+.closing-cta::after  { content:''; position:absolute; right:60px; top:40px; width:280px; height:280px; border-radius:50%; border:1px solid rgba(255,255,255,0.05); pointer-events:none; }
+.cta-inner { max-width:1160px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:48px; position:relative; z-index:2; }
+.cta-text h2 { font-family:var(--serif); font-size:clamp(2rem,3.5vw,3.2rem); font-weight:300; color:var(--white); line-height:1.15; margin-bottom:12px; }
+.cta-text p { font-size:0.92rem; color:rgba(255,255,255,0.65); font-weight:300; line-height:1.75; max-width:440px; }
+.cta-actions { display:flex; flex-direction:column; align-items:flex-end; gap:12px; flex-shrink:0; }
+.cta-btn-white { display:inline-flex; align-items:center; gap:10px; background:var(--white); color:var(--black); font-family:var(--sans); font-size:0.72rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; padding:15px 36px; border-radius:2px; text-decoration:none; transition:all 0.22s; white-space:nowrap; border:none; cursor:pointer; }
+.cta-btn-white:hover { background:var(--green-pale); transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.15); }
+.cta-btn-white svg { transition:transform 0.22s; }
+.cta-btn-white:hover svg { transform:translateX(4px); }
+.cta-note { font-size:0.7rem; color:rgba(255,255,255,0.45); text-align:right; }
+
+/* ── BOTANICAL DIVIDER ── */
+.botanical-divider { display:flex; align-items:center; gap:20px; max-width:1160px; margin:0 auto; padding:0 64px; color:var(--gray-300); }
+.botanical-divider::before, .botanical-divider::after { content:''; flex:1; height:1px; background:var(--gray-200); }
+
+/* ── FOOTER ── */
+.mkt-footer { background:var(--black); padding:64px 64px 0; }
+.footer-top { max-width:1160px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:56px; padding-bottom:48px; border-bottom:1px solid rgba(255,255,255,0.07); }
+.footer-logo { font-family:var(--script); font-size:1.6rem; color:var(--green-light); display:block; margin-bottom:12px; font-weight:700; text-decoration:none; }
+.footer-tagline { font-size:0.82rem; color:rgba(255,255,255,0.35); line-height:1.7; font-weight:300; max-width:260px; margin-bottom:24px; }
+.footer-social { display:flex; gap:8px; }
+.footer-social-link { width:32px; height:32px; border:1px solid rgba(255,255,255,0.1); border-radius:2px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; text-decoration:none; }
+.footer-social-link:hover { border-color:var(--green-light); background:rgba(107,143,103,0.12); }
+.footer-col h4 { font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.25); margin-bottom:18px; font-weight:500; }
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:11px; }
+.footer-col ul a { font-size:0.83rem; color:rgba(255,255,255,0.5); text-decoration:none; transition:color 0.2s; font-weight:300; }
+.footer-col ul a:hover { color:var(--green-light); }
+.footer-bottom { max-width:1160px; margin:0 auto; padding:22px 0; display:flex; align-items:center; justify-content:space-between; }
+.footer-copy { font-size:0.7rem; color:rgba(255,255,255,0.2); }
+.footer-script { font-family:var(--script); font-size:0.95rem; color:rgba(255,255,255,0.12); font-weight:600; }
+.footer-legal { display:flex; gap:18px; }
+.footer-legal a { font-size:0.65rem; color:rgba(255,255,255,0.2); text-decoration:none; transition:color 0.2s; }
+.footer-legal a:hover { color:rgba(255,255,255,0.5); }
+
+/* ── KEYFRAMES ── */
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { to { opacity:1; } }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+@keyframes slowSpin { to { transform:rotate(360deg); } }
+@keyframes chipIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+@keyframes progressGrow { from{width:0} to{width:60%} }
+
+/* ── RESPONSIVE ── */
+@media (max-width:1024px) {
+  .hero { grid-template-columns:1fr; min-height:auto; }
+  .hero-right { display:none; }
+  .hero-left { padding:100px 40px 72px; }
+  .hero-left::after { display:none; }
+  .story-inner, .demo-inner { grid-template-columns:1fr; gap:48px; }
+  .features-header { grid-template-columns:1fr; }
+  .features-grid { grid-template-columns:1fr 1fr; }
+  .testimonials-grid { grid-template-columns:1fr; }
+  .faq-inner { grid-template-columns:1fr; gap:40px; }
+  .pricing-grid { grid-template-columns:1fr 1fr; }
+  .pc--featured { transform:none; }
+  .cta-inner { flex-direction:column; align-items:flex-start; }
+  .cta-actions { align-items:flex-start; }
+  .cta-note { text-align:left; }
+  .story-section,.demo-section,.faq-section,.closing-cta,.mkt-footer { padding-left:40px; padding-right:40px; }
+  .features-section,.testimonials-section,.pricing-section { padding-left:40px; padding-right:40px; }
+  .botanical-divider { padding:0 40px; }
+  .footer-top { grid-template-columns:1fr 1fr; gap:36px; }
+  .footer-brand { grid-column:1/-1; }
+  .mkt-nav { padding:0 40px; }
+}
+@media (max-width:640px) {
+  .hero-left { padding:88px 24px 64px; }
+  .hero-actions { flex-direction:column; align-items:flex-start; }
+  .features-grid { grid-template-columns:1fr; }
+  .pricing-grid { grid-template-columns:1fr; }
+  .story-section,.demo-section,.faq-section,.closing-cta,.mkt-footer { padding-left:24px; padding-right:24px; }
+  .features-section,.testimonials-section,.pricing-section { padding-left:24px; padding-right:24px; }
+  .botanical-divider { padding:0 24px; }
+  .footer-top { grid-template-columns:1fr; }
+  .footer-bottom { flex-direction:column; gap:10px; text-align:center; }
+  .mkt-nav { padding:0 24px; }
+  .nav-center { display:none; }
+  .demo-inner { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="mkt-nav" id="mkt-nav">
+  <a href="index.html" class="nav-logo">Evercrafted</a>
+  <ul class="nav-center">
+    <li><a href="index.html#services">Platform</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Pricing</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <span class="nav-tier-pill">🌸 Bloom — Included in all plans</span>
+    <a href="index.html" class="nav-signin">Sign in</a>
+    <a href="index.html#contact" class="nav-cta">Get Access</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+  1. HERO
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-pill">
+        <div class="eyebrow-dot"></div>
+        <span class="eyebrow-text">Bloom Tier · Included in all plans</span>
+      </div>
+    </div>
+    <span class="hero-kicker">Tutorial Guide App</span>
+    <h1 class="hero-title">
+      Learn to make<br>wreaths that <em>sell.</em>
+    </h1>
+    <p class="hero-body">Step-by-step lessons for every skill level, every season, and every style. Track your progress, build your technique, and graduate from beginner to professional — at your own pace.</p>
+    <div class="hero-actions">
+      <a href="index.html#contact" class="btn btn-dark btn-lg">
+        Start Learning Free
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#demo" class="btn btn-ghost btn-lg">See how it works →</a>
+    </div>
+    <div class="hero-proof">
+      <div class="proof-avatars">
+        <div class="proof-av" style="background:#7B9E76">SM</div>
+        <div class="proof-av" style="background:#7B8C9E">DK</div>
+        <div class="proof-av" style="background:#9E9A7B">AT</div>
+        <div class="proof-av" style="background:#9E7B8C">LB</div>
+      </div>
+      <div class="proof-text">
+        <div class="proof-stars">★★★★★</div>
+        <p class="proof-copy"><strong>240+ makers</strong> already building their skills</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-right-rings">
+      <div class="hr-ring hr-ring-1"></div>
+      <div class="hr-ring hr-ring-2"></div>
+    </div>
+
+    <!-- Floating chips -->
+    <div class="mockup-chip chip-left">
+      <div class="chip-icon chip-icon-green">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      </div>
+      <div><div class="chip-val">Step 3 of 5</div><div class="chip-lbl">Autumn wreath</div></div>
+    </div>
+    <div class="mockup-chip chip-right">
+      <div class="chip-icon chip-icon-amber">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#C4922A" stroke-width="1.8" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      </div>
+      <div><div class="chip-val">4.9 / 5</div><div class="chip-lbl">Avg tutorial rating</div></div>
+    </div>
+
+    <!-- Tutorial card mockup -->
+    <div class="tutorial-mockup">
+      <div class="tm-header">
+        <div class="tm-header-label">Tutorial · Intermediate · Fall</div>
+        <div class="tm-header-title">Autumn Grapevine Wreath</div>
+        <div class="tm-progress-bar"><div class="tm-progress-fill"></div></div>
+      </div>
+      <div class="tm-body">
+        <div class="tm-step">
+          <div class="tm-step-check done">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="tm-step-content">
+            <div class="tm-step-num">Step 01</div>
+            <div class="tm-step-name">Prepare your grapevine base</div>
+            <div class="tm-step-meta">15 min · Base preparation</div>
+          </div>
+        </div>
+        <div class="tm-step">
+          <div class="tm-step-check done">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="tm-step-content">
+            <div class="tm-step-num">Step 02</div>
+            <div class="tm-step-name">Lay in eucalyptus base layer</div>
+            <div class="tm-step-meta">20 min · Greenery</div>
+          </div>
+        </div>
+        <div class="tm-step active">
+          <div class="tm-step-check">
+            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="tm-step-content">
+            <div class="tm-step-num">Step 03 · In progress</div>
+            <div class="tm-step-name" style="color:var(--green)">Place focal flowers</div>
+            <div class="tm-step-meta">25 min · Dahlias at 12, 4, 8 o'clock</div>
+          </div>
+        </div>
+        <div class="tm-step">
+          <div class="tm-step-check"></div>
+          <div class="tm-step-content">
+            <div class="tm-step-num">Step 04</div>
+            <div class="tm-step-name">Add accent elements</div>
+            <div class="tm-step-meta">15 min · Berries, picks</div>
+          </div>
+        </div>
+      </div>
+      <div class="tm-footer">
+        <div class="tm-season-chips">
+          <span class="tm-chip">Spring</span>
+          <span class="tm-chip active">Fall</span>
+          <span class="tm-chip">Winter</span>
+        </div>
+        <span style="font-size:0.65rem;color:var(--gray-400)">3 of 5 steps</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Botanical divider -->
+<div class="botanical-divider">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- ══════════════════════════════════════
+  2. STORY
+══════════════════════════════════════ -->
+<section class="story-section">
+  <div class="story-watermark">
+    <svg width="560" height="560" viewBox="0 0 200 200" fill="none"><circle cx="100" cy="100" r="90" stroke="white" stroke-width="0.5"/><circle cx="100" cy="100" r="65" stroke="white" stroke-width="0.5" stroke-dasharray="4 3"/><circle cx="100" cy="100" r="40" stroke="white" stroke-width="0.5"/><path d="M100 10C100 10 85 40 85 60C85 78 95 88 100 90C105 88 115 78 115 60C115 40 100 10 100 10Z" stroke="white" stroke-width="0.5" fill="none"/><path d="M100 190C100 190 115 160 115 140C115 122 105 112 100 110C95 112 85 122 85 140C85 160 100 190 100 190Z" stroke="white" stroke-width="0.5" fill="none"/></svg>
+  </div>
+  <div class="story-inner">
+    <div class="story-left reveal-left">
+      <div class="section-label"><span>The problem we solved</span></div>
+      <h2 class="story-headline">
+        Great wreath makers<br>aren't born with<br><em>perfect technique.</em>
+      </h2>
+    </div>
+    <div class="story-right reveal-right d2">
+      <div class="story-pullquote">
+        <p>"The best tutorials I found online were either too vague or buried in YouTube comments. I kept losing my place and forgetting what materials I needed."</p>
+      </div>
+      <p class="story-body">Most wreath makers learn in fragments — a YouTube video here, a Pinterest pin there, a note from a local class. There's no structured path from beginner to confident creator, and no way to track what you've actually mastered. The Tutorial Guide App changes that. Structured lessons, organised by skill level and season, with a checklist you can actually follow through.</p>
+      <div class="story-stats">
+        <div class="story-stat">
+          <div class="story-stat-num">48<span>+</span></div>
+          <div class="story-stat-lbl">Step-by-step tutorials</div>
+        </div>
+        <div class="story-stat">
+          <div class="story-stat-num"><span>4</span></div>
+          <div class="story-stat-lbl">Skill levels</div>
+        </div>
+        <div class="story-stat">
+          <div class="story-stat-num"><span>4</span></div>
+          <div class="story-stat-lbl">Seasonal collections</div>
+        </div>
+        <div class="story-stat">
+          <div class="story-stat-num">100<span>%</span></div>
+          <div class="story-stat-lbl">Included in every plan</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  3. FEATURES
+══════════════════════════════════════ -->
+<section class="features-section">
+  <div class="features-header">
+    <div class="reveal">
+      <div class="section-label"><span>What's inside</span></div>
+      <h2>Everything you need<br>to learn properly</h2>
+    </div>
+    <p class="reveal d2">Not just a list of steps — a structured learning system that builds real technique, season by season, skill level by skill level.</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-card reveal d1">
+      <span class="feat-num">01</span>
+      <div class="feat-icon fi-bloom">📖</div>
+      <div class="feat-title">Browse by skill level</div>
+      <p class="feat-desc">Filter tutorials by Beginner, Intermediate, Advanced, or Master. Every lesson is tagged so you always know exactly where you are on the path.</p>
+      <span class="feat-tag">Included in Bloom</span>
+    </div>
+
+    <div class="feature-card feature-card--dark reveal d2">
+      <span class="feat-num">02</span>
+      <div class="feat-icon">🌸</div>
+      <div class="feat-title">Seasonal filter</div>
+      <p class="feat-desc">Spring / Summer / Fall / Winter collections, updated quarterly. Never run out of relevant designs and stay ahead of seasonal demand.</p>
+      <span class="feat-tag">Included in Bloom</span>
+    </div>
+
+    <div class="feature-card reveal d3">
+      <span class="feat-num">03</span>
+      <div class="feat-icon fi-bloom">✓</div>
+      <div class="feat-title">Progress checkboxes</div>
+      <p class="feat-desc">Mark each step complete as you go. Your progress saves automatically so you can pick up exactly where you left off — days or weeks later.</p>
+      <span class="feat-tag">Included in Bloom</span>
+    </div>
+
+    <div class="feature-card feature-card--green reveal d1">
+      <span class="feat-num">04</span>
+      <div class="feat-icon">🧵</div>
+      <div class="feat-title">Materials list per tutorial</div>
+      <p class="feat-desc">Every tutorial includes a precise materials list with quantities — so you can prep everything before you start, not mid-step when your hands are sticky with glue.</p>
+      <span class="feat-tag">Included in Bloom</span>
+    </div>
+
+    <div class="feature-card reveal d2">
+      <span class="feat-num">05</span>
+      <div class="feat-icon fi-bloom">⏱</div>
+      <div class="feat-title">Time estimates per step</div>
+      <p class="feat-desc">Each step shows an estimated time so you can plan your build sessions realistically — and know which tutorials fit into a quiet afternoon vs. a full weekend.</p>
+      <span class="feat-tag">Included in Bloom</span>
+    </div>
+
+    <div class="feature-card reveal d3">
+      <span class="feat-num">06</span>
+      <div class="feat-icon fi-bloom">📥</div>
+      <div class="feat-title">PDF download + notes</div>
+      <p class="feat-desc">Download any tutorial as a print-ready PDF, or save your own step-by-step notes directly inside the app — so your technique modifications are never lost.</p>
+      <span class="feat-tag">Craft tier +</span>
+    </div>
+  </div>
+</section>
+
+<!-- Botanical divider -->
+<div class="botanical-divider">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- ══════════════════════════════════════
+  4. DEMO PREVIEW
+══════════════════════════════════════ -->
+<section class="demo-section" id="demo">
+  <div class="demo-inner">
+    <div class="demo-left reveal-left">
+      <div class="section-label"><span>How it works</span></div>
+      <h2>Browse, learn,<br>and track your progress</h2>
+      <p>Pick your skill level and season. Open a tutorial. Follow the steps. Check them off as you go. Simple as that — but with the depth and structure that actually makes you better.</p>
+      <div class="demo-features">
+        <div class="demo-feature">
+          <div class="demo-feature-dot"></div>
+          <div class="demo-feature-text">
+            <div class="demo-feature-title">Find tutorials instantly</div>
+            <div class="demo-feature-desc">Search by name, filter by skill level, season, or style. Your in-progress tutorials surface at the top.</div>
+          </div>
+        </div>
+        <div class="demo-feature">
+          <div class="demo-feature-dot"></div>
+          <div class="demo-feature-text">
+            <div class="demo-feature-title">Follow the build step by step</div>
+            <div class="demo-feature-desc">Each step has a clear instruction, time estimate, and the exact materials you need for that step — not just a long list at the top.</div>
+          </div>
+        </div>
+        <div class="demo-feature">
+          <div class="demo-feature-dot"></div>
+          <div class="demo-feature-text">
+            <div class="demo-feature-title">Launch in Blueprint Generator</div>
+            <div class="demo-feature-desc">At Studio tier, any tutorial can pre-fill the Blueprint Generator with the right wreath size, base type, and element counts.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal-right d2">
+      <div class="browser-mockup">
+        <div class="bm-topbar">
+          <div class="bm-dot" style="background:#EF4444"></div>
+          <div class="bm-dot" style="background:#F59E0B"></div>
+          <div class="bm-dot" style="background:#10B981"></div>
+          <div class="bm-url">evercrafted.com/app/tutorial-guide</div>
+        </div>
+        <div class="bm-body">
+          <div class="bm-search">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gray-400)" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span class="bm-search-placeholder">Search tutorials…</span>
+          </div>
+          <div class="bm-filter-chips">
+            <span class="bm-chip active">All</span>
+            <span class="bm-chip">Beginner</span>
+            <span class="bm-chip active">Fall</span>
+            <span class="bm-chip">Intermediate</span>
+          </div>
+          <div class="bm-grid">
+            <div class="bm-card">
+              <div class="bm-card-thumb" style="background:var(--green-pale)">
+                <svg width="40" height="40" viewBox="0 0 120 120" fill="none"><circle cx="60" cy="60" r="44" stroke="var(--green)" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/><circle cx="60" cy="60" r="30" stroke="var(--green)" stroke-width="0.5" opacity="0.3"/><path d="M60 16C60 16 52 10 44 12C36 15 38 24 46 24C52 24 60 16 60 16Z" fill="rgba(74,103,65,0.2)" stroke="var(--green)" stroke-width="1"/><path d="M60 16C60 16 68 10 76 12C84 15 82 24 74 24C68 24 60 16 60 16Z" fill="rgba(74,103,65,0.2)" stroke="var(--green)" stroke-width="1"/><circle cx="60" cy="60" r="6" fill="rgba(74,103,65,0.3)"/></svg>
+              </div>
+              <div class="bm-card-body">
+                <div class="bm-card-title">Autumn Grapevine Wreath</div>
+                <div class="bm-card-meta">
+                  <span class="bm-card-level">Intermediate</span>
+                  <span class="bm-card-time">75 min</span>
+                </div>
+                <div class="bm-progress"><div class="bm-progress-fill" style="width:60%"></div></div>
+              </div>
+            </div>
+            <div class="bm-card">
+              <div class="bm-card-thumb" style="background:#FEF3E2">
+                <svg width="40" height="40" viewBox="0 0 120 120" fill="none"><circle cx="60" cy="60" r="44" stroke="#C4922A" stroke-width="1" stroke-dasharray="4 3" opacity="0.4"/><path d="M60 16C60 16 52 10 44 12C36 15 38 24 46 24C52 24 60 16 60 16Z" fill="rgba(196,146,42,0.2)" stroke="#C4922A" stroke-width="1"/><path d="M104 60C104 60 110 52 108 44C105 36 96 38 96 46C96 52 104 60 104 60Z" fill="rgba(196,146,42,0.2)" stroke="#C4922A" stroke-width="1"/><circle cx="60" cy="60" r="6" fill="rgba(196,146,42,0.3)"/></svg>
+              </div>
+              <div class="bm-card-body">
+                <div class="bm-card-title">Harvest Gold Statement</div>
+                <div class="bm-card-meta">
+                  <span class="bm-card-level">Advanced</span>
+                  <span class="bm-card-time">90 min</span>
+                </div>
+                <div class="bm-progress"><div class="bm-progress-fill" style="width:0%"></div></div>
+              </div>
+            </div>
+            <div class="bm-card">
+              <div class="bm-card-thumb" style="background:var(--paper)">
+                <svg width="40" height="40" viewBox="0 0 120 120" fill="none"><circle cx="60" cy="60" r="44" stroke="var(--ink)" stroke-width="1" stroke-dasharray="4 3" opacity="0.2"/><path d="M60 16C60 16 52 10 44 12C36 15 38 24 46 24C52 24 60 16 60 16Z" fill="rgba(74,74,74,0.1)" stroke="var(--ink)" stroke-width="1" opacity="0.4"/><circle cx="60" cy="60" r="6" fill="rgba(74,74,74,0.15)"/></svg>
+              </div>
+              <div class="bm-card-body">
+                <div class="bm-card-title">Dried Naturals Starter</div>
+                <div class="bm-card-meta">
+                  <span class="bm-card-level">Beginner</span>
+                  <span class="bm-card-time">45 min</span>
+                </div>
+                <div class="bm-progress"><div class="bm-progress-fill" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="bm-card">
+              <div class="bm-card-thumb" style="background:var(--studio-pale)">
+                <svg width="40" height="40" viewBox="0 0 120 120" fill="none"><circle cx="60" cy="60" r="44" stroke="var(--studio-c)" stroke-width="1" stroke-dasharray="4 3" opacity="0.3"/><path d="M60 16C60 16 52 10 44 12C36 15 38 24 46 24C52 24 60 16 60 16Z" fill="rgba(122,74,133,0.1)" stroke="var(--studio-c)" stroke-width="1" opacity="0.5"/><circle cx="60" cy="60" r="6" fill="rgba(122,74,133,0.2)"/></svg>
+              </div>
+              <div class="bm-card-body">
+                <div class="bm-card-title">Autumn Florals Deep Dive</div>
+                <div class="bm-card-meta">
+                  <span class="bm-card-level" style="background:var(--studio-pale);color:var(--studio-c);border-color:rgba(122,74,133,0.2)">Master</span>
+                  <span class="bm-card-time">120 min</span>
+                </div>
+                <div class="bm-progress"><div class="bm-progress-fill" style="width:20%"></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  5. TESTIMONIALS
+══════════════════════════════════════ -->
+<section class="testimonials-section">
+  <div class="testimonials-header reveal">
+    <div class="section-label" style="justify-content:center"><span>What makers say</span></div>
+    <h2>From absolute beginner<br>to confident creator</h2>
+    <p>Real feedback from the Evercrafted early access community</p>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card reveal d1">
+      <div class="t-stars">★★★★★</div>
+      <p class="t-quote">"I went from watching YouTube tutorials on 2× speed and still getting lost, to actually finishing a wreath in one sitting. The step checkboxes are genuinely life-changing."</p>
+      <div class="t-author">
+        <div class="t-avatar" style="background:#7B9E76">JR</div>
+        <div><div class="t-name">Jessica R.</div><div class="t-role">Beginner maker · Etsy seller · Nashville, TN</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card testimonial-card--dark reveal d2">
+      <div class="t-stars">★★★★★</div>
+      <p class="t-quote">"The seasonal filter is how I plan my whole year. I browse the Fall collection in August, know exactly what I'm building in October, and I'm never scrambling for ideas."</p>
+      <div class="t-author">
+        <div class="t-avatar" style="background:#9E9A7B">AT</div>
+        <div><div class="t-name">Amber T.</div><div class="t-role">Seasonal studio owner · Portland, OR</div></div>
+      </div>
+    </div>
+    <div class="testimonial-card reveal d3">
+      <div class="t-stars">★★★★★</div>
+      <p class="t-quote">"Having the exact materials list per step — not just a big list at the top — means I actually prep properly before I start. My workshop is so much less chaotic now."</p>
+      <div class="t-author">
+        <div class="t-avatar" style="background:#7B8C9E">DK</div>
+        <div><div class="t-name">Diane K.</div><div class="t-role">Interior designer & maker · Chicago, IL</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Botanical divider -->
+<div class="botanical-divider">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- ══════════════════════════════════════
+  6. FAQ
+══════════════════════════════════════ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="faq-left reveal-left">
+      <div class="section-label"><span>Questions</span></div>
+      <h2>Everything you're<br>wondering about</h2>
+      <p>Can't find what you need? Email us at hello@evercrafted.com and we'll respond within 24 hours.</p>
+      <a href="index.html#contact" class="btn btn-dark btn-md" style="margin-top:8px">Contact us →</a>
+    </div>
+    <div class="faq-list reveal d1">
+      <div class="faq-item open">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is the Tutorial Guide really included in all plans?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Yes — the Tutorial Guide is included at every tier, starting with Bloom at $19/month. Every plan gets the full tutorial browser, skill-level filtering, seasonal collections, step-by-step instructions, and progress tracking. PDF download and note-saving unlock at Craft tier.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How often are new tutorials added?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">New tutorials are added on a rolling basis, with seasonal collections refreshed quarterly. Fall tutorials arrive in July, Holiday in October, Spring in January, and Summer in April. All Evercrafted subscribers get every new tutorial automatically — no separate purchase required.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What skill level do I need to start?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">None whatsoever. The Beginner collection starts from absolute zero — we assume you've never touched a wreath base or a glue gun. The skill levels progress naturally, so you can start at Beginner and work your way to Master without any gaps in instruction.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Does my progress save if I close the app?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Yes. Every step you check off is saved automatically to your account. You can close the app mid-tutorial, come back days later on a different device, and pick up exactly where you left off.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Can tutorials connect to the Blueprint Generator?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">At Studio tier and above, every tutorial has a "Build from this tutorial" button that pre-fills the Blueprint Generator with the wreath size, base type, and element counts from that tutorial — so you can generate a precise placement blueprint without re-entering everything manually.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  7. PRICING
+══════════════════════════════════════ -->
+<section class="pricing-section">
+  <div class="pricing-header reveal">
+    <div class="section-label" style="justify-content:center"><span>Pricing</span></div>
+    <h2>Included in every plan</h2>
+    <p>The Tutorial Guide is the foundation of Evercrafted — which is why it comes with every subscription, from Bloom to Atelier.</p>
+  </div>
+
+  <div class="pricing-grid reveal d1">
+    <div class="pc">
+      <div class="pc-name">Bloom</div>
+      <div class="pc-sub">For beginners</div>
+      <div class="pc-price-row">
+        <span class="pc-sym">$</span>
+        <span class="pc-val">19</span>
+        <span class="pc-per">/ mo</span>
+      </div>
+      <div class="pc-txn">+ <span>3%</span> transaction fee</div>
+      <div class="pc-this-app">✓ Tutorial Guide included</div>
+      <div class="pc-hr"></div>
+      <div class="pc-features">
+        <div class="pc-feature"><span class="pc-check">✓</span>Full tutorial browser</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Skill-level & seasonal filters</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Step-by-step progress tracking</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Materials list per tutorial</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Seasonal Lookbook app</div>
+      </div>
+      <a href="index.html#contact" class="pc-btn">Get started</a>
+    </div>
+
+    <div class="pc pc--featured">
+      <div class="pc-popular">Most popular</div>
+      <div class="pc-name">Craft</div>
+      <div class="pc-sub">For active sellers</div>
+      <div class="pc-price-row">
+        <span class="pc-sym">$</span>
+        <span class="pc-val">39</span>
+        <span class="pc-per">/ mo</span>
+      </div>
+      <div class="pc-txn">+ <span>2%</span> transaction fee</div>
+      <div class="pc-this-app">✓ Tutorial Guide + PDF download</div>
+      <div class="pc-hr"></div>
+      <div class="pc-features">
+        <div class="pc-feature"><span class="pc-check">✓</span>Everything in Bloom</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>PDF download per tutorial</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Save custom notes per step</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Inventory & Pricing apps</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Order Manager</div>
+      </div>
+      <a href="index.html#contact" class="pc-btn pc-btn--solid">Get started</a>
+    </div>
+
+    <div class="pc">
+      <div class="pc-name">Studio</div>
+      <div class="pc-sub">For professionals</div>
+      <div class="pc-price-row">
+        <span class="pc-sym">$</span>
+        <span class="pc-val">69</span>
+        <span class="pc-per">/ mo</span>
+      </div>
+      <div class="pc-txn">+ <span>1%</span> transaction fee</div>
+      <div class="pc-this-app">✓ Launch to Blueprint Generator</div>
+      <div class="pc-hr"></div>
+      <div class="pc-features">
+        <div class="pc-feature"><span class="pc-check">✓</span>Everything in Craft</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>"Build from tutorial" → Blueprint</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Video embed slots per step</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Blueprint Generator + Client Portal</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Storefront & Analytics</div>
+      </div>
+      <a href="index.html#contact" class="pc-btn">Get started</a>
+    </div>
+
+    <div class="pc">
+      <div class="pc-name">Atelier</div>
+      <div class="pc-sub">For studios</div>
+      <div class="pc-price-row">
+        <span class="pc-sym">$</span>
+        <span class="pc-val">129</span>
+        <span class="pc-per">/ mo</span>
+      </div>
+      <div class="pc-txn"><span>0%</span> transaction fee</div>
+      <div class="pc-this-app">✓ All features + all 5 AI apps</div>
+      <div class="pc-hr"></div>
+      <div class="pc-features">
+        <div class="pc-feature"><span class="pc-check">✓</span>Everything in Studio</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>All 5 AI-powered apps</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Unlimited seats</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>Priority support</div>
+        <div class="pc-feature"><span class="pc-check">✓</span>All future apps included</div>
+      </div>
+      <a href="index.html#contact" class="pc-btn">Get started</a>
+    </div>
+  </div>
+
+  <div class="pricing-note reveal">
+    <div class="pricing-note-dot"></div>
+    <span>No lock-in contracts. Cancel or change your plan any time. All plans include a 14-day free trial.</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  8. CLOSING CTA
+══════════════════════════════════════ -->
+<section class="closing-cta">
+  <div class="cta-inner">
+    <div class="cta-text reveal">
+      <h2>Start learning wreath<br>making the right way.</h2>
+      <p>The Tutorial Guide is included in every Evercrafted plan — from $19/month. Browse 48+ step-by-step lessons, track your progress, and build real technique from day one.</p>
+    </div>
+    <div class="cta-actions reveal d2">
+      <a href="index.html#contact" class="cta-btn-white">
+        Get Early Access
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <span class="cta-note">Bloom from $19/mo · 14-day trial · No card required</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="mkt-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="footer-logo">Evercrafted</a>
+      <p class="footer-tagline">The all-in-one platform for professional wreath makers and interior designers.</p>
+      <div class="footer-social">
+        <a href="#" class="footer-social-link">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#" class="footer-social-link">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Platform</h4><ul><li><a href="#">All 19 Apps</a></li><li><a href="#">Bloom Tier</a></li><li><a href="#">Craft Tier</a></li><li><a href="#">Studio Tier</a></li><li><a href="#">Atelier Tier</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Press</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Resources</h4><ul><li><a href="#">Wreath Design Guide</a></li><li><a href="#">Seasonal Lookbook</a></li><li><a href="#">Help & Docs</a></li><li><a href="#">Status</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Evercrafted. All rights reserved.</p>
+    <p class="footer-script">Made with care ✦</p>
+    <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></div>
+  </div>
+</footer>
+
+<script>
+// Nav scroll
+const nav = document.getElementById('mkt-nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
+
+// Scroll reveal
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => io.observe(el));
+
+// FAQ
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

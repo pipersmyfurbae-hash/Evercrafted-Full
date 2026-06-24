@@ -17,6 +17,7 @@
 const Anthropic = require('@anthropic-ai/sdk');
 const fs = require('fs');
 const path = require('path');
+const EC = require('./evercrafted-schema.js'); // single source of truth for the tag vocabulary
 
 // ── CONFIG ────────────────────────────────────────────────────────
 const BATCH_SIZE = 20;        // items per API call
@@ -249,12 +250,8 @@ async function runTagger() {
         const tag = tags[i] || {};
 
         // Validate and normalise tag fields
-        const ROLES = ['focal','secondary','greenery','accent','structural','texture','bridge'];
-        const BEHAVIORS = ['heavy','mid','light','wispy'];
-        const MOVEMENTS = ['weeping','reaching','sweeping','architectural','cascading','still'];
-        const FINISHES = ['matte','satin','metallic','raw','gloss'];
-        const PALETTES = ['neutral-light','neutral-mid','neutral-dark','botanical-green','champagne','silver'];
-        const EMOTIONS = ['nostalgia','grief','sadness','peace','joy','longing','warmth','trust','awe','tenderness','melancholy','reverence','anticipation'];
+        const ROLES = EC.VOCAB.roles, BEHAVIORS = EC.VOCAB.behaviors, MOVEMENTS = EC.VOCAB.movements,
+              FINISHES = EC.VOCAB.finishes, PALETTES = EC.VOCAB.palettes, EMOTIONS = EC.VOCAB.emotions;
 
         results.push({
           ...kept,

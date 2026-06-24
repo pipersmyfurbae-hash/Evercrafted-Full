@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seasonal Lookbook — Stay Ahead of Every Season | Evercrafted</title>
+<meta name="description" content="Curated seasonal style inspiration for wreath makers. Color palettes, trending floral combinations, and editorial style guides — updated quarterly. Included in every Evercrafted plan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Dancing+Script:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --white:#FFFFFF; --off-white:#F9F7F4; --paper:#F2EFE9; --parchment:#EAE4DA;
+  --black:#1A1A1A; --charcoal:#2E2E2E; --ink:#4A4A4A;
+  --green:#4A6741; --green-light:#6B8F67; --green-pale:#EEF2ED; --green-dim:rgba(74,103,65,0.10);
+  --gray-200:#E8E8E8; --gray-300:#D0D0D0; --gray-400:#A8A8A8; --gray-500:#787878;
+  --bloom:#4A6741; --bloom-pale:#EEF2ED;
+  --craft-c:#4A6785; --craft-pale:#EEF1F6;
+  --studio-c:#7A4A85; --studio-pale:#F3EEF6;
+  --atelier-c:#1A1A1A; --atelier-pale:#F0EDE8;
+  /* Season colours */
+  --spring-c:#6B8F67; --spring-pale:#EEF2ED;
+  --summer-c:#4A6785; --summer-pale:#EEF1F6;
+  --fall-c:#C4922A;   --fall-pale:#FEF3E2;
+  --winter-c:#7A4A85; --winter-pale:#F3EEF6;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+  --script:'Dancing Script',cursive;
+  --ease:cubic-bezier(0.16,1,0.3,1);
+}
+html,body { font-family:var(--sans); background:var(--off-white); color:var(--black); -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+
+/* ── SCROLL REVEAL ── */
+.reveal,.reveal-left,.reveal-right { opacity:0; transition:opacity 0.85s var(--ease),transform 0.85s var(--ease); }
+.reveal { transform:translateY(28px); } .reveal-left { transform:translateX(-24px); } .reveal-right { transform:translateX(24px); }
+.reveal.visible,.reveal-left.visible,.reveal-right.visible { opacity:1; transform:none; }
+.d1{transition-delay:.08s} .d2{transition-delay:.16s} .d3{transition-delay:.24s} .d4{transition-delay:.32s} .d5{transition-delay:.40s}
+
+/* ── NAV ── */
+.mkt-nav { position:fixed; top:0; left:0; right:0; z-index:100; height:64px; display:flex; align-items:center; justify-content:space-between; padding:0 56px; background:rgba(249,247,244,0.90); backdrop-filter:blur(16px); border-bottom:1px solid transparent; transition:border-color 0.3s; }
+.mkt-nav.scrolled { border-color:var(--gray-200); }
+.nav-logo { font-family:var(--script); font-size:1.5rem; font-weight:700; color:var(--green); text-decoration:none; }
+.nav-center { position:absolute; left:50%; transform:translateX(-50%); display:flex; gap:32px; list-style:none; }
+.nav-center a { font-size:0.72rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink); text-decoration:none; transition:color 0.2s; }
+.nav-center a:hover { color:var(--green); }
+.nav-right { display:flex; align-items:center; gap:16px; }
+.nav-tier-pill { font-size:0.58rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:4px 10px; border-radius:100px; background:var(--bloom-pale); color:var(--bloom); border:1px solid rgba(74,103,65,0.18); }
+.nav-signin { font-size:0.72rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-500); text-decoration:none; }
+.nav-signin:hover { color:var(--black); }
+.nav-cta { font-size:0.7rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; background:var(--black); color:var(--white); padding:9px 22px; border-radius:2px; text-decoration:none; transition:background 0.2s; }
+.nav-cta:hover { background:var(--green); }
+
+/* ── SECTION LABEL ── */
+.section-label { display:flex; align-items:center; gap:14px; margin-bottom:22px; }
+.section-label::before { content:''; width:28px; height:1px; background:var(--green); flex-shrink:0; }
+.section-label span { font-size:0.64rem; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--green); }
+
+/* ── BUTTONS ── */
+.btn { display:inline-flex; align-items:center; gap:8px; font-family:var(--sans); font-weight:500; letter-spacing:0.08em; text-transform:uppercase; border:none; cursor:pointer; border-radius:2px; transition:all 0.22s; text-decoration:none; white-space:nowrap; }
+.btn-lg { font-size:0.72rem; padding:15px 36px; }
+.btn-md { font-size:0.70rem; padding:12px 28px; }
+.btn-dark { background:var(--black); color:var(--white); }
+.btn-dark:hover { background:var(--green); transform:translateY(-2px); box-shadow:0 8px 24px rgba(74,103,65,0.25); }
+.btn-outline { background:transparent; color:var(--black); border:1.5px solid var(--gray-300); }
+.btn-outline:hover { border-color:var(--black); }
+.btn-ghost { background:transparent; color:var(--ink); }
+.btn-ghost:hover { color:var(--green); }
+.btn svg { transition:transform 0.22s; }
+.btn:hover svg { transform:translateX(4px); }
+
+/* ════════════════════════════════
+   1. HERO — full-width editorial
+════════════════════════════════ */
+.hero {
+  min-height: 100vh;
+  padding-top: 64px;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: var(--black);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Watermark ring */
+.hero-watermark { position:absolute; right:-80px; top:50%; transform:translateY(-50%); opacity:0.04; pointer-events:none; z-index:1; }
+
+/* Seasonal strip at bottom of hero */
+.hero-season-strip {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  border-top: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+  z-index: 2;
+}
+.season-strip-cell {
+  padding: 20px 32px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.season-strip-cell:last-child { border-right: none; }
+.season-strip-cell:hover { background: rgba(255,255,255,0.03); }
+.season-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.season-name { font-size: 0.68rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+.season-count { margin-left: auto; font-family: var(--serif); font-size: 1rem; color: rgba(255,255,255,0.25); }
+
+/* Hero center content */
+.hero-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 64px 60px;
+  position: relative;
+  z-index: 2;
+}
+.hero-eyebrow { display:flex; align-items:center; gap:10px; margin-bottom:32px; opacity:0; transform:translateY(12px); animation:fadeUp 0.7s var(--ease) 0.15s forwards; }
+.eyebrow-pill { display:flex; align-items:center; gap:7px; background:rgba(74,103,65,0.15); border:1px solid rgba(74,103,65,0.3); border-radius:100px; padding:5px 14px 5px 8px; }
+.eyebrow-dot { width:7px; height:7px; border-radius:50%; background:var(--green-light); animation:pulse 2.4s ease-in-out infinite; }
+.eyebrow-text { font-size:0.64rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--green-light); }
+.hero-kicker { font-family:var(--script); font-size:1.5rem; color:var(--green-light); display:block; margin-bottom:10px; font-weight:600; opacity:0; transform:translateY(16px); animation:fadeUp 0.8s var(--ease) 0.28s forwards; }
+.hero-title { font-family:var(--serif); font-size:clamp(3.2rem,6vw,7rem); font-weight:300; line-height:1.02; letter-spacing:-0.03em; color:var(--white); max-width:900px; opacity:0; transform:translateY(24px); animation:fadeUp 0.95s var(--ease) 0.4s forwards; }
+.hero-title em { font-style:italic; color:var(--green-light); }
+.hero-body { font-size:1.05rem; line-height:1.82; color:rgba(255,255,255,0.5); font-weight:300; max-width:520px; margin:28px 0 44px; opacity:0; transform:translateY(14px); animation:fadeUp 0.8s var(--ease) 0.6s forwards; }
+.hero-actions { display:flex; align-items:center; gap:24px; opacity:0; transform:translateY(14px); animation:fadeUp 0.8s var(--ease) 0.72s forwards; }
+.btn-white { background:var(--white); color:var(--black); }
+.btn-white:hover { background:var(--green-pale); transform:translateY(-2px); }
+.btn-ghost-light { background:transparent; color:rgba(255,255,255,0.6); font-family:var(--sans); font-size:0.72rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; }
+.btn-ghost-light:hover { color:var(--white); }
+
+/* Palette swatches in hero */
+.hero-palettes {
+  display: flex;
+  gap: 24px;
+  margin-top: 60px;
+  opacity: 0;
+  animation: fadeIn 0.8s ease 1.0s forwards;
+}
+.palette-group { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.palette-name { font-size:0.58rem; letter-spacing:0.12em; text-transform:uppercase; color:rgba(255,255,255,0.3); }
+.palette-swatches { display:flex; gap:3px; }
+.swatch { width:28px; height:28px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.1); }
+
+/* ════════════════════════════════
+   2. STORY
+════════════════════════════════ */
+.story-section { background:var(--paper); border-bottom:1px solid var(--gray-200); padding:100px 64px; }
+.story-inner { max-width:1160px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center; }
+.story-left h2 { font-family:var(--serif); font-size:clamp(2.2rem,3.5vw,4rem); font-weight:300; line-height:1.08; letter-spacing:-0.02em; color:var(--black); margin-bottom:24px; }
+.story-left h2 em { font-style:italic; color:var(--green); }
+.story-left p { font-size:0.92rem; line-height:1.85; color:var(--ink); font-weight:300; margin-bottom:20px; }
+.story-right { display:flex; flex-direction:column; gap:20px; }
+.story-pullquote { border-left:2px solid var(--green); padding:4px 0 4px 24px; }
+.story-pullquote p { font-family:var(--serif); font-size:1.2rem; font-style:italic; line-height:1.65; color:var(--charcoal); }
+.story-timeline { display:flex; flex-direction:column; gap:0; margin-top:8px; }
+.timeline-item { display:flex; gap:16px; padding:16px 0; border-bottom:1px solid var(--gray-200); }
+.timeline-item:last-child { border-bottom:none; }
+.timeline-month { width:72px; flex-shrink:0; }
+.timeline-month-name { font-size:0.62rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--gray-400); margin-bottom:2px; }
+.timeline-month-season { font-size:0.72rem; font-weight:500; }
+.timeline-content { flex:1; }
+.timeline-title { font-family:var(--serif); font-size:0.95rem; font-weight:400; color:var(--black); margin-bottom:3px; }
+.timeline-desc { font-size:0.72rem; color:var(--gray-500); line-height:1.5; font-weight:300; }
+
+/* ════════════════════════════════
+   3. FEATURES
+════════════════════════════════ */
+.features-section { max-width:1160px; margin:0 auto; padding:100px 64px; }
+.features-header { display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:end; margin-bottom:64px; }
+.features-header h2 { font-family:var(--serif); font-size:clamp(2rem,3vw,3rem); font-weight:300; line-height:1.15; }
+.features-header p { font-size:0.92rem; line-height:1.8; color:var(--ink); font-weight:300; }
+.features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.fc { background:var(--white); padding:36px 30px; display:flex; flex-direction:column; gap:14px; position:relative; overflow:hidden; transition:transform 0.28s var(--ease),box-shadow 0.28s; }
+.fc::after { content:''; position:absolute; bottom:0; left:0; right:0; height:2px; background:var(--green); transform:scaleX(0); transform-origin:left; transition:transform 0.3s var(--ease); }
+.fc:hover { transform:translateY(-4px); box-shadow:0 16px 48px rgba(0,0,0,0.08); z-index:2; }
+.fc:hover::after { transform:scaleX(1); }
+.fc--dark { background:var(--black); }
+.fc--dark::after { background:rgba(255,255,255,0.2); }
+.fc--spring { background:var(--spring-pale); }
+.fc--spring::after { background:var(--spring-c); }
+.fc--fall { background:var(--fall-pale); }
+.fc--fall::after { background:var(--fall-c); }
+.fc-num { font-family:var(--serif); font-size:3.5rem; font-weight:300; line-height:1; display:block; color:var(--gray-200); }
+.fc--dark .fc-num { color:rgba(255,255,255,0.06); }
+.fc--spring .fc-num,.fc--fall .fc-num { color:rgba(0,0,0,0.06); }
+.fc-icon { width:44px; height:44px; border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; background:var(--green-pale); }
+.fc--dark .fc-icon { background:rgba(255,255,255,0.07); }
+.fc--spring .fc-icon { background:rgba(107,143,103,0.15); }
+.fc--fall .fc-icon { background:rgba(196,146,42,0.12); }
+.fc-title { font-family:var(--serif); font-size:1.2rem; font-weight:400; color:var(--black); line-height:1.3; }
+.fc--dark .fc-title { color:var(--white); }
+.fc-desc { font-size:0.82rem; line-height:1.75; color:var(--gray-500); font-weight:300; flex:1; }
+.fc--dark .fc-desc { color:rgba(255,255,255,0.45); }
+.fc--spring .fc-desc,.fc--fall .fc-desc { color:var(--ink); }
+.fc-tag { display:inline-flex; align-items:center; gap:5px; font-size:0.58rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; padding:3px 9px; border-radius:100px; background:var(--bloom-pale); color:var(--bloom); border:1px solid rgba(74,103,65,0.15); width:fit-content; }
+.fc--dark .fc-tag { background:rgba(255,255,255,0.07); color:rgba(255,255,255,0.5); border-color:rgba(255,255,255,0.1); }
+
+/* ════════════════════════════════
+   4. DEMO — LOOKBOOK SPREAD
+════════════════════════════════ */
+.demo-section { background:var(--black); padding:100px 64px; overflow:hidden; position:relative; }
+.demo-section::before { content:''; position:absolute; left:-60px; top:50%; transform:translateY(-50%); width:500px; height:500px; border-radius:50%; border:1px solid rgba(255,255,255,0.03); pointer-events:none; }
+.demo-inner { max-width:1160px; margin:0 auto; display:grid; grid-template-columns:1fr 540px; gap:80px; align-items:center; position:relative; z-index:2; }
+.demo-left .section-label::before { background:var(--green-light); }
+.demo-left .section-label span { color:var(--green-light); }
+.demo-left h2 { font-family:var(--serif); font-size:clamp(2rem,3vw,3rem); font-weight:300; line-height:1.15; color:var(--white); margin-bottom:20px; }
+.demo-left h2 em { font-style:italic; color:var(--green-light); }
+.demo-left p { font-size:0.92rem; line-height:1.82; color:rgba(255,255,255,0.45); font-weight:300; margin-bottom:36px; }
+.demo-points { display:flex; flex-direction:column; gap:16px; }
+.demo-point { display:flex; align-items:flex-start; gap:14px; }
+.demo-point-dot { width:8px; height:8px; border-radius:50%; background:var(--green-light); flex-shrink:0; margin-top:6px; }
+.demo-point-title { font-size:0.82rem; font-weight:500; color:var(--white); margin-bottom:3px; }
+.demo-point-desc { font-size:0.75rem; color:rgba(255,255,255,0.4); line-height:1.55; font-weight:300; }
+
+/* Lookbook mockup — editorial magazine spread */
+.lookbook-mockup { background:var(--white); border-radius:4px; overflow:hidden; box-shadow:0 8px 60px rgba(0,0,0,0.35); }
+.lm-tabs { display:flex; background:var(--off-white); border-bottom:1px solid var(--gray-200); }
+.lm-tab { flex:1; padding:10px; font-size:0.62rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; text-align:center; color:var(--gray-400); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; }
+.lm-tab.active { color:var(--fall-c); border-bottom-color:var(--fall-c); background:var(--white); }
+.lm-body { padding:20px; }
+.lm-season-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.lm-season-name { font-family:var(--script); font-size:1.5rem; color:var(--fall-c); font-weight:700; }
+.lm-season-year { font-size:0.62rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gray-400); }
+.lm-palette-row { display:flex; align-items:center; gap:6px; margin-bottom:16px; padding-bottom:14px; border-bottom:1px solid var(--gray-200); }
+.lm-palette-label { font-size:0.58rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gray-400); margin-right:4px; }
+.lm-swatch { width:22px; height:22px; border-radius:50%; flex-shrink:0; }
+.lm-swatch-name { font-size:0.62rem; color:var(--gray-500); }
+.lm-elements-heading { font-size:0.6rem; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--gray-400); margin-bottom:10px; }
+.lm-elements-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:14px; }
+.lm-element-card { border:1px solid var(--gray-200); border-radius:3px; overflow:hidden; }
+.lm-element-thumb { height:52px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; }
+.lm-element-name { padding:5px 8px; font-size:0.62rem; font-weight:500; color:var(--black); }
+.lm-element-note { padding:0 8px 5px; font-size:0.58rem; color:var(--gray-400); line-height:1.3; }
+.lm-styles-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:14px; }
+.lm-style-card { border:1px solid var(--gray-200); border-radius:3px; padding:10px; }
+.lm-style-name { font-family:var(--serif); font-size:0.85rem; font-weight:400; color:var(--black); margin-bottom:3px; }
+.lm-style-desc { font-size:0.62rem; color:var(--gray-500); line-height:1.4; }
+.lm-footer { display:flex; align-items:center; justify-content:space-between; padding-top:12px; border-top:1px solid var(--gray-200); }
+.lm-updated { font-size:0.6rem; color:var(--gray-400); }
+.lm-next-badge { display:flex; align-items:center; gap:5px; font-size:0.6rem; font-weight:500; color:var(--winter-c); background:var(--winter-pale); padding:4px 10px; border-radius:100px; }
+
+/* ════════════════════════════════
+   5. SEASON DEEP-DIVE GRID
+════════════════════════════════ */
+.seasons-section { max-width:1160px; margin:0 auto; padding:100px 64px; }
+.seasons-header { text-align:center; margin-bottom:56px; }
+.seasons-header h2 { font-family:var(--serif); font-size:clamp(2rem,2.8vw,2.8rem); font-weight:300; margin-bottom:12px; }
+.seasons-header p { font-size:0.88rem; color:var(--gray-500); font-weight:300; max-width:440px; margin:0 auto; }
+.seasons-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; }
+.season-card { padding:48px 40px; position:relative; overflow:hidden; cursor:default; }
+.season-card-spring { background:var(--spring-pale); }
+.season-card-summer { background:var(--summer-pale); }
+.season-card-fall   { background:var(--fall-pale); }
+.season-card-winter { background:var(--winter-pale); }
+.season-card-label { font-size:0.62rem; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; margin-bottom:10px; }
+.spring-label { color:var(--spring-c); } .summer-label { color:var(--summer-c); }
+.fall-label   { color:var(--fall-c); }   .winter-label { color:var(--winter-c); }
+.season-card-title { font-family:var(--serif); font-size:clamp(1.8rem,2.5vw,2.5rem); font-weight:300; line-height:1.15; color:var(--black); margin-bottom:12px; }
+.season-card-desc { font-size:0.85rem; line-height:1.75; color:var(--ink); font-weight:300; max-width:340px; margin-bottom:24px; }
+.season-card-elements { display:flex; flex-wrap:wrap; gap:6px; }
+.season-element-pill { font-size:0.62rem; font-weight:500; padding:4px 12px; border-radius:100px; border:1px solid; }
+.spring-pill { background:rgba(107,143,103,0.1); color:var(--spring-c); border-color:rgba(107,143,103,0.25); }
+.summer-pill { background:rgba(74,103,133,0.08); color:var(--summer-c); border-color:rgba(74,103,133,0.2); }
+.fall-pill   { background:rgba(196,146,42,0.1); color:var(--fall-c);   border-color:rgba(196,146,42,0.25); }
+.winter-pill { background:rgba(122,74,133,0.08); color:var(--winter-c);border-color:rgba(122,74,133,0.2); }
+.season-card-num { position:absolute; right:32px; bottom:24px; font-family:var(--serif); font-size:5rem; font-weight:300; line-height:1; opacity:0.06; }
+.season-card-updated { margin-top:20px; font-size:0.62rem; color:var(--gray-400); }
+
+/* ════════════════════════════════
+   6. TESTIMONIALS
+════════════════════════════════ */
+.testimonials-section { background:var(--white); border-top:1px solid var(--gray-200); border-bottom:1px solid var(--gray-200); padding:100px 64px; }
+.t-inner { max-width:1160px; margin:0 auto; }
+.t-header { text-align:center; margin-bottom:56px; }
+.t-header h2 { font-family:var(--serif); font-size:clamp(2rem,2.8vw,2.8rem); font-weight:300; margin-bottom:12px; }
+.t-header p { font-size:0.88rem; color:var(--gray-500); font-weight:300; max-width:400px; margin:0 auto; }
+.t-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.tc { padding:28px; display:flex; flex-direction:column; gap:14px; transition:transform 0.25s var(--ease); background:var(--off-white); }
+.tc:hover { transform:translateY(-3px); box-shadow:0 10px 32px rgba(0,0,0,0.07); z-index:2; background:var(--white); }
+.tc--dark { background:var(--black); }
+.tc--dark:hover { background:var(--black); }
+.t-stars { font-size:0.75rem; color:#C4922A; letter-spacing:0.05em; }
+.t-quote { font-family:var(--serif); font-size:1.03rem; font-style:italic; line-height:1.65; color:var(--charcoal); flex:1; }
+.tc--dark .t-quote { color:rgba(255,255,255,0.75); }
+.t-author-row { display:flex; align-items:center; gap:12px; padding-top:14px; border-top:1px solid var(--gray-200); }
+.tc--dark .t-author-row { border-color:rgba(255,255,255,0.08); }
+.t-av { width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.65rem; font-weight:600; color:var(--white); flex-shrink:0; }
+.t-name { font-size:0.75rem; font-weight:500; color:var(--black); margin-bottom:2px; }
+.tc--dark .t-name { color:var(--white); }
+.t-role { font-size:0.65rem; color:var(--gray-400); }
+
+/* ════════════════════════════════
+   7. FAQ
+════════════════════════════════ */
+.faq-section { padding:100px 64px; }
+.faq-inner { max-width:1160px; margin:0 auto; display:grid; grid-template-columns:360px 1fr; gap:80px; align-items:start; }
+.faq-left h2 { font-family:var(--serif); font-size:clamp(1.8rem,2.5vw,2.6rem); font-weight:300; line-height:1.2; margin-bottom:16px; }
+.faq-left p { font-size:0.88rem; color:var(--ink); line-height:1.75; font-weight:300; margin-bottom:28px; }
+.faq-list { display:flex; flex-direction:column; }
+.faq-item { border-bottom:1px solid var(--gray-200); }
+.faq-item:first-child { border-top:1px solid var(--gray-200); }
+.faq-q { width:100%; background:none; border:none; padding:20px 0; display:flex; align-items:center; justify-content:space-between; gap:20px; cursor:pointer; text-align:left; font-family:var(--serif); font-size:1.05rem; font-weight:400; color:var(--black); line-height:1.3; transition:color 0.2s; }
+.faq-q:hover { color:var(--green); }
+.faq-chevron { width:22px; height:22px; border:1px solid var(--gray-300); border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:transform 0.3s var(--ease),background 0.2s,border-color 0.2s; }
+.faq-item.open .faq-chevron { transform:rotate(180deg); background:var(--green); border-color:var(--green); }
+.faq-item.open .faq-chevron svg path { stroke:white; }
+.faq-a { max-height:0; overflow:hidden; transition:max-height 0.45s var(--ease); }
+.faq-a-inner { padding:0 0 20px; font-size:0.88rem; line-height:1.8; color:var(--ink); font-weight:300; }
+.faq-item.open .faq-a { max-height:300px; }
+
+/* ════════════════════════════════
+   8. PRICING
+════════════════════════════════ */
+.pricing-section { background:var(--paper); border-top:1px solid var(--gray-200); padding:100px 64px; }
+.pricing-inner { max-width:1160px; margin:0 auto; }
+.pricing-header { text-align:center; margin-bottom:56px; }
+.pricing-header h2 { font-family:var(--serif); font-size:clamp(2rem,2.8vw,2.8rem); font-weight:300; margin-bottom:12px; }
+.pricing-header p { font-size:0.88rem; color:var(--gray-500); font-weight:300; max-width:440px; margin:0 auto; line-height:1.7; }
+.pricing-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:2px; }
+.pc { background:var(--white); padding:32px 24px; display:flex; flex-direction:column; position:relative; transition:transform 0.25s var(--ease); }
+.pc:hover { transform:translateY(-4px); box-shadow:0 14px 40px rgba(0,0,0,0.08); z-index:2; }
+.pc--feat { background:var(--black); transform:translateY(-8px); box-shadow:0 20px 56px rgba(0,0,0,0.18); z-index:3; }
+.pc--feat:hover { transform:translateY(-12px); }
+.pc-pop { position:absolute; top:-1px; left:50%; transform:translateX(-50%); background:var(--green); color:var(--white); font-size:0.55rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; padding:5px 14px; border-radius:0 0 4px 4px; white-space:nowrap; }
+.pc-name { font-family:var(--script); font-size:1.35rem; font-weight:600; color:var(--green); margin-bottom:2px; }
+.pc--feat .pc-name { color:var(--green-light); }
+.pc-sub { font-size:0.62rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--gray-400); margin-bottom:22px; }
+.pc--feat .pc-sub { color:rgba(255,255,255,0.3); }
+.pc-row { display:flex; align-items:baseline; gap:3px; margin-bottom:4px; }
+.pc-sym { font-family:var(--serif); font-size:1rem; font-weight:300; color:var(--gray-400); margin-top:5px; }
+.pc-val { font-family:var(--serif); font-size:2.6rem; font-weight:300; letter-spacing:-0.02em; color:var(--black); line-height:1; }
+.pc--feat .pc-val { color:var(--white); } .pc--feat .pc-sym { color:rgba(255,255,255,0.35); }
+.pc-per { font-size:0.68rem; color:var(--gray-400); align-self:flex-end; margin-bottom:3px; }
+.pc--feat .pc-per { color:rgba(255,255,255,0.3); }
+.pc-txn { font-size:0.65rem; color:var(--gray-400); margin-bottom:20px; }
+.pc--feat .pc-txn { color:rgba(255,255,255,0.3); }
+.pc-txn span { color:var(--green); font-weight:500; }
+.pc--feat .pc-txn span { color:var(--green-light); }
+.pc-highlight { display:flex; align-items:center; gap:5px; font-size:0.62rem; font-weight:600; color:var(--green); background:var(--green-pale); padding:5px 10px; border-radius:100px; border:1px solid rgba(74,103,65,0.15); margin-bottom:14px; }
+.pc--feat .pc-highlight { color:var(--green-light); background:rgba(107,143,103,0.12); border-color:rgba(107,143,103,0.2); }
+.pc-hr { height:1px; background:var(--gray-200); margin-bottom:18px; }
+.pc--feat .pc-hr { background:rgba(255,255,255,0.1); }
+.pc-features { display:flex; flex-direction:column; gap:8px; flex:1; margin-bottom:22px; }
+.pcf { display:flex; align-items:flex-start; gap:7px; font-size:0.75rem; color:var(--ink); font-weight:300; line-height:1.4; }
+.pc--feat .pcf { color:rgba(255,255,255,0.55); }
+.pc-ck { color:var(--green); font-size:0.68rem; font-weight:600; flex-shrink:0; margin-top:2px; }
+.pc--feat .pc-ck { color:var(--green-light); }
+.pc-btn { display:flex; align-items:center; justify-content:center; padding:12px; border-radius:2px; font-family:var(--sans); font-size:0.7rem; font-weight:500; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; border:1.5px solid var(--gray-300); background:transparent; color:var(--black); transition:all 0.2s; text-decoration:none; }
+.pc-btn:hover { border-color:var(--black); }
+.pc-btn-solid { background:var(--white); color:var(--black); border-color:transparent; }
+.pc-btn-solid:hover { background:var(--green-pale); }
+.pricing-note { text-align:center; margin-top:14px; font-size:0.72rem; color:var(--gray-400); display:flex; align-items:center; justify-content:center; gap:8px; }
+.pricing-note-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 2.4s ease-in-out infinite; }
+
+/* ════════════════════════════════
+   9. CLOSING CTA
+════════════════════════════════ */
+.closing-cta { background:var(--green); padding:96px 64px; position:relative; overflow:hidden; }
+.closing-cta::before { content:''; position:absolute; right:-60px; top:-60px; width:500px; height:500px; border-radius:50%; border:1px solid rgba(255,255,255,0.07); }
+.closing-cta::after  { content:''; position:absolute; right:60px; top:40px; width:280px; height:280px; border-radius:50%; border:1px solid rgba(255,255,255,0.05); }
+.cta-inner { max-width:1160px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:48px; position:relative; z-index:2; }
+.cta-text h2 { font-family:var(--serif); font-size:clamp(2rem,3.5vw,3.2rem); font-weight:300; color:var(--white); line-height:1.15; margin-bottom:12px; }
+.cta-text p { font-size:0.92rem; color:rgba(255,255,255,0.65); font-weight:300; line-height:1.75; max-width:440px; }
+.cta-right { display:flex; flex-direction:column; align-items:flex-end; gap:12px; flex-shrink:0; }
+.cta-btn-white { display:inline-flex; align-items:center; gap:10px; background:var(--white); color:var(--black); font-family:var(--sans); font-size:0.72rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; padding:15px 36px; border-radius:2px; text-decoration:none; transition:all 0.22s; border:none; cursor:pointer; }
+.cta-btn-white:hover { background:var(--green-pale); transform:translateY(-2px); box-shadow:0 10px 30px rgba(0,0,0,0.15); }
+.cta-btn-white svg { transition:transform 0.22s; }
+.cta-btn-white:hover svg { transform:translateX(4px); }
+.cta-note { font-size:0.7rem; color:rgba(255,255,255,0.45); text-align:right; }
+
+/* ── BOTANICAL DIVIDER ── */
+.botanical-divider { display:flex; align-items:center; gap:20px; max-width:1160px; margin:0 auto; padding:0 64px; color:var(--gray-300); }
+.botanical-divider::before,.botanical-divider::after { content:''; flex:1; height:1px; background:var(--gray-200); }
+
+/* ── FOOTER ── */
+.mkt-footer { background:var(--black); padding:64px 64px 0; }
+.footer-top { max-width:1160px; margin:0 auto; display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:56px; padding-bottom:48px; border-bottom:1px solid rgba(255,255,255,0.07); }
+.footer-logo { font-family:var(--script); font-size:1.6rem; color:var(--green-light); display:block; margin-bottom:12px; font-weight:700; text-decoration:none; }
+.footer-tagline { font-size:0.82rem; color:rgba(255,255,255,0.35); line-height:1.7; font-weight:300; max-width:260px; margin-bottom:24px; }
+.footer-social { display:flex; gap:8px; }
+.footer-social-link { width:32px; height:32px; border:1px solid rgba(255,255,255,0.1); border-radius:2px; display:flex; align-items:center; justify-content:center; transition:all 0.2s; text-decoration:none; }
+.footer-social-link:hover { border-color:var(--green-light); }
+.footer-col h4 { font-size:0.6rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.25); margin-bottom:18px; font-weight:500; }
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:11px; }
+.footer-col ul a { font-size:0.83rem; color:rgba(255,255,255,0.5); text-decoration:none; transition:color 0.2s; font-weight:300; }
+.footer-col ul a:hover { color:var(--green-light); }
+.footer-bottom { max-width:1160px; margin:0 auto; padding:22px 0; display:flex; align-items:center; justify-content:space-between; }
+.footer-copy { font-size:0.7rem; color:rgba(255,255,255,0.2); }
+.footer-script { font-family:var(--script); font-size:0.95rem; color:rgba(255,255,255,0.12); font-weight:600; }
+.footer-legal { display:flex; gap:18px; }
+.footer-legal a { font-size:0.65rem; color:rgba(255,255,255,0.2); text-decoration:none; transition:color 0.2s; }
+.footer-legal a:hover { color:rgba(255,255,255,0.5); }
+
+/* ── KEYFRAMES ── */
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+@keyframes fadeIn { to { opacity:1; } }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.7)} }
+
+/* ── RESPONSIVE ── */
+@media (max-width:1024px) {
+  .mkt-nav { padding:0 40px; }
+  .nav-center { display:none; }
+  .hero-center { padding:72px 40px 48px; }
+  .hero-season-strip { grid-template-columns:1fr 1fr; }
+  .story-inner { grid-template-columns:1fr; gap:48px; }
+  .features-header,.demo-inner { grid-template-columns:1fr; gap:40px; }
+  .features-grid { grid-template-columns:1fr 1fr; }
+  .seasons-grid { grid-template-columns:1fr; }
+  .t-grid { grid-template-columns:1fr; }
+  .faq-inner { grid-template-columns:1fr; gap:40px; }
+  .pricing-grid { grid-template-columns:1fr 1fr; }
+  .pc--feat { transform:none; }
+  .cta-inner { flex-direction:column; align-items:flex-start; }
+  .cta-right { align-items:flex-start; }
+  .cta-note { text-align:left; }
+  .story-section,.demo-section,.testimonials-section,.faq-section,.pricing-section,.closing-cta,.mkt-footer { padding-left:40px; padding-right:40px; }
+  .features-section,.seasons-section { padding-left:40px; padding-right:40px; }
+  .botanical-divider { padding:0 40px; }
+  .footer-top { grid-template-columns:1fr 1fr; }
+  .footer-brand { grid-column:1/-1; }
+}
+@media (max-width:640px) {
+  .mkt-nav { padding:0 24px; }
+  .hero-center { padding:64px 24px 40px; }
+  .hero-palettes { display:none; }
+  .hero-season-strip { grid-template-columns:1fr 1fr; }
+  .features-grid,.pricing-grid { grid-template-columns:1fr; }
+  .hero-actions { flex-direction:column; align-items:center; }
+  .story-section,.demo-section,.testimonials-section,.faq-section,.pricing-section,.closing-cta,.mkt-footer { padding-left:24px; padding-right:24px; }
+  .features-section,.seasons-section { padding-left:24px; padding-right:24px; }
+  .botanical-divider { padding:0 24px; }
+  .footer-top { grid-template-columns:1fr; }
+  .footer-bottom { flex-direction:column; gap:10px; text-align:center; }
+  .demo-inner { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav class="mkt-nav" id="mkt-nav">
+  <a href="index.html" class="nav-logo">Evercrafted</a>
+  <ul class="nav-center">
+    <li><a href="index.html#services">Platform</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="index.html#services">Pricing</a></li>
+    <li><a href="index.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <span class="nav-tier-pill">🍂 Bloom — Included in all plans</span>
+    <a href="index.html" class="nav-signin">Sign in</a>
+    <a href="index.html#contact" class="nav-cta">Get Access</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════
+  1. HERO — full-width dark editorial
+══════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-watermark">
+    <svg width="700" height="700" viewBox="0 0 200 200" fill="none">
+      <circle cx="100" cy="100" r="90" stroke="white" stroke-width="0.5"/>
+      <circle cx="100" cy="100" r="65" stroke="white" stroke-width="0.5" stroke-dasharray="4 3"/>
+      <circle cx="100" cy="100" r="40" stroke="white" stroke-width="0.5"/>
+      <path d="M100 10C100 10 85 40 85 60C85 78 95 88 100 90C105 88 115 78 115 60C115 40 100 10 100 10Z" stroke="white" stroke-width="0.5" fill="none"/>
+      <path d="M10 100C10 100 40 85 60 85C78 85 88 95 90 100C88 105 78 115 60 115C40 115 10 100 10 100Z" stroke="white" stroke-width="0.5" fill="none"/>
+      <path d="M190 100C190 100 160 85 140 85C122 85 112 95 110 100C112 105 122 115 140 115C160 115 190 100 190 100Z" stroke="white" stroke-width="0.5" fill="none"/>
+      <path d="M100 190C100 190 115 160 115 140C115 122 105 112 100 110C95 112 85 122 85 140C85 160 100 190 100 190Z" stroke="white" stroke-width="0.5" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="hero-center">
+    <div class="hero-eyebrow">
+      <div class="eyebrow-pill">
+        <div class="eyebrow-dot"></div>
+        <span class="eyebrow-text">Bloom Tier · Included in all plans</span>
+      </div>
+    </div>
+    <span class="hero-kicker">Seasonal Lookbook</span>
+    <h1 class="hero-title">
+      Stay <em>ahead</em> of every<br>season, every style.
+    </h1>
+    <p class="hero-body">Curated editorial inspiration — color palettes, trending floral combinations, and style guides — refreshed quarterly before each season peaks. Know what's coming before your customers do.</p>
+    <div class="hero-actions">
+      <a href="index.html#contact" class="btn btn-white btn-lg">
+        Browse the Lookbook
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#demo" class="btn btn-ghost-light btn-lg">See this season →</a>
+    </div>
+
+    <!-- Palette preview swatches -->
+    <div class="hero-palettes">
+      <div class="palette-group">
+        <span class="palette-name">Spring</span>
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#B8D4B0"></div>
+          <div class="swatch" style="background:#E8C4C4"></div>
+          <div class="swatch" style="background:#F2E8D4"></div>
+          <div class="swatch" style="background:#C4D8E8"></div>
+        </div>
+      </div>
+      <div class="palette-group">
+        <span class="palette-name">Summer</span>
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#4A7C8A"></div>
+          <div class="swatch" style="background:#E8D480"></div>
+          <div class="swatch" style="background:#F2C860"></div>
+          <div class="swatch" style="background:#88B4A0"></div>
+        </div>
+      </div>
+      <div class="palette-group">
+        <span class="palette-name" style="color:var(--fall-c)">Fall ← Now</span>
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#C4922A;border-color:rgba(196,146,42,0.4)"></div>
+          <div class="swatch" style="background:#8B4A2A;border-color:rgba(139,74,42,0.4)"></div>
+          <div class="swatch" style="background:#D4A850;border-color:rgba(212,168,80,0.4)"></div>
+          <div class="swatch" style="background:#6B4A3A;border-color:rgba(107,74,58,0.4)"></div>
+        </div>
+      </div>
+      <div class="palette-group">
+        <span class="palette-name">Winter</span>
+        <div class="palette-swatches">
+          <div class="swatch" style="background:#4A6785"></div>
+          <div class="swatch" style="background:#C8D4DC"></div>
+          <div class="swatch" style="background:#E8E0D8"></div>
+          <div class="swatch" style="background:#7A4A85"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Season strip -->
+  <div class="hero-season-strip">
+    <div class="season-strip-cell">
+      <div class="season-dot" style="background:var(--spring-c)"></div>
+      <span class="season-name">Spring</span>
+      <span class="season-count">12</span>
+    </div>
+    <div class="season-strip-cell">
+      <div class="season-dot" style="background:var(--summer-c)"></div>
+      <span class="season-name">Summer</span>
+      <span class="season-count">14</span>
+    </div>
+    <div class="season-strip-cell" style="background:rgba(196,146,42,0.06)">
+      <div class="season-dot" style="background:var(--fall-c)"></div>
+      <span class="season-name" style="color:var(--fall-c)">Fall · Current</span>
+      <span class="season-count" style="color:var(--fall-c);opacity:0.6">16</span>
+    </div>
+    <div class="season-strip-cell">
+      <div class="season-dot" style="background:var(--winter-c)"></div>
+      <span class="season-name">Winter · Coming Nov</span>
+      <span class="season-count">—</span>
+    </div>
+  </div>
+</section>
+
+<!-- Botanical divider -->
+<div class="botanical-divider" style="padding-top:48px">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- ══════════════════════════════════════
+  2. STORY
+══════════════════════════════════════ -->
+<section class="story-section">
+  <div class="story-inner">
+    <div class="story-left reveal-left">
+      <div class="section-label"><span>Why it matters</span></div>
+      <h2>The makers who <em>plan ahead</em><br>are the ones who sell out.</h2>
+      <p>The wreath market is seasonal by nature. The difference between a sold-out fall collection and leftover inventory sitting in your garage often comes down to one thing: knowing what customers want before they know it themselves.</p>
+      <p>The Seasonal Lookbook ships quarterly, before each season peaks. You get curated color palettes, trending floral and foliage combinations, and editorial style direction — so you can design your collection with intention, not guesswork.</p>
+    </div>
+    <div class="story-right reveal-right d2">
+      <div class="story-pullquote">
+        <p>"The Fall Lookbook arrived in July. I designed my whole collection from it. By October, I'd sold out in two weeks — and I'd never sold out before."</p>
+      </div>
+      <div class="story-timeline">
+        <div class="timeline-item">
+          <div class="timeline-month">
+            <div class="timeline-month-name">January</div>
+            <div class="timeline-month-season" style="color:var(--spring-c)">🌸 Spring</div>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">Spring Lookbook drops</div>
+            <div class="timeline-desc">Pastels, fresh greenery, botanical prints — 8 weeks before spring demand peaks in March</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-month">
+            <div class="timeline-month-name">April</div>
+            <div class="timeline-month-season" style="color:var(--summer-c)">☀️ Summer</div>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">Summer Lookbook drops</div>
+            <div class="timeline-desc">Coastal blues, citrus accents, dried botanicals — 8 weeks before summer demand peaks</div>
+          </div>
+        </div>
+        <div class="timeline-item" style="background:rgba(196,146,42,0.04);margin:0 -20px;padding:16px 20px;border-radius:3px;">
+          <div class="timeline-month">
+            <div class="timeline-month-name">July</div>
+            <div class="timeline-month-season" style="color:var(--fall-c)">🍂 Fall ← Now</div>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">Fall Lookbook drops</div>
+            <div class="timeline-desc">Warm ambers, dried dahlias, grapevine — 8 weeks before the biggest wreath season of the year</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-month">
+            <div class="timeline-month-name">October</div>
+            <div class="timeline-month-season" style="color:var(--winter-c)">❄️ Winter</div>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-title">Holiday Lookbook drops</div>
+            <div class="timeline-desc">Evergreens, velvet ribbon, metallics — 8 weeks before the Christmas rush</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  3. FEATURES
+══════════════════════════════════════ -->
+<section class="features-section">
+  <div class="features-header">
+    <div class="reveal">
+      <div class="section-label"><span>What's inside</span></div>
+      <h2>More than inspiration —<br>a seasonal design brief</h2>
+    </div>
+    <p class="reveal d2">Every Lookbook is a curated editorial package. Not a mood board dump — a structured design brief with everything you need to make decisions and start creating.</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="fc reveal d1">
+      <span class="fc-num">01</span>
+      <div class="fc-icon">🎨</div>
+      <div class="fc-title">Curated color palettes</div>
+      <p class="fc-desc">4–6 seasonal palettes per edition with Pantone-adjacent names, hex values, and example floral combinations for each one. Pick a palette and design with confidence.</p>
+      <span class="fc-tag">All plans</span>
+    </div>
+
+    <div class="fc fc--fall reveal d2">
+      <span class="fc-num">02</span>
+      <div class="fc-icon">🌿</div>
+      <div class="fc-title">Trending element guide</div>
+      <p class="fc-desc">Which florals, foliages, and accent elements are gaining traction this season — sourced from Pinterest trend data and professional florist networks. Updated every quarter.</p>
+      <span class="fc-tag" style="background:rgba(196,146,42,0.12);color:var(--fall-c);border-color:rgba(196,146,42,0.25)">All plans</span>
+    </div>
+
+    <div class="fc reveal d3">
+      <span class="fc-num">03</span>
+      <div class="fc-icon">✦</div>
+      <div class="fc-title">Style direction cards</div>
+      <p class="fc-desc">4–8 named style directions per season (e.g. "Rustic Harvest", "Modern Dried", "Farmhouse Neutral") — each with a description, palette, and element list.</p>
+      <span class="fc-tag">All plans</span>
+    </div>
+
+    <div class="fc fc--dark reveal d1">
+      <span class="fc-num">04</span>
+      <div class="fc-icon">📐</div>
+      <div class="fc-title">Pairing suggestions</div>
+      <p class="fc-desc">Which elements work together and which clash — practical pairing guidance from a floral design perspective, not just aesthetic. Backed by colour theory and proportion rules.</p>
+      <span class="fc-tag">All plans</span>
+    </div>
+
+    <div class="fc reveal d2">
+      <span class="fc-num">05</span>
+      <div class="fc-icon">🔗</div>
+      <div class="fc-title">Blueprint Generator launch</div>
+      <p class="fc-desc">At Studio tier, any style direction card has a "Build this style" button that pre-fills the Blueprint Generator — so you go from inspiration to placement blueprint in seconds.</p>
+      <span class="fc-tag" style="background:var(--studio-pale);color:var(--studio-c);border-color:rgba(122,74,133,0.18)">Studio tier +</span>
+    </div>
+
+    <div class="fc fc--spring reveal d3">
+      <span class="fc-num">06</span>
+      <div class="fc-icon">📥</div>
+      <div class="fc-title">PDF download</div>
+      <p class="fc-desc">Download any Lookbook edition as a print-ready PDF — so you can pin it in your studio, share it with your team, or take it to the craft store when you're sourcing materials.</p>
+      <span class="fc-tag" style="background:rgba(107,143,103,0.12);color:var(--spring-c);border-color:rgba(107,143,103,0.25)">Craft tier +</span>
+    </div>
+  </div>
+</section>
+
+<!-- Botanical divider -->
+<div class="botanical-divider">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- ══════════════════════════════════════
+  4. DEMO — LOOKBOOK SPREAD
+══════════════════════════════════════ -->
+<section class="demo-section" id="demo">
+  <div class="demo-inner">
+    <div class="demo-left reveal-left">
+      <div class="section-label"><span>Inside the Fall 2025 edition</span></div>
+      <h2>What the current<br>Lookbook <em>looks like</em></h2>
+      <p>Every edition is structured the same way — palettes first, element guide second, style directions third, pairing notes last. Consistent enough to build a workflow around, refreshed enough to always feel current.</p>
+      <div class="demo-points">
+        <div class="demo-point">
+          <div class="demo-point-dot"></div>
+          <div>
+            <div class="demo-point-title">6 Fall 2025 palettes</div>
+            <div class="demo-point-desc">Ranging from Warm Harvest to Muted Naturals — each with hex values and example florals.</div>
+          </div>
+        </div>
+        <div class="demo-point">
+          <div class="demo-point-dot"></div>
+          <div>
+            <div class="demo-point-title">14 trending elements this fall</div>
+            <div class="demo-point-desc">Dried dahlias, smoke tree branches, and millet are trending up. Foam roses are trending down.</div>
+          </div>
+        </div>
+        <div class="demo-point">
+          <div class="demo-point-dot"></div>
+          <div>
+            <div class="demo-point-title">8 named fall style directions</div>
+            <div class="demo-point-desc">From "Rustic Harvest" to "Moody Gothic" — each with a design brief, palette, and element shortlist.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal-right d2">
+      <div class="lookbook-mockup">
+        <div class="lm-tabs">
+          <div class="lm-tab">Spring</div>
+          <div class="lm-tab">Summer</div>
+          <div class="lm-tab active">Fall 2025</div>
+          <div class="lm-tab">Winter</div>
+        </div>
+        <div class="lm-body">
+          <div class="lm-season-header">
+            <span class="lm-season-name">Fall 2025</span>
+            <span class="lm-season-year">Updated July 2025</span>
+          </div>
+          <div class="lm-palette-row">
+            <span class="lm-palette-label">Key palette</span>
+            <div class="lm-swatch" style="background:#C4922A" title="Amber Harvest"></div>
+            <div class="lm-swatch" style="background:#8B4A2A" title="Burnt Sienna"></div>
+            <div class="lm-swatch" style="background:#D4A850" title="Golden Hour"></div>
+            <div class="lm-swatch" style="background:#6B4A3A" title="Deep Bark"></div>
+            <div class="lm-swatch" style="background:#4A6741" title="Evergreen"></div>
+            <span class="lm-swatch-name" style="margin-left:6px">Warm Harvest</span>
+          </div>
+          <div class="lm-elements-heading">Trending elements</div>
+          <div class="lm-elements-grid">
+            <div class="lm-element-card">
+              <div class="lm-element-thumb" style="background:var(--fall-pale)">🌸</div>
+              <div class="lm-element-name">Dried Dahlias</div>
+              <div class="lm-element-note">↑ Trending up · Focal flower</div>
+            </div>
+            <div class="lm-element-card">
+              <div class="lm-element-thumb" style="background:var(--green-pale)">🌿</div>
+              <div class="lm-element-name">Smoke Tree</div>
+              <div class="lm-element-note">↑ Breakout this season</div>
+            </div>
+            <div class="lm-element-card">
+              <div class="lm-element-thumb" style="background:#FEF3E2">🌾</div>
+              <div class="lm-element-name">Millet Sprays</div>
+              <div class="lm-element-note">↑ Strong accent pick</div>
+            </div>
+          </div>
+          <div class="lm-elements-heading">Style directions</div>
+          <div class="lm-styles-row">
+            <div class="lm-style-card" style="background:var(--fall-pale);border-color:rgba(196,146,42,0.2)">
+              <div class="lm-style-name">Rustic Harvest</div>
+              <div class="lm-style-desc">Warm amber, grapevine, dried naturals. The quintessential fall statement.</div>
+            </div>
+            <div class="lm-style-card" style="background:var(--paper)">
+              <div class="lm-style-name">Muted Naturals</div>
+              <div class="lm-style-desc">Neutral tones, dried seed pods, bleached grasses. Understated but refined.</div>
+            </div>
+          </div>
+          <div class="lm-footer">
+            <span class="lm-updated">16 entries · Updated July 2025</span>
+            <span class="lm-next-badge">❄️ Winter drops Oct 1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  5. SEASONS DEEP-DIVE
+══════════════════════════════════════ -->
+<section class="seasons-section">
+  <div class="seasons-header reveal">
+    <div class="section-label" style="justify-content:center"><span>Four editions a year</span></div>
+    <h2>Every season, a new editorial</h2>
+    <p>Each Lookbook is designed for its season's wreath market — the elements, palettes, and styles that actually sell.</p>
+  </div>
+  <div class="seasons-grid">
+    <div class="season-card season-card-spring reveal d1">
+      <div class="season-card-label spring-label">Spring Edition · Jan release</div>
+      <div class="season-card-title">Fresh, hopeful,<br>and quietly abundant.</div>
+      <p class="season-card-desc">Pastel palettes, fresh foliages, and the first florals of the year. The spring Lookbook captures that shift from winter grey to garden green.</p>
+      <div class="season-card-elements">
+        <span class="season-element-pill spring-pill">Peonies</span>
+        <span class="season-element-pill spring-pill">Lamb's ear</span>
+        <span class="season-element-pill spring-pill">Cherry blossom</span>
+        <span class="season-element-pill spring-pill">Soft eucalyptus</span>
+        <span class="season-element-pill spring-pill">Sweet pea</span>
+      </div>
+      <div class="season-card-updated">12 palettes · 8 style directions · PDF download at Craft+</div>
+      <div class="season-card-num">🌸</div>
+    </div>
+    <div class="season-card season-card-summer reveal d2">
+      <div class="season-card-label summer-label">Summer Edition · Apr release</div>
+      <div class="season-card-title">Bold, coastal,<br>sun-bleached and free.</div>
+      <p class="season-card-desc">Coastal blues, citrus pops, and the dry botanicals of high summer. The summer Lookbook leans into texture and contrast.</p>
+      <div class="season-card-elements">
+        <span class="season-element-pill summer-pill">Sea holly</span>
+        <span class="season-element-pill summer-pill">Dried citrus</span>
+        <span class="season-element-pill summer-pill">Blue thistle</span>
+        <span class="season-element-pill summer-pill">Cotton stems</span>
+        <span class="season-element-pill summer-pill">Seagrass</span>
+      </div>
+      <div class="season-card-updated">14 palettes · 8 style directions · PDF download at Craft+</div>
+      <div class="season-card-num">☀️</div>
+    </div>
+    <div class="season-card season-card-fall reveal d3">
+      <div class="season-card-label fall-label">Fall Edition · Jul release · Current</div>
+      <div class="season-card-title">Warm, abundant,<br>and unmistakably autumn.</div>
+      <p class="season-card-desc">The biggest wreath season of the year. The fall Lookbook is our most comprehensive edition — 16 entries covering everything from Rustic Harvest to Moody Gothic.</p>
+      <div class="season-card-elements">
+        <span class="season-element-pill fall-pill">Dried dahlias</span>
+        <span class="season-element-pill fall-pill">Smoke tree</span>
+        <span class="season-element-pill fall-pill">Grapevine</span>
+        <span class="season-element-pill fall-pill">Millet sprays</span>
+        <span class="season-element-pill fall-pill">Oak leaves</span>
+      </div>
+      <div class="season-card-updated" style="color:var(--fall-c)">16 entries · 8 style directions · Live now</div>
+      <div class="season-card-num">🍂</div>
+    </div>
+    <div class="season-card season-card-winter reveal d4">
+      <div class="season-card-label winter-label">Holiday Edition · Oct release · Coming soon</div>
+      <div class="season-card-title">Luxe, festive,<br>and endlessly giftable.</div>
+      <p class="season-card-desc">Evergreens, velvet ribbon, metallics, and the full Christmas palette. The holiday Lookbook covers both traditional and contemporary holiday styles.</p>
+      <div class="season-card-elements">
+        <span class="season-element-pill winter-pill">Fraser fir</span>
+        <span class="season-element-pill winter-pill">Velvet ribbon</span>
+        <span class="season-element-pill winter-pill">Dried orange</span>
+        <span class="season-element-pill winter-pill">Magnolia</span>
+        <span class="season-element-pill winter-pill">Gold picks</span>
+      </div>
+      <div class="season-card-updated">Coming Oct 1, 2025</div>
+      <div class="season-card-num">❄️</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  6. TESTIMONIALS
+══════════════════════════════════════ -->
+<section class="testimonials-section">
+  <div class="t-inner">
+    <div class="t-header reveal">
+      <div class="section-label" style="justify-content:center"><span>What makers say</span></div>
+      <h2>Makers who plan ahead,<br>sell out first.</h2>
+      <p>Real feedback from the Evercrafted early access community</p>
+    </div>
+    <div class="t-grid">
+      <div class="tc reveal d1">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"The Fall Lookbook arrived in July. I designed my whole collection from it. By October, I'd sold out in two weeks. I'd never sold out before. That brief paid for years of Evercrafted subscriptions."</p>
+        <div class="t-author-row">
+          <div class="t-av" style="background:#9E9A7B">AT</div>
+          <div><div class="t-name">Amber T.</div><div class="t-role">Seasonal studio owner · Portland, OR</div></div>
+        </div>
+      </div>
+      <div class="tc tc--dark reveal d2">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"I used to just copy what I saw selling on Etsy. Now I get a Lookbook in January and spend February designing something nobody else is doing yet. The difference is night and day."</p>
+        <div class="t-author-row">
+          <div class="t-av" style="background:#7B8C9E">SM</div>
+          <div><div class="t-name">Sarah M.</div><div class="t-role">Professional wreath artist · Nashville, TN</div></div>
+        </div>
+      </div>
+      <div class="tc reveal d3">
+        <div class="t-stars">★★★★★</div>
+        <p class="t-quote">"The trending element guide is worth everything. Smoke tree branches as a filler — I never would have thought of it. Every single wreath I built with it this fall sold within 48 hours."</p>
+        <div class="t-author-row">
+          <div class="t-av" style="background:#7B9E76">JR</div>
+          <div><div class="t-name">Jessica R.</div><div class="t-role">Etsy seller · Wreath educator</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Botanical divider -->
+<div class="botanical-divider" style="padding-top:48px;padding-bottom:0">
+  <svg width="16" height="16" viewBox="0 0 32 32" fill="none" style="color:var(--gray-300)"><path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/><path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+</div>
+
+<!-- ══════════════════════════════════════
+  7. FAQ
+══════════════════════════════════════ -->
+<section class="faq-section">
+  <div class="faq-inner">
+    <div class="faq-left reveal-left">
+      <div class="section-label"><span>Questions</span></div>
+      <h2>Everything about<br>the Lookbook</h2>
+      <p>Any other questions? Email hello@evercrafted.com — we reply within 24 hours.</p>
+      <a href="index.html#contact" class="btn btn-dark btn-md" style="margin-top:8px">Contact us →</a>
+    </div>
+    <div class="faq-list reveal d1">
+      <div class="faq-item open">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          When exactly does each Lookbook drop?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">January (Spring), April (Summer), July (Fall), October (Holiday/Winter). Each edition drops 8 weeks before demand peaks for that season — so you have time to source materials, build your collection, and list before the rush. All subscribers get an email notification when a new edition goes live.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is it really included in all plans including Bloom at $19?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Yes — every subscriber gets access to the full Lookbook browser: all four seasonal editions, color palettes, trending element guides, and style direction cards. PDF download unlocks at Craft tier, and the "Build this style" Blueprint Generator shortcut unlocks at Studio tier.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How is this different from just browsing Pinterest?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Pinterest shows you what's already been made. The Lookbook is forward-looking — it's a curated brief for what to make next, written specifically for wreath makers. Instead of hours of browsing and second-guessing, you get a structured design brief with named palettes, specific element recommendations, and pairing guidance. It's the difference between infinite inspiration and actionable direction.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Who creates the Lookbook?
+          <div class="faq-chevron"><svg width="10" height="10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Each edition is compiled from Pinterest trend analysis, professional florist and floral design publications, and feedback from Evercrafted's maker community. It's not AI-generated trend spam — it's a curated editorial produced by someone who understands the wreath market specifically.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Can I access past editions?
+          <div class="faq-chevron"><svg width="10" height(10" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="var(--gray-400)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Yes — every past edition stays in the archive for the lifetime of your subscription. You can revisit last year's Fall Lookbook, compare it to this year's, and use archived editions as research for new designs. Nothing is removed when a new edition drops.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  8. PRICING
+══════════════════════════════════════ -->
+<section class="pricing-section">
+  <div class="pricing-inner">
+    <div class="pricing-header reveal">
+      <div class="section-label" style="justify-content:center"><span>Pricing</span></div>
+      <h2>Included in every plan</h2>
+      <p>The Seasonal Lookbook comes with every Evercrafted subscription — because staying ahead of the season should be standard, not a premium add-on.</p>
+    </div>
+    <div class="pricing-grid reveal d1">
+
+      <div class="pc">
+        <div class="pc-name">Bloom</div>
+        <div class="pc-sub">For beginners</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">19</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn">+ <span>3%</span> transaction fee</div>
+        <div class="pc-highlight">✓ Full Lookbook access</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>All 4 seasonal editions</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Color palettes with hex values</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Trending element guide</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Style direction cards</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Full archive access</div>
+        </div>
+        <a href="index.html#contact" class="pc-btn">Get started</a>
+      </div>
+
+      <div class="pc pc--feat">
+        <div class="pc-pop">Most popular</div>
+        <div class="pc-name">Craft</div>
+        <div class="pc-sub">For active sellers</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">39</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn">+ <span>2%</span> transaction fee</div>
+        <div class="pc-highlight">✓ Lookbook + PDF download</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Everything in Bloom</div>
+          <div class="pcf"><span class="pc-ck">✓</span>PDF download per edition</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Inventory & Pricing apps</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Order Manager</div>
+          <div class="pcf"><span class="pc-ck">✓</span>2 user seats</div>
+        </div>
+        <a href="index.html#contact" class="pc-btn pc-btn-solid">Get started</a>
+      </div>
+
+      <div class="pc">
+        <div class="pc-name">Studio</div>
+        <div class="pc-sub">For professionals</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">69</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn">+ <span>1%</span> transaction fee</div>
+        <div class="pc-highlight">✓ Launch to Blueprint Generator</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Everything in Craft</div>
+          <div class="pcf"><span class="pc-ck">✓</span>"Build this style" → Blueprint</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Blueprint Generator + Portal</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Storefront & Analytics</div>
+          <div class="pcf"><span class="pc-ck">✓</span>5 user seats</div>
+        </div>
+        <a href="index.html#contact" class="pc-btn">Get started</a>
+      </div>
+
+      <div class="pc">
+        <div class="pc-name">Atelier</div>
+        <div class="pc-sub">For studios</div>
+        <div class="pc-row"><span class="pc-sym">$</span><span class="pc-val">129</span><span class="pc-per">/ mo</span></div>
+        <div class="pc-txn"><span>0%</span> transaction fee</div>
+        <div class="pc-highlight">✓ + All 5 AI apps</div>
+        <div class="pc-hr"></div>
+        <div class="pc-features">
+          <div class="pcf"><span class="pc-ck">✓</span>Everything in Studio</div>
+          <div class="pcf"><span class="pc-ck">✓</span>AI Stylist trend analysis</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Unlimited seats</div>
+          <div class="pcf"><span class="pc-ck">✓</span>Priority support</div>
+          <div class="pcf"><span class="pc-ck">✓</span>All future apps</div>
+        </div>
+        <a href="index.html#contact" class="pc-btn">Get started</a>
+      </div>
+
+    </div>
+    <div class="pricing-note reveal">
+      <div class="pricing-note-dot"></div>
+      <span>No lock-in contracts. Cancel or change plan anytime. All plans include a 14-day free trial.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  9. CLOSING CTA
+══════════════════════════════════════ -->
+<section class="closing-cta">
+  <div class="cta-inner">
+    <div class="cta-text reveal">
+      <h2>Stop guessing what<br>to make next season.</h2>
+      <p>Get the Seasonal Lookbook with every Evercrafted plan — from $19/month. Your Fall 2025 edition is ready right now.</p>
+    </div>
+    <div class="cta-right reveal d2">
+      <a href="index.html#contact" class="cta-btn-white">
+        Get Early Access
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <span class="cta-note">Bloom from $19/mo · 14-day trial · No card required</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer class="mkt-footer">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="index.html" class="footer-logo">Evercrafted</a>
+      <p class="footer-tagline">The all-in-one platform for professional wreath makers and interior designers.</p>
+      <div class="footer-social">
+        <a href="#" class="footer-social-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="#" class="footer-social-link"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1.5" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Platform</h4><ul><li><a href="#">All 19 Apps</a></li><li><a href="#">Bloom Tier</a></li><li><a href="#">Craft Tier</a></li><li><a href="#">Studio Tier</a></li><li><a href="#">Pricing</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Blog</a></li><li><a href="#">Press</a></li><li><a href="#">Contact</a></li></ul></div>
+    <div class="footer-col"><h4>Resources</h4><ul><li><a href="#">Wreath Design Guide</a></li><li><a href="#">Seasonal Lookbook</a></li><li><a href="#">Help & Docs</a></li><li><a href="#">Status</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p class="footer-copy">© 2025 Evercrafted. All rights reserved.</p>
+    <p class="footer-script">Made with care ✦</p>
+    <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></div>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('mkt-nav');
+window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+}, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => io.observe(el));
+function toggleFaq(btn) {
+  const item = btn.closest('.faq-item');
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

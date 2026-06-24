@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WreathStudio — AI-Powered Wreath Prompt Composer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sage:#3B6D11;--sage-l:#EAF3DE;--sage-m:#97C459;--sage-d:#27500A;
+  --ink:#1a1a18;--stone:#5F5E5A;--parchment:#F7F5F0;--warm:#FDFCF9;
+  --border:rgba(0,0,0,0.08);--border-s:rgba(0,0,0,0.14)
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--warm);color:var(--ink);font-size:15px}
+.page{display:none}.page.active{display:block}
+
+/* ─── NAV ─────────────────────────────────────────── */
+.nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;border-bottom:0.5px solid var(--border);background:rgba(253,252,249,0.94);backdrop-filter:blur(8px)}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:400;letter-spacing:0.3px;color:var(--ink);display:flex;align-items:center;gap:9px;cursor:pointer}
+.leaf{width:16px;height:16px;background:var(--sage);border-radius:50% 0 50% 0;transform:rotate(-15deg);flex-shrink:0}
+.nav-r{display:flex;align-items:center;gap:6px}
+.nl{font-size:13px;color:var(--stone);padding:7px 14px;border-radius:6px;cursor:pointer;border:none;background:none;font-family:'Outfit',sans-serif;transition:all .15s}
+.nl:hover{color:var(--ink);background:rgba(0,0,0,0.04)}
+.nc{font-size:13px;font-family:'Outfit',sans-serif;padding:8px 18px;border-radius:7px;border:none;background:var(--sage);color:#fff;cursor:pointer;font-weight:500;transition:all .15s}
+.nc:hover{background:var(--sage-d)}
+
+/* ─── HERO ─────────────────────────────────────────── */
+.hero{padding:96px 40px 80px;max-width:780px;margin:0 auto;text-align:center}
+.eyebrow{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--sage);font-weight:500;margin-bottom:22px}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:58px;font-weight:300;line-height:1.12;color:var(--ink);margin-bottom:22px}
+.hero h1 em{font-style:italic;color:var(--sage)}
+.hero p{font-size:17px;color:var(--stone);line-height:1.72;max-width:520px;margin:0 auto 40px;font-weight:300}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-p{font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;padding:14px 30px;border-radius:8px;background:var(--sage);color:#fff;border:none;cursor:pointer;transition:all .15s}
+.btn-p:hover{background:var(--sage-d)}
+.btn-g{font-family:'Outfit',sans-serif;font-size:14px;font-weight:400;padding:14px 30px;border-radius:8px;background:transparent;color:var(--ink);border:0.5px solid var(--border-s);cursor:pointer;transition:all .15s}
+.btn-g:hover{border-color:rgba(0,0,0,0.35);background:rgba(0,0,0,0.02)}
+
+/* ─── STRIP ─────────────────────────────────────────── */
+.strip{background:var(--parchment);border-top:0.5px solid var(--border);border-bottom:0.5px solid var(--border);padding:64px 40px}
+.inner{max-width:900px;margin:0 auto}
+.sec-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--sage);font-weight:500;margin-bottom:12px;text-align:center}
+.sec-title{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:300;text-align:center;margin-bottom:44px;color:var(--ink)}
+
+/* ─── FEATURES ─────────────────────────────────────── */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.fc{background:var(--warm);border:0.5px solid var(--border);border-radius:14px;padding:26px}
+.fi{width:38px;height:38px;border-radius:9px;background:var(--sage-l);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.fi svg{width:20px;height:20px}
+.ft{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:7px}
+.fd{font-size:13px;color:var(--stone);line-height:1.65;font-weight:300}
+
+/* ─── PRICING ─────────────────────────────────────── */
+.pricing{padding:80px 40px;max-width:900px;margin:0 auto}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:44px}
+.pc{background:var(--warm);border:0.5px solid var(--border);border-radius:14px;padding:26px}
+.pc.feat{border:2px solid var(--sage)}
+.pbadge{font-size:11px;font-weight:500;background:var(--sage-l);color:var(--sage-d);padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:14px;letter-spacing:.3px}
+.pname{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--ink);margin-bottom:4px}
+.pprice{font-size:30px;font-weight:500;color:var(--ink);margin:14px 0 5px}
+.pprice span{font-size:14px;font-weight:400;color:var(--stone)}
+.pdesc{font-size:12px;color:var(--stone);margin-bottom:22px;font-weight:300}
+.pf{list-style:none;margin-bottom:26px}
+.pf li{font-size:13px;color:var(--stone);padding:6px 0;display:flex;align-items:center;gap:9px;border-bottom:0.5px solid rgba(0,0,0,0.04)}
+.pf li:last-child{border-bottom:none}
+.ck{width:15px;height:15px;border-radius:50%;background:var(--sage-l);flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.ck::after{content:'';width:6px;height:4px;border-left:1.5px solid var(--sage);border-bottom:1.5px solid var(--sage);transform:rotate(-45deg) translateY(-1px)}
+.pb{width:100%;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;padding:11px;border-radius:8px;cursor:pointer;transition:all .15s}
+.pbo{background:transparent;border:0.5px solid var(--border-s);color:var(--ink)}
+.pbo:hover{background:rgba(0,0,0,0.03)}
+.pbf{background:var(--sage);border:none;color:#fff}
+.pbf:hover{background:var(--sage-d)}
+
+/* ─── TESTI ─────────────────────────────────────────── */
+.testi-section{background:var(--parchment);padding:80px 40px;border-top:0.5px solid var(--border)}
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;max-width:900px;margin:44px auto 0}
+.tc{background:var(--warm);border:0.5px solid var(--border);border-radius:14px;padding:22px}
+.stars{display:flex;gap:4px;margin-bottom:12px}
+.star{width:12px;height:12px;background:var(--sage-m);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.ttext{font-size:13px;color:var(--stone);line-height:1.65;font-weight:300;margin-bottom:16px;font-style:italic}
+.tauth{font-size:12px;font-weight:500;color:var(--ink)}
+.trole{font-size:11px;color:var(--stone)}
+
+/* ─── FOOTER ─────────────────────────────────────────── */
+.footer{padding:32px 40px;border-top:0.5px solid var(--border);display:flex;justify-content:space-between;align-items:center;max-width:900px;margin:0 auto}
+.fbrand{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--stone)}
+.flinks{display:flex;gap:22px}
+.flink{font-size:12px;color:var(--stone);cursor:pointer;transition:color .15s}
+.flink:hover{color:var(--ink)}
+
+/* ─── APP SHELL ─────────────────────────────────────── */
+.app-shell{display:grid;grid-template-columns:230px 1fr;min-height:calc(100vh - 57px)}
+.sidebar{background:var(--parchment);border-right:0.5px solid var(--border);padding:24px 0}
+.sb-brand{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:400;padding:0 20px 20px;color:var(--ink);display:flex;align-items:center;gap:8px;border-bottom:0.5px solid var(--border)}
+.sb-sec{padding:18px 20px 8px;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--stone);font-weight:500}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13px;color:var(--stone);cursor:pointer;transition:all .15s;border-left:2px solid transparent;font-weight:300}
+.sb-item:hover{color:var(--ink);background:rgba(0,0,0,0.03)}
+.sb-item.act{color:var(--sage-d);background:rgba(59,109,17,0.06);border-left-color:var(--sage);font-weight:400}
+.sb-dot{width:5px;height:5px;border-radius:50%;background:currentColor;flex-shrink:0}
+.sb-plan{margin:24px 14px 0;background:var(--sage-l);border-radius:9px;padding:13px;font-size:11px;color:var(--sage-d)}
+.sb-plan strong{display:block;font-size:12px;font-weight:500;margin-bottom:3px}
+.sb-prog{height:3px;background:rgba(59,109,17,0.15);border-radius:2px;margin-top:8px}
+.sb-prog-fill{height:100%;background:var(--sage);border-radius:2px;width:72%}
+
+.main{padding:32px 36px;background:var(--warm);overflow-y:auto}
+.mhdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px}
+.mtitle{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink)}
+.msub{font-size:13px;color:var(--stone);margin-top:4px;font-weight:300}
+.usage-info{font-size:11px;color:var(--stone);text-align:right}
+.usage-bar{height:3px;width:130px;background:rgba(0,0,0,0.07);border-radius:2px;margin-top:5px}
+.usage-fill{height:100%;background:var(--sage);border-radius:2px;width:28%}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.panel{background:#fff;border:0.5px solid var(--border);border-radius:14px;padding:20px}
+.ptitle{font-size:10px;font-weight:500;letter-spacing:1.2px;text-transform:uppercase;color:var(--stone);margin-bottom:16px}
+
+.fl{font-size:11px;font-weight:500;color:var(--stone);letter-spacing:.5px;text-transform:uppercase;display:block;margin-bottom:6px}
+.fg{margin-bottom:15px}
+.cr{display:flex;flex-wrap:wrap;gap:5px}
+.chip{font-size:12px;padding:5px 12px;border-radius:20px;border:0.5px solid var(--border);background:#fff;color:var(--stone);cursor:pointer;transition:all .12s;font-family:'Outfit',sans-serif}
+.chip:hover{border-color:var(--sage);color:var(--sage-d)}
+.chip.on{background:var(--sage-l);border-color:var(--sage-m);color:var(--sage-d);font-weight:400}
+input[type=text]{width:100%;font-family:'Outfit',sans-serif;font-size:13px;padding:9px 11px;border:0.5px solid var(--border);border-radius:7px;background:#fff;color:var(--ink);outline:none;transition:border-color .15s}
+input[type=text]:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(59,109,17,0.07)}
+input[type=range]{width:100%;accent-color:var(--sage)}
+.sr{display:flex;align-items:center;gap:10px}
+.sr input{flex:1}
+.sv{font-size:12px;font-weight:500;color:var(--ink);min-width:30px;text-align:right}
+.se{display:flex;justify-content:space-between;font-size:10px;color:rgba(0,0,0,0.28);margin-top:2px}
+
+.out-panel{background:#fff;border:0.5px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px}
+.out-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.tpill{font-size:11px;padding:4px 13px;border-radius:20px;background:var(--sage-l);color:var(--sage-d);font-weight:500;letter-spacing:.3px}
+.ppre{background:var(--parchment);border-radius:9px;padding:16px;font-size:12px;line-height:1.8;color:var(--ink);font-family:'Outfit',sans-serif;min-height:80px;word-break:break-word;white-space:pre-wrap;border:0.5px solid rgba(0,0,0,0.05)}
+.pempty{color:rgba(0,0,0,0.28);font-style:italic}
+.ptags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.ptag{font-size:11px;padding:3px 10px;border-radius:20px;background:rgba(0,0,0,0.04);color:var(--stone);font-family:monospace}
+.acts{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.ab{font-family:'Outfit',sans-serif;font-size:12px;padding:8px 16px;border-radius:7px;cursor:pointer;transition:all .15s;border:0.5px solid var(--border-s);background:#fff;color:var(--stone)}
+.ab:hover{color:var(--ink);border-color:rgba(0,0,0,0.25);background:rgba(0,0,0,0.02)}
+.ab.pr{background:var(--sage);border-color:var(--sage);color:#fff;font-weight:500}
+.ab.pr:hover{background:var(--sage-d)}
+.ab.ok{background:var(--sage-l);border-color:var(--sage-m);color:var(--sage-d)}
+
+.gen{width:100%;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;padding:14px;border-radius:9px;background:var(--sage);color:#fff;border:none;cursor:pointer;transition:all .15s;letter-spacing:.2px;margin-top:6px}
+.gen:hover{background:var(--sage-d)}
+.gen:active{transform:scale(0.99)}
+
+.hist-list{display:flex;flex-direction:column;gap:7px;max-height:240px;overflow-y:auto}
+.hi{padding:11px 13px;border-radius:9px;border:0.5px solid var(--border);cursor:pointer;transition:all .12s;background:var(--parchment)}
+.hi:hover{border-color:var(--border-s);background:#fff}
+.hi-label{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.hi-pre{font-size:11px;color:var(--stone);line-height:1.45}
+.empty{font-size:12px;color:rgba(0,0,0,0.28);padding:10px 0;font-style:italic}
+
+.tip{font-size:12px;color:var(--stone);line-height:1.65;padding:11px 13px;background:var(--parchment);border-radius:9px;margin-bottom:9px}
+.tip strong{color:var(--sage-d);font-weight:500}
+
+@media(max-width:700px){
+  .feat-grid,.plans,.tg,.row2{grid-template-columns:1fr}
+  .hero h1{font-size:38px}
+  .nav{padding:14px 20px}
+  .app-shell{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .main{padding:20px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ LANDING ══════════════ -->
+<div class="page active" id="pg-land">
+  <nav class="nav">
+    <div class="nav-brand" onclick="showLand()"><div class="leaf"></div>WreathStudio</div>
+    <div class="nav-r">
+      <button class="nl" onclick="scrollToPricing()">Pricing</button>
+      <button class="nl" onclick="showApp()">Sign in</button>
+      <button class="nc" onclick="showApp()">Start free trial</button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="eyebrow">AI-powered wreath design tools</div>
+    <h1>Turn blueprints into<br><em>stunning Midjourney prompts</em><br>in seconds</h1>
+    <p>WreathStudio translates your wreath blueprints — materials, emotion, structure — into precision Midjourney prompts. Stop writing prompts from scratch. Start shipping beautiful product imagery.</p>
+    <div class="hero-btns">
+      <button class="btn-p" onclick="showApp()">Start free trial — no card needed</button>
+      <button class="btn-g" onclick="showApp()">See it in action</button>
+    </div>
+  </div>
+
+  <div class="strip">
+    <div class="inner">
+      <div class="sec-label">How it works</div>
+      <div class="sec-title">Blueprint in. Prompt out.</div>
+      <div class="feat-grid">
+        <div class="fc"><div class="fi"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="3" stroke="#3B6D11" stroke-width="1.5"/><path d="M6.5 10h7M6.5 7h4M6.5 13h5.5" stroke="#3B6D11" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="ft">Blueprint to prompt</div><div class="fd">Map your wreath's materials, structure, and emotional profile to Midjourney-ready prompts automatically — no prompt engineering required.</div></div>
+        <div class="fc"><div class="fi"><svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#3B6D11" stroke-width="1.5"/><path d="M10 7v3.5l2.5 2" stroke="#3B6D11" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="ft">Six prompt targets</div><div class="fd">Hero door shots, studio flat-lays, lifestyle porch scenes, close-up detail, editorial, and experimental — each with the right parameters baked in.</div></div>
+        <div class="fc"><div class="fi"><svg viewBox="0 0 20 20" fill="none"><path d="M4 15.5l4.5-4.5 3.5 3.5 5.5-8" stroke="#3B6D11" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="ft">Fidelity control</div><div class="fd">Slide between exact blueprint replication and creative variation. Control --stylize, --chaos, and --sw for style references from one interface.</div></div>
+        <div class="fc"><div class="fi"><svg viewBox="0 0 20 20" fill="none"><path d="M10 3v14M3 10h14" stroke="#3B6D11" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="ft">Remix variants</div><div class="fd">Hit Remix to generate a compositional variation from the same blueprint — perfect for A/B testing visuals without starting over.</div></div>
+        <div class="fc"><div class="fi"><svg viewBox="0 0 20 20" fill="none"><rect x="3" y="6" width="14" height="11" rx="2" stroke="#3B6D11" stroke-width="1.5"/><path d="M6 6V5a4 4 0 018 0v1" stroke="#3B6D11" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="ft">Prompt history</div><div class="fd">Every prompt you generate is saved with its blueprint, knobs, and parameters. Reload, remix, and rate your outputs.</div></div>
+        <div class="fc"><div class="fi"><svg viewBox="0 0 20 20" fill="none"><path d="M6.5 10h7M6.5 7h4" stroke="#3B6D11" stroke-width="1.5" stroke-linecap="round"/><rect x="3" y="3" width="14" height="14" rx="3" stroke="#3B6D11" stroke-width="1.5"/><path d="M7 13.5l2 2 4-4" stroke="#3B6D11" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="ft">--sref lighting profiles</div><div class="fd">Attach style reference images with calibrated --sw values to lock in your brand lighting across an entire seasonal collection.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pricing" id="pricing-anchor">
+    <div class="sec-label" style="text-align:center">Pricing</div>
+    <div class="sec-title" style="text-align:center">Simple, honest pricing</div>
+    <div class="plans">
+      <div class="pc">
+        <div class="pname">Sprout</div>
+        <div class="pprice">$0 <span>/ month</span></div>
+        <div class="pdesc">Perfect for exploring the tool</div>
+        <ul class="pf">
+          <li><span class="ck"></span>25 prompts / month</li>
+          <li><span class="ck"></span>3 prompt targets</li>
+          <li><span class="ck"></span>Basic fidelity control</li>
+          <li><span class="ck"></span>7-day prompt history</li>
+        </ul>
+        <button class="pb pbo" onclick="showApp()">Get started free</button>
+      </div>
+      <div class="pc feat">
+        <div class="pbadge">Most popular</div>
+        <div class="pname">Studio</div>
+        <div class="pprice">$29 <span>/ month</span></div>
+        <div class="pdesc">For working wreath designers</div>
+        <ul class="pf">
+          <li><span class="ck"></span>300 prompts / month</li>
+          <li><span class="ck"></span>All 6 prompt targets</li>
+          <li><span class="ck"></span>Full slider controls</li>
+          <li><span class="ck"></span>--sref lighting profiles</li>
+          <li><span class="ck"></span>Remix variants</li>
+          <li><span class="ck"></span>Unlimited prompt history</li>
+          <li><span class="ck"></span>CSV export</li>
+        </ul>
+        <button class="pb pbf" onclick="showApp()">Start 14-day trial</button>
+      </div>
+      <div class="pc">
+        <div class="pname">Atelier</div>
+        <div class="pprice">$79 <span>/ month</span></div>
+        <div class="pdesc">For studios and teams</div>
+        <ul class="pf">
+          <li><span class="ck"></span>Unlimited prompts</li>
+          <li><span class="ck"></span>Up to 5 seats</li>
+          <li><span class="ck"></span>Custom blueprint templates</li>
+          <li><span class="ck"></span>API access</li>
+          <li><span class="ck"></span>Outcome ratings & analytics</li>
+          <li><span class="ck"></span>Priority support</li>
+        </ul>
+        <button class="pb pbo" onclick="showApp()">Contact us</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="testi-section">
+    <div style="max-width:900px;margin:0 auto">
+      <div class="sec-label" style="text-align:center">What designers say</div>
+      <div class="sec-title" style="text-align:center">Made for how you actually work</div>
+      <div class="tg">
+        <div class="tc"><div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><div class="ttext">"I used to spend 30 minutes per wreath crafting Midjourney prompts. WreathStudio cuts that to under a minute and the outputs actually match my blueprints."</div><div class="tauth">Sarah M.</div><div class="trole">Etsy top seller, 4,200+ sales</div></div>
+        <div class="tc"><div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><div class="ttext">"The --sref lighting profile feature alone is worth the subscription. My entire spring collection now has a consistent look without spending hours tweaking parameters."</div><div class="tauth">Lauren T.</div><div class="trole">Floral studio owner, Nashville</div></div>
+        <div class="tc"><div class="stars"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div><div class="ttext">"The emotion-to-lighting mapping is brilliant. When I say 'cozy' my wreaths actually come out feeling warm and inviting, not just technically correct."</div><div class="tauth">Priya K.</div><div class="trole">Workshop instructor & designer</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="fbrand">WreathStudio</div>
+    <div class="flinks">
+      <span class="flink">Privacy</span>
+      <span class="flink">Terms</span>
+      <span class="flink" onclick="showApp()">Sign in</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ APP ══════════════ -->
+<div class="page" id="pg-app">
+  <nav class="nav">
+    <div class="nav-brand" onclick="showLand()"><div class="leaf"></div>WreathStudio</div>
+    <div class="nav-r">
+      <button class="nl" onclick="showLand()">Back to site</button>
+      <div style="width:33px;height:33px;border-radius:50%;background:var(--sage-l);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--sage-d)">JD</div>
+    </div>
+  </nav>
+
+  <div class="app-shell">
+    <div class="sidebar">
+      <div class="sb-brand"><div class="leaf"></div>WreathStudio</div>
+      <div class="sb-sec">Compose</div>
+      <div class="sb-item act"><span class="sb-dot"></span>Prompt composer</div>
+      <div class="sb-item"><span class="sb-dot"></span>Blueprint library</div>
+      <div class="sb-item"><span class="sb-dot"></span>Prompt history</div>
+      <div class="sb-sec">Settings</div>
+      <div class="sb-item"><span class="sb-dot"></span>Lighting profiles</div>
+      <div class="sb-item"><span class="sb-dot"></span>Style presets</div>
+      <div class="sb-item"><span class="sb-dot"></span>Account</div>
+      <div class="sb-plan">
+        <strong>Studio plan</strong>
+        217 of 300 prompts used
+        <div class="sb-prog"><div class="sb-prog-fill"></div></div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="mhdr">
+        <div><div class="mtitle">Prompt composer</div><div class="msub">Configure your blueprint and generate Midjourney-ready prompts</div></div>
+        <div class="usage-info"><span>83 prompts remaining</span><div class="usage-bar"><div class="usage-fill"></div></div></div>
+      </div>
+
+      <div class="row2">
+        <div class="panel">
+          <div class="ptitle">Blueprint structure</div>
+          <div class="fg"><label class="fl">Shape</label><div class="cr" id="s-shape"><div class="chip on" data-v="full round">Full round</div><div class="chip" data-v="asymmetrical">Asymmetrical</div><div class="chip" data-v="oval">Oval</div><div class="chip" data-v="grapevine">Grapevine</div><div class="chip" data-v="open minimal">Open</div></div></div>
+          <div class="fg"><label class="fl">Season</label><div class="cr" id="s-season"><div class="chip on" data-v="spring">Spring</div><div class="chip" data-v="summer">Summer</div><div class="chip" data-v="fall">Fall</div><div class="chip" data-v="winter">Winter</div></div></div>
+          <div class="fg"><label class="fl">Focal flowers</label><input type="text" id="f-focal" value="ivory peonies, dusty blue hydrangeas"></div>
+          <div class="fg"><label class="fl">Greenery</label><input type="text" id="f-greenery" value="soft sage eucalyptus"></div>
+          <div class="fg"><label class="fl">Ribbon</label><input type="text" id="f-ribbon" value="wide navy velvet ribbon, long trailing tails"></div>
+          <div class="fg"><label class="fl">Accents</label><input type="text" id="f-accents" placeholder="e.g. pinecones, brass bells…"></div>
+        </div>
+
+        <div class="panel">
+          <div class="ptitle">Emotion + target</div>
+          <div class="fg"><label class="fl">Emotion</label><div class="cr" id="s-emotion"><div class="chip on" data-v="calm and welcoming">Calm</div><div class="chip" data-v="joyful and celebratory">Joyful</div><div class="chip" data-v="cozy and inviting">Cozy</div><div class="chip" data-v="dramatic and bold">Dramatic</div><div class="chip" data-v="romantic and soft">Romantic</div><div class="chip" data-v="fresh and airy">Fresh</div></div></div>
+          <div class="fg"><label class="fl">Color palette</label><input type="text" id="f-palette" value="soft pastels of blush, ivory, and dusty blue"></div>
+          <div class="fg"><label class="fl">Prompt target</label><div class="cr" id="s-target"><div class="chip on" data-v="hero">Hero door</div><div class="chip" data-v="studio">Studio</div><div class="chip" data-v="lifestyle">Lifestyle</div><div class="chip" data-v="closeup">Close-up</div><div class="chip" data-v="editorial">Editorial</div><div class="chip" data-v="experimental">Experimental</div></div></div>
+          <div class="fg"><label class="fl">Door / wall color</label><div class="cr" id="s-door"><div class="chip on" data-v="dark navy">Navy</div><div class="chip" data-v="classic white">White</div><div class="chip" data-v="charcoal">Charcoal</div><div class="chip" data-v="forest green">Forest green</div><div class="chip" data-v="warm gray">Warm gray</div></div></div>
+          <div class="fg"><label class="fl">Aspect ratio</label><div class="cr" id="s-ar"><div class="chip" data-v="1:1">1:1</div><div class="chip on" data-v="2:3">2:3</div><div class="chip" data-v="3:4">3:4</div><div class="chip" data-v="4:5">4:5</div><div class="chip" data-v="16:9">16:9</div></div></div>
+        </div>
+      </div>
+
+      <div class="panel" style="margin-bottom:16px">
+        <div class="ptitle">Midjourney controls</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:16px 28px">
+          <div><label class="fl">Blueprint fidelity</label><div class="sr"><input type="range" min="0" max="100" value="75" id="r-fidelity" step="1"><span class="sv" id="rv-fidelity">75</span></div><div class="se"><span>Creative</span><span>Exact</span></div></div>
+          <div><label class="fl">--stylize</label><div class="sr"><input type="range" min="50" max="750" value="180" id="r-stylize" step="10"><span class="sv" id="rv-stylize">180</span></div><div class="se"><span>Realistic</span><span>Artistic</span></div></div>
+          <div><label class="fl">--chaos</label><div class="sr"><input type="range" min="0" max="50" value="5" id="r-chaos" step="1"><span class="sv" id="rv-chaos">5</span></div><div class="se"><span>Consistent</span><span>Variable</span></div></div>
+          <div><label class="fl">--sw (style weight)</label><div class="sr"><input type="range" min="0" max="300" value="100" id="r-sw" step="10"><span class="sv" id="rv-sw">100</span></div><div class="se"><span>Subtle</span><span>Dominant</span></div></div>
+        </div>
+        <button class="gen" onclick="generate(false)">Generate prompt</button>
+      </div>
+
+      <div class="out-panel">
+        <div class="out-top"><div class="ptitle" style="margin:0">Generated prompt</div><span class="tpill" id="target-pill">Hero door</span></div>
+        <div class="ppre" id="prompt-out"><span class="pempty">Configure your blueprint above and click "Generate prompt".</span></div>
+        <div class="ptags" id="param-tags"></div>
+        <div class="acts" id="actions" style="display:none">
+          <button class="ab pr" id="copy-btn" onclick="doCopy()">Copy to clipboard</button>
+          <button class="ab" onclick="generate(true)">Remix variant</button>
+          <button class="ab" onclick="doSave()">Save to history</button>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div class="panel">
+          <div class="ptitle">Prompt history</div>
+          <div class="hist-list" id="hist-list"><div class="empty">No saved prompts yet. Generate and save your first.</div></div>
+        </div>
+        <div class="panel">
+          <div class="ptitle">Quick tips</div>
+          <div class="tip"><strong>Fidelity 70–100</strong> — enforces exact materials. Best for SKU-accurate product shots.</div>
+          <div class="tip"><strong>--sw 60–120</strong> — balanced style reference. Keeps lighting consistent without overriding palette.</div>
+          <div class="tip"><strong>--chaos 0–10</strong> — keeps outputs predictable for shop hero images. Raise for moodboards.</div>
+          <div class="tip"><strong>Experimental target</strong> — drops --style raw for concept exploration. Not for product images.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showApp(){document.getElementById('pg-land').classList.remove('active');document.getElementById('pg-app').classList.add('active');window.scrollTo(0,0)}
+function showLand(){document.getElementById('pg-app').classList.remove('active');document.getElementById('pg-land').classList.add('active');window.scrollTo(0,0)}
+function scrollToPricing(){document.getElementById('pricing-anchor').scrollIntoView({behavior:'smooth'})}
+
+['s-shape','s-season','s-emotion','s-target','s-door','s-ar'].forEach(id=>{
+  document.querySelectorAll('#'+id+' .chip').forEach(c=>{
+    c.addEventListener('click',()=>{document.querySelectorAll('#'+id+' .chip').forEach(x=>x.classList.remove('on'));c.classList.add('on')});
+  });
+});
+
+['fidelity','stylize','chaos','sw'].forEach(id=>{
+  const inp=document.getElementById('r-'+id);
+  const out=document.getElementById('rv-'+id);
+  if(inp&&out)inp.addEventListener('input',()=>out.textContent=inp.value);
+});
+
+const EM={'calm and welcoming':'soft, serene, gentle, low contrast','joyful and celebratory':'bright, lively, cheerful, vivid','cozy and inviting':'warm, inviting, soft amber shadows','dramatic and bold':'high contrast, bold focal points, dramatic light and shadow','romantic and soft':'dreamy, delicate, rose-tinted diffused light','fresh and airy':'clean, crisp, open, breezy natural light'};
+const TL={'hero':'Hero door','studio':'Studio','lifestyle':'Lifestyle porch','closeup':'Close-up detail','editorial':'Editorial','experimental':'Experimental'};
+
+function ga(id){const el=document.querySelector('#'+id+' .chip.on');return el?el.dataset.v:''}
+function gv(id){return(document.getElementById(id)||{}).value||''}
+function gi(id){return parseInt(document.getElementById('r-'+id).value)}
+
+let lastPrompt='';const history=[];
+
+function generate(remix){
+  const shape=ga('s-shape'),season=ga('s-season'),emotion=ga('s-emotion'),target=ga('s-target'),door=ga('s-door'),ar=ga('s-ar');
+  const focal=gv('f-focal')||'mixed florals',green=gv('f-greenery')||'eucalyptus',ribbon=gv('f-ribbon')||'ribbon',accents=gv('f-accents'),palette=gv('f-palette')||'natural tones';
+  const fid=gi('fidelity'),styl=gi('stylize'),chaos=gi('chaos'),sw=gi('sw');
+  const mood=EM[emotion]||emotion;
+  const acc=accents?', '+accents:'';
+  const fidP=fid>70?'must follow these exact material and structural details':fid>40?'allow tasteful variations in secondary blooms and foliage':'allow creative interpretation inspired by the color story and emotion';
+  const rem=remix?', slight compositional reinterpretation':'';
+
+  let base='';
+  if(target==='hero') base=`a ${shape} faux ${season} floral wreath on a ${door} front door, made of ${focal} with ${green} and ${ribbon}${acc}${rem}, ${fidP}, styled as premium catalog product photography, ${mood} mood, soft natural window light, straight-on angle, shallow depth of field, ultra-detailed, hyper-realistic, professional product photography`;
+  else if(target==='studio') base=`a single ${shape} faux ${season} floral wreath on a neutral studio backdrop, composed of ${focal}, ${green}, ${ribbon}${acc}${rem}, ${fidP}, clean minimalist e-commerce product photography, evenly lit, soft shadows, high-end commercial still life, hyper-realistic`;
+  else if(target==='lifestyle') base=`a cozy front porch scene featuring a faux ${season} wreath on a ${door} front door, made of ${focal}, ${green}, ${ribbon}${acc}${rem}, ${fidP}, ${mood} atmosphere, warm inviting lighting, slight angle, shallow depth of field, realistic home decor photography`;
+  else if(target==='closeup') base=`extreme close-up of a faux floral wreath section, showing ${focal} and ${green} with ${ribbon}${rem}, focus on realistic petal texture and color gradients in a ${palette} palette, soft diffused side light, macro still life photography, bokeh background, ultra sharp detail, photorealistic`;
+  else if(target==='editorial') base=`editorial home decor photography of a ${shape} faux ${season} wreath on a ${door} surface, made of ${focal}, ${green}, ${ribbon}${acc}${rem}, ${fidP}, ${palette} color story, ${mood} mood, architectural photography lighting, magazine quality`;
+  else base=`concept art of a ${emotion}-inspired faux floral wreath, abstract arrangement of ${focal} and ${palette} palette swirling around an invisible ${shape} circle, ${green} textures${rem}, dreamy atmosphere, painterly digital art, intricate detail`;
+
+  const noT=target==='experimental'?'--no frame, watermark, text':`--no text, watermark, logo, frame, people, hands`;
+  const params=target==='experimental'?`--ar ${ar} --s ${styl} --v 6.1`:`--sref {your_lighting_ref_url} --sw ${sw} --ar ${ar} --s ${styl} --chaos ${chaos} --v 6.1 --style raw --q 1 ${noT}`;
+  lastPrompt=base+' '+params;
+
+  document.getElementById('prompt-out').textContent=lastPrompt;
+  document.getElementById('target-pill').textContent=TL[target]||target;
+  const tags=document.getElementById('param-tags');
+  tags.innerHTML=[`--ar ${ar}`,`--s ${styl}`,`--chaos ${chaos}`,`--sw ${sw}`,'--v 6.1','--style raw'].map(p=>`<span class="ptag">${p}</span>`).join('');
+  document.getElementById('actions').style.display='flex';
+}
+
+function doCopy(){
+  if(!lastPrompt)return;
+  navigator.clipboard.writeText(lastPrompt).then(()=>{
+    const btn=document.getElementById('copy-btn');
+    btn.textContent='Copied!';btn.classList.remove('pr');btn.classList.add('ok');
+    setTimeout(()=>{btn.textContent='Copy to clipboard';btn.classList.add('pr');btn.classList.remove('ok')},2000);
+  });
+}
+
+function doSave(){
+  if(!lastPrompt)return;
+  const target=ga('s-target'),season=ga('s-season');
+  const label=(TL[target]||target)+' · '+season;
+  history.unshift({label,preview:lastPrompt.substring(0,95)+'…',full:lastPrompt});
+  renderHist();
+}
+
+function renderHist(){
+  const el=document.getElementById('hist-list');
+  if(!history.length){el.innerHTML='<div class="empty">No saved prompts yet.</div>';return;}
+  el.innerHTML=history.slice(0,8).map((h,i)=>`<div class="hi" data-i="${i}"><div class="hi-label">${h.label}</div><div class="hi-pre">${h.preview}</div></div>`).join('');
+  el.querySelectorAll('.hi').forEach(item=>{
+    item.addEventListener('click',()=>{
+      const i=parseInt(item.dataset.i);
+      document.getElementById('prompt-out').textContent=history[i].full;
+      lastPrompt=history[i].full;
+      document.getElementById('actions').style.display='flex';
+    });
+  });
+}
+</script>
+</body>
+</html>

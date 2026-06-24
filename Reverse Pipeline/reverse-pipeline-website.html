@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reverse Pipeline — Evercrafted | Photograph → Blueprint</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ec-white:        #FFFFFF;
+      --ec-off-white:    #F9F7F4;
+      --ec-paper:        #F2EFE9;
+      --ec-black:        #1A1A1A;
+      --ec-charcoal:     #2E2E2E;
+      --ec-ink:          #4A4A4A;
+      --ec-green:        #4A6741;
+      --ec-green-light:  #6B8F67;
+      --ec-green-pale:   #EEF2ED;
+      --ec-green-mid:    rgba(74,103,65,0.08);
+      --ec-gray-200:     #E8E8E8;
+      --ec-gray-300:     #D0D0D0;
+      --ec-gray-400:     #A8A8A8;
+      --ec-gray-500:     #787878;
+      --ec-font-serif:   'Cormorant Garamond', Georgia, serif;
+      --ec-font-sans:    'Inter', system-ui, sans-serif;
+      --ec-font-script:  'Dancing Script', cursive;
+      --ec-font-mono:    'DM Mono', monospace;
+      --ec-shadow-hero:  0 40px 120px rgba(0,0,0,0.12);
+      --ec-shadow-card:  0 8px 40px rgba(0,0,0,0.07);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ec-font-sans);
+      background: var(--ec-white);
+      color: var(--ec-black);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ── Reveal Animation ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.45s; }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      background: rgba(249,247,244,0.88);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(232,232,232,0.6);
+      padding: 0 2.5rem;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.3s ease;
+    }
+    .nav-brand {
+      font-family: var(--ec-font-serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--ec-green);
+      text-decoration: none;
+      letter-spacing: -0.01em;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2.5rem;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ec-ink);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ec-green); }
+    .nav-cta {
+      padding: 0.55rem 1.4rem;
+      background: var(--ec-green);
+      color: white !important;
+      border-radius: 9999px;
+      font-size: 0.78rem !important;
+    }
+    .nav-cta:hover { background: var(--ec-green-light) !important; }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 8rem 2rem 6rem;
+      position: relative;
+      overflow: hidden;
+      background: var(--ec-off-white);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 80% 20%, rgba(74,103,65,0.06) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 20% 80%, rgba(74,103,65,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-eyebrow {
+      font-family: var(--ec-font-sans);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ec-green);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .eyebrow-line { width: 32px; height: 1px; background: var(--ec-green); }
+    .hero h1 {
+      font-family: var(--ec-font-serif);
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      font-weight: 700;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      color: var(--ec-black);
+      max-width: 900px;
+      margin-bottom: 0.25rem;
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--ec-green);
+    }
+    .hero-script {
+      font-family: var(--ec-font-script);
+      font-size: clamp(1.75rem, 4vw, 3rem);
+      color: var(--ec-green-light);
+      margin-bottom: 2rem;
+      display: block;
+    }
+    .hero-subhead {
+      font-family: var(--ec-font-sans);
+      font-size: 1.0625rem;
+      color: var(--ec-ink);
+      max-width: 540px;
+      margin: 0 auto 3rem;
+      line-height: 1.7;
+    }
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 5rem;
+    }
+    .btn-hero-primary {
+      padding: 1rem 2.25rem;
+      background: var(--ec-green);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      font-family: var(--ec-font-sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 8px 24px rgba(74,103,65,0.3);
+    }
+    .btn-hero-primary:hover {
+      background: var(--ec-green-light);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(74,103,65,0.4);
+    }
+    .btn-hero-ghost {
+      padding: 1rem 2rem;
+      background: transparent;
+      color: var(--ec-ink);
+      border: 1.5px solid var(--ec-gray-300);
+      border-radius: 9999px;
+      font-family: var(--ec-font-sans);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+    }
+    .btn-hero-ghost:hover {
+      border-color: var(--ec-green);
+      color: var(--ec-green);
+    }
+
+    /* Pipeline visual */
+    .hero-pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      background: var(--ec-white);
+      border: 1.5px solid var(--ec-gray-200);
+      border-radius: 16px;
+      padding: 1rem 1.75rem;
+      box-shadow: var(--ec-shadow-card);
+      margin-top: 0;
+    }
+    .pipeline-node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0 1.25rem;
+    }
+    .pipeline-node-icon {
+      font-size: 1.5rem;
+    }
+    .pipeline-node-label {
+      font-family: var(--ec-font-mono);
+      font-size: 0.65rem;
+      color: var(--ec-gray-400);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .pipeline-arrow {
+      color: var(--ec-green);
+      font-size: 1.125rem;
+      padding: 0 0.25rem;
+      opacity: 0.5;
+    }
+    .pipeline-node.active .pipeline-node-label { color: var(--ec-green); }
+
+    /* ── Section Base ── */
+    section { padding: 120px 2rem; }
+    .section-inner { max-width: 1200px; margin: 0 auto; }
+    .overline {
+      font-family: var(--ec-font-sans);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ec-green);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .overline::before {
+      content: '';
+      display: block;
+      width: 24px;
+      height: 1px;
+      background: var(--ec-green);
+    }
+    .section-heading {
+      font-family: var(--ec-font-serif);
+      font-size: clamp(2.25rem, 4vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--ec-black);
+      margin-bottom: 1.25rem;
+    }
+    .section-heading em { font-style: italic; color: var(--ec-green); }
+    .section-body {
+      font-size: 1.0625rem;
+      color: var(--ec-ink);
+      max-width: 520px;
+      line-height: 1.7;
+    }
+
+    /* ── How It Works ── */
+    .how-section { background: var(--ec-white); }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 4rem;
+      position: relative;
+    }
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: 12.5%;
+      right: 12.5%;
+      height: 1px;
+      background: linear-gradient(90deg, var(--ec-green-pale), var(--ec-green), var(--ec-green-pale));
+    }
+    .step-card {
+      padding: 0 2rem;
+      text-align: center;
+      position: relative;
+    }
+    .step-number {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--ec-white);
+      border: 2px solid var(--ec-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-family: var(--ec-font-serif);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--ec-green);
+      position: relative;
+      z-index: 1;
+    }
+    .step-title {
+      font-family: var(--ec-font-serif);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--ec-charcoal);
+      margin-bottom: 0.6rem;
+    }
+    .step-body {
+      font-size: 0.875rem;
+      color: var(--ec-gray-500);
+      line-height: 1.65;
+    }
+    .step-tag {
+      display: inline-block;
+      margin-top: 0.75rem;
+      padding: 0.25rem 0.65rem;
+      background: var(--ec-green-pale);
+      color: var(--ec-green);
+      border-radius: 9999px;
+      font-family: var(--ec-font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Feature Split ── */
+    .feature-section { background: var(--ec-off-white); }
+    .feature-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+    .feature-split.reverse { direction: rtl; }
+    .feature-split.reverse > * { direction: ltr; }
+    .feature-visual {
+      background: var(--ec-charcoal);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: var(--ec-shadow-hero);
+      aspect-ratio: 4/3;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .mock-terminal {
+      width: 100%;
+      height: 100%;
+      padding: 2rem;
+      font-family: var(--ec-font-mono);
+      font-size: 0.78rem;
+      line-height: 1.8;
+      color: #8EC98A;
+    }
+    .mock-terminal .comment { color: #666; }
+    .mock-terminal .key { color: #C9F0C0; }
+    .mock-terminal .val { color: #F9C74F; }
+    .mock-terminal .str { color: #90E0EF; }
+    .terminal-topbar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 1.25rem;
+    }
+    .t-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+    }
+    .t-dot-r { background: #FF5F57; }
+    .t-dot-y { background: #FFBD2E; }
+    .t-dot-g { background: #28C840; }
+
+    .feature-list { list-style: none; margin-top: 1.75rem; }
+    .feature-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--ec-gray-200);
+      font-size: 0.9375rem;
+      color: var(--ec-ink);
+    }
+    .feature-list li:last-child { border-bottom: none; }
+    .feature-check {
+      width: 22px; height: 22px;
+      background: var(--ec-green-pale);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 0.7rem;
+      color: var(--ec-green);
+    }
+
+    /* ── Stats ── */
+    .stats-section {
+      background: var(--ec-green);
+      padding: 80px 2rem;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    .stat-item {}
+    .stat-num {
+      font-family: var(--ec-font-serif);
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: white;
+      line-height: 1;
+      margin-bottom: 0.5rem;
+    }
+    .stat-lbl {
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ── Tier Cards ── */
+    .tiers-section { background: var(--ec-off-white); }
+    .tiers-heading-wrap { text-align: center; margin-bottom: 4rem; }
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    .tier-card {
+      background: var(--ec-white);
+      border: 1.5px solid var(--ec-gray-200);
+      border-radius: 20px;
+      padding: 2.25rem 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .tier-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--ec-shadow-card);
+    }
+    .tier-card.featured {
+      border-color: var(--ec-green);
+      box-shadow: 0 0 0 1px var(--ec-green), var(--ec-shadow-card);
+    }
+    .tier-card.featured::before {
+      content: 'Most Popular';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      background: var(--ec-green);
+      color: white;
+      text-align: center;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 0.4rem;
+    }
+    .tier-card.featured { padding-top: 3.5rem; }
+    .tier-name {
+      font-family: var(--ec-font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--ec-charcoal);
+      margin-bottom: 0.25rem;
+    }
+    .tier-price {
+      font-family: var(--ec-font-serif);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--ec-black);
+      line-height: 1;
+      margin: 1rem 0 0.25rem;
+    }
+    .tier-price span {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--ec-gray-400);
+    }
+    .tier-desc {
+      font-size: 0.8rem;
+      color: var(--ec-gray-500);
+      margin-bottom: 1.75rem;
+      line-height: 1.55;
+    }
+    .tier-features { list-style: none; margin-bottom: 2rem; flex: 1; }
+    .tier-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.825rem;
+      color: var(--ec-ink);
+      padding: 0.45rem 0;
+      border-bottom: 1px solid var(--ec-gray-200);
+    }
+    .tier-features li:last-child { border: none; }
+    .tier-features li.locked { color: var(--ec-gray-300); }
+    .tier-features .check { color: var(--ec-green); font-size: 0.8rem; }
+    .tier-features .lock { color: var(--ec-gray-300); font-size: 0.75rem; }
+    .tier-cta {
+      display: block;
+      text-align: center;
+      padding: 0.875rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .tier-cta-primary { background: var(--ec-green); color: white; }
+    .tier-cta-primary:hover { background: var(--ec-green-light); }
+    .tier-cta-ghost {
+      background: transparent;
+      color: var(--ec-green);
+      border: 1.5px solid var(--ec-green);
+    }
+    .tier-cta-ghost:hover { background: var(--ec-green-pale); }
+    .tier-cta-dark { background: var(--ec-charcoal); color: white; }
+    .tier-cta-dark:hover { background: var(--ec-black); }
+
+    /* ── Testimonials ── */
+    .testimonials-section { background: var(--ec-paper); }
+    .testimonials-heading { text-align: center; margin-bottom: 4rem; }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+    }
+    .testimonial-card {
+      background: var(--ec-white);
+      border: 1px solid var(--ec-gray-200);
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: var(--ec-shadow-card);
+    }
+    .testimonial-stars { color: #F59E0B; font-size: 0.875rem; margin-bottom: 1rem; letter-spacing: 0.15em; }
+    .testimonial-quote {
+      font-family: var(--ec-font-serif);
+      font-size: 1.125rem;
+      font-style: italic;
+      color: var(--ec-charcoal);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .author-avatar {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: var(--ec-green-pale);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.125rem;
+    }
+    .author-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--ec-charcoal);
+    }
+    .author-handle {
+      font-family: var(--ec-font-mono);
+      font-size: 0.7rem;
+      color: var(--ec-gray-400);
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      background: var(--ec-black);
+      text-align: center;
+      padding: 120px 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 50%, rgba(74,103,65,0.18) 0%, transparent 70%);
+    }
+    .cta-section > * { position: relative; z-index: 1; }
+    .cta-eyebrow {
+      font-family: var(--ec-font-script);
+      font-size: 1.5rem;
+      color: var(--ec-green-light);
+      margin-bottom: 1rem;
+      display: block;
+    }
+    .cta-heading {
+      font-family: var(--ec-font-serif);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    .cta-heading em { font-style: italic; color: var(--ec-green-light); }
+    .cta-sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.55);
+      max-width: 440px;
+      margin: 0 auto 3rem;
+      line-height: 1.7;
+    }
+    .cta-email-form {
+      display: flex;
+      max-width: 420px;
+      margin: 0 auto;
+      gap: 0;
+    }
+    .cta-email-input {
+      flex: 1;
+      padding: 0.9rem 1.25rem;
+      background: rgba(255,255,255,0.07);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-right: none;
+      border-radius: 9999px 0 0 9999px;
+      color: white;
+      font-size: 0.875rem;
+      font-family: var(--ec-font-sans);
+    }
+    .cta-email-input::placeholder { color: rgba(255,255,255,0.35); }
+    .cta-email-input:focus { outline: none; border-color: var(--ec-green); }
+    .cta-submit {
+      padding: 0.9rem 1.75rem;
+      background: var(--ec-green);
+      border: none;
+      border-radius: 0 9999px 9999px 0;
+      color: white;
+      font-family: var(--ec-font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .cta-submit:hover { background: var(--ec-green-light); }
+    .cta-caption {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.3);
+      margin-top: 1rem;
+      font-family: var(--ec-font-mono);
+    }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--ec-charcoal);
+      padding: 3rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .footer-brand {
+      font-family: var(--ec-font-serif);
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--ec-green-light);
+    }
+    .footer-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    .footer-links a {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.4);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: white; }
+    .footer-copy {
+      font-size: 0.72rem;
+      color: rgba(255,255,255,0.25);
+      font-family: var(--ec-font-mono);
+    }
+
+    /* ── Botanical SVG ── */
+    .botanical-accent {
+      color: var(--ec-green);
+      opacity: 0.15;
+      position: absolute;
+    }
+
+    @media (max-width: 1024px) {
+      .tiers-grid { grid-template-columns: repeat(2, 1fr); }
+      .steps-grid { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+      .steps-grid::before { display: none; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .feature-split { grid-template-columns: 1fr; gap: 3rem; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .tiers-grid { grid-template-columns: 1fr; }
+      .cta-email-form { flex-direction: column; }
+      .cta-email-input { border-right: 1.5px solid rgba(255,255,255,0.15); border-radius: 9999px; border-bottom: none; }
+      .cta-submit { border-radius: 9999px; }
+      section { padding: 80px 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="#" class="nav-brand">Evercrafted</a>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#launch" class="nav-cta">Get Early Access</a></li>
+  </ul>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-eyebrow reveal">
+    <span class="eyebrow-line"></span>
+    Evercrafted — Reverse Pipeline
+    <span class="eyebrow-line"></span>
+  </div>
+  <h1 class="reveal reveal-delay-1">
+    Any photograph.<br />
+    <em>Instant blueprint.</em>
+  </h1>
+  <span class="hero-script reveal reveal-delay-2">Every detail, reverse-engineered.</span>
+  <p class="hero-subhead reveal reveal-delay-3">
+    Upload a wreath photo — from Midjourney, Pinterest, or your own studio — and watch Claude Vision decode it into a production-ready manufacturing blueprint in seconds.
+  </p>
+  <div class="hero-actions reveal reveal-delay-4">
+    <a href="#launch" class="btn-hero-primary">↺ Start Reverse Engineering</a>
+    <a href="#how" class="btn-hero-ghost">See How It Works →</a>
+  </div>
+  <div class="hero-pipeline reveal reveal-delay-4">
+    <div class="pipeline-node">
+      <span class="pipeline-node-icon">🖼️</span>
+      <span class="pipeline-node-label">Image</span>
+    </div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-node active">
+      <span class="pipeline-node-icon">👁️</span>
+      <span class="pipeline-node-label">Vision AI</span>
+    </div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-node">
+      <span class="pipeline-node-icon">📊</span>
+      <span class="pipeline-node-label">Analysis</span>
+    </div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-node active">
+      <span class="pipeline-node-icon">📋</span>
+      <span class="pipeline-node-label">Blueprint</span>
+    </div>
+    <span class="pipeline-arrow">→</span>
+    <div class="pipeline-node">
+      <span class="pipeline-node-icon">🏭</span>
+      <span class="pipeline-node-label">Build</span>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works -->
+<section class="how-section" id="how">
+  <div class="section-inner">
+    <div class="overline reveal">Process</div>
+    <h2 class="section-heading reveal reveal-delay-1">Four steps from <em>photograph<br/>to production</em></h2>
+    <div class="steps-grid">
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-number">1</div>
+        <h3 class="step-title">Upload</h3>
+        <p class="step-body">Drop any wreath image — Midjourney renders, product photos, Pinterest saves, or your own designs. PNG, JPG, or WEBP.</p>
+        <span class="step-tag">IMAGE INPUT</span>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-number">2</div>
+        <h3 class="step-title">Claude Vision</h3>
+        <p class="step-body">Claude's vision model scans for floral species, colors, quantities, spatial placement, depth, and visual style in a single pass.</p>
+        <span class="step-tag">VISION ANALYSIS</span>
+      </div>
+      <div class="step-card reveal reveal-delay-3">
+        <div class="step-number">3</div>
+        <h3 class="step-title">Blueprint Schema</h3>
+        <p class="step-body">Raw analysis gets compiled into an Evercrafted blueprint — bill of materials, QACS polar placements, render prompt, and metadata.</p>
+        <span class="step-tag">SCHEMA COMPILE</span>
+      </div>
+      <div class="step-card reveal reveal-delay-4">
+        <div class="step-number">4</div>
+        <h3 class="step-title">Export & Build</h3>
+        <p class="step-body">Copy the JSON, download it, or pipe it straight to the Blueprint Studio, Etsy Listing Builder, or your manufacturer.</p>
+        <span class="step-tag">EXPORT</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-item reveal">
+      <div class="stat-num">~82%</div>
+      <div class="stat-lbl">Detection Accuracy</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-1">
+      <div class="stat-num">&lt;8s</div>
+      <div class="stat-lbl">Blueprint Generation</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-2">
+      <div class="stat-num">24+</div>
+      <div class="stat-lbl">Floral Types Detected</div>
+    </div>
+    <div class="stat-item reveal reveal-delay-3">
+      <div class="stat-num">100%</div>
+      <div class="stat-lbl">Evercrafted Schema</div>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<section class="feature-section" id="features">
+  <div class="section-inner">
+    <div class="overline reveal">What You Get</div>
+    <div class="feature-split">
+      <div class="reveal reveal-delay-1">
+        <h2 class="section-heading">AI that reads<br /><em>every petal.</em></h2>
+        <p class="section-body">Claude Vision doesn't just see colors — it identifies floral species, estimates stem counts, maps polar placement coordinates, and classifies each element by its role in the design.</p>
+        <ul class="feature-list">
+          <li><span class="feature-check">✓</span> Detects flower species, colors, and textures</li>
+          <li><span class="feature-check">✓</span> Estimates stem quantities per element type</li>
+          <li><span class="feature-check">✓</span> Maps focal, accent, and greenery layers</li>
+          <li><span class="feature-check">✓</span> Outputs QACS polar placement coordinates (θ, r)</li>
+          <li><span class="feature-check">✓</span> Classifies visual style and depth profile</li>
+          <li><span class="feature-check">✓</span> Generates a Midjourney render prompt from the blueprint</li>
+        </ul>
+      </div>
+      <div class="reveal reveal-delay-2">
+        <div class="feature-visual">
+          <div class="mock-terminal">
+            <div class="terminal-topbar">
+              <div class="t-dot t-dot-r"></div>
+              <div class="t-dot t-dot-y"></div>
+              <div class="t-dot t-dot-g"></div>
+            </div>
+            <span class="comment">// Vision analysis complete — 6.2s</span><br/>
+            <br/>
+            <span class="key">"wreath_diameter_inches"</span>: <span class="val">24</span>,<br/>
+            <span class="key">"visual_style"</span>: <span class="str">"romantic-editorial"</span>,<br/>
+            <span class="key">"color_palette"</span>: [<span class="str">"cream ivory"</span>, <span class="str">"blush"</span>, <span class="str">"sage"</span>],<br/>
+            <span class="key">"elements"</span>: [{<br/>
+            &nbsp; <span class="key">"type"</span>: <span class="str">"cabbage rose"</span>,<br/>
+            &nbsp; <span class="key">"color"</span>: <span class="str">"cream white"</span>,<br/>
+            &nbsp; <span class="key">"quantity"</span>: <span class="val">5</span>,<br/>
+            &nbsp; <span class="key">"role"</span>: <span class="str">"focal"</span><br/>
+            }, {<br/>
+            &nbsp; <span class="key">"type"</span>: <span class="str">"eucalyptus"</span>,<br/>
+            &nbsp; <span class="key">"quantity"</span>: <span class="val">18</span>,<br/>
+            &nbsp; <span class="key">"role"</span>: <span class="str">"greenery"</span><br/>
+            }],<br/>
+            <span class="key">"placements"</span>: [{<br/>
+            &nbsp; <span class="key">"theta"</span>: <span class="val">315</span>, <span class="key">"radius"</span>: <span class="val">8</span>,<br/>
+            &nbsp; <span class="key">"layer"</span>: <span class="str">"foreground"</span><br/>
+            }]<br/>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="tiers-section" id="pricing">
+  <div class="section-inner">
+    <div class="tiers-heading-wrap">
+      <div class="overline" style="justify-content:center">Pricing</div>
+      <h2 class="section-heading reveal">The right tier for every studio</h2>
+      <p class="section-body reveal reveal-delay-1" style="margin:0 auto;text-align:center">From hobbyist designers to high-volume manufacturing studios.</p>
+    </div>
+    <div class="tiers-grid">
+
+      <div class="tier-card reveal">
+        <div class="tier-name">Bloom</div>
+        <div class="tier-price">$0<span>/mo</span></div>
+        <p class="tier-desc">Get started with basic reverse analysis.</p>
+        <ul class="tier-features">
+          <li><span class="check">✓</span> 5 analyses / month</li>
+          <li><span class="check">✓</span> Blueprint JSON export</li>
+          <li><span class="check">✓</span> Basic element detection</li>
+          <li class="locked"><span class="lock">🔒</span> Midjourney prompt output</li>
+          <li class="locked"><span class="lock">🔒</span> Polar placement mapping</li>
+          <li class="locked"><span class="lock">🔒</span> SKU matching</li>
+        </ul>
+        <a href="#launch" class="tier-cta tier-cta-ghost">Start Free</a>
+      </div>
+
+      <div class="tier-card featured reveal reveal-delay-1">
+        <div class="tier-name">Craft</div>
+        <div class="tier-price">$29<span>/mo</span></div>
+        <p class="tier-desc">Full pipeline for active designers and Etsy sellers.</p>
+        <ul class="tier-features">
+          <li><span class="check">✓</span> 50 analyses / month</li>
+          <li><span class="check">✓</span> Blueprint JSON export</li>
+          <li><span class="check">✓</span> Full element detection</li>
+          <li><span class="check">✓</span> Midjourney prompt output</li>
+          <li><span class="check">✓</span> Polar placement coordinates</li>
+          <li class="locked"><span class="lock">🔒</span> Inventory SKU matching</li>
+        </ul>
+        <a href="#launch" class="tier-cta tier-cta-primary">Get Craft</a>
+      </div>
+
+      <div class="tier-card reveal reveal-delay-2">
+        <div class="tier-name">Studio</div>
+        <div class="tier-price">$79<span>/mo</span></div>
+        <p class="tier-desc">Full-stack pipeline for growing studios.</p>
+        <ul class="tier-features">
+          <li><span class="check">✓</span> 200 analyses / month</li>
+          <li><span class="check">✓</span> All Craft features</li>
+          <li><span class="check">✓</span> Inventory SKU auto-match</li>
+          <li><span class="check">✓</span> Blueprint scoring + repair</li>
+          <li><span class="check">✓</span> Etsy listing generation</li>
+          <li><span class="check">✓</span> Team seats (3 users)</li>
+        </ul>
+        <a href="#launch" class="tier-cta tier-cta-ghost">Get Studio</a>
+      </div>
+
+      <div class="tier-card reveal reveal-delay-3" style="background:var(--ec-charcoal);border-color:var(--ec-charcoal)">
+        <div class="tier-name" style="color:var(--ec-paper)">Atelier</div>
+        <div class="tier-price" style="color:white">Custom<span style="color:rgba(255,255,255,0.4)">/mo</span></div>
+        <p class="tier-desc" style="color:rgba(255,255,255,0.5)">White-label API access for manufacturers and platforms.</p>
+        <ul class="tier-features" style="--ec-border: rgba(255,255,255,0.08)">
+          <li style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.08)"><span class="check">✓</span> Unlimited analyses</li>
+          <li style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.08)"><span class="check">✓</span> All Studio features</li>
+          <li style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.08)"><span class="check">✓</span> REST API access</li>
+          <li style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.08)"><span class="check">✓</span> White-label rights</li>
+          <li style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.08)"><span class="check">✓</span> Dedicated support</li>
+          <li style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.08)"><span class="check">✓</span> Custom SKU database</li>
+        </ul>
+        <a href="#launch" class="tier-cta tier-cta-dark" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.15)">Contact Sales</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials-section">
+  <div class="section-inner">
+    <div class="testimonials-heading">
+      <div class="overline" style="justify-content:center">Early Access</div>
+      <h2 class="section-heading reveal">Designers who tested it<br/><em>are obsessed.</em></h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"I photographed a $300 wreath at a wedding and had the exact build recipe in my hands before I left the venue. This is genuinely magic."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">🌸</div>
+          <div>
+            <div class="author-name">Kelsey M.</div>
+            <div class="author-handle">Etsy / 4,200+ sales</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-stars">★★★★★</div>
+        <p class="testimonial-quote">"The polar placement coordinates are shockingly accurate. I can drop the JSON straight into our CNC template system. No more hand-measuring."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">🏭</div>
+          <div>
+            <div class="author-name">Travis H.</div>
+            <div class="author-handle">Studio owner / wholesale</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-stars">★★★★☆</div>
+        <p class="testimonial-quote">"I use it to reverse-engineer my own Midjourney renders. Generate a concept, upload it, get the build guide. The entire pipeline is closed-loop now."</p>
+        <div class="testimonial-author">
+          <div class="author-avatar">✨</div>
+          <div>
+            <div class="author-name">Dana L.</div>
+            <div class="author-handle">Floral designer / content creator</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="launch">
+  <span class="cta-eyebrow">Coming soon</span>
+  <h2 class="cta-heading">Get early access to<br /><em>Reverse Pipeline</em></h2>
+  <p class="cta-sub">Be first in line when we open Studio tier. Early access members lock in 40% off forever.</p>
+  <div class="cta-email-form">
+    <input type="email" class="cta-email-input" placeholder="your@email.com" />
+    <button class="cta-submit">Join Waitlist</button>
+  </div>
+  <p class="cta-caption">No spam. Unsubscribe any time. Evercrafted — Studio Tier launching Q3 2026.</p>
+</section>
+
+<!-- Footer -->
+<footer>
+  <span class="footer-brand">Evercrafted</span>
+  <ul class="footer-links">
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li>
+    <li><a href="#">API Docs</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <span class="footer-copy">© 2026 Evercrafted. All rights reserved.</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Hero elements animate on load
+  document.querySelectorAll('.hero .reveal').forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), 100 + i * 120);
+  });
+</script>
+</body>
+</html>

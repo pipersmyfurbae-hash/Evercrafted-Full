@@ -1,0 +1,830 @@
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,700;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --sage:#4A7A50;--sage-d:#355A3A;--sage-l:#7AAF82;--sage-p:#E8F2E9;
+  --bark:#7A5C3A;--bark-l:#C4A478;--bark-p:#F7F0E6;
+  --cream:#F6F2EC;--white:#FEFEFE;--dark:#1A2E1C;
+  --mid:#4A5A4C;--muted:#8A9A8C;--border:rgba(74,122,80,0.15);
+}
+body{font-family:'Outfit',sans-serif;background:var(--cream);color:var(--dark);overflow-x:hidden;scroll-behavior:smooth}
+
+/* ── NAV ── */
+nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 3rem;background:rgba(254,254,254,0.92);backdrop-filter:blur(12px);border-bottom:0.5px solid var(--border);position:sticky;top:0;z-index:999;gap:1.5rem}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0}
+.logo-mark{width:34px;height:34px;background:var(--sage);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-size:15px;font-style:italic}
+.logo-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:var(--sage)}
+.nav-center{display:flex;gap:2rem;list-style:none}
+.nav-center a{font-size:13.5px;font-weight:400;color:var(--mid);text-decoration:none;transition:color 0.2s}
+.nav-center a:hover{color:var(--sage)}
+.nav-right{display:flex;gap:10px;align-items:center;flex-shrink:0}
+.btn-ghost{padding:8px 18px;border-radius:100px;font-size:13px;font-weight:500;color:var(--mid);background:transparent;border:0.5px solid var(--border);cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif}
+.btn-ghost:hover{border-color:var(--sage);color:var(--sage)}
+.btn-fill{padding:9px 20px;border-radius:100px;font-size:13px;font-weight:500;color:#fff;background:var(--sage);border:none;cursor:pointer;transition:all 0.2s;font-family:'Outfit',sans-serif}
+.btn-fill:hover{background:var(--sage-d);transform:translateY(-1px)}
+
+/* ── HERO ── */
+.hero{min-height:88vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 60% 40%, rgba(74,122,80,0.08) 0%, transparent 70%);pointer-events:none}
+.hero-l{padding:5rem 3rem 5rem 4rem;display:flex;flex-direction:column;justify-content:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--bark);background:var(--bark-p);border:0.5px solid rgba(122,92,58,0.2);padding:6px 14px;border-radius:100px;margin-bottom:1.75rem;width:fit-content}
+.eyebrow-dot{width:5px;height:5px;background:var(--bark-l);border-radius:50%}
+.hero-title{font-family:'Playfair Display',serif;font-size:58px;font-weight:400;line-height:1.1;color:var(--dark);margin-bottom:1.5rem}
+.hero-title em{font-style:italic;color:var(--sage)}
+.hero-sub{font-size:15.5px;font-weight:300;color:var(--mid);line-height:1.75;max-width:460px;margin-bottom:2.5rem}
+.hero-ctas{display:flex;gap:12px;align-items:center;margin-bottom:3rem}
+.btn-hero{padding:14px 28px;border-radius:100px;font-size:14px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.2s}
+.btn-hero-p{background:var(--sage);color:#fff;border:none}
+.btn-hero-p:hover{background:var(--sage-d);transform:translateY(-1px)}
+.btn-hero-s{background:transparent;color:var(--mid);border:0.5px solid var(--border);display:flex;align-items:center;gap:6px}
+.hero-stats{display:flex;gap:2.5rem;padding-top:2rem;border-top:0.5px solid var(--border)}
+.stat-n{font-family:'Playfair Display',serif;font-size:32px;font-weight:500;color:var(--dark);line-height:1}
+.stat-l{font-size:12px;color:var(--muted);margin-top:2px;font-weight:400}
+
+/* ── HERO RIGHT (Wireframe Preview) ── */
+.hero-r{background:var(--sage-p);display:flex;align-items:center;justify-content:center;position:relative;padding:3rem}
+.app-preview{background:var(--white);border-radius:20px;border:0.5px solid var(--border);width:100%;max-width:480px;box-shadow:0 20px 60px rgba(26,46,28,0.12);overflow:hidden}
+.app-bar{background:var(--dark);padding:10px 16px;display:flex;align-items:center;gap:8px}
+.app-dot{width:10px;height:10px;border-radius:50%}
+.app-bar-title{font-size:11px;color:rgba(255,255,255,0.5);margin-left:8px;font-weight:400}
+.app-tabs{display:flex;border-bottom:0.5px solid var(--border);background:var(--white)}
+.app-tab{padding:10px 16px;font-size:12px;font-weight:400;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent}
+.app-tab.active{color:var(--sage);border-bottom-color:var(--sage);font-weight:500}
+.app-body{display:grid;grid-template-columns:160px 1fr;min-height:260px}
+.app-panel-l{border-right:0.5px solid var(--border);padding:12px}
+.prompt-area{background:var(--sage-p);border-radius:8px;padding:10px;font-size:10px;color:var(--mid);line-height:1.5;margin-bottom:10px;font-style:italic}
+.style-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.chip{font-size:9px;padding:3px 8px;border-radius:100px;background:var(--cream);border:0.5px solid var(--border);color:var(--mid)}
+.chip.active{background:var(--sage);color:#fff;border-color:var(--sage)}
+.mini-slider{margin-bottom:8px}
+.mini-label{font-size:9px;color:var(--muted);margin-bottom:3px}
+.mini-track{height:3px;background:var(--sage-p);border-radius:100px;position:relative}
+.mini-fill{height:100%;background:var(--sage);border-radius:100px;width:65%}
+.mini-thumb{width:10px;height:10px;background:var(--sage);border-radius:50%;position:absolute;top:-3.5px;left:60%;border:1.5px solid #fff}
+.gen-btn{width:100%;padding:8px;background:var(--sage);color:#fff;border:none;border-radius:8px;font-size:10px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;margin-top:8px}
+.app-panel-r{padding:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start}
+.design-card-mini{background:var(--sage-p);border-radius:10px;padding:10px;border:0.5px solid var(--border)}
+.design-card-mini.selected{border-color:var(--sage);border-width:1.5px}
+.mini-wreath{width:100%;height:60px;display:flex;align-items:center;justify-content:center}
+.mini-wreath svg{width:52px;height:52px}
+.mini-design-label{font-size:9px;color:var(--mid);margin-top:4px;font-weight:500}
+.mini-tag{font-size:8px;color:var(--muted)}
+.loading-pulse{display:flex;align-items:center;gap:4px;margin-top:6px}
+.pulse-dot{width:5px;height:5px;border-radius:50%;background:var(--sage-l);animation:pd 1.2s infinite}
+.pulse-dot:nth-child(2){animation-delay:0.2s}
+.pulse-dot:nth-child(3){animation-delay:0.4s}
+@keyframes pd{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1)}}
+.ai-chip{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);background:var(--white);border:0.5px solid var(--border);border-radius:100px;padding:8px 16px;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:500;color:var(--mid);white-space:nowrap;box-shadow:0 4px 20px rgba(26,46,28,0.1)}
+.ai-blink{width:7px;height:7px;background:var(--sage);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ── SECTION SHARED ── */
+.section{padding:5rem 4rem}
+.s-label{font-size:10.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--bark);margin-bottom:0.75rem}
+.s-title{font-family:'Playfair Display',serif;font-size:42px;font-weight:400;line-height:1.2;color:var(--dark);margin-bottom:1rem}
+.s-sub{font-size:15px;color:var(--mid);line-height:1.75;font-weight:300;max-width:560px}
+.divider{width:48px;height:2px;background:var(--sage);border-radius:2px;margin:1.5rem 0}
+
+/* ── DESIGN ELEMENTS SECTION ── */
+.design-section{background:var(--white);padding:5rem 4rem}
+.design-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem}
+.design-block{padding:2rem;border-radius:16px;background:var(--cream);border:0.5px solid var(--border)}
+.design-block-title{font-size:15px;font-weight:600;color:var(--dark);margin-bottom:0.5rem;display:flex;align-items:center;gap:8px}
+.design-block-sub{font-size:13px;color:var(--mid);line-height:1.6;margin-bottom:1.25rem;font-weight:300}
+.color-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.swatch{width:36px;height:36px;border-radius:8px;position:relative}
+.swatch-label{font-size:9px;color:var(--muted);text-align:center;margin-top:4px}
+.swatch-group{display:flex;flex-direction:column;align-items:center}
+.type-row{display:flex;flex-direction:column;gap:8px}
+.type-specimen{display:flex;align-items:baseline;gap:12px}
+.type-font{color:var(--dark)}
+.type-meta{font-size:11px;color:var(--muted)}
+.spacing-vis{display:flex;gap:4px;align-items:flex-end;margin-top:8px}
+.sp-block{background:var(--sage-p);border:0.5px solid var(--sage-l);border-radius:4px;display:flex;align-items:center;justify-content:center}
+.sp-label{font-size:9px;color:var(--sage-d)}
+
+/* ── UI WIREFRAMES ── */
+.wireframe-section{background:var(--dark);padding:5rem 4rem}
+.wireframe-section .s-title{color:var(--white)}
+.wireframe-section .s-sub{color:rgba(255,255,255,0.5)}
+.wireframe-section .s-label{color:var(--bark-l)}
+.wireframe-tabs{display:flex;gap:8px;margin:2rem 0 1.5rem;flex-wrap:wrap}
+.wf-tab{padding:8px 18px;border-radius:100px;font-size:12.5px;font-weight:500;cursor:pointer;border:0.5px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);background:transparent;font-family:'Outfit',sans-serif;transition:all 0.2s}
+.wf-tab.active{background:var(--sage);color:#fff;border-color:var(--sage)}
+.wf-frame{display:none}
+.wf-frame.active{display:block}
+.wf-screen{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.1);border-radius:16px;padding:24px;margin-top:1rem}
+.wf-nav{background:rgba(255,255,255,0.08);border-radius:8px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.wf-nav-logo{width:80px;height:12px;background:var(--sage);border-radius:4px;opacity:0.8}
+.wf-nav-links{display:flex;gap:12px}
+.wf-nl{width:40px;height:8px;background:rgba(255,255,255,0.2);border-radius:3px}
+.wf-nl.sm{width:28px}
+.wf-cta{width:60px;height:26px;background:var(--sage);border-radius:100px;opacity:0.8}
+.wf-hero-block{background:rgba(255,255,255,0.04);border-radius:12px;padding:20px;margin-bottom:16px;display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}
+.wf-h-l{display:flex;flex-direction:column;gap:8px}
+.wf-line{height:8px;background:rgba(255,255,255,0.15);border-radius:3px}
+.wf-line.lg{height:14px;width:70%}
+.wf-line.xl{height:18px;width:90%}
+.wf-line.sm{width:55%}
+.wf-line.xs{width:40%;height:6px;background:rgba(255,255,255,0.08)}
+.wf-h-r{background:rgba(74,122,80,0.2);border-radius:12px;height:140px;display:flex;align-items:center;justify-content:center}
+.wf-ring{width:90px;height:90px;border-radius:50%;border:6px solid rgba(74,122,80,0.5);display:flex;align-items:center;justify-content:center}
+.wf-ring-inner{width:40px;height:40px;border-radius:50%;border:3px solid rgba(74,122,80,0.4)}
+.wf-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.wf-card{background:rgba(255,255,255,0.05);border-radius:10px;padding:14px}
+.wf-card-img{height:50px;background:rgba(74,122,80,0.15);border-radius:8px;margin-bottom:10px}
+.wf-card-l1{height:8px;background:rgba(255,255,255,0.15);border-radius:3px;margin-bottom:6px;width:80%}
+.wf-card-l2{height:6px;background:rgba(255,255,255,0.07);border-radius:3px;width:55%}
+
+/* Studio wireframe */
+.wf-studio{display:grid;grid-template-columns:180px 1fr 200px;gap:12px;min-height:240px}
+.wf-studio-panel{background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:8px}
+.wf-p-title{height:8px;background:rgba(255,255,255,0.2);border-radius:3px;width:60%;margin-bottom:4px}
+.wf-input{height:50px;background:rgba(74,122,80,0.15);border-radius:8px}
+.wf-chips-row{display:flex;flex-wrap:wrap;gap:4px}
+.wf-chip{height:20px;border-radius:100px;background:rgba(255,255,255,0.08)}
+.wf-chip.w1{width:40px}.wf-chip.w2{width:55px}.wf-chip.w3{width:48px}
+.wf-slider{height:4px;background:rgba(255,255,255,0.1);border-radius:100px;margin:4px 0;position:relative}
+.wf-slider::after{content:'';position:absolute;left:0;top:0;width:65%;height:100%;background:var(--sage-l);border-radius:100px}
+.wf-gen-btn{height:30px;background:var(--sage);border-radius:8px;opacity:0.8;margin-top:auto}
+.wf-canvas-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:14px}
+.wf-design-card{background:rgba(255,255,255,0.05);border-radius:10px;padding:12px}
+.wf-design-card.f{grid-column:1/-1}
+.wf-preview{height:80px;background:rgba(74,122,80,0.12);border-radius:8px;margin-bottom:8px;display:flex;align-items:center;justify-content:center}
+.wf-preview svg{opacity:0.6}
+.wf-mat-list{display:flex;flex-direction:column;gap:6px}
+.wf-mat-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:0.5px solid rgba(255,255,255,0.06)}
+.wf-mat-name{height:7px;background:rgba(255,255,255,0.15);border-radius:3px}
+.wf-mat-n1{width:70%}.wf-mat-n2{width:60%}.wf-mat-n3{width:55%}.wf-mat-n4{width:65%}
+.wf-mat-val{height:7px;width:25px;background:rgba(74,122,80,0.4);border-radius:3px}
+
+/* ── FUNCTIONALITY SECTION ── */
+.func-section{background:var(--cream);padding:5rem 4rem}
+.func-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.5rem;margin-top:3rem}
+.func-card{background:var(--white);border:0.5px solid var(--border);border-radius:16px;padding:2rem;transition:box-shadow 0.2s}
+.func-card:hover{box-shadow:0 8px 30px rgba(74,122,80,0.1)}
+.func-icon{width:44px;height:44px;background:var(--sage-p);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:1.25rem;border:0.5px solid rgba(74,122,80,0.2)}
+.func-title{font-size:15px;font-weight:600;color:var(--dark);margin-bottom:0.5rem}
+.func-desc{font-size:13px;color:var(--mid);line-height:1.65;font-weight:300;margin-bottom:1rem}
+.func-pills{display:flex;flex-wrap:wrap;gap:5px}
+.func-pill{font-size:10px;padding:3px 10px;border-radius:100px;background:var(--sage-p);color:var(--sage-d);font-weight:500}
+.func-feature-strip{margin-top:3rem;background:var(--white);border:0.5px solid var(--border);border-radius:16px;overflow:hidden}
+.strip-header{background:var(--sage);padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between}
+.strip-h-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:var(--white)}
+.strip-h-badge{font-size:11px;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.15);padding:4px 12px;border-radius:100px;font-weight:500}
+.strip-body{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.strip-col{padding:1.5rem;border-right:0.5px solid var(--border)}
+.strip-col:last-child{border-right:none}
+.strip-col-title{font-size:12px;font-weight:600;color:var(--sage-d);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:1rem}
+.strip-item{font-size:12.5px;color:var(--mid);padding:4px 0;display:flex;gap:6px;align-items:flex-start;line-height:1.4}
+.strip-check{color:var(--sage);font-size:12px;flex-shrink:0;margin-top:1px}
+
+/* ── USER JOURNEY ── */
+.journey-section{background:var(--white);padding:5rem 4rem}
+.journey-timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:3rem;position:relative}
+.journey-timeline::before{content:'';position:absolute;top:28px;left:10%;right:10%;height:1px;background:linear-gradient(to right,var(--sage-l),var(--bark-l));z-index:0}
+.jt-step{display:flex;flex-direction:column;align-items:center;text-align:center;position:relative;z-index:1;padding:0 0.75rem}
+.jt-circle{width:56px;height:56px;border-radius:50%;background:var(--white);border:2px solid var(--sage);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:20px;font-weight:500;color:var(--sage);margin-bottom:1rem}
+.jt-circle.filled{background:var(--sage);color:#fff}
+.jt-title{font-size:13px;font-weight:600;color:var(--dark);margin-bottom:0.4rem}
+.jt-desc{font-size:11.5px;color:var(--muted);line-height:1.5;font-weight:300}
+
+/* ── PRICING ── */
+.pricing-section{padding:5rem 4rem;background:var(--cream);text-align:center}
+.pricing-toggle{display:inline-flex;background:var(--white);border:0.5px solid var(--border);border-radius:100px;padding:4px;margin:1.5rem auto 3rem;gap:4px}
+.p-toggle{padding:8px 20px;border-radius:100px;font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all 0.2s;color:var(--muted);background:transparent}
+.p-toggle.active{background:var(--sage);color:#fff}
+.pricing-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;max-width:900px;margin:0 auto}
+.p-card{background:var(--white);border:0.5px solid var(--border);border-radius:20px;padding:2.5rem 2rem;text-align:left;transition:all 0.2s}
+.p-card:hover{transform:translateY(-4px)}
+.p-card.featured{background:var(--sage);border-color:var(--sage)}
+.p-tier{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem}
+.p-card.featured .p-tier{color:rgba(255,255,255,0.65)}
+.p-price{font-family:'Playfair Display',serif;font-size:48px;font-weight:400;color:var(--dark);line-height:1}
+.p-card.featured .p-price{color:#fff}
+.p-per{font-size:12px;color:var(--muted);margin-bottom:1.75rem;margin-top:4px}
+.p-card.featured .p-per{color:rgba(255,255,255,0.55)}
+.p-feats{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:2rem}
+.p-feat{font-size:13px;color:var(--mid);display:flex;gap:8px;align-items:flex-start}
+.p-card.featured .p-feat{color:rgba(255,255,255,0.8)}
+.p-ck{color:var(--sage);font-size:12px;flex-shrink:0;margin-top:1px}
+.p-card.featured .p-ck{color:rgba(255,255,255,0.9)}
+.p-btn{width:100%;padding:12px;border-radius:100px;font-size:13.5px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;transition:all 0.2s}
+.p-btn-out{background:transparent;color:var(--sage);border:1px solid var(--sage)}
+.p-btn-out:hover{background:var(--sage);color:#fff}
+.p-card.featured .p-btn{background:var(--white);color:var(--sage);border:none}
+.p-badge{font-size:10px;background:var(--bark-p);color:var(--bark);padding:4px 12px;border-radius:100px;font-weight:600;letter-spacing:0.04em;margin-bottom:1rem;display:inline-block}
+
+/* ── TESTIMONIALS ── */
+.testimonials{background:var(--dark);padding:5rem 4rem}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.test-card{background:rgba(255,255,255,0.05);border:0.5px solid rgba(255,255,255,0.08);border-radius:16px;padding:2rem}
+.test-quote{font-size:14px;color:rgba(255,255,255,0.7);line-height:1.7;font-weight:300;margin-bottom:1.5rem;font-style:italic}
+.test-author{display:flex;align-items:center;gap:12px}
+.test-avatar{width:38px;height:38px;border-radius:50%;background:var(--sage-d);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff}
+.test-name{font-size:13px;font-weight:500;color:rgba(255,255,255,0.85)}
+.test-role{font-size:11px;color:rgba(255,255,255,0.4)}
+.test-stars{color:var(--bark-l);font-size:12px;margin-bottom:1rem;letter-spacing:2px}
+.testimonials .s-title{color:#fff}
+.testimonials .s-label{color:var(--bark-l)}
+.testimonials .s-sub{color:rgba(255,255,255,0.5)}
+
+/* ── CTA BANNER ── */
+.cta-section{background:var(--sage);padding:5rem 4rem;text-align:center}
+.cta-section h2{font-family:'Playfair Display',serif;font-size:44px;font-weight:400;color:#fff;margin-bottom:1rem}
+.cta-section p{font-size:15px;color:rgba(255,255,255,0.7);margin-bottom:2.5rem;font-weight:300}
+.cta-form{display:flex;gap:10px;max-width:420px;margin:0 auto}
+.cta-input{flex:1;padding:13px 20px;border-radius:100px;border:none;font-size:14px;font-family:'Outfit',sans-serif;background:rgba(255,255,255,0.15);color:#fff;outline:none}
+.cta-input::placeholder{color:rgba(255,255,255,0.5)}
+.cta-submit{padding:13px 24px;border-radius:100px;background:#fff;color:var(--sage);border:none;font-size:14px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;transition:all 0.2s}
+.cta-submit:hover{background:var(--cream)}
+
+/* ── FOOTER ── */
+footer{background:var(--dark);color:rgba(255,255,255,0.45);padding:4rem 4rem 2rem}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:3rem;margin-bottom:3rem}
+.footer-brand p{font-size:13px;line-height:1.7;margin-top:0.75rem;font-weight:300;max-width:260px}
+.footer-col-title{font-size:12px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.7);margin-bottom:1.25rem}
+.footer-links{list-style:none;display:flex;flex-direction:column;gap:8px}
+.footer-links a{font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s}
+.footer-links a:hover{color:rgba(255,255,255,0.8)}
+.footer-bottom{border-top:0.5px solid rgba(255,255,255,0.08);padding-top:2rem;display:flex;justify-content:space-between;align-items:center;font-size:12px}
+
+/* fade-in animation */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.55s ease,transform 0.55s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+</style>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <div class="logo-mark">W</div>
+    <span class="logo-name">WreathAI</span>
+  </a>
+  <ul class="nav-center">
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Design Types</a></li>
+    <li><a href="#">Wireframes</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">About</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="btn-ghost">Log in</button>
+    <button class="btn-fill" onclick="sendPrompt('Show me the WreathAI PRD details — specifically the technical architecture and feature requirements')">Start free ↗</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-l">
+    <div class="eyebrow"><div class="eyebrow-dot"></div> New Feature Package — 2026</div>
+    <h1 class="hero-title">Where <em>AI meets</em><br>the art of wreaths</h1>
+    <p class="hero-sub">A complete SaaS design platform — from concept to creation. Describe your vision in plain language and watch WreathAI build it in real time, with materials, costs, and instructions included.</p>
+    <div class="hero-ctas">
+      <button class="btn-hero btn-hero-p" onclick="sendPrompt('Walk me through each WreathAI section in detail starting with Design Elements')">Explore the platform ↗</button>
+      <button class="btn-hero btn-hero-s">▶ Watch demo</button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="stat-n">3.2s</div><div class="stat-l">Avg generation</div></div>
+      <div><div class="stat-n">12+</div><div class="stat-l">Design styles</div></div>
+      <div><div class="stat-n">4,000+</div><div class="stat-l">Material database</div></div>
+      <div><div class="stat-n">94%</div><div class="stat-l">Satisfaction rate</div></div>
+    </div>
+  </div>
+  <div class="hero-r">
+    <div class="app-preview">
+      <div class="app-bar">
+        <div class="app-dot" style="background:#FF5F57"></div>
+        <div class="app-dot" style="background:#FEBC2E"></div>
+        <div class="app-dot" style="background:#28C840"></div>
+        <span class="app-bar-title">WreathAI Studio — app.wreathAI.co</span>
+      </div>
+      <div class="app-tabs">
+        <div class="app-tab active">Studio</div>
+        <div class="app-tab">Library</div>
+        <div class="app-tab">Materials</div>
+        <div class="app-tab">Guides</div>
+      </div>
+      <div class="app-body">
+        <div class="app-panel-l">
+          <div class="prompt-area">"Autumn wreath with dried oranges, eucalyptus and dark berries..."</div>
+          <div class="style-chips">
+            <span class="chip active">Seasonal</span>
+            <span class="chip">Floral</span>
+            <span class="chip">Modern</span>
+            <span class="chip">Botanical</span>
+          </div>
+          <div class="mini-slider"><div class="mini-label">Complexity</div><div class="mini-track"><div class="mini-fill"></div><div class="mini-thumb"></div></div></div>
+          <div class="mini-slider"><div class="mini-label">Size</div><div class="mini-track" style=""><div class="mini-fill" style="width:45%"></div><div class="mini-thumb" style="left:40%"></div></div></div>
+          <button class="gen-btn">✦ Generate designs</button>
+        </div>
+        <div class="app-panel-r">
+          <div class="design-card-mini selected">
+            <div class="mini-wreath"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="20" fill="none" stroke="#7AAF82" stroke-width="6"/><circle cx="26" cy="7" r="4" fill="#C4A478"/><circle cx="7" cy="26" r="3" fill="#8B3040"/><circle cx="45" cy="26" r="3" fill="#8B3040"/><circle cx="26" cy="45" r="4" fill="#C4A478"/></svg></div>
+            <div class="mini-design-label">Autumn Classic</div>
+            <div class="mini-tag">Seasonal · Medium</div>
+          </div>
+          <div class="design-card-mini">
+            <div class="mini-wreath"><svg viewBox="0 0 52 52"><circle cx="26" cy="26" r="18" fill="none" stroke="#4A7A50" stroke-width="8" stroke-dasharray="5 3"/><circle cx="26" cy="8" r="5" fill="#7A5C3A"/><circle cx="44" cy="26" r="5" fill="#7A5C3A"/></svg></div>
+            <div class="mini-design-label">Wild Harvest</div>
+            <div class="mini-tag">Botanical · Large</div>
+          </div>
+          <div class="design-card-mini" style="grid-column:1/-1">
+            <div style="display:flex;align-items:center;justify-content:center;height:28px;gap:6px">
+              <div class="loading-pulse"><div class="pulse-dot"></div><div class="pulse-dot"></div><div class="pulse-dot"></div></div>
+              <span style="font-size:9px;color:var(--muted)">Generating variation 3...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ai-chip"><div class="ai-blink"></div> AI generating in real time</div>
+  </div>
+</section>
+
+<!-- DESIGN ELEMENTS SECTION -->
+<section class="design-section reveal">
+  <div class="s-label">01 — Design Elements</div>
+  <h2 class="s-title">A design system rooted<br>in craft and nature</h2>
+  <div class="divider"></div>
+  <p class="s-sub">Every visual decision — from typeface weight to border radius — is derived from the organic, handcrafted world of wreath making. The system is cohesive, purposeful, and beautiful.</p>
+  <div class="design-grid">
+    <div class="design-block reveal">
+      <div class="design-block-title">🎨 Color System</div>
+      <div class="design-block-sub">A botanical palette grounded in sage greens, warm barks, and natural creams. Dominant colors with intentional restraint — never decorative for its own sake.</div>
+      <div class="color-row">
+        <div class="swatch-group"><div class="swatch" style="background:#4A7A50"></div><div class="swatch-label">Sage</div></div>
+        <div class="swatch-group"><div class="swatch" style="background:#355A3A"></div><div class="swatch-label">Sage Dark</div></div>
+        <div class="swatch-group"><div class="swatch" style="background:#E8F2E9"></div><div class="swatch-label">Sage Pale</div></div>
+        <div class="swatch-group"><div class="swatch" style="background:#7A5C3A"></div><div class="swatch-label">Bark</div></div>
+        <div class="swatch-group"><div class="swatch" style="background:#C4A478"></div><div class="swatch-label">Bark Light</div></div>
+        <div class="swatch-group"><div class="swatch" style="background:#F6F2EC"></div><div class="swatch-label">Cream</div></div>
+        <div class="swatch-group"><div class="swatch" style="background:#1A2E1C;border:0.5px solid #ccc"></div><div class="swatch-label">Dark</div></div>
+      </div>
+    </div>
+    <div class="design-block reveal">
+      <div class="design-block-title">✦ Typography</div>
+      <div class="design-block-sub">Playfair Display for editorial warmth and organic character. Outfit for clean, legible UI text. Two families — endlessly versatile.</div>
+      <div class="type-row">
+        <div class="type-specimen"><span class="type-font" style="font-family:'Playfair Display',serif;font-size:26px;font-style:italic">Display Italic</span><span class="type-meta">Playfair Display / 400i</span></div>
+        <div class="type-specimen"><span class="type-font" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700">Display Bold</span><span class="type-meta">Playfair Display / 700</span></div>
+        <div class="type-specimen"><span class="type-font" style="font-family:'Outfit',sans-serif;font-size:15px;font-weight:500">UI Medium — Navigation, Labels</span><span class="type-meta">Outfit / 500</span></div>
+        <div class="type-specimen"><span class="type-font" style="font-family:'Outfit',sans-serif;font-size:14px;font-weight:300;color:#666">Body Light — Descriptions, help text</span><span class="type-meta">Outfit / 300</span></div>
+      </div>
+    </div>
+    <div class="design-block reveal">
+      <div class="design-block-title">📐 Spacing & Grid</div>
+      <div class="design-block-sub">8px base grid. Consistent spatial rhythm. Generous breathing room between sections — never cluttered.</div>
+      <div class="spacing-vis">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div class="sp-block" style="width:16px;height:16px"><span class="sp-label">2</span></div><div style="font-size:9px;color:var(--muted)">2×</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div class="sp-block" style="width:24px;height:24px"><span class="sp-label">3</span></div><div style="font-size:9px;color:var(--muted)">3×</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div class="sp-block" style="width:32px;height:32px"><span class="sp-label">4</span></div><div style="font-size:9px;color:var(--muted)">4×</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div class="sp-block" style="width:48px;height:48px"><span class="sp-label">6</span></div><div style="font-size:9px;color:var(--muted)">6×</div></div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div class="sp-block" style="width:64px;height:64px"><span class="sp-label">8</span></div><div style="font-size:9px;color:var(--muted)">8×</div></div>
+      </div>
+      <div style="margin-top:1rem;display:flex;gap:8px;flex-wrap:wrap">
+        <div style="font-size:10px;padding:4px 10px;background:var(--cream);border:0.5px solid var(--border);border-radius:4px;color:var(--mid)">4px — inputs</div>
+        <div style="font-size:10px;padding:4px 10px;background:var(--cream);border:0.5px solid var(--border);border-radius:8px;color:var(--mid)">8px — cards</div>
+        <div style="font-size:10px;padding:4px 10px;background:var(--cream);border:0.5px solid var(--border);border-radius:16px;color:var(--mid)">16px — sections</div>
+        <div style="font-size:10px;padding:4px 10px;background:var(--cream);border:0.5px solid var(--border);border-radius:100px;color:var(--mid)">100px — pills</div>
+      </div>
+    </div>
+    <div class="design-block reveal">
+      <div class="design-block-title">💫 Motion Principles</div>
+      <div class="design-block-sub">Transitions that feel organic — never abrupt. Duration, easing, and stagger are calibrated to feel like the natural world.</div>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:8px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--mid)">Page load stagger</span><span style="font-size:11px;color:var(--sage-d);font-weight:500">0.55s ease-out, 80ms delay</span></div>
+        <div style="height:0.5px;background:var(--border)"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--mid)">Hover transitions</span><span style="font-size:11px;color:var(--sage-d);font-weight:500">0.2s ease</span></div>
+        <div style="height:0.5px;background:var(--border)"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--mid)">Wreath generation</span><span style="font-size:11px;color:var(--sage-d);font-weight:500">Progressive element reveal</span></div>
+        <div style="height:0.5px;background:var(--border)"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;color:var(--mid)">AI pulse indicator</span><span style="font-size:11px;color:var(--sage-d);font-weight:500">2s infinite breathe</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UI WIREFRAMES -->
+<section class="wireframe-section reveal">
+  <div class="s-label">02 — User Interface</div>
+  <h2 class="s-title" style="color:#fff">Wireframes & screen specs</h2>
+  <div class="divider" style="background:var(--bark-l)"></div>
+  <p class="s-sub">Annotated wireframes for every core screen. Switch between views to see the full information architecture.</p>
+  <div class="wireframe-tabs">
+    <button class="wf-tab active" onclick="showWF('landing')">Landing Page</button>
+    <button class="wf-tab" onclick="showWF('studio')">AI Studio</button>
+    <button class="wf-tab" onclick="showWF('library')">Design Library</button>
+    <button class="wf-tab" onclick="showWF('presentation')">Client View</button>
+  </div>
+
+  <!-- Landing WF -->
+  <div class="wf-frame active" id="wf-landing">
+    <div class="wf-screen">
+      <div class="wf-nav">
+        <div class="wf-nav-logo"></div>
+        <div class="wf-nav-links"><div class="wf-nl"></div><div class="wf-nl"></div><div class="wf-nl"></div><div class="wf-nl sm"></div></div>
+        <div class="wf-cta"></div>
+      </div>
+      <div class="wf-hero-block">
+        <div class="wf-h-l">
+          <div class="wf-line xs" style="width:30%"></div>
+          <div class="wf-line xl"></div>
+          <div class="wf-line lg"></div>
+          <div class="wf-line" style="height:6px;width:80%;background:rgba(255,255,255,0.1)"></div>
+          <div class="wf-line" style="height:6px;width:70%;background:rgba(255,255,255,0.1)"></div>
+          <div style="display:flex;gap:8px;margin-top:8px"><div style="height:32px;width:110px;background:var(--sage);border-radius:100px;opacity:0.8"></div><div style="height:32px;width:90px;background:rgba(255,255,255,0.08);border-radius:100px"></div></div>
+        </div>
+        <div class="wf-h-r"><div class="wf-ring"><div class="wf-ring-inner"></div></div></div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:16px;justify-content:center">
+        <div style="text-align:center"><div style="font-size:9px;color:rgba(255,255,255,0.4);margin-bottom:4px">FEATURES</div><div style="height:3px;width:60px;background:var(--sage);border-radius:2px"></div></div>
+      </div>
+      <div class="wf-cards">
+        <div class="wf-card"><div class="wf-card-img"></div><div class="wf-card-l1"></div><div class="wf-card-l2"></div></div>
+        <div class="wf-card"><div class="wf-card-img" style="background:rgba(122,92,58,0.15)"></div><div class="wf-card-l1"></div><div class="wf-card-l2"></div></div>
+        <div class="wf-card"><div class="wf-card-img" style="background:rgba(74,90,76,0.15)"></div><div class="wf-card-l1"></div><div class="wf-card-l2"></div></div>
+      </div>
+      <div style="background:rgba(74,122,80,0.15);border-radius:10px;padding:16px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center">
+        <div class="wf-line xl" style="width:40%"></div>
+        <div class="wf-line" style="width:60%;height:6px;background:rgba(255,255,255,0.08)"></div>
+        <div style="height:36px;width:140px;background:var(--sage);border-radius:100px;opacity:0.8;margin-top:4px"></div>
+      </div>
+    </div>
+    <div style="color:rgba(255,255,255,0.35);font-size:11px;margin-top:12px;padding:0 4px;line-height:1.6">
+      Key sections: Nav (sticky) → Hero (2-col, wreath SVG) → Feature grid (3-col) → Design types (dark bg) → Pricing (3 tiers) → CTA banner → Footer
+    </div>
+  </div>
+
+  <!-- Studio WF -->
+  <div class="wf-frame" id="wf-studio">
+    <div class="wf-screen">
+      <div class="wf-nav" style="margin-bottom:12px">
+        <div class="wf-nav-logo"></div>
+        <div class="wf-nav-links"><div class="wf-nl"></div><div class="wf-nl"></div><div class="wf-nl"></div></div>
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
+      </div>
+      <div class="wf-studio">
+        <div class="wf-studio-panel">
+          <div class="wf-p-title"></div>
+          <div class="wf-input"></div>
+          <div class="wf-chips-row"><div class="wf-chip w1"></div><div class="wf-chip w2"></div><div class="wf-chip w3"></div><div class="wf-chip w1"></div></div>
+          <div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;width:40%;margin:4px 0 2px"></div>
+          <div class="wf-slider"></div>
+          <div style="height:6px;background:rgba(255,255,255,0.08);border-radius:3px;width:35%;margin:4px 0 2px"></div>
+          <div class="wf-slider"></div>
+          <div class="wf-gen-btn"></div>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border-radius:10px">
+          <div class="wf-canvas-grid">
+            <div class="wf-design-card"><div class="wf-preview"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="22" fill="none" stroke="rgba(122,175,130,0.5)" stroke-width="8"/></svg></div><div class="wf-card-l1"></div></div>
+            <div class="wf-design-card"><div class="wf-preview"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="20" fill="none" stroke="rgba(122,175,130,0.4)" stroke-width="6" stroke-dasharray="4 2"/></svg></div><div class="wf-card-l1"></div></div>
+            <div class="wf-design-card f"><div class="wf-preview" style="height:50px;display:flex;align-items:center;justify-content:center;gap:5px"><div class="pulse-dot" style="width:7px;height:7px;background:rgba(122,175,130,0.5)"></div><div class="pulse-dot" style="width:7px;height:7px;background:rgba(122,175,130,0.5);animation-delay:0.2s"></div><div class="pulse-dot" style="width:7px;height:7px;background:rgba(122,175,130,0.5);animation-delay:0.4s"></div></div></div>
+          </div>
+        </div>
+        <div class="wf-studio-panel">
+          <div class="wf-p-title"></div>
+          <div class="wf-mat-list">
+            <div class="wf-mat-row"><div class="wf-mat-name wf-mat-n1"></div><div class="wf-mat-val"></div></div>
+            <div class="wf-mat-row"><div class="wf-mat-name wf-mat-n2"></div><div class="wf-mat-val"></div></div>
+            <div class="wf-mat-row"><div class="wf-mat-name wf-mat-n3"></div><div class="wf-mat-val"></div></div>
+            <div class="wf-mat-row"><div class="wf-mat-name wf-mat-n4"></div><div class="wf-mat-val"></div></div>
+            <div class="wf-mat-row"><div class="wf-mat-name wf-mat-n1"></div><div class="wf-mat-val"></div></div>
+          </div>
+          <div style="margin-top:8px;height:24px;background:rgba(74,122,80,0.3);border-radius:8px"></div>
+          <div style="margin-top:4px;height:20px;background:rgba(255,255,255,0.06);border-radius:8px"></div>
+        </div>
+      </div>
+    </div>
+    <div style="color:rgba(255,255,255,0.35);font-size:11px;margin-top:12px;padding:0 4px;line-height:1.6">
+      3-panel layout: Input panel (180px) | Design canvas (flex) | Material details (200px). Responsive: collapses to tabs on mobile.
+    </div>
+  </div>
+
+  <!-- Library WF -->
+  <div class="wf-frame" id="wf-library">
+    <div class="wf-screen">
+      <div class="wf-nav" style="margin-bottom:16px">
+        <div class="wf-nav-logo"></div>
+        <div class="wf-nav-links"><div class="wf-nl"></div><div class="wf-nl"></div><div class="wf-nl"></div></div>
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1)"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div style="display:flex;gap:6px;align-items:center"><div class="wf-line xl" style="width:120px;height:12px"></div></div>
+        <div style="display:flex;gap:6px"><div style="height:28px;width:80px;background:rgba(255,255,255,0.08);border-radius:100px"></div><div style="height:28px;width:60px;background:var(--sage);border-radius:100px;opacity:0.8"></div></div>
+      </div>
+      <div style="display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap">
+        <div style="height:26px;width:50px;background:var(--sage);border-radius:100px;opacity:0.8"></div>
+        <div style="height:26px;width:65px;background:rgba(255,255,255,0.08);border-radius:100px"></div>
+        <div style="height:26px;width:55px;background:rgba(255,255,255,0.08);border-radius:100px"></div>
+        <div style="height:26px;width:60px;background:rgba(255,255,255,0.08);border-radius:100px"></div>
+        <div style="height:26px;width:50px;background:rgba(255,255,255,0.08);border-radius:100px"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+        ${[1,2,3,4,5,6,7,8].map(i=>`<div style="background:rgba(255,255,255,0.05);border-radius:10px;overflow:hidden"><div style="height:70px;background:rgba(74,122,80,${0.1 + (i%3)*0.05})"></div><div style="padding:8px"><div style="height:7px;background:rgba(255,255,255,0.15);border-radius:3px;margin-bottom:4px;width:80%"></div><div style="height:6px;background:rgba(255,255,255,0.07);border-radius:3px;width:50%"></div></div></div>`).join('')}
+      </div>
+    </div>
+    <div style="color:rgba(255,255,255,0.35);font-size:11px;margin-top:12px;padding:0 4px;line-height:1.6">
+      Masonry grid with filter chips (All / Seasonal / Floral / Thematic / Favorites). Card actions: Edit, Remix, Share, Delete.
+    </div>
+  </div>
+
+  <!-- Presentation WF -->
+  <div class="wf-frame" id="wf-presentation">
+    <div class="wf-screen">
+      <div style="text-align:center;margin-bottom:16px">
+        <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-bottom:6px">CLIENT VIEW — Read-only shared link</div>
+        <div class="wf-line xl" style="margin:0 auto 4px;width:200px;height:14px"></div>
+        <div class="wf-line" style="margin:0 auto;width:140px;height:7px;background:rgba(255,255,255,0.07)"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div style="background:rgba(74,122,80,0.15);border-radius:14px;height:160px;display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 100 100" width="80" height="80"><circle cx="50" cy="50" r="38" fill="none" stroke="rgba(122,175,130,0.7)" stroke-width="14"/><circle cx="50" cy="13" r="8" fill="#C4A478"/><circle cx="87" cy="50" r="6" fill="#8B3040"/><circle cx="13" cy="50" r="6" fill="#8B3040"/><circle cx="50" cy="87" r="8" fill="#C4A478"/></svg>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;justify-content:center">
+          <div class="wf-line xl" style="height:12px"></div>
+          <div class="wf-line lg" style="height:8px;background:rgba(255,255,255,0.08)"></div>
+          <div class="wf-line" style="height:6px;width:90%;background:rgba(255,255,255,0.06)"></div>
+          <div class="wf-line" style="height:6px;width:75%;background:rgba(255,255,255,0.06)"></div>
+          <div style="display:flex;gap:6px;margin-top:4px">
+            ${['#4A7A50','#7A5C3A','#C4A478','#8B3040','#2A4A2C'].map(c=>`<div style="width:22px;height:22px;border-radius:4px;background:${c}"></div>`).join('')}
+          </div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+        <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:10px"><div class="wf-card-l1" style="margin-bottom:4px"></div><div class="wf-card-l2"></div></div>
+        <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:10px"><div class="wf-card-l1" style="margin-bottom:4px"></div><div class="wf-card-l2"></div></div>
+        <div style="background:rgba(255,255,255,0.05);border-radius:10px;padding:10px"><div class="wf-card-l1" style="margin-bottom:4px"></div><div class="wf-card-l2"></div></div>
+      </div>
+      <div style="display:flex;justify-content:center;gap:8px">
+        <div style="height:36px;width:110px;background:var(--sage);border-radius:100px;opacity:0.8"></div>
+        <div style="height:36px;width:100px;background:rgba(255,255,255,0.08);border-radius:100px"></div>
+        <div style="height:36px;width:90px;background:rgba(255,255,255,0.05);border-radius:100px"></div>
+      </div>
+    </div>
+    <div style="color:rgba(255,255,255,0.35);font-size:11px;margin-top:12px;padding:0 4px;line-height:1.6">
+      Client-facing read-only view. Actions: Approve / Request revisions / Download PDF. No account required.
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY TIMELINE -->
+<section class="journey-section reveal">
+  <div class="s-label">03 — User Journey</div>
+  <h2 class="s-title">From prompt to finished wreath</h2>
+  <div class="divider"></div>
+  <p class="s-sub">Five touchpoints, zero friction. The journey is designed so that a new user reaches their first completed design within 5 minutes of signing up.</p>
+  <div class="journey-timeline">
+    <div class="jt-step"><div class="jt-circle filled">1</div><div class="jt-title">Describe</div><div class="jt-desc">Type a prompt or pick a mood board. Natural language, no design knowledge needed.</div></div>
+    <div class="jt-step"><div class="jt-circle filled">2</div><div class="jt-title">Generate</div><div class="jt-desc">Three distinct AI-designed variations appear in under 5 seconds, each with materials.</div></div>
+    <div class="jt-step"><div class="jt-circle">3</div><div class="jt-title">Refine</div><div class="jt-desc">Swap materials, adjust colors, remix variations. Every change updates the preview live.</div></div>
+    <div class="jt-step"><div class="jt-circle">4</div><div class="jt-title">Present</div><div class="jt-desc">Share a branded PDF with your client before buying a single branch.</div></div>
+    <div class="jt-step"><div class="jt-circle">5</div><div class="jt-title">Build</div><div class="jt-desc">Follow the AI-generated step-by-step guide. Order materials with one click.</div></div>
+  </div>
+</section>
+
+<!-- FUNCTIONALITY SECTION -->
+<section class="func-section reveal">
+  <div class="s-label">04 — Functionalities</div>
+  <h2 class="s-title">Everything a wreath maker<br>could ever need</h2>
+  <div class="divider"></div>
+  <p class="s-sub">Six core modules — each independently powerful, even better together. Designed for hobbyists and professionals alike.</p>
+  <div class="func-grid">
+    <div class="func-card reveal">
+      <div class="func-icon">✦</div>
+      <div class="func-title">AI Design Engine</div>
+      <div class="func-desc">Natural language prompts generate 3 visual wreath designs in under 5 seconds, with full material specs and SVG previews.</div>
+      <div class="func-pills"><span class="func-pill">Prompt-to-design</span><span class="func-pill">3 variations</span><span class="func-pill">SVG preview</span></div>
+    </div>
+    <div class="func-card reveal">
+      <div class="func-icon">🌿</div>
+      <div class="func-title">Material Intelligence</div>
+      <div class="func-desc">4,000+ materials database with real-time pricing, seasonal availability flags, and budget/premium substitution suggestions.</div>
+      <div class="func-pills"><span class="func-pill">Live pricing</span><span class="func-pill">Substitutions</span><span class="func-pill">Availability</span></div>
+    </div>
+    <div class="func-card reveal">
+      <div class="func-icon">📋</div>
+      <div class="func-title">Client Presentations</div>
+      <div class="func-desc">Generate branded PDF decks in one click. Clients can approve, request revisions, or decline via a shareable link — no account needed.</div>
+      <div class="func-pills"><span class="func-pill">PDF export</span><span class="func-pill">Share link</span><span class="func-pill">Client approval</span></div>
+    </div>
+    <div class="func-card reveal">
+      <div class="func-icon">📖</div>
+      <div class="func-title">Build Guide Generator</div>
+      <div class="func-desc">Step-by-step assembly instructions auto-generated for every design, adapted to three skill levels with time estimates per step.</div>
+      <div class="func-pills"><span class="func-pill">Skill-adaptive</span><span class="func-pill">Printable</span><span class="func-pill">Timed steps</span></div>
+    </div>
+    <div class="func-card reveal">
+      <div class="func-icon">🗂</div>
+      <div class="func-title">Design Library</div>
+      <div class="func-desc">Save, tag, version, and remix every design. Build a reusable catalog of bestsellers with full revision history.</div>
+      <div class="func-pills"><span class="func-pill">Versioning</span><span class="func-pill">Remix</span><span class="func-pill">Tags & filters</span></div>
+    </div>
+    <div class="func-card reveal">
+      <div class="func-icon">🛒</div>
+      <div class="func-title">Supplier Integration</div>
+      <div class="func-desc">One-click "add all to cart" connects directly to FiftyFlowers, Afloral, and Save-On-Crafts with pre-filled quantities and SKUs.</div>
+      <div class="func-pills"><span class="func-pill">3 suppliers</span><span class="func-pill">One-click cart</span><span class="func-pill">SKU sync</span></div>
+    </div>
+  </div>
+  <div class="func-feature-strip reveal">
+    <div class="strip-header">
+      <div class="strip-h-title">Feature comparison across all tiers</div>
+      <div class="strip-h-badge">3 plans available</div>
+    </div>
+    <div class="strip-body">
+      <div class="strip-col">
+        <div class="strip-col-title">AI Studio</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Natural language prompts</div>
+        <div class="strip-item"><span class="strip-check">✓</span>3 variations per prompt</div>
+        <div class="strip-item"><span class="strip-check">✓</span>12 design styles</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Real-time SVG preview</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Prompt history (90 days)</div>
+      </div>
+      <div class="strip-col">
+        <div class="strip-col-title">Materials</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Full material list per design</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Cost estimator</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Seasonal availability</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Substitution suggestions</div>
+        <div class="strip-item"><span class="strip-check">✓</span>CSV / PDF export</div>
+      </div>
+      <div class="strip-col">
+        <div class="strip-col-title">Presentation</div>
+        <div class="strip-item"><span class="strip-check">✓</span>PDF generation</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Client share link</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Approval workflow</div>
+        <div class="strip-item"><span class="strip-check">✓</span>White-label (Commercial)</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Custom branding</div>
+      </div>
+      <div class="strip-col">
+        <div class="strip-col-title">Advanced</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Build guides</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Design library</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Supplier integration</div>
+        <div class="strip-item"><span class="strip-check">✓</span>Team seats (Commercial)</div>
+        <div class="strip-item"><span class="strip-check">✓</span>API access (Commercial)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section reveal">
+  <div class="s-label">05 — Pricing</div>
+  <h2 class="s-title">Plans for every maker</h2>
+  <div class="pricing-toggle">
+    <button class="p-toggle active" id="tog-m" onclick="toggleBilling('monthly')">Monthly</button>
+    <button class="p-toggle" id="tog-a" onclick="toggleBilling('annual')">Annual · save 20%</button>
+  </div>
+  <div class="pricing-cards">
+    <div class="p-card">
+      <div class="p-tier">Hobby</div>
+      <div class="p-price" id="price-free">$0</div>
+      <div class="p-per">forever free</div>
+      <ul class="p-feats">
+        <li class="p-feat"><span class="p-ck">✓</span>10 designs per month</li>
+        <li class="p-feat"><span class="p-ck">✓</span>3 design styles</li>
+        <li class="p-feat"><span class="p-ck">✓</span>Basic material list</li>
+        <li class="p-feat"><span class="p-ck">✓</span>PNG export</li>
+        <li class="p-feat"><span class="p-ck">✓</span>Design library (10 saves)</li>
+      </ul>
+      <button class="p-btn p-btn-out">Get started free</button>
+    </div>
+    <div class="p-card featured">
+      <div class="p-badge">Most popular</div>
+      <div class="p-tier">Studio</div>
+      <div class="p-price" id="price-studio">$29</div>
+      <div class="p-per" id="per-studio">per month</div>
+      <ul class="p-feats">
+        <li class="p-feat"><span class="p-ck">✓</span>Unlimited designs</li>
+        <li class="p-feat"><span class="p-ck">✓</span>All 12 design styles</li>
+        <li class="p-feat"><span class="p-ck">✓</span>Client presentation mode</li>
+        <li class="p-feat"><span class="p-ck">✓</span>Supplier integration</li>
+        <li class="p-feat"><span class="p-ck">✓</span>Build guides</li>
+        <li class="p-feat"><span class="p-ck">✓</span>Unlimited library</li>
+      </ul>
+      <button class="p-btn">Start 14-day free trial</button>
+    </div>
+    <div class="p-card">
+      <div class="p-tier">Commercial</div>
+      <div class="p-price" id="price-comm">$89</div>
+      <div class="p-per" id="per-comm">per month</div>
+      <ul class="p-feats">
+        <li class="p-feat"><span class="p-ck">✓</span>Everything in Studio</li>
+        <li class="p-feat"><span class="p-ck">✓</span>5 team seats</li>
+        <li class="p-feat"><span class="p-ck">✓</span>White-label exports</li>
+        <li class="p-feat"><span class="p-ck">✓</span>REST API access</li>
+        <li class="p-feat"><span class="p-ck">✓</span>Priority support & SLA</li>
+        <li class="p-feat"><span class="p-ck">✓</span>Custom material catalogs</li>
+      </ul>
+      <button class="p-btn p-btn-out">Contact sales</button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials reveal">
+  <div class="s-label">06 — Social Proof</div>
+  <h2 class="s-title">Makers love WreathAI</h2>
+  <div class="divider" style="background:var(--bark-l)"></div>
+  <p class="s-sub">From hobbyists to professional florists — here's what our beta community has to say.</p>
+  <div class="test-grid">
+    <div class="test-card reveal">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-quote">I used to spend hours searching Pinterest and sketching on paper. Now I describe what I want and the design is done in seconds — with a shopping list attached. It's genuinely magical.</div>
+      <div class="test-author"><div class="test-avatar">SR</div><div><div class="test-name">Sarah R.</div><div class="test-role">Independent florist, Nashville</div></div></div>
+    </div>
+    <div class="test-card reveal">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-quote">The client presentation feature alone is worth the subscription. I send a beautiful PDF before I start any commission — clients feel confident and I save hours of back-and-forth.</div>
+      <div class="test-author"><div class="test-avatar">MK</div><div><div class="test-name">Marcus K.</div><div class="test-role">Event designer, Chicago</div></div></div>
+    </div>
+    <div class="test-card reveal">
+      <div class="test-stars">★★★★☆</div>
+      <div class="test-quote">As a craft workshop teacher, the build guides are a game-changer. I generate a professional handout for every class in about 30 seconds. My students are obsessed.</div>
+      <div class="test-author"><div class="test-avatar">JL</div><div><div class="test-name">Jamie L.</div><div class="test-role">Craft workshop instructor, Portland</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section reveal">
+  <h2>Your next wreath starts<br>with a sentence.</h2>
+  <p>Join 2,400 makers and florists already designing with WreathAI. Free to start — no credit card required.</p>
+  <div class="cta-form">
+    <input class="cta-input" type="email" placeholder="your@email.com">
+    <button class="cta-submit" onclick="sendPrompt('I want to start with WreathAI — what is the onboarding flow for a new user?')">Start free →</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a class="logo" href="#" style="text-decoration:none">
+        <div class="logo-mark">W</div>
+        <span class="logo-name" style="color:rgba(255,255,255,0.75)">WreathAI</span>
+      </a>
+      <p>The first AI design studio built exclusively for wreath makers. From prompt to finished design in seconds.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Product</div>
+      <ul class="footer-links">
+        <li><a href="#">AI Studio</a></li>
+        <li><a href="#">Design Library</a></li>
+        <li><a href="#">Material Database</a></li>
+        <li><a href="#">Build Guides</a></li>
+        <li><a href="#">API Docs</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#">About</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Press</a></li>
+        <li><a href="#">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Legal</div>
+      <ul class="footer-links">
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Cookie Settings</a></li>
+        <li><a href="#">Security</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 WreathAI Inc. — Crafted with care.</span>
+    <span>Made for makers, by makers.</span>
+  </div>
+</footer>
+
+<script>
+function showWF(id) {
+  document.querySelectorAll('.wf-frame').forEach(f=>f.classList.remove('active'));
+  document.querySelectorAll('.wf-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('wf-'+id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleBilling(type) {
+  const isAnnual = type === 'annual';
+  document.getElementById('tog-m').classList.toggle('active', !isAnnual);
+  document.getElementById('tog-a').classList.toggle('active', isAnnual);
+  document.getElementById('price-studio').textContent = isAnnual ? '$23' : '$29';
+  document.getElementById('per-studio').textContent = isAnnual ? 'per month, billed annually' : 'per month';
+  document.getElementById('price-comm').textContent = isAnnual ? '$71' : '$89';
+  document.getElementById('per-comm').textContent = isAnnual ? 'per month, billed annually' : 'per month';
+}
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.08 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>

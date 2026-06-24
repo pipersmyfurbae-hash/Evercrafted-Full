@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Principles Coach — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ec-white: #FFFFFF;
+  --ec-off-white: #F9F7F4;
+  --ec-paper: #F2EFE9;
+  --ec-black: #1A1A1A;
+  --ec-charcoal: #2E2E2E;
+  --ec-ink: #4A4A4A;
+  --ec-green: #4A6741;
+  --ec-green-light: #6B8F67;
+  --ec-green-pale: #EEF2ED;
+  --ec-green-dim: rgba(74,103,65,0.12);
+  --ec-gray-100: #F5F5F5;
+  --ec-gray-200: #E8E8E8;
+  --ec-gray-300: #D0D0D0;
+  --ec-gray-400: #A8A8A8;
+  --ec-gray-500: #787878;
+  --ec-warning: #C4922A;
+  --ec-error: #B94040;
+  --ec-info: #4A6785;
+  --ec-surface: var(--ec-white);
+  --ec-surface-alt: var(--ec-off-white);
+  --ec-surface-warm: var(--ec-paper);
+  --ec-border: #E8E8E8;
+  --ec-border-dark: #D0D0D0;
+  --ec-text: var(--ec-black);
+  --ec-text-muted: var(--ec-ink);
+  --ec-text-faint: var(--ec-gray-500);
+  --ec-font-serif: 'Cormorant Garamond', Georgia, serif;
+  --ec-font-sans: 'Inter', system-ui, sans-serif;
+  --ec-font-script: 'Dancing Script', cursive;
+  --ec-font-mono: 'DM Mono', monospace;
+  --ec-text-xs: 0.6875rem;
+  --ec-text-sm: 0.8125rem;
+  --ec-text-base: 1rem;
+  --ec-text-lg: 1.125rem;
+  --ec-text-xl: 1.375rem;
+  --ec-text-2xl: 1.75rem;
+  --ec-text-3xl: 2.25rem;
+  --ec-space-1: 0.25rem; --ec-space-2: 0.5rem; --ec-space-3: 0.75rem;
+  --ec-space-4: 1rem; --ec-space-5: 1.5rem; --ec-space-6: 2rem;
+  --ec-space-8: 2.5rem; --ec-space-10: 3rem; --ec-space-12: 4rem;
+  --ec-radius-sm: 4px; --ec-radius-md: 8px; --ec-radius-lg: 14px;
+  --ec-radius-xl: 20px; --ec-radius-full: 9999px;
+  --ec-shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --ec-shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --ec-shadow-lg: 0 8px 32px rgba(0,0,0,0.10);
+  --ec-shadow-card: 0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px var(--ec-border);
+  --ec-transition: 200ms ease;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--ec-font-sans);
+  background: var(--ec-off-white);
+  color: var(--ec-text);
+  min-height: 100vh;
+}
+
+.ec-app {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: var(--ec-space-8) var(--ec-space-5);
+}
+
+/* Header */
+.ec-app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--ec-space-5);
+  border-bottom: 1px solid var(--ec-border);
+  margin-bottom: var(--ec-space-8);
+}
+.ec-app-header__brand { display: flex; align-items: baseline; gap: var(--ec-space-3); }
+.ec-script { font-family: var(--ec-font-script); font-size: var(--ec-text-xl); color: var(--ec-green); font-weight: 600; }
+.ec-app-header__app-name { font-family: var(--ec-font-sans); font-size: var(--ec-text-sm); color: var(--ec-text-faint); letter-spacing: 0.05em; }
+.ec-tier-badge { font-family: var(--ec-font-sans); font-size: var(--ec-text-xs); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 10px; border-radius: var(--ec-radius-full); }
+.ec-tier-studio { background: #F5EEF4; color: #7A4A85; }
+.ec-tier-atelier { background: #1A1A1A; color: #F2EFE9; }
+
+/* Page intro */
+.page-intro { margin-bottom: var(--ec-space-8); }
+.page-intro h1 { font-family: var(--ec-font-serif); font-size: var(--ec-text-3xl); font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; margin-bottom: var(--ec-space-3); }
+.page-intro p { font-size: var(--ec-text-lg); color: var(--ec-text-muted); line-height: 1.65; max-width: 600px; }
+
+/* Module tabs */
+.module-tabs { display: flex; gap: var(--ec-space-2); margin-bottom: var(--ec-space-6); flex-wrap: wrap; }
+.module-tab {
+  padding: 8px 20px;
+  border-radius: var(--ec-radius-full);
+  font-family: var(--ec-font-sans);
+  font-size: var(--ec-text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid var(--ec-border-dark);
+  background: var(--ec-white);
+  color: var(--ec-text-muted);
+  transition: all var(--ec-transition);
+}
+.module-tab:hover { border-color: var(--ec-green); color: var(--ec-green); }
+.module-tab.active { background: var(--ec-green); color: var(--ec-white); border-color: var(--ec-green); }
+
+/* Two-column layout */
+.coach-layout { display: grid; grid-template-columns: 1fr 1.1fr; gap: var(--ec-space-6); align-items: start; }
+@media (max-width: 700px) { .coach-layout { grid-template-columns: 1fr; } }
+
+/* Left panel — reference */
+.ref-panel { background: var(--ec-surface); border-radius: var(--ec-radius-lg); box-shadow: var(--ec-shadow-card); overflow: hidden; }
+.ref-panel__header { padding: var(--ec-space-5); border-bottom: 1px solid var(--ec-border); background: var(--ec-paper); display: flex; align-items: center; gap: var(--ec-space-3); }
+.ref-panel__icon { color: var(--ec-green); }
+.ref-panel__title { font-family: var(--ec-font-serif); font-size: var(--ec-text-xl); font-weight: 600; }
+.ref-panel__body { padding: var(--ec-space-5); }
+
+/* Principle cards */
+.principle-card { padding: var(--ec-space-4); border-radius: var(--ec-radius-md); background: var(--ec-off-white); margin-bottom: var(--ec-space-3); border-left: 3px solid var(--ec-green); transition: all var(--ec-transition); }
+.principle-card:last-child { margin-bottom: 0; }
+.principle-card h4 { font-family: var(--ec-font-serif); font-size: var(--ec-text-lg); font-weight: 600; margin-bottom: 4px; }
+.principle-card p { font-size: var(--ec-text-sm); color: var(--ec-text-muted); line-height: 1.6; }
+
+/* Color swatch strip */
+.swatch-strip { display: flex; gap: var(--ec-space-2); margin-top: var(--ec-space-3); flex-wrap: wrap; }
+.swatch { width: 36px; height: 36px; border-radius: var(--ec-radius-sm); border: 1px solid var(--ec-border); cursor: pointer; transition: transform var(--ec-transition); position: relative; }
+.swatch:hover { transform: scale(1.1); }
+.swatch-label { font-size: var(--ec-text-xs); color: var(--ec-text-faint); margin-top: var(--ec-space-2); font-family: var(--ec-font-mono); }
+
+/* Polar grid visual */
+.polar-canvas-wrap { background: var(--ec-paper); border-radius: var(--ec-radius-md); padding: var(--ec-space-4); margin-top: var(--ec-space-3); display: flex; flex-direction: column; align-items: center; }
+canvas { display: block; }
+.polar-label { font-size: var(--ec-text-xs); color: var(--ec-text-faint); margin-top: var(--ec-space-2); font-family: var(--ec-font-mono); text-align: center; }
+
+/* Right panel — AI coach */
+.coach-panel { background: var(--ec-surface); border-radius: var(--ec-radius-lg); box-shadow: var(--ec-shadow-card); display: flex; flex-direction: column; }
+.coach-panel__header { padding: var(--ec-space-5); border-bottom: 1px solid var(--ec-border); display: flex; align-items: center; justify-content: space-between; }
+.coach-panel__title { font-family: var(--ec-font-serif); font-size: var(--ec-text-xl); font-weight: 600; }
+.coach-panel__status { display: flex; align-items: center; gap: 6px; font-size: var(--ec-text-xs); color: var(--ec-green); font-weight: 500; }
+.status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--ec-green); }
+
+.chat-messages { padding: var(--ec-space-5); min-height: 320px; max-height: 420px; overflow-y: auto; display: flex; flex-direction: column; gap: var(--ec-space-4); }
+.msg { display: flex; gap: var(--ec-space-3); }
+.msg--user { flex-direction: row-reverse; }
+.msg__avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.msg--coach .msg__avatar { background: var(--ec-green-pale); color: var(--ec-green); }
+.msg--user .msg__avatar { background: var(--ec-black); color: var(--ec-white); font-size: 11px; font-weight: 600; }
+.msg__bubble { max-width: 85%; padding: 12px 16px; border-radius: var(--ec-radius-lg); font-size: var(--ec-text-sm); line-height: 1.65; }
+.msg--coach .msg__bubble { background: var(--ec-green-pale); color: var(--ec-ink); border-bottom-left-radius: 4px; }
+.msg--user .msg__bubble { background: var(--ec-black); color: var(--ec-white); border-bottom-right-radius: 4px; }
+
+.chat-input-area { padding: var(--ec-space-4) var(--ec-space-5); border-top: 1px solid var(--ec-border); }
+.quick-prompts { display: flex; gap: var(--ec-space-2); margin-bottom: var(--ec-space-3); flex-wrap: wrap; }
+.quick-btn {
+  padding: 5px 12px;
+  border-radius: var(--ec-radius-full);
+  font-size: var(--ec-text-xs);
+  font-family: var(--ec-font-sans);
+  cursor: pointer;
+  border: 1.5px solid var(--ec-border-dark);
+  background: transparent;
+  color: var(--ec-text-muted);
+  transition: all var(--ec-transition);
+}
+.quick-btn:hover { border-color: var(--ec-green); color: var(--ec-green); background: var(--ec-green-pale); }
+.input-row { display: flex; gap: var(--ec-space-3); align-items: flex-end; }
+.ec-input {
+  width: 100%; padding: 10px var(--ec-space-4);
+  background: var(--ec-white); border: 1.5px solid var(--ec-border);
+  border-radius: var(--ec-radius-md); font-family: var(--ec-font-sans);
+  font-size: var(--ec-text-base); color: var(--ec-text); outline: none;
+  transition: border-color var(--ec-transition); resize: none;
+}
+.ec-input:focus { border-color: var(--ec-green); box-shadow: 0 0 0 3px var(--ec-green-dim); }
+.ec-input::placeholder { color: var(--ec-gray-400); }
+.ec-btn {
+  display: inline-flex; align-items: center; gap: var(--ec-space-2);
+  padding: 10px var(--ec-space-5); border-radius: var(--ec-radius-md);
+  font-family: var(--ec-font-sans); font-size: var(--ec-text-sm);
+  font-weight: 500; cursor: pointer; border: none;
+  transition: all var(--ec-transition); white-space: nowrap;
+}
+.ec-btn-green { background: var(--ec-green); color: var(--ec-white); }
+.ec-btn-green:hover:not(:disabled) { background: var(--ec-green-light); transform: translateY(-1px); }
+.ec-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* Divider */
+.ec-divider { display: flex; align-items: center; gap: var(--ec-space-4); margin: var(--ec-space-8) 0; color: var(--ec-gray-300); font-size: var(--ec-text-lg); }
+.ec-divider::before, .ec-divider::after { content: ''; flex: 1; height: 1px; background: var(--ec-border); }
+
+/* Design Score card */
+.score-section { margin-top: var(--ec-space-6); }
+.score-section h3 { font-family: var(--ec-font-serif); font-size: var(--ec-text-2xl); font-weight: 400; margin-bottom: var(--ec-space-5); }
+.score-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--ec-space-4); }
+.score-card { background: var(--ec-surface); border-radius: var(--ec-radius-lg); box-shadow: var(--ec-shadow-card); padding: var(--ec-space-5); }
+.score-card__label { font-size: var(--ec-text-xs); font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ec-text-faint); margin-bottom: var(--ec-space-3); }
+.score-card__value { font-family: var(--ec-font-serif); font-size: 2.5rem; font-weight: 600; color: var(--ec-green); line-height: 1; margin-bottom: var(--ec-space-2); }
+.score-card__bar-wrap { height: 4px; background: var(--ec-gray-200); border-radius: var(--ec-radius-full); overflow: hidden; }
+.score-card__bar { height: 100%; background: var(--ec-green); border-radius: var(--ec-radius-full); transition: width 0.8s ease; }
+.score-card__note { font-size: var(--ec-text-xs); color: var(--ec-text-faint); margin-top: var(--ec-space-2); }
+
+/* Locked feature overlay */
+.ec-locked-wrap { position: relative; }
+.ec-locked-overlay {
+  position: absolute; inset: 0; background: rgba(249,247,244,0.90);
+  border-radius: inherit; backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center; z-index: 2;
+}
+.ec-lock-card { background: var(--ec-white); border: 1.5px solid var(--ec-border-dark); border-radius: var(--ec-radius-lg); padding: var(--ec-space-5) var(--ec-space-6); text-align: center; box-shadow: var(--ec-shadow-md); max-width: 280px; }
+.ec-lock-card h4 { font-family: var(--ec-font-serif); font-size: var(--ec-text-lg); margin-bottom: var(--ec-space-2); }
+.ec-lock-card p { font-size: var(--ec-text-sm); color: var(--ec-text-muted); margin-bottom: var(--ec-space-4); line-height: 1.55; }
+.ec-btn-outline { background: transparent; color: var(--ec-text); border: 1.5px solid var(--ec-border-dark); }
+.ec-btn-outline:hover { border-color: var(--ec-black); background: var(--ec-gray-100); }
+
+/* Loading */
+.ec-loading { display: flex; align-items: center; gap: var(--ec-space-3); padding: 12px 16px; background: var(--ec-green-pale); border-radius: var(--ec-radius-lg); border-bottom-left-radius: 4px; font-size: var(--ec-text-sm); color: var(--ec-green); max-width: 85%; }
+.ec-spinner { width: 16px; height: 16px; border: 2px solid var(--ec-green-pale); border-top-color: var(--ec-green); border-radius: 50%; animation: ec-spin 0.7s linear infinite; flex-shrink: 0; }
+@keyframes ec-spin { to { transform: rotate(360deg); } }
+
+/* Module panel visibility */
+.module-panel { display: none; }
+.module-panel.active { display: block; }
+
+/* Color theory grid */
+.color-theory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ec-space-3); }
+.color-combo { border-radius: var(--ec-radius-md); overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: border-color var(--ec-transition); }
+.color-combo:hover { border-color: var(--ec-green); }
+.color-combo__swatches { display: flex; height: 48px; }
+.color-combo__swatch { flex: 1; }
+.color-combo__label { padding: 6px 10px; background: var(--ec-white); font-size: var(--ec-text-xs); font-weight: 500; color: var(--ec-text-muted); }
+
+/* Focal point diagram */
+.focal-diagram { background: var(--ec-paper); border-radius: var(--ec-radius-md); padding: var(--ec-space-4); text-align: center; }
+</style>
+</head>
+<body>
+<div class="ec-app">
+
+  <!-- Header -->
+  <header class="ec-app-header">
+    <div class="ec-app-header__brand">
+      <span class="ec-script">Evercrafted</span>
+      <span class="ec-app-header__app-name">Design Principles Coach</span>
+    </div>
+    <div class="ec-tier-badge ec-tier-studio">Studio</div>
+  </header>
+
+  <!-- Page intro -->
+  <div class="page-intro">
+    <h1>Design Principles Coach</h1>
+    <p>Master balance, rhythm, focal points, and color theory — with an AI coach that speaks fluent wreath. Ask anything, get precise answers with polar coordinates and stem counts.</p>
+  </div>
+
+  <!-- Module tabs -->
+  <div class="module-tabs">
+    <button class="module-tab active" onclick="switchModule('balance')">⚖️ Balance</button>
+    <button class="module-tab" onclick="switchModule('rhythm')">〰 Rhythm</button>
+    <button class="module-tab" onclick="switchModule('focal')">◎ Focal Points</button>
+    <button class="module-tab" onclick="switchModule('color')">🎨 Color Theory</button>
+  </div>
+
+  <!-- Main coach layout -->
+  <div class="coach-layout">
+
+    <!-- LEFT: Reference panel -->
+    <div class="ref-panel">
+      <!-- BALANCE module -->
+      <div id="ref-balance" class="module-panel active">
+        <div class="ref-panel__header">
+          <svg class="ref-panel__icon" width="22" height="22" viewBox="0 0 32 32" fill="none"><path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/><path d="M16 18 C16 18 12 16 10 13" stroke="currentColor" stroke-width="1"/><path d="M16 14 C16 14 20 12 22 9" stroke="currentColor" stroke-width="1"/></svg>
+          <span class="ref-panel__title">Balance Reference</span>
+        </div>
+        <div class="ref-panel__body">
+          <div class="principle-card">
+            <h4>Symmetrical Balance</h4>
+            <p>Mirror-image distribution across the vertical axis. Place equal-weight clusters at 10° and 170°, 2° and 178°. Feels formal, traditional, timeless.</p>
+          </div>
+          <div class="principle-card">
+            <h4>Asymmetrical Balance</h4>
+            <p>Unequal visual weight creating dynamic tension. A large focal cluster at 315° balanced by smaller rhythm clusters spanning 90°–180°. Evercrafted's default.</p>
+          </div>
+          <div class="principle-card">
+            <h4>Radial Balance</h4>
+            <p>Golden angle distribution (137.5°). Place each new element at +137.5° from the last. Produces natural, botanical-looking scatter across the full ring.</p>
+          </div>
+          <div class="polar-canvas-wrap">
+            <canvas id="polar-balance" width="180" height="180"></canvas>
+            <p class="polar-label">24" wreath · asymmetric layout · r_work = 9.5"</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- RHYTHM module -->
+      <div id="ref-rhythm" class="module-panel">
+        <div class="ref-panel__header">
+          <svg class="ref-panel__icon" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M2 12 Q6 4 10 12 Q14 20 18 12 Q20 8 22 12" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          <span class="ref-panel__title">Rhythm Reference</span>
+        </div>
+        <div class="ref-panel__body">
+          <div class="principle-card">
+            <h4>Repetition</h4>
+            <p>Use the same floral element at regular intervals. 3 identical clusters at 120° intervals creates a strong, resolved rhythm. Minimum 3 repetitions to register.</p>
+          </div>
+          <div class="principle-card">
+            <h4>Alternation</h4>
+            <p>A–B–A–B pattern. Alternate a focal flower with a texture element every 45°. Creates movement without chaos. Ideal for garland-style designs.</p>
+          </div>
+          <div class="principle-card">
+            <h4>Progression</h4>
+            <p>Scale or density increases along a direction. Start with 3 stems at 270°, grow to 7 stems by 315°. Creates visual momentum toward a focal point.</p>
+          </div>
+          <div class="principle-card" style="border-left-color: var(--ec-warning);">
+            <h4>Flow Direction</h4>
+            <p>All stems should reinforce a single dominant flow — clockwise or counter-clockwise. Conflicting stem directions read as chaos, not texture.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOCAL module -->
+      <div id="ref-focal" class="module-panel">
+        <div class="ref-panel__header">
+          <svg class="ref-panel__icon" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="7" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="0.75"/></svg>
+          <span class="ref-panel__title">Focal Point Reference</span>
+        </div>
+        <div class="ref-panel__body">
+          <div class="principle-card">
+            <h4>Primary Focal Point</h4>
+            <p>The single dominant element the eye lands on first. Place between 300°–330° (upper-left of ring). Use your largest, most dramatic bloom at r_work with ±10° spread. Max 1 per design.</p>
+          </div>
+          <div class="principle-card">
+            <h4>Secondary Focal Points</h4>
+            <p>Supporting anchors that create rhythm with the primary. Place at 180° and 90° offset from primary. 60–70% the scale of the primary. Max 2 per design.</p>
+          </div>
+          <div class="principle-card">
+            <h4>Eye Path</h4>
+            <p>The invisible line the viewer's eye travels. Primary → secondary → filler → back to primary. Design this path deliberately using size, color, and direction cues.</p>
+          </div>
+          <div class="focal-diagram">
+            <svg width="160" height="160" viewBox="0 0 160 160">
+              <circle cx="80" cy="80" r="60" stroke="#D0D0D0" stroke-width="1" fill="none"/>
+              <circle cx="80" cy="80" r="40" stroke="#E8E8E8" stroke-width="1" fill="none"/>
+              <!-- Primary focal - upper left ring position -->
+              <circle cx="50" cy="38" r="12" fill="#4A6741" opacity="0.9"/>
+              <text x="50" y="42" text-anchor="middle" font-size="8" fill="white" font-family="Inter">P</text>
+              <!-- Secondary 1 -->
+              <circle cx="120" cy="80" r="8" fill="#6B8F67" opacity="0.7"/>
+              <text x="120" y="83" text-anchor="middle" font-size="7" fill="white" font-family="Inter">S</text>
+              <!-- Secondary 2 -->
+              <circle cx="60" cy="130" r="8" fill="#6B8F67" opacity="0.7"/>
+              <text x="60" y="133" text-anchor="middle" font-size="7" fill="white" font-family="Inter">S</text>
+              <!-- Eye path arrows -->
+              <path d="M62 46 Q95 60 112 76" stroke="#C4922A" stroke-width="1.5" fill="none" stroke-dasharray="3 2" marker-end="url(#arr)"/>
+              <path d="M112 88 Q90 118 68 126" stroke="#C4922A" stroke-width="1.5" fill="none" stroke-dasharray="3 2"/>
+              <defs><marker id="arr" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#C4922A"/></marker></defs>
+              <text x="80" y="158" text-anchor="middle" font-size="7" fill="#A8A8A8" font-family="Inter">Eye path: P → S → S → P</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLOR module -->
+      <div id="ref-color" class="module-panel">
+        <div class="ref-panel__header">
+          <svg class="ref-panel__icon" width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M12 3 L12 12 L19.8 7.5" stroke="currentColor" stroke-width="1" fill="none"/></svg>
+          <span class="ref-panel__title">Color Theory Reference</span>
+        </div>
+        <div class="ref-panel__body">
+          <div class="principle-card">
+            <h4>60–30–10 Rule</h4>
+            <p>60% dominant (greenery, base texture), 30% secondary (main florals), 10% accent (pops of contrast or metallic). Apply to stem count, not just visual area.</p>
+          </div>
+          <div class="color-theory-grid" style="margin: var(--ec-space-3) 0;">
+            <div class="color-combo">
+              <div class="color-combo__swatches">
+                <div class="color-combo__swatch" style="background:#7D9B78;"></div>
+                <div class="color-combo__swatch" style="background:#C4922A;"></div>
+                <div class="color-combo__swatch" style="background:#F2EFE9;"></div>
+              </div>
+              <div class="color-combo__label">Warm Autumn</div>
+            </div>
+            <div class="color-combo">
+              <div class="color-combo__swatches">
+                <div class="color-combo__swatch" style="background:#4A6785;"></div>
+                <div class="color-combo__swatch" style="background:#A8C0B8;"></div>
+                <div class="color-combo__swatch" style="background:#F9F7F4;"></div>
+              </div>
+              <div class="color-combo__label">Cool Winter</div>
+            </div>
+            <div class="color-combo">
+              <div class="color-combo__swatches">
+                <div class="color-combo__swatch" style="background:#6B8F67;"></div>
+                <div class="color-combo__swatch" style="background:#E8C4C4;"></div>
+                <div class="color-combo__swatch" style="background:#FFF8F0;"></div>
+              </div>
+              <div class="color-combo__label">Spring Soft</div>
+            </div>
+            <div class="color-combo">
+              <div class="color-combo__swatches">
+                <div class="color-combo__swatch" style="background:#2E2E2E;"></div>
+                <div class="color-combo__swatch" style="background:#8B6A4A;"></div>
+                <div class="color-combo__swatch" style="background:#D4C5A9;"></div>
+              </div>
+              <div class="color-combo__label">Moody Editorial</div>
+            </div>
+          </div>
+          <div class="principle-card">
+            <h4>Warm / Cool Balance</h4>
+            <p>Every palette needs both warm and cool tones. Pure warm palettes feel heavy; pure cool palettes feel cold. A 70/30 split reads most naturally to the eye.</p>
+          </div>
+        </div>
+      </div>
+    </div><!-- end ref-panel -->
+
+    <!-- RIGHT: AI Coach chat -->
+    <div class="coach-panel">
+      <div class="coach-panel__header">
+        <span class="coach-panel__title">Ask the Design Coach</span>
+        <span class="coach-panel__status"><span class="status-dot"></span>AI-Powered</span>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg msg--coach">
+          <div class="msg__avatar">🌿</div>
+          <div class="msg__bubble">Welcome to your Design Principles Coach. I'm trained in wreath composition — balance, rhythm, focal points, and color theory. Ask me anything from "how do I fix a lopsided wreath" to "give me the polar coordinates for a three-focal asymmetric layout." What are we working on?</div>
+        </div>
+      </div>
+
+      <div class="chat-input-area">
+        <div class="quick-prompts">
+          <button class="quick-btn" onclick="quickAsk('How do I fix a lopsided 24-inch wreath?')">Fix lopsided wreath</button>
+          <button class="quick-btn" onclick="quickAsk('Give me 3 focal point coordinates for asymmetric balance')">Focal coordinates</button>
+          <button class="quick-btn" onclick="quickAsk('What colors work for a moody fall palette with 60-30-10?')">Fall palette</button>
+          <button class="quick-btn" onclick="quickAsk('How many stems do I need for good rhythm on an 18-inch?')">Stem counts</button>
+        </div>
+        <div class="input-row">
+          <textarea class="ec-input" id="userInput" rows="2" placeholder="Ask about balance, rhythm, focal points, or color…" onkeydown="handleKey(event)"></textarea>
+          <button class="ec-btn ec-btn-green" id="sendBtn" onclick="sendMessage()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Ask
+          </button>
+        </div>
+      </div>
+    </div><!-- end coach-panel -->
+
+  </div><!-- end coach-layout -->
+
+  <!-- Divider -->
+  <div class="ec-divider">✦</div>
+
+  <!-- Design Critique Score (Studio feature - unlocked) -->
+  <div class="score-section">
+    <h3>Design Score Analyzer</h3>
+    <p style="font-size: var(--ec-text-sm); color: var(--ec-text-muted); margin-bottom: var(--ec-space-5);">Describe your current design and the coach will score it across four principles.</p>
+    <div id="scoreGrid" class="score-grid">
+      <div class="score-card">
+        <div class="score-card__label">Balance</div>
+        <div class="score-card__value" id="scoreBalance">—</div>
+        <div class="score-card__bar-wrap"><div class="score-card__bar" id="barBalance" style="width:0%"></div></div>
+        <div class="score-card__note" id="noteBalance">Ask the coach to score your design</div>
+      </div>
+      <div class="score-card">
+        <div class="score-card__label">Rhythm</div>
+        <div class="score-card__value" id="scoreRhythm">—</div>
+        <div class="score-card__bar-wrap"><div class="score-card__bar" id="barRhythm" style="width:0%"></div></div>
+        <div class="score-card__note" id="noteRhythm">Ask the coach to score your design</div>
+      </div>
+      <div class="score-card">
+        <div class="score-card__label">Focal Impact</div>
+        <div class="score-card__value" id="scoreFocal">—</div>
+        <div class="score-card__bar-wrap"><div class="score-card__bar" id="barFocal" style="width:0%"></div></div>
+        <div class="score-card__note" id="noteFocal">Ask the coach to score your design</div>
+      </div>
+      <div class="score-card">
+        <div class="score-card__label">Color Harmony</div>
+        <div class="score-card__value" id="scoreColor">—</div>
+        <div class="score-card__bar-wrap"><div class="score-card__bar" id="barColor" style="width:0%"></div></div>
+        <div class="score-card__note" id="noteColor">Ask the coach to score your design</div>
+      </div>
+    </div>
+    <div style="margin-top: var(--ec-space-4); display: flex; gap: var(--ec-space-3); align-items: center;">
+      <textarea class="ec-input" id="critiqueInput" rows="2" placeholder="Describe your design: size, florals, placement, colors…" style="max-width: 600px;"></textarea>
+      <button class="ec-btn ec-btn-green" onclick="runCritique()" id="critiqueBtn">Score It</button>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="ec-divider">✦</div>
+
+  <!-- Atelier locked: Blueprint Generator from principles -->
+  <div class="ec-locked-wrap" style="border-radius: var(--ec-radius-lg);">
+    <div style="background: var(--ec-surface); border-radius: var(--ec-radius-lg); box-shadow: var(--ec-shadow-card); padding: var(--ec-space-6); filter: blur(1px);">
+      <h3 style="font-family: var(--ec-font-serif); font-size: var(--ec-text-2xl); margin-bottom: var(--ec-space-4);">Generate Blueprint from Principles</h3>
+      <p style="color: var(--ec-text-muted); font-size: var(--ec-text-base);">Define your design principles and the AI will generate a full WGS genome string and QACS placement coordinates.</p>
+      <div style="display:flex; gap: var(--ec-space-3); margin-top: var(--ec-space-5);">
+        <div style="flex:1; background: var(--ec-paper); border-radius: var(--ec-radius-md); height: 80px;"></div>
+        <div style="flex:1; background: var(--ec-paper); border-radius: var(--ec-radius-md); height: 80px;"></div>
+      </div>
+    </div>
+    <div class="ec-locked-overlay">
+      <div class="ec-lock-card">
+        <div style="font-size: 24px; margin-bottom: var(--ec-space-3);">🔒</div>
+        <h4>Atelier Feature</h4>
+        <p>Blueprint generation from principles requires Atelier tier. Upgrade to unlock genome output and QACS coordinates.</p>
+        <button class="ec-btn ec-btn-outline" style="font-size: var(--ec-text-sm); padding: 8px 20px;">Upgrade to Atelier</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end ec-app -->
+
+<script>
+// ─── Tier gating ───────────────────────────────────────────────────────────
+const TIER_RANK = { bloom:1, craft:2, studio:3, atelier:4 };
+const USER_TIER = 'studio';
+function canAccess(required) { return TIER_RANK[USER_TIER] >= TIER_RANK[required]; }
+
+// ─── Module switching ──────────────────────────────────────────────────────
+function switchModule(name) {
+  document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.module-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('ref-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  updateSystemPrompt(name);
+}
+
+// ─── Polar balance canvas ──────────────────────────────────────────────────
+(function() {
+  const c = document.getElementById('polar-balance');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const cx = 90, cy = 90, r = 70, innerR = 46;
+  ctx.strokeStyle = '#E8E8E8'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, innerR, 0, Math.PI*2); ctx.stroke();
+  // radial guides
+  for (let a = 0; a < 360; a += 45) {
+    const rad = (a - 90) * Math.PI / 180;
+    ctx.beginPath(); ctx.moveTo(cx + innerR*Math.cos(rad), cy + innerR*Math.sin(rad));
+    ctx.lineTo(cx + r*Math.cos(rad), cy + r*Math.sin(rad));
+    ctx.strokeStyle = '#F0F0F0'; ctx.stroke();
+  }
+  // clusters
+  const clusters = [
+    { angle: 315, size: 9, label: 'P', col: '#4A6741' },
+    { angle: 135, size: 6, label: 'S', col: '#6B8F67' },
+    { angle: 90, size: 4, label: 'f', col: '#A8C0B8' },
+    { angle: 180, size: 4, label: 'f', col: '#A8C0B8' },
+  ];
+  clusters.forEach(cl => {
+    const rad = (cl.angle - 90) * Math.PI / 180;
+    const rw = (innerR + r) / 2;
+    const x = cx + rw * Math.cos(rad), y = cy + rw * Math.sin(rad);
+    ctx.beginPath(); ctx.arc(x, y, cl.size, 0, Math.PI*2);
+    ctx.fillStyle = cl.col; ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 7px Inter'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(cl.label, x, y);
+  });
+})();
+
+// ─── AI chat ───────────────────────────────────────────────────────────────
+let currentModule = 'balance';
+let chatHistory = [];
+
+const systemPrompts = {
+  balance: `You are the Evercrafted Design Principles Coach — an expert in wreath and floral design balance. You speak with warm authority, like a master florist who is also a great teacher. Give specific, actionable advice using polar coordinates (degrees), stem counts, and wreath sizes (12", 18", 24"). When referencing placement, always use clock positions or degree angles. Keep responses concise but precise — 2-4 sentences max unless a detailed breakdown is requested. Never suggest cherry blossoms, pussy willow, or twig-based blossom florals. Use gender-neutral language always.`,
+  rhythm: `You are the Evercrafted Design Principles Coach — an expert in wreath design rhythm and repetition. Give specific guidance with angular intervals, stem counts, and repetition patterns. Use terms like "alternation," "progression," "flow direction." Be concise, precise, actionable. Always use degree angles and clock positions for placement. Never suggest cherry blossoms, pussy willow, or twig-based blossom florals.`,
+  focal: `You are the Evercrafted Design Principles Coach — an expert in focal point design for wreaths. Give specific polar coordinates, size ratios, and eye-path guidance. Reference primary vs secondary focal points. Be concise and precise. Always use degree angles. Never suggest cherry blossoms, pussy willow, or twig-based blossom florals.`,
+  color: `You are the Evercrafted Design Principles Coach — an expert in color theory for floral and wreath design. Apply 60-30-10 rules, warm/cool balance, seasonal palettes. Reference actual floral colors by species when possible. Be concise and precise. Never suggest cherry blossoms, pussy willow, or twig-based blossom florals.`
+};
+
+function updateSystemPrompt(mod) { currentModule = mod; }
+
+function appendMessage(role, text) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `msg msg--${role === 'user' ? 'user' : 'coach'}`;
+  div.innerHTML = `
+    <div class="msg__avatar">${role === 'user' ? 'You' : '🌿'}</div>
+    <div class="msg__bubble">${text.replace(/\n/g, '<br>')}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showLoading() {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg msg--coach'; div.id = 'loadingMsg';
+  div.innerHTML = `<div class="msg__avatar">🌿</div><div class="ec-loading"><div class="ec-spinner"></div>Coaching…</div>`;
+  msgs.appendChild(div); msgs.scrollTop = msgs.scrollHeight;
+}
+function hideLoading() { const l = document.getElementById('loadingMsg'); if (l) l.remove(); }
+
+async function callClaude(messages, systemPrompt) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: systemPrompt, messages })
+  });
+  const data = await res.json();
+  return data.content.filter(b => b.type === 'text').map(b => b.text).join('\n');
+}
+
+async function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  document.getElementById('sendBtn').disabled = true;
+  appendMessage('user', text);
+  chatHistory.push({ role: 'user', content: text });
+  showLoading();
+  try {
+    const reply = await callClaude(chatHistory, systemPrompts[currentModule]);
+    hideLoading();
+    appendMessage('coach', reply);
+    chatHistory.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    hideLoading();
+    appendMessage('coach', 'Connection issue — please try again in a moment.');
+  }
+  document.getElementById('sendBtn').disabled = false;
+}
+
+function quickAsk(text) {
+  document.getElementById('userInput').value = text;
+  sendMessage();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+// ─── Design Score ──────────────────────────────────────────────────────────
+async function runCritique() {
+  const input = document.getElementById('critiqueInput');
+  const desc = input.value.trim();
+  if (!desc) return;
+  document.getElementById('critiqueBtn').disabled = true;
+  document.getElementById('critiqueBtn').textContent = 'Scoring…';
+  const systemPrompt = `You are an Evercrafted design critic scoring wreath designs. Given a design description, return ONLY valid JSON like this:
+{"balance":{"score":72,"note":"Asymmetric tension is strong but the 9 o'clock zone is underweighted"},"rhythm":{"score":85,"note":"Good alternation pattern, progression toward focal is clear"},"focal":{"score":60,"note":"Primary focal placement is correct but secondary is competing for dominance"},"color":{"score":78,"note":"Warm/cool split is close to ideal; accent is slightly undersized"}}
+Scores are 0-100. Notes are 1 sentence max. Return ONLY the JSON object, no other text.`;
+  try {
+    const raw = await callClaude([{ role: 'user', content: `Score this wreath design: ${desc}` }], systemPrompt);
+    const clean = raw.replace(/```json|```/g, '').trim();
+    const data = JSON.parse(clean);
+    ['balance','rhythm','focal','color'].forEach(k => {
+      const key = k === 'focal' ? 'focal' : k;
+      const d = data[key] || data[k];
+      if (!d) return;
+      const s = d.score;
+      const ids = { balance:'Balance', rhythm:'Rhythm', focal:'Focal', color:'Color' };
+      document.getElementById('score'+ids[k]).textContent = s;
+      document.getElementById('bar'+ids[k]).style.width = s+'%';
+      document.getElementById('note'+ids[k]).textContent = d.note;
+      document.getElementById('bar'+ids[k]).style.background = s >= 80 ? 'var(--ec-green)' : s >= 60 ? 'var(--ec-warning)' : 'var(--ec-error)';
+    });
+  } catch(e) {
+    alert('Could not parse score — try a more detailed description.');
+  }
+  document.getElementById('critiqueBtn').disabled = false;
+  document.getElementById('critiqueBtn').textContent = 'Score It';
+}
+</script>
+</body>
+</html>

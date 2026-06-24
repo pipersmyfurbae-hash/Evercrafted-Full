@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Product Requirements Document v1.0</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0907;
+    --bg2: #0f0d0b;
+    --sf: #141210;
+    --sf2: #1a1714;
+    --bd: #2a2520;
+    --bd2: #332e28;
+    --gold: #c9a96e;
+    --gold2: #e8c98a;
+    --gold-dim: #c9a96e44;
+    --txt: #d4cdc4;
+    --txm: #9a9088;
+    --txd: #6a6058;
+    --green: #4a6741;
+    --red: #8a3a2a;
+    --blue: #2a5a7a;
+    --fd: 'Cormorant Garamond', serif;
+    --fm: 'DM Mono', monospace;
+    --fi: 'Inter', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--txt);
+    font-family: var(--fi);
+    font-size: 13px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    border-bottom: 1px solid var(--bd);
+    padding: 32px 48px 28px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    background: var(--bg2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .header-left {}
+  .brand {
+    font-family: var(--fd);
+    font-size: 11px;
+    letter-spacing: .35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .doc-title {
+    font-family: var(--fd);
+    font-size: 28px;
+    font-weight: 300;
+    color: var(--txt);
+    letter-spacing: .04em;
+    line-height: 1.1;
+  }
+  .header-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .tag {
+    font-family: var(--fm);
+    font-size: 9px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--bd);
+    color: var(--txm);
+    border-radius: 2px;
+    background: var(--sf);
+  }
+  .tag.gold { border-color: var(--gold-dim); color: var(--gold); background: #c9a96e0a; }
+  .tag.green { border-color: #4a674144; color: #6a9a60; background: #4a67410a; }
+
+  /* ── NAV ── */
+  .nav-bar {
+    border-bottom: 1px solid var(--bd);
+    background: var(--bg2);
+    padding: 0 48px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  .nav-item {
+    font-family: var(--fm);
+    font-size: 9px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--txd);
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .nav-item:hover { color: var(--txm); }
+  .nav-item.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* ── LAYOUT ── */
+  .body-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px;
+  }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 56px; }
+  .section-label {
+    font-family: var(--fm);
+    font-size: 9px;
+    letter-spacing: .25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--bd);
+  }
+  .section-title {
+    font-family: var(--fd);
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--txt);
+    letter-spacing: .03em;
+    margin-bottom: 20px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--sf);
+    border: 1px solid var(--bd);
+    border-radius: 3px;
+    padding: 20px 22px;
+    margin-bottom: 10px;
+  }
+  .card.gold-border { border-color: var(--gold-dim); }
+  .card-title {
+    font-family: var(--fm);
+    font-size: 10px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-body {
+    color: var(--txm);
+    font-size: 12px;
+    line-height: 1.75;
+  }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  @media (max-width: 700px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .body-wrap { padding: 24px 20px; }
+    .header { padding: 20px; }
+    .nav-bar { padding: 0 20px; }
+  }
+
+  /* ── COMPETITOR TABLE ── */
+  .comp-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  .comp-table th {
+    font-family: var(--fm);
+    font-size: 9px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--txd);
+    padding: 10px 14px;
+    text-align: left;
+    border-bottom: 1px solid var(--bd);
+    white-space: nowrap;
+  }
+  .comp-table td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--bd);
+    font-size: 12px;
+    color: var(--txm);
+    vertical-align: top;
+  }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:hover td { background: var(--sf2); }
+  .comp-name { font-family: var(--fm); font-size: 11px; color: var(--txt); }
+  .badge {
+    display: inline-block;
+    font-family: var(--fm);
+    font-size: 8px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 2px;
+    white-space: nowrap;
+  }
+  .badge-yes { background: #4a674120; border: 1px solid #4a674144; color: #6a9a60; }
+  .badge-no { background: #8a3a2a18; border: 1px solid #8a3a2a44; color: #b05040; }
+  .badge-partial { background: #c9a96e15; border: 1px solid var(--gold-dim); color: var(--gold); }
+  .badge-na { background: var(--sf); border: 1px solid var(--bd); color: var(--txd); }
+
+  /* ── MOAT BLOCK ── */
+  .moat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 700px) { .moat-grid { grid-template-columns: 1fr; } }
+  .moat-card {
+    background: var(--sf);
+    border: 1px solid var(--bd);
+    border-left: 3px solid var(--gold);
+    border-radius: 3px;
+    padding: 16px 18px;
+  }
+  .moat-label {
+    font-family: var(--fm);
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 7px;
+  }
+  .moat-desc { font-size: 12px; color: var(--txm); line-height: 1.7; }
+
+  /* ── PHASE BLOCK ── */
+  .phase-card {
+    background: var(--sf);
+    border: 1px solid var(--bd);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .phase-header {
+    background: var(--sf2);
+    border-bottom: 1px solid var(--bd);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .phase-num {
+    font-family: var(--fd);
+    font-size: 32px;
+    font-weight: 300;
+    color: var(--gold);
+    line-height: 1;
+    opacity: .4;
+    min-width: 32px;
+  }
+  .phase-meta {}
+  .phase-name {
+    font-family: var(--fd);
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--txt);
+    letter-spacing: .03em;
+    line-height: 1.2;
+  }
+  .phase-sub {
+    font-family: var(--fm);
+    font-size: 9px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--txd);
+    margin-top: 3px;
+  }
+  .phase-badges {
+    margin-left: auto;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .phase-body { padding: 20px 22px; }
+  .phase-desc { color: var(--txm); font-size: 12px; margin-bottom: 16px; line-height: 1.75; }
+
+  .feature-list { list-style: none; }
+  .feature-list li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--bd);
+    font-size: 12px;
+    color: var(--txm);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .feature-list li::before {
+    content: '→';
+    color: var(--gold);
+    font-family: var(--fm);
+    font-size: 10px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .feature-strong { color: var(--txt); font-weight: 500; }
+
+  /* ── STACK ROW ── */
+  .stack-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+  .stack-chip {
+    background: var(--sf2);
+    border: 1px solid var(--bd);
+    border-radius: 2px;
+    padding: 5px 12px;
+    font-family: var(--fm);
+    font-size: 10px;
+    color: var(--txm);
+    letter-spacing: .08em;
+  }
+  .stack-chip.highlight {
+    border-color: var(--gold-dim);
+    color: var(--gold);
+    background: #c9a96e0a;
+  }
+
+  /* ── RISK TABLE ── */
+  .risk-row {
+    display: grid;
+    grid-template-columns: 180px 80px 1fr;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--bd);
+    align-items: start;
+  }
+  .risk-row:last-child { border-bottom: none; }
+  .risk-name { font-size: 12px; color: var(--txt); }
+  .risk-level {
+    font-family: var(--fm);
+    font-size: 8px;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+  }
+  .risk-level.high { color: #b05040; }
+  .risk-level.med { color: var(--gold); }
+  .risk-level.low { color: #6a9a60; }
+  .risk-mit { font-size: 12px; color: var(--txm); }
+
+  /* ── STAT BOXES ── */
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 24px; }
+  @media (max-width: 700px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+  .stat-box {
+    background: var(--sf);
+    border: 1px solid var(--bd);
+    border-radius: 3px;
+    padding: 16px;
+  }
+  .stat-label { font-family: var(--fm); font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--txd); margin-bottom: 8px; }
+  .stat-val { font-family: var(--fd); font-size: 28px; font-weight: 300; color: var(--gold); line-height: 1; }
+  .stat-sub { font-size: 11px; color: var(--txd); margin-top: 4px; }
+
+  /* ── DIVIDER ── */
+  .divider { border: none; border-top: 1px solid var(--bd); margin: 32px 0; }
+
+  /* ── CALLOUT ── */
+  .callout {
+    background: #c9a96e08;
+    border: 1px solid var(--gold-dim);
+    border-radius: 3px;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+  }
+  .callout-label {
+    font-family: var(--fm);
+    font-size: 9px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .callout-text { font-size: 12px; color: var(--txm); line-height: 1.75; }
+
+  /* ── SCROLL NAV ── */
+  .section[id] { scroll-margin-top: 90px; }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top: 1px solid var(--bd);
+    padding: 24px 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 48px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .footer-txt { font-family: var(--fm); font-size: 10px; color: var(--txd); letter-spacing: .12em; }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: #fff; color: #000; }
+    .header, .nav-bar { position: static; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="brand">Evercrafted · The Baden Company</div>
+    <div class="doc-title">Product Requirements Document</div>
+  </div>
+  <div class="header-meta">
+    <div class="tag gold">v1.0 · April 2026</div>
+    <div class="tag">EC_CANON_V1</div>
+    <div class="tag green">For Review</div>
+  </div>
+</header>
+
+<nav class="nav-bar">
+  <div class="nav-item active" onclick="scrollTo('overview')">Overview</div>
+  <div class="nav-item" onclick="scrollTo('landscape')">Landscape</div>
+  <div class="nav-item" onclick="scrollTo('gap')">Gap Analysis</div>
+  <div class="nav-item" onclick="scrollTo('moat')">Our Moat</div>
+  <div class="nav-item" onclick="scrollTo('phases')">Phases</div>
+  <div class="nav-item" onclick="scrollTo('stack')">Tech Stack</div>
+  <div class="nav-item" onclick="scrollTo('risks')">Risks</div>
+  <div class="nav-item" onclick="scrollTo('success')">Success Metrics</div>
+</nav>
+
+<div class="body-wrap">
+
+  <!-- ══ OVERVIEW ══ -->
+  <section class="section" id="overview">
+    <div class="section-label">Document Scope</div>
+    <div class="section-title">What We're Building & Why</div>
+
+    <div class="callout">
+      <div class="callout-label">Mission Statement</div>
+      <div class="callout-text">Evercrafted is the only platform that converts a client's emotional brief and physical faux botanical inventory into a complete, buildable, sellable wreath design package — including a polar-coordinate blueprint, Midjourney render prompt, step-by-step build guide, and Etsy listing copy. No comparable system exists at this specificity or quality tier.</div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-box">
+        <div class="stat-label">Pipeline Stages</div>
+        <div class="stat-val">7</div>
+        <div class="stat-sub">Intake → Listing</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Core Skills</div>
+        <div class="stat-val">12+</div>
+        <div class="stat-sub">Built & documented</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Competitors w/ Full Pipeline</div>
+        <div class="stat-val">0</div>
+        <div class="stat-sub">Verified via research</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-label">Target Tier</div>
+        <div class="stat-val">$49</div>
+        <div class="stat-sub">Studio / mo entry</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Primary User</div>
+        <div class="card-body">Wreath makers, faux floral artists, and florists who sell on Etsy or run custom order businesses. They have existing inventory, client requests with emotional language, and no structured design system to translate brief → blueprint → listing.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Core Problem We Solve</div>
+        <div class="card-body">The translation gap between "I want something that feels like a cozy fall morning" and a physically buildable wreath with exact stem counts, polar placements, render prompts, and a live Etsy listing. That gap takes skilled makers 2–4 hours per design. Evercrafted collapses it to minutes.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ LANDSCAPE ══ -->
+  <section class="section" id="landscape">
+    <div class="section-label">Research Findings</div>
+    <div class="section-title">Competitive Landscape</div>
+
+    <div class="callout">
+      <div class="callout-label">Research Method</div>
+      <div class="callout-text">Conducted live searches across: AI floral design tools, Etsy listing generators, open-source emotion-to-color APIs, polar coordinate placement engines, wreath design CLIs, and JSON-to-image-prompt pipelines. No single tool or combination comes close to Evercrafted's integrated pipeline.</div>
+    </div>
+
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Tool / Platform</th>
+            <th>Category</th>
+            <th>Emotion → Design</th>
+            <th>Inventory Aware</th>
+            <th>Blueprint JSON</th>
+            <th>Render Prompt</th>
+            <th>Build Guide</th>
+            <th>Etsy Listing</th>
+            <th>Wreath-Specific</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="comp-name">FlwrsAI</span><br><span style="font-size:10px;color:var(--txd);">flwrsai.com</span></td>
+            <td>AI Floral Design</td>
+            <td><span class="badge badge-partial">Partial</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-yes">Image Gen</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+          </tr>
+          <tr>
+            <td><span class="comp-name">FloristGPT / ChatGPT GPTs</span><br><span style="font-size:10px;color:var(--txd);">yeschat.ai</span></td>
+            <td>AI Chat / Floral</td>
+            <td><span class="badge badge-partial">Partial</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-partial">Unstructured</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+          </tr>
+          <tr>
+            <td><span class="comp-name">Vondy Floral Generator</span><br><span style="font-size:10px;color:var(--txd);">vondy.com</span></td>
+            <td>AI Design Gen</td>
+            <td><span class="badge badge-partial">Occasion-based</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-yes">Image Only</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+          </tr>
+          <tr>
+            <td><span class="comp-name">ListifyAI / Roketfy</span><br><span style="font-size:10px;color:var(--txd);">listifyai.net</span></td>
+            <td>Etsy Listing Tool</td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-no">No</span></td>
+          </tr>
+          <tr>
+            <td><span class="comp-name">Marmalead / eRank / Alura</span><br><span style="font-size:10px;color:var(--txd);">SEO platforms</span></td>
+            <td>Etsy SEO Suite</td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-partial">SEO Only</span></td>
+            <td><span class="badge badge-no">No</span></td>
+          </tr>
+          <tr>
+            <td><span class="comp-name">JSON Prompt Generators</span><br><span style="font-size:10px;color:var(--txd);">Various (labgen.ai, etc.)</span></td>
+            <td>Prompt Engineering</td>
+            <td><span class="badge badge-na">—</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-partial">Generic JSON</span></td>
+            <td><span class="badge badge-yes">Yes</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+          </tr>
+          <tr>
+            <td><span class="comp-name">EmotiCrafter / EmoMap</span><br><span style="font-size:10px;color:var(--txd);">Research / GitHub</span></td>
+            <td>Emotion → Image</td>
+            <td><span class="badge badge-yes">Valence-Arousal</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-partial">Research Only</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+            <td><span class="badge badge-no">No</span></td>
+          </tr>
+          <tr style="background: #c9a96e05;">
+            <td><span class="comp-name" style="color:var(--gold);">Evercrafted</span><br><span style="font-size:10px;color:var(--txd);">You</span></td>
+            <td style="color:var(--gold);font-family:var(--fm);font-size:10px;">Full Pipeline</td>
+            <td><span class="badge badge-yes">✓ Valence-Arousal</span></td>
+            <td><span class="badge badge-yes">✓ SKU-aware</span></td>
+            <td><span class="badge badge-yes">✓ EC_CANON_V1</span></td>
+            <td><span class="badge badge-yes">✓ Luxury Faux</span></td>
+            <td><span class="badge badge-yes">✓ Clock-based</span></td>
+            <td><span class="badge badge-yes">✓ SEO + Story</span></td>
+            <td><span class="badge badge-yes">✓ Native</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider">
+
+    <div class="section-label">Open Source / API Ecosystem</div>
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-title">Emotion Mapping</div>
+        <div class="card-body"><strong style="color:var(--txt);">What exists:</strong> Academic valence-arousal models (Russell Circumplex), EmoMap (GitHub), scikit-image color analysis, music-to-palette research papers.<br><br><strong style="color:var(--txt);">Gap:</strong> None are applied to physical botanical design or inventory-constrained composition. Evercrafted's implementation is novel.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Composition / Placement</div>
+        <div class="card-body"><strong style="color:var(--txt);">What exists:</strong> Plotly polar charts, PyAbel transforms, generative design frameworks (Blender/Anton), Matplotlib radial plotting.<br><br><strong style="color:var(--txt);">Gap:</strong> All are data viz or engineering tools. None apply polar coordinate placement to floral design with asymmetry rules and odd cluster enforcement.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Prompt Engineering</div>
+        <div class="card-body"><strong style="color:var(--txt);">What exists:</strong> JSON prompt generators (labgen.ai), Key Prompt Ninja, ChatGPT prompt builders, Streamlit prompt builder tutorials.<br><br><strong style="color:var(--txt);">Gap:</strong> None are domain-trained on faux botanical luxury rendering. Evercrafted's render rules (no dew, no organic scatter, grapevine cues) are proprietary.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ GAP ANALYSIS ══ -->
+  <section class="section" id="gap">
+    <div class="section-label">Strategic Positioning</div>
+    <div class="section-title">What the Market Is Missing</div>
+
+    <div class="grid-2">
+      <div class="card gold-border">
+        <div class="card-title">⊕ Unoccupied Territory</div>
+        <div class="card-body" style="color:var(--txt);">
+          <ul class="feature-list">
+            <li><span>Emotion-to-physical-design pipeline with inventory constraints — <strong class="feature-strong">no one does this</strong></span></li>
+            <li><span>Wreath-specific polar coordinate blueprint schema — <strong class="feature-strong">completely novel</strong></span></li>
+            <li><span>Faux botanical render prompt discipline (anti-fresh rules) — <strong class="feature-strong">proprietary logic</strong></span></li>
+            <li><span>Genome-based design encoding (WGS) — <strong class="feature-strong">original IP</strong></span></li>
+            <li><span>End-to-end: intake → blueprint → build guide → listing in one session — <strong class="feature-strong">no competitor closes this loop</strong></span></li>
+            <li><span>Asymmetry enforcement as a system rule — <strong class="feature-strong">design-as-code principle</strong></span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">⊘ What We Don't Need to Build</div>
+        <div class="card-body">
+          <ul class="feature-list">
+            <li><span>Etsy keyword data scraping — well-served by Marmalead, eRank; we generate copy, not analytics</span></li>
+            <li><span>Generic image generation — Midjourney/DALL-E handles rendering; we generate the prompt</span></li>
+            <li><span>Inventory purchasing / supply chain — out of scope; we consume inventory data, not source it</span></li>
+            <li><span>Customer-facing Etsy API integration — Phase 3+ only; Phase 1 is copy generation</span></li>
+            <li><span>Mobile app — web-first, responsive; native app is a future phase</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ MOAT ══ -->
+  <section class="section" id="moat">
+    <div class="section-label">Competitive Defensibility</div>
+    <div class="section-title">Evercrafted's Moat</div>
+
+    <div class="moat-grid">
+      <div class="moat-card">
+        <div class="moat-label">Proprietary Schema</div>
+        <div class="moat-desc">EC_CANON_V1 / EC_WR_V2 is a domain-specific blueprint format. Competitors would need to reverse-engineer 12+ composition formulas, QACS coordinate system, and odd-cluster placement logic.</div>
+      </div>
+      <div class="moat-card">
+        <div class="moat-label">Emotion Engine</div>
+        <div class="moat-desc">Valence-Arousal → color palette → shape language → bouba/kiki mapping → floral selection is a multi-step translation chain that took iterations to calibrate. Not replicable quickly.</div>
+      </div>
+      <div class="moat-card">
+        <div class="moat-label">Render Discipline</div>
+        <div class="moat-desc">Anti-fresh render rules (no dew, no wild scatter, grapevine integration cues, silk surface properties) are a trained prompt system. Generic prompt tools produce fresh-flower results.</div>
+      </div>
+      <div class="moat-card">
+        <div class="moat-label">Genome System (WGS)</div>
+        <div class="moat-desc">Design-as-compact-string allows sharing, mutation, breeding, and versioning of wreath designs. This is a novel concept with no analog in the floral or craft SaaS space.</div>
+      </div>
+      <div class="moat-card">
+        <div class="moat-label">Inventory Intelligence</div>
+        <div class="moat-desc">The platform only uses what a maker actually has. Hallucinated substitutions are flagged and blocked by rule. This constraint-aware design is a trust signal competitors can't easily match.</div>
+      </div>
+      <div class="moat-card">
+        <div class="moat-label">Niche Network Effects</div>
+        <div class="moat-desc">As blueprints accumulate in the marketplace and more makers validate designs, the corpus of EC_CANON blueprints becomes a flywheel. The more designs, the more valuable the platform.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ PHASES ══ -->
+  <section class="section" id="phases">
+    <div class="section-label">Build Roadmap</div>
+    <div class="section-title">Phased Development Plan</div>
+
+    <div class="callout">
+      <div class="callout-label">Phase Philosophy</div>
+      <div class="callout-text">Each phase delivers a complete, usable product. We don't build features — we build <em>working things people can use today</em>. Phase 1 is a standalone win. Every subsequent phase adds a new capability layer on top of a proven foundation.</div>
+    </div>
+
+    <!-- PHASE 1 -->
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-num">1</div>
+        <div class="phase-meta">
+          <div class="phase-name">The Core Pipeline — Emotion In, Design Package Out</div>
+          <div class="phase-sub">Quick Win · MVP · Ship-First · 4–6 Week Build</div>
+        </div>
+        <div class="phase-badges">
+          <span class="badge badge-yes">BUILD NOW</span>
+          <span class="badge badge-partial">Web App</span>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-desc">A single-session web tool where a maker enters their client's brief and inventory list, and receives a complete design package: emotion profile, blueprint JSON, render prompt, step-by-step build guide, and Etsy listing copy. No account required in v1. No database. No subscriptions. Just the pipeline working end-to-end. This is the quick win — it proves the system and gets real users generating real designs.</div>
+
+        <ul class="feature-list">
+          <li><span><strong class="feature-strong">Emotion Intake Form</strong> — free text brief + occasion + mood sliders (valence/arousal). Client name optional.</span></li>
+          <li><span><strong class="feature-strong">Inventory Input</strong> — paste or type inventory list (CSV or plain text). System categorizes into base / greenery / focal / filler / accent.</span></li>
+          <li><span><strong class="feature-strong">Wreath Size Selector</strong> — 14", 18", 24", 30" with auto stem count ranges populated.</span></li>
+          <li><span><strong class="feature-strong">Claude API Pipeline</strong> — single orchestrated call runs all 7 stages and returns structured JSON package.</span></li>
+          <li><span><strong class="feature-strong">Blueprint Viewer</strong> — renders the clock-position placement map as an interactive SVG (basic; no full QACS canvas yet).</span></li>
+          <li><span><strong class="feature-strong">Render Prompt Output</strong> — formatted, copyable Midjourney-ready prompt with all anti-fresh rules applied.</span></li>
+          <li><span><strong class="feature-strong">Build Guide</strong> — numbered steps by layer with attachment method and clock positions.</span></li>
+          <li><span><strong class="feature-strong">Etsy Listing Copy</strong> — title, description, bullets, 13 tags, price suggestion. One-click copy each section.</span></li>
+          <li><span><strong class="feature-strong">Download Package</strong> — full design package as a single JSON file and/or formatted PDF-ready HTML.</span></li>
+        </ul>
+
+        <div class="stack-row">
+          <span class="stack-chip highlight">Next.js / React</span>
+          <span class="stack-chip highlight">Claude API (Sonnet 4)</span>
+          <span class="stack-chip">Tailwind CSS</span>
+          <span class="stack-chip">SVG Blueprint Canvas</span>
+          <span class="stack-chip">Vercel Deploy</span>
+          <span class="stack-chip">No Auth Required</span>
+          <span class="stack-chip">No DB Required</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 2 -->
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-num">2</div>
+        <div class="phase-meta">
+          <div class="phase-name">Accounts, Inventory Library & Blueprint History</div>
+          <div class="phase-sub">Retention Layer · Supabase Integration · 6–8 Weeks After Phase 1</div>
+        </div>
+        <div class="phase-badges">
+          <span class="badge badge-partial">PLAN NEXT</span>
+          <span class="badge badge-na">Auth Required</span>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-desc">Add user accounts so makers can save their inventory, reuse it across sessions, and access their blueprint history. This is the retention unlock — once someone has their inventory saved and blueprints stored, switching cost increases significantly. Supabase handles auth + database with RLS.</div>
+
+        <ul class="feature-list">
+          <li><span><strong class="feature-strong">Supabase Auth</strong> — email/password + magic link. Row-level security so each user only sees their data.</span></li>
+          <li><span><strong class="feature-strong">Inventory Library</strong> — saved, reusable inventory lists. Tag items with category, color, quantity. Persist across sessions.</span></li>
+          <li><span><strong class="feature-strong">Blueprint History</strong> — all generated designs saved to user account with timestamp, client name, and wreath size.</span></li>
+          <li><span><strong class="feature-strong">Blueprint Reload</strong> — reload any past design, regenerate with new inventory, or fork into a new brief.</span></li>
+          <li><span><strong class="feature-strong">Subscription Tiers (Bloom / Craft)</strong> — Bloom = 5 designs/mo free; Craft = unlimited designs + history. Stripe integration.</span></li>
+          <li><span><strong class="feature-strong">Client Profiles</strong> — save client names, past briefs, and order notes for repeat business.</span></li>
+        </ul>
+
+        <div class="stack-row">
+          <span class="stack-chip highlight">Supabase Auth</span>
+          <span class="stack-chip highlight">Supabase DB + RLS</span>
+          <span class="stack-chip highlight">Stripe Payments</span>
+          <span class="stack-chip">PostgreSQL</span>
+          <span class="stack-chip">Email Magic Link</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-num">3</div>
+        <div class="phase-meta">
+          <div class="phase-name">QACS Canvas, Genome System & Blueprint Marketplace</div>
+          <div class="phase-sub">Design Power · Studio Tier · 8–12 Weeks After Phase 2</div>
+        </div>
+        <div class="phase-badges">
+          <span class="badge badge-na">FUTURE</span>
+          <span class="badge badge-na">Studio Tier</span>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-desc">Unlock the full visual blueprint canvas (QACS polar coordinate system), the Wreath Genome String encoder/decoder, and the Blueprint Marketplace where makers can buy/sell locked and shell blueprints. This is the Studio tier feature set — the power layer for professional floral artists.</div>
+
+        <ul class="feature-list">
+          <li><span><strong class="feature-strong">QACS Canvas</strong> — interactive 600px polar grid. Visualize exact stem placements at normalized radii. Drag to inspect, not drag to edit (v1 canvas is read-only).</span></li>
+          <li><span><strong class="feature-strong">WGS Genome Encoder</strong> — one-click encode any blueprint to a compact genome string. Share, save, or import from string.</span></li>
+          <li><span><strong class="feature-strong">Design Mutation</strong> — generate 3 variants of any blueprint (soft, medium, dramatic mutation levels). Compare side-by-side.</span></li>
+          <li><span><strong class="feature-strong">Blueprint Marketplace</strong> — browse and purchase locked (fully specified) and shell (geometry locked, florals swappable) blueprints. Stripe payouts for sellers.</span></li>
+          <li><span><strong class="feature-strong">ABC Lab (Adaptive Blueprint Composer)</strong> — run evolutionary algorithm on blueprint to score and auto-repair balance, cluster count, and style compliance.</span></li>
+          <li><span><strong class="feature-strong">Blueprint Scoring Dashboard</strong> — EC_WR_V2 validator output with visual scoring on: asymmetry, cluster count, layer balance, inventory compliance, style rules.</span></li>
+        </ul>
+
+        <div class="stack-row">
+          <span class="stack-chip highlight">Canvas API / SVG</span>
+          <span class="stack-chip highlight">WGS Genome Engine</span>
+          <span class="stack-chip">Stripe Connect (Marketplace)</span>
+          <span class="stack-chip">EC_WR_V2 Validator</span>
+          <span class="stack-chip">Studio Tier Paywall</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHASE 4 -->
+    <div class="phase-card">
+      <div class="phase-header">
+        <div class="phase-num">4</div>
+        <div class="phase-meta">
+          <div class="phase-name">Client Portal, Motion Engine & Commerce Integrations</div>
+          <div class="phase-sub">Atelier Tier · Business Tools · Future Roadmap</div>
+        </div>
+        <div class="phase-badges">
+          <span class="badge badge-na">FUTURE</span>
+          <span class="badge badge-na">Atelier Tier</span>
+        </div>
+      </div>
+      <div class="phase-body">
+        <div class="phase-desc">The Atelier tier is the full-business layer for professional wreath studios. Public client-facing portals (/portal/[slug]), animated wreath canvas (Motion Engine), direct Etsy listing push via API, and StyleSync for seasonal collection management. The highest value tier with the highest switching cost.</div>
+
+        <ul class="feature-list">
+          <li><span><strong class="feature-strong">Client Portal (/portal/[slug])</strong> — public-facing page where a maker's clients can submit briefs directly. Auto-feeds the pipeline. No client account needed.</span></li>
+          <li><span><strong class="feature-strong">Motion Engine</strong> — animated wreath canvas with motion profiles (gentle sway, seasonal drift). Export as video loop for social content.</span></li>
+          <li><span><strong class="feature-strong">Etsy Direct Push</strong> — via Etsy API: push finalized listing copy, tags, and pricing directly to the maker's active Etsy shop. One-click publish.</span></li>
+          <li><span><strong class="feature-strong">StyleSync</strong> — manage seasonal collection identities (Spring / Fall / Holiday / Custom). Apply collection DNA to batch-generate coordinated designs.</span></li>
+          <li><span><strong class="feature-strong">Offer Architect</strong> — pricing calculator with materials cost, labor time, platform fees. Auto-populates into Etsy listing price suggestion.</span></li>
+          <li><span><strong class="feature-strong">Floral Asset Renderer</strong> — generate scaled SVG icons for each inventory item. Build a visual catalog of your florals. Used in QACS canvas for real-looking placement previews.</span></li>
+        </ul>
+
+        <div class="stack-row">
+          <span class="stack-chip highlight">Etsy API v3</span>
+          <span class="stack-chip highlight">Motion Engine (Canvas)</span>
+          <span class="stack-chip">Public Portal Routes</span>
+          <span class="stack-chip">StyleSync DNA</span>
+          <span class="stack-chip">Atelier Tier Paywall</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ TECH STACK ══ -->
+  <section class="section" id="stack">
+    <div class="section-label">Technical Foundation</div>
+    <div class="section-title">Stack & Architecture</div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Phase 1 Stack (Ship Now)</div>
+        <div class="card-body">
+          <ul class="feature-list">
+            <li><span><strong class="feature-strong">Frontend:</strong> Next.js 14 App Router + React + Tailwind CSS</span></li>
+            <li><span><strong class="feature-strong">AI:</strong> Claude Sonnet 4 via Anthropic API — server-side only, never NEXT_PUBLIC_</span></li>
+            <li><span><strong class="feature-strong">Blueprint Canvas:</strong> SVG (hand-rolled, no lib required for v1)</span></li>
+            <li><span><strong class="feature-strong">Output:</strong> JSON download + formatted HTML for copy-paste</span></li>
+            <li><span><strong class="feature-strong">Hosting:</strong> Vercel (zero config, free tier for MVP)</span></li>
+            <li><span><strong class="feature-strong">No auth, no DB, no Stripe</strong> — pure pipeline tool in Phase 1</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Phase 2+ Stack (Add as Needed)</div>
+        <div class="card-body">
+          <ul class="feature-list">
+            <li><span><strong class="feature-strong">Auth + DB:</strong> Supabase (auth, PostgreSQL, RLS, realtime)</span></li>
+            <li><span><strong class="feature-strong">Payments:</strong> Stripe (subscriptions, one-time, marketplace payouts)</span></li>
+            <li><span><strong class="feature-strong">Marketplace:</strong> Stripe Connect for blueprint seller payouts</span></li>
+            <li><span><strong class="feature-strong">Commerce:</strong> Etsy API v3 for direct listing push (Phase 4)</span></li>
+            <li><span><strong class="feature-strong">Canvas:</strong> Canvas API for QACS + Motion Engine (Phase 3–4)</span></li>
+            <li><span><strong class="feature-strong">Typography:</strong> Cormorant Garamond + Dancing Script + Inter + DM Mono</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:10px;">
+      <div class="card-title">API Design Principles (Non-Negotiable)</div>
+      <div class="card-body">
+        <ul class="feature-list">
+          <li><span>All Claude API calls are server-side only — API key in <code style="font-family:var(--fm);color:var(--gold);">ANTHROPIC_API_KEY</code>, never <code style="font-family:var(--fm);">NEXT_PUBLIC_</code></span></li>
+          <li><span>All blueprint outputs validated against EC_WR_V2 schema before returning to client</span></li>
+          <li><span>AI system prompts must include "Respond ONLY with valid JSON — no preamble, no markdown, no backticks" for all structured outputs</span></li>
+          <li><span>CSS tokens must use <code style="font-family:var(--fm);color:var(--gold);">--ec-*</code> variables — no raw hex values in component code</span></li>
+          <li><span>All tier-gated features use blur overlay with upgrade CTA — never <code style="font-family:var(--fm);">display:none</code></span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ RISKS ══ -->
+  <section class="section" id="risks">
+    <div class="section-label">Risk Register</div>
+    <div class="section-title">Known Risks & Mitigations</div>
+
+    <div class="card" style="padding: 20px 22px;">
+      <div class="risk-row">
+        <span class="risk-name">API Cost at Scale</span>
+        <span class="risk-level med">Medium</span>
+        <span class="risk-mit">Claude API cost per pipeline run is ~$0.01–0.05 at Sonnet rates. Phase 1 has no auth so abuse is possible. Mitigate: add rate limiting by IP at Vercel edge; require email in Phase 2 to gate usage.</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-name">Inventory Hallucination</span>
+        <span class="risk-level high">High</span>
+        <span class="risk-mit">System prompt must include "NEVER invent inventory" with explicit enforcement. EC_WR_V2 validator cross-checks blueprint elements against structured_inventory before output is returned. Flag mismatches as errors, not warnings.</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-name">Etsy SEO Accuracy</span>
+        <span class="risk-level med">Medium</span>
+        <span class="risk-mit">We generate listing copy, not keyword data. Recommend users cross-reference tags with eRank/Marmalead. Add disclaimer in UI: "Tags are AI-generated — validate with Etsy SEO tools before publishing."</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-name">Market Niche Size</span>
+        <span class="risk-level low">Low</span>
+        <span class="risk-mit">Etsy wreath/faux floral is a multi-hundred-million-dollar vertical. 2M+ active Etsy sellers in home decor. Even 0.1% adoption at $49/mo Studio tier = $1M ARR. Niche is large enough.</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-name">Competitor Clone Risk</span>
+        <span class="risk-level low">Low</span>
+        <span class="risk-mit">The full pipeline (emotion engine + inventory constraints + polar blueprint + faux render rules + genome system) is a multi-layer moat. A competitor could build pieces, but not the integrated system quickly. First mover matters here.</span>
+      </div>
+      <div class="risk-row">
+        <span class="risk-name">Claude API Breaking Changes</span>
+        <span class="risk-level low">Low</span>
+        <span class="risk-mit">Always use pinned model string (claude-sonnet-4-20250514 or latest stable). Wrap all API calls in try/catch with graceful degradation. Never expose raw API errors to users.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ SUCCESS METRICS ══ -->
+  <section class="section" id="success">
+    <div class="section-label">Definition of Done</div>
+    <div class="section-title">Phase 1 Success Criteria</div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Functional Gates (Must Pass)</div>
+        <div class="card-body">
+          <ul class="feature-list">
+            <li><span>Pipeline runs end-to-end in under 20 seconds on a cold start</span></li>
+            <li><span>Blueprint JSON validates against EC_WR_V2 schema with 0 errors on 10 test inputs</span></li>
+            <li><span>Focal cluster count is odd (3, 5, or 7) on 100% of outputs</span></li>
+            <li><span>No inventory items appear in blueprint that weren't in the user's input list</span></li>
+            <li><span>Render prompt contains at least 3 of the 5 anti-fresh marker phrases</span></li>
+            <li><span>Etsy listing outputs exactly 13 tags on every run</span></li>
+            <li><span>Blueprint SVG renders correctly on mobile (375px viewport)</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Business Gates (30 Days Post-Launch)</div>
+        <div class="card-body">
+          <ul class="feature-list">
+            <li><span>25+ unique users generate a design in first 30 days (organic, no paid ads)</span></li>
+            <li><span>At least 3 users share output on social media or Etsy community</span></li>
+            <li><span>At least 1 user reports using the render prompt in Midjourney and sharing result</span></li>
+            <li><span>Zero critical bug reports related to inventory hallucination</span></li>
+            <li><span>Net Promoter feedback: "Would you pay $15/mo for unlimited designs?" — 40%+ say Yes</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 20px;">
+      <div class="callout-label">Phase 1 Definition of "Done"</div>
+      <div class="callout-text">Phase 1 is done when a wreath maker can paste in a client's emotional brief and their inventory list, click one button, and copy a complete design package — blueprint, render prompt, build guide, Etsy listing — in under 30 seconds, with zero hallucinated materials. That's the win. Everything else is Phase 2.</div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="footer">
+  <div class="footer-txt">Evercrafted · The Baden Company · Shelby, Ohio</div>
+  <div class="footer-txt">PRD v1.0 · April 2026 · EC_CANON_V1 · For Review</div>
+  <div class="footer-txt">Confidence: 94%</div>
+</footer>
+
+<script>
+  function scrollTo(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  // Active nav on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navItems = document.querySelectorAll('.nav-item');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navItems.forEach(n => n.classList.remove('active'));
+        const active = document.querySelector(`.nav-item[onclick*="${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-30% 0px -60% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

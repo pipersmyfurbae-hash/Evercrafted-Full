@@ -1,0 +1,665 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .app {
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    background: var(--color-background-tertiary);
+    padding: 2rem 1rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--color-text-primary);
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    color: #3B6D11;
+  }
+
+  .header p {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    font-weight: 300;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: 0.2px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-green { background: #639922; }
+  .dot-blue { background: #378ADD; }
+  .dot-amber { background: #BA7517; }
+  .dot-pink { background: #D4537E; }
+
+  .field-group {
+    margin-bottom: 14px;
+  }
+
+  .field-label {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 5px;
+    display: block;
+  }
+
+  select, input[type="text"] {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+  }
+
+  .chip-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .chip {
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    padding: 5px 11px;
+    border-radius: 20px;
+    border: 0.5px solid var(--color-border-secondary);
+    background: var(--color-background-primary);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .chip:hover { border-color: var(--color-border-primary); color: var(--color-text-primary); }
+
+  .chip.active-green { background: #EAF3DE; border-color: #639922; color: #3B6D11; }
+  .chip.active-blue { background: #E6F1FB; border-color: #378ADD; color: #185FA5; }
+  .chip.active-amber { background: #FAEEDA; border-color: #BA7517; color: #854F0B; }
+  .chip.active-pink { background: #FBEAF0; border-color: #D4537E; color: #993556; }
+  .chip.active-purple { background: #EEEDFE; border-color: #7F77DD; color: #534AB7; }
+
+  .slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .slider-wrap input[type="range"] {
+    flex: 1;
+  }
+
+  .slider-val {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--color-text-primary);
+    min-width: 30px;
+    text-align: right;
+  }
+
+  .slider-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 10px;
+    color: var(--color-text-tertiary);
+    margin-top: 2px;
+  }
+
+  .output-card {
+    grid-column: 1 / -1;
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+  }
+
+  .btn-generate {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px;
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid #639922;
+    background: #EAF3DE;
+    color: #3B6D11;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-top: 1rem;
+    letter-spacing: 0.2px;
+  }
+
+  .btn-generate:hover { background: #C0DD97; }
+  .btn-generate:active { transform: scale(0.98); }
+
+  .prompt-box {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 1rem;
+    font-family: 'DM Mono', monospace, 'DM Sans', sans-serif;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--color-text-primary);
+    min-height: 80px;
+    word-break: break-word;
+    white-space: pre-wrap;
+    position: relative;
+  }
+
+  .prompt-placeholder {
+    color: var(--color-text-tertiary);
+    font-style: italic;
+    font-size: 12px;
+  }
+
+  .prompt-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+    flex-wrap: wrap;
+  }
+
+  .btn-small {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-secondary);
+    background: var(--color-background-primary);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-small:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+  .btn-small.copied { border-color: #639922; color: #3B6D11; background: #EAF3DE; }
+
+  .params-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .param-badge {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 12px;
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    color: var(--color-text-secondary);
+    font-family: monospace;
+  }
+
+  .divider {
+    border: none;
+    border-top: 0.5px solid var(--color-border-tertiary);
+    margin: 12px 0;
+  }
+
+  .section-sub {
+    font-size: 11px;
+    color: var(--color-text-tertiary);
+    margin-bottom: 8px;
+  }
+
+  .saved-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .saved-item {
+    padding: 8px 10px;
+    border-radius: var(--border-radius-md);
+    border: 0.5px solid var(--color-border-tertiary);
+    font-size: 11px;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1.5;
+    background: var(--color-background-secondary);
+  }
+
+  .saved-item:hover { border-color: var(--color-border-primary); color: var(--color-text-primary); }
+  .saved-item .saved-label { font-weight: 500; color: var(--color-text-primary); font-size: 12px; margin-bottom: 2px; }
+
+  .full-width { grid-column: 1 / -1; }
+
+  @media (max-width: 600px) {
+    .layout { grid-template-columns: 1fr; }
+    .output-card { grid-column: 1; }
+  }
+</style>
+
+<div class="app">
+  <div class="header">
+    <h1>Wreath <em>Blueprint</em> Composer</h1>
+    <p>Blueprint → Midjourney prompt generator</p>
+  </div>
+
+  <div class="layout">
+
+    <div class="card">
+      <div class="card-title"><span class="dot dot-green"></span> Blueprint structure</div>
+
+      <div class="field-group">
+        <label class="field-label">Wreath shape</label>
+        <div class="chip-grid" id="shape-chips">
+          <div class="chip active-green" data-val="full round">Full round</div>
+          <div class="chip" data-val="asymmetrical">Asymmetrical</div>
+          <div class="chip" data-val="oval">Oval</div>
+          <div class="chip" data-val="grapevine">Grapevine</div>
+          <div class="chip" data-val="minimalist open">Open / minimal</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Season</label>
+        <div class="chip-grid" id="season-chips">
+          <div class="chip active-green" data-val="spring">Spring</div>
+          <div class="chip" data-val="summer">Summer</div>
+          <div class="chip" data-val="fall">Fall</div>
+          <div class="chip" data-val="winter">Winter</div>
+          <div class="chip" data-val="year-round">Year-round</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Focal flowers</label>
+        <input type="text" id="focal-flowers" placeholder="e.g. ivory peonies, dusty blue hydrangeas" value="ivory peonies, dusty blue hydrangeas">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Greenery</label>
+        <input type="text" id="greenery" placeholder="e.g. seeded eucalyptus, soft sage ferns" value="soft sage eucalyptus">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Ribbon</label>
+        <input type="text" id="ribbon" placeholder="e.g. wide navy velvet, long trailing tails at top" value="wide navy velvet ribbon, long trailing tails at top">
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Accents (optional)</label>
+        <input type="text" id="accents" placeholder="e.g. pinecones, brass bells, berries">
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot dot-pink"></span> Emotion & style</div>
+
+      <div class="field-group">
+        <label class="field-label">Primary emotion</label>
+        <div class="chip-grid" id="emotion-chips">
+          <div class="chip active-pink" data-val="calm and welcoming">Calm</div>
+          <div class="chip" data-val="joyful and celebratory">Joyful</div>
+          <div class="chip" data-val="cozy and inviting">Cozy</div>
+          <div class="chip" data-val="dramatic and bold">Dramatic</div>
+          <div class="chip" data-val="romantic and soft">Romantic</div>
+          <div class="chip" data-val="fresh and airy">Fresh</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Color palette description</label>
+        <input type="text" id="palette" placeholder="e.g. soft pastels of blush, ivory, and dusty blue" value="soft pastels of blush, ivory, and dusty blue">
+      </div>
+
+      <hr class="divider">
+      <div class="card-title" style="margin-bottom:10px;"><span class="dot dot-blue"></span> Target & setting</div>
+
+      <div class="field-group">
+        <label class="field-label">Prompt target</label>
+        <div class="chip-grid" id="target-chips">
+          <div class="chip active-blue" data-val="hero">Hero product shot</div>
+          <div class="chip" data-val="studio">Studio flat-lay</div>
+          <div class="chip" data-val="lifestyle">Lifestyle porch</div>
+          <div class="chip" data-val="closeup">Close-up detail</div>
+          <div class="chip" data-val="editorial">Editorial</div>
+          <div class="chip" data-val="experimental">Experimental</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Door / wall color</label>
+        <div class="chip-grid" id="door-chips">
+          <div class="chip active-blue" data-val="dark navy">Navy</div>
+          <div class="chip" data-val="classic white">White</div>
+          <div class="chip" data-val="charcoal">Charcoal</div>
+          <div class="chip" data-val="forest green">Forest green</div>
+          <div class="chip" data-val="neutral warm gray">Warm gray</div>
+          <div class="chip" data-val="rustic wood">Rustic wood</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot dot-amber"></span> Midjourney controls</div>
+
+      <div class="field-group">
+        <label class="field-label">Blueprint fidelity</label>
+        <div class="slider-wrap">
+          <input type="range" min="0" max="100" value="75" id="fidelity" step="1">
+          <span class="slider-val" id="fidelity-val">75</span>
+        </div>
+        <div class="slider-labels"><span>Creative variation</span><span>Exact blueprint</span></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Style preset</label>
+        <div class="chip-grid" id="style-chips">
+          <div class="chip active-amber" data-val="catalog">Catalog</div>
+          <div class="chip" data-val="lifestyle">Lifestyle</div>
+          <div class="chip" data-val="moody">Dark & moody</div>
+          <div class="chip" data-val="airy">Light & airy</div>
+          <div class="chip" data-val="editorial">Editorial</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Aspect ratio</label>
+        <div class="chip-grid" id="ar-chips">
+          <div class="chip" data-val="1:1">1:1</div>
+          <div class="chip active-amber" data-val="2:3">2:3</div>
+          <div class="chip" data-val="3:4">3:4</div>
+          <div class="chip" data-val="4:5">4:5</div>
+          <div class="chip" data-val="16:9">16:9</div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">--stylize (realism ↔ artistic)</label>
+        <div class="slider-wrap">
+          <input type="range" min="50" max="750" value="180" id="stylize" step="10">
+          <span class="slider-val" id="stylize-val">180</span>
+        </div>
+        <div class="slider-labels"><span>Realistic</span><span>Artistic</span></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">--chaos (consistency ↔ variation)</label>
+        <div class="slider-wrap">
+          <input type="range" min="0" max="50" value="5" id="chaos" step="1">
+          <span class="slider-val" id="chaos-val">5</span>
+        </div>
+        <div class="slider-labels"><span>Consistent</span><span>Variable</span></div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Style weight --sw (for --sref)</label>
+        <div class="slider-wrap">
+          <input type="range" min="0" max="300" value="100" id="sw" step="10">
+          <span class="slider-val" id="sw-val">100</span>
+        </div>
+        <div class="slider-labels"><span>Subtle</span><span>Dominant</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="dot dot-green"></span> Saved prompts</div>
+      <p class="section-sub">Click generate to build prompts. Save your favorites.</p>
+      <div class="saved-list" id="saved-list">
+        <div style="font-size:12px;color:var(--color-text-tertiary);padding:8px 0;">No saved prompts yet.</div>
+      </div>
+    </div>
+
+    <div class="output-card">
+      <div class="card-title" style="justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <span style="display:flex;align-items:center;gap:8px;"><span class="dot dot-blue"></span> Generated prompt</span>
+        <span id="mode-badge" style="font-size:11px;padding:3px 10px;border-radius:12px;background:var(--color-background-info);color:var(--color-text-info);font-weight:400;">Hero product shot</span>
+      </div>
+
+      <div class="prompt-box" id="prompt-output">
+        <span class="prompt-placeholder">Configure your blueprint and click "Generate prompt" to build a Midjourney-ready prompt.</span>
+      </div>
+
+      <div class="params-row" id="params-row"></div>
+
+      <button class="btn-generate" id="btn-generate">Generate prompt</button>
+
+      <div class="prompt-actions" id="prompt-actions" style="display:none;">
+        <button class="btn-small" id="btn-copy">Copy to clipboard</button>
+        <button class="btn-small" id="btn-save">Save prompt</button>
+        <button class="btn-small" id="btn-variant">Remix variant</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function makeChips(groupId, activeClass) {
+  const chips = document.querySelectorAll('#' + groupId + ' .chip');
+  chips.forEach(c => {
+    c.addEventListener('click', () => {
+      chips.forEach(x => { x.className = 'chip'; });
+      c.classList.add(activeClass);
+    });
+  });
+}
+
+makeChips('shape-chips', 'active-green');
+makeChips('season-chips', 'active-green');
+makeChips('emotion-chips', 'active-pink');
+makeChips('target-chips', 'active-blue');
+makeChips('door-chips', 'active-blue');
+makeChips('style-chips', 'active-amber');
+makeChips('ar-chips', 'active-amber');
+
+function getActive(groupId) {
+  const el = document.querySelector('#' + groupId + ' .chip.active-green, #' + groupId + ' .chip.active-pink, #' + groupId + ' .chip.active-blue, #' + groupId + ' .chip.active-amber, #' + groupId + ' .chip.active-purple');
+  return el ? el.dataset.val : '';
+}
+
+function val(id) { return (document.getElementById(id).value || '').trim(); }
+function slideVal(id) { return parseInt(document.getElementById(id).value); }
+
+['fidelity','stylize','chaos','sw'].forEach(id => {
+  const inp = document.getElementById(id);
+  const out = document.getElementById(id + '-val');
+  inp.addEventListener('input', () => { out.textContent = inp.value; });
+});
+
+const emotionMap = {
+  'calm and welcoming': 'soft, serene, gentle, low contrast',
+  'joyful and celebratory': 'bright, lively, cheerful, high color contrast',
+  'cozy and inviting': 'warm, inviting, soft shadows',
+  'dramatic and bold': 'high contrast, bold focal points, strong light and shadow',
+  'romantic and soft': 'dreamy, delicate, soft diffused glow',
+  'fresh and airy': 'clean, crisp, airy, open'
+};
+
+const targetLabels = {
+  'hero': 'Hero product shot',
+  'studio': 'Studio flat-lay',
+  'lifestyle': 'Lifestyle porch',
+  'closeup': 'Close-up detail',
+  'editorial': 'Editorial',
+  'experimental': 'Experimental'
+};
+
+const styleMap = {
+  'catalog': 'premium catalog product photography, clean studio lighting',
+  'lifestyle': 'lifestyle home decor photography, porch scene, natural ambient light',
+  'moody': 'dark and moody editorial photography, dramatic side lighting, deep shadows',
+  'airy': 'light and airy, bright white photography, soft shadows, clean minimalist feel',
+  'editorial': 'editorial home decor photography, styled composition, magazine quality'
+};
+
+let lastPrompt = '';
+
+function buildPrompt(isVariant) {
+  const shape = getActive('shape-chips');
+  const season = getActive('season-chips');
+  const emotion = getActive('emotion-chips');
+  const target = getActive('target-chips');
+  const door = getActive('door-chips');
+  const style = getActive('style-chips');
+  const ar = getActive('ar-chips');
+
+  const focal = val('focal-flowers') || 'mixed florals';
+  const greenery = val('greenery') || 'eucalyptus greenery';
+  const ribbon = val('ribbon') || 'ribbon';
+  const accents = val('accents');
+  const palette = val('palette') || 'soft natural tones';
+
+  const fidelity = slideVal('fidelity');
+  const stylize = slideVal('stylize');
+  const chaos = slideVal('chaos');
+  const sw = slideVal('sw');
+
+  const emotionMood = emotionMap[emotion] || emotion;
+  const styleText = styleMap[style] || 'product photography';
+
+  const accentText = accents ? ', ' + accents : '';
+  const fidelityPhrase = fidelity > 70
+    ? 'must follow these exact material and structural details'
+    : fidelity > 40
+      ? 'allow tasteful variations in secondary blooms and foliage'
+      : 'allow creative interpretation inspired by the color story and emotion';
+
+  const variantPhrase = isVariant ? ', slight creative reinterpretation of composition, ' : '';
+
+  let promptBase = '';
+
+  if (target === 'hero') {
+    promptBase = `a ${shape} faux ${season} floral wreath on a ${door} front door, made of ${focal} with ${greenery} and ${ribbon}${accentText}${variantPhrase}, ${fidelityPhrase}, styled as ${styleText}, ${emotionMood} mood, soft natural window light, straight-on camera angle, shallow depth of field, ultra-detailed, hyper-realistic, professional product photography`;
+  } else if (target === 'studio') {
+    promptBase = `a single ${shape} faux ${season} floral wreath lying flat on a neutral studio backdrop, composed of ${focal}, ${greenery}, ${ribbon}${accentText}${variantPhrase}, ${fidelityPhrase}, clean minimalist ${styleText}, evenly lit, soft shadows, high-end e-commerce style, extremely detailed, hyper-realistic, macro still life feel`;
+  } else if (target === 'lifestyle') {
+    promptBase = `a cozy front porch scene featuring a faux ${season} wreath on a ${door} front door, wreath made of ${focal}, ${greenery} and ${ribbon}${accentText}${variantPhrase}, ${fidelityPhrase}, ${styleText}, ${emotionMood} atmosphere, warm inviting lighting, slight angle, shallow depth of field, realistic home decor styling`;
+  } else if (target === 'closeup') {
+    promptBase = `extreme close-up of a faux floral wreath section, showing ${focal} and ${greenery} with ${ribbon} ribbon, focus on realistic petal texture and subtle color gradients in a ${palette} palette, ${emotionMood} feel${variantPhrase}, soft diffused side light, macro still life photography, bokeh background, ultra sharp details, photorealistic`;
+  } else if (target === 'editorial') {
+    promptBase = `editorial home decor photography of a ${shape} faux ${season} wreath on a ${door} surface, made of ${focal}, ${greenery}, ${ribbon}${accentText}${variantPhrase}, ${fidelityPhrase}, ${palette} color story, ${emotionMood} mood, ${styleText}, architectural photography lighting, sharp compositional framing`;
+  } else if (target === 'experimental') {
+    promptBase = `concept art of a ${emotion} inspired faux floral wreath, abstract arrangement of ${focal} and ${palette} palette swirling around an invisible ${shape} circle, ${greenery} textures, dreamy atmosphere, painterly digital art, intricate detail${variantPhrase}`;
+  }
+
+  const noList = target === 'experimental'
+    ? '--no frame, watermark, text'
+    : '--no text, watermark, logo, frame, people, hands';
+
+  const params = target === 'experimental'
+    ? `--ar ${ar} --s ${stylize} --v 6.1`
+    : `--sref {your_lighting_ref} --sw ${sw} --ar ${ar} --s ${stylize} --chaos ${chaos} --v 6.1 --style raw --q 1 ${noList}`;
+
+  return { promptBase, params, target, ar, stylize, chaos, sw };
+}
+
+document.getElementById('btn-generate').addEventListener('click', () => {
+  const result = buildPrompt(false);
+  lastPrompt = result.promptBase + ' ' + result.params;
+
+  document.getElementById('prompt-output').textContent = lastPrompt;
+
+  const badge = document.getElementById('mode-badge');
+  badge.textContent = targetLabels[result.target] || result.target;
+
+  const paramsRow = document.getElementById('params-row');
+  paramsRow.innerHTML = [
+    '--ar ' + result.ar,
+    '--s ' + result.stylize,
+    '--chaos ' + result.chaos,
+    '--sw ' + result.sw,
+    '--v 6.1',
+    '--style raw'
+  ].map(p => `<span class="param-badge">${p}</span>`).join('');
+
+  document.getElementById('prompt-actions').style.display = 'flex';
+});
+
+document.getElementById('btn-copy').addEventListener('click', () => {
+  if (!lastPrompt) return;
+  navigator.clipboard.writeText(lastPrompt).then(() => {
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy to clipboard'; btn.classList.remove('copied'); }, 2000);
+  });
+});
+
+document.getElementById('btn-save').addEventListener('click', () => {
+  if (!lastPrompt) return;
+  const target = getActive('target-chips');
+  const season = getActive('season-chips');
+  const label = (targetLabels[target] || target) + ' · ' + season;
+
+  const list = document.getElementById('saved-list');
+  if (list.querySelector('.empty-note')) list.innerHTML = '';
+
+  const item = document.createElement('div');
+  item.className = 'saved-item';
+  item.innerHTML = `<div class="saved-label">${label}</div>${lastPrompt.substring(0, 120)}...`;
+  item.addEventListener('click', () => {
+    document.getElementById('prompt-output').textContent = lastPrompt;
+    document.getElementById('prompt-actions').style.display = 'flex';
+  });
+  list.prepend(item);
+
+  const btn = document.getElementById('btn-save');
+  btn.textContent = 'Saved!';
+  setTimeout(() => { btn.textContent = 'Save prompt'; }, 1500);
+});
+
+document.getElementById('btn-variant').addEventListener('click', () => {
+  const result = buildPrompt(true);
+  lastPrompt = result.promptBase + ' ' + result.params;
+  document.getElementById('prompt-output').textContent = lastPrompt;
+
+  const btn = document.getElementById('btn-variant');
+  btn.textContent = 'Remixed!';
+  setTimeout(() => { btn.textContent = 'Remix variant'; }, 1500);
+});
+
+const savedList = document.getElementById('saved-list');
+if (!savedList.children.length || savedList.querySelector('.empty-note')) {
+  savedList.innerHTML = '<div style="font-size:12px;color:var(--color-text-tertiary);padding:8px 0;" class="empty-note">No saved prompts yet.</div>';
+}
+</script>

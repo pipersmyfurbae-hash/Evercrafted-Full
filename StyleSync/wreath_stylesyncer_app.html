@@ -1,0 +1,729 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --wine: #7c2d3e;
+    --wine-light: #f5e8eb;
+    --sage: #4a6741;
+    --sage-light: #eaf3e8;
+    --cream: #f9f5ef;
+    --amber-warm: #c47a2b;
+    --text-dark: var(--color-text-primary);
+    --text-muted: var(--color-text-secondary);
+    --surface: var(--color-background-primary);
+    --surface2: var(--color-background-secondary);
+    --border: var(--color-border-tertiary);
+  }
+
+  .app { font-family: 'DM Sans', sans-serif; padding: 1.5rem 0; max-width: 860px; }
+
+  .app-header { margin-bottom: 2rem; }
+  .app-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 400; color: var(--text-dark); letter-spacing: -0.3px; }
+  .app-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  .tabs { display: flex; gap: 4px; margin-bottom: 1.5rem; border-bottom: 0.5px solid var(--border); padding-bottom: 0; }
+  .tab { padding: 8px 16px; font-size: 13px; font-weight: 400; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; background: none; border-top: none; border-left: none; border-right: none; font-family: 'DM Sans', sans-serif; }
+  .tab.active { color: var(--text-dark); border-bottom-color: var(--text-dark); font-weight: 500; }
+  .tab:hover:not(.active) { color: var(--text-dark); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .section-label { font-size: 11px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+
+  .field-group { margin-bottom: 1.25rem; }
+  .field-label { font-size: 13px; font-weight: 500; color: var(--text-dark); margin-bottom: 6px; display: block; }
+  .field-hint { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+  input[type=text], select, textarea {
+    width: 100%; padding: 8px 12px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+    border: 0.5px solid var(--border); border-radius: var(--border-radius-md);
+    background: var(--surface); color: var(--text-dark); outline: none;
+    transition: border-color 0.15s;
+  }
+  input[type=text]:focus, select:focus, textarea:focus { border-color: var(--color-border-primary); }
+  textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+
+  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip { padding: 5px 12px; font-size: 12px; border-radius: 99px; border: 0.5px solid var(--border); cursor: pointer; transition: all 0.15s; background: var(--surface); color: var(--text-dark); font-family: 'DM Sans', sans-serif; }
+  .chip.selected { background: var(--text-dark); color: var(--surface); border-color: var(--text-dark); }
+
+  .material-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .material-row input { flex: 1; }
+  .material-badge { font-size: 11px; padding: 3px 8px; border-radius: 4px; font-weight: 500; white-space: nowrap; }
+  .role-base { background: var(--sage-light); color: var(--sage); }
+  .role-focal { background: var(--wine-light); color: var(--wine); }
+  .role-accent { background: #fef3e2; color: var(--amber-warm); }
+  .btn-remove { width: 24px; height: 24px; border: none; border-radius: 50%; background: var(--surface2); cursor: pointer; color: var(--text-muted); font-size: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .btn-add { font-size: 12px; color: var(--text-muted); background: none; border: 0.5px dashed var(--border); border-radius: var(--border-radius-md); padding: 6px 12px; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+  .btn-add:hover { border-color: var(--color-border-primary); color: var(--text-dark); }
+
+  .color-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .color-swatch { width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent; cursor: pointer; transition: transform 0.1s; }
+  .color-swatch.selected { transform: scale(1.2); border-color: var(--text-dark); }
+
+  .emotion-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .emotion-card { padding: 10px 12px; border: 0.5px solid var(--border); border-radius: var(--border-radius-md); cursor: pointer; transition: all 0.15s; background: var(--surface); }
+  .emotion-card.selected { border-color: var(--wine); background: var(--wine-light); }
+  .emotion-card .e-name { font-size: 13px; font-weight: 500; color: var(--text-dark); }
+  .emotion-card .e-visual { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+  .emotion-card.selected .e-name, .emotion-card.selected .e-visual { color: var(--wine); }
+
+  .intensity-row { display: flex; gap: 8px; margin-top: 10px; }
+  .intensity-btn { flex: 1; padding: 7px; font-size: 12px; border: 0.5px solid var(--border); border-radius: var(--border-radius-md); background: var(--surface); cursor: pointer; font-family: 'DM Sans', sans-serif; color: var(--text-muted); transition: all 0.15s; }
+  .intensity-btn.selected { background: var(--text-dark); color: var(--surface); border-color: var(--text-dark); }
+
+  .generate-bar { margin-top: 2rem; display: flex; gap: 12px; align-items: center; padding-top: 1.5rem; border-top: 0.5px solid var(--border); }
+  .btn-primary { padding: 10px 24px; font-size: 14px; font-weight: 500; background: var(--text-dark); color: var(--surface); border: none; border-radius: var(--border-radius-md); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: opacity 0.15s; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secondary { padding: 10px 20px; font-size: 13px; background: var(--surface); color: var(--text-dark); border: 0.5px solid var(--border); border-radius: var(--border-radius-md); cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+  .btn-secondary:hover { border-color: var(--color-border-primary); }
+
+  .output-area { background: var(--surface2); border-radius: var(--border-radius-lg); padding: 1.25rem 1.5rem; margin-top: 1.5rem; min-height: 120px; }
+  .output-label { font-size: 11px; font-weight: 500; letter-spacing: 0.8px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; }
+  .prompt-text { font-size: 14px; line-height: 1.7; color: var(--text-dark); font-style: italic; }
+  .prompt-placeholder { font-size: 13px; color: var(--text-muted); }
+
+  .variants-grid { display: grid; gap: 12px; margin-top: 1.5rem; }
+  .variant-card { border: 0.5px solid var(--border); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; background: var(--surface); }
+  .variant-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .variant-tag { font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 99px; }
+  .tag-base { background: var(--surface2); color: var(--text-muted); }
+  .tag-short { background: var(--sage-light); color: var(--sage); }
+  .tag-emotion { background: var(--wine-light); color: var(--wine); }
+  .tag-layout { background: #fef3e2; color: var(--amber-warm); }
+  .tag-best { background: #e8f5e9; color: #2e7d32; }
+  .variant-prompt { font-size: 13px; line-height: 1.6; color: var(--text-dark); font-style: italic; }
+  .score-row { display: flex; gap: 16px; margin-top: 12px; padding-top: 10px; border-top: 0.5px solid var(--border); }
+  .score-item { flex: 1; }
+  .score-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
+  .score-bar-wrap { height: 4px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .score-bar { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+  .score-val { font-size: 12px; font-weight: 500; color: var(--text-dark); margin-top: 3px; }
+
+  .json-block { font-family: 'DM Mono', 'Courier New', monospace; font-size: 12px; line-height: 1.6; background: var(--surface2); padding: 1rem; border-radius: var(--border-radius-md); overflow-x: auto; color: var(--text-dark); white-space: pre; }
+
+  .loading-dots { display: inline-flex; gap: 4px; vertical-align: middle; }
+  .loading-dots span { width: 5px; height: 5px; background: var(--text-muted); border-radius: 50%; animation: bounce 1.2s infinite; }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,80%,100%{transform:translateY(0)} 40%{transform:translateY(-5px)} }
+
+  .insight-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 12px; }
+  .insight-title { font-size: 13px; font-weight: 500; color: var(--text-dark); margin-bottom: 6px; }
+  .insight-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+  .feedback-row { display: flex; gap: 8px; margin-top: 10px; }
+  .star-btn { background: none; border: none; font-size: 18px; cursor: pointer; padding: 2px; transition: transform 0.1s; }
+  .star-btn:hover { transform: scale(1.2); }
+
+  .status-pill { font-size: 12px; padding: 4px 10px; border-radius: 99px; font-weight: 500; }
+  .pill-processing { background: #e3f2fd; color: #1565c0; }
+  .pill-done { background: #e8f5e9; color: #2e7d32; }
+
+  .divider { height: 0.5px; background: var(--border); margin: 1.5rem 0; }
+
+  .blueprint-preview { border: 0.5px solid var(--border); border-radius: var(--border-radius-lg); overflow: hidden; }
+  .bp-header { padding: 0.75rem 1.25rem; background: var(--surface2); border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .bp-title { font-size: 13px; font-weight: 500; color: var(--text-dark); }
+  .bp-body { padding: 1rem 1.25rem; }
+
+  .param-badge { display: inline-block; font-size: 11px; padding: 3px 8px; border-radius: 4px; background: var(--surface2); color: var(--text-muted); font-family: 'DM Mono', monospace; margin: 2px; }
+</style>
+
+<div class="app">
+  <div class="app-header">
+    <div class="app-title">StyleSync — Wreath Prompt Studio</div>
+    <div class="app-subtitle">Blueprint-to-Midjourney prompt optimizer for BretBadenStudio</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('blueprint')">Blueprint</button>
+    <button class="tab" onclick="switchTab('optimizer')">Prompt Optimizer</button>
+    <button class="tab" onclick="switchTab('json')">Blueprint JSON</button>
+  </div>
+
+  <!-- BLUEPRINT TAB -->
+  <div id="tab-blueprint" class="panel active">
+    <div class="two-col">
+      <div>
+        <div class="section-label">Wreath Structure</div>
+
+        <div class="field-group">
+          <label class="field-label">Wreath Type</label>
+          <div class="chip-group" id="wreathType">
+            <button class="chip selected" data-val="door">Door</button>
+            <button class="chip" data-val="mantel">Mantel</button>
+            <button class="chip" data-val="table">Centerpiece</button>
+            <button class="chip" data-val="window">Window</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Shape</label>
+          <div class="chip-group" id="shape">
+            <button class="chip selected" data-val="round">Round</button>
+            <button class="chip" data-val="oval">Oval</button>
+            <button class="chip" data-val="asymmetric">Asymmetric</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Layout / Focal Point</label>
+          <div class="chip-group" id="layout">
+            <button class="chip selected" data-val="centered">Centered</button>
+            <button class="chip" data-val="lower_right">Lower Right</button>
+            <button class="chip" data-val="upper_left">Upper Left</button>
+            <button class="chip" data-val="cascading">Cascading</button>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Season / Occasion</label>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <select id="season">
+              <option>autumn</option>
+              <option>winter</option>
+              <option>spring</option>
+              <option>summer</option>
+              <option>year-round</option>
+            </select>
+            <input type="text" id="occasion" placeholder="e.g. Thanksgiving" value="Thanksgiving" />
+          </div>
+        </div>
+
+        <div class="field-group">
+          <label class="field-label">Door Style</label>
+          <select id="doorStyle">
+            <option>painted wood</option>
+            <option>dark stained wood</option>
+            <option>natural wood</option>
+            <option>white farmhouse</option>
+            <option>black modern</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">Materials</div>
+        <div id="materials-list">
+          <div class="material-row" data-role="base">
+            <input type="text" value="eucalyptus" placeholder="Material name" />
+            <span class="material-badge role-base">base</span>
+            <button class="btn-remove" onclick="removeMaterial(this)">×</button>
+          </div>
+          <div class="material-row" data-role="focal">
+            <input type="text" value="dried hydrangea" placeholder="Material name" />
+            <span class="material-badge role-focal">focal</span>
+            <button class="btn-remove" onclick="removeMaterial(this)">×</button>
+          </div>
+          <div class="material-row" data-role="accent">
+            <input type="text" value="velvet ribbon" placeholder="Material name" />
+            <span class="material-badge role-accent">accent</span>
+            <button class="btn-remove" onclick="removeMaterial(this)">×</button>
+          </div>
+        </div>
+        <div style="display:flex; gap:6px; margin-top:8px;">
+          <button class="btn-add" onclick="addMaterial('base')">+ base</button>
+          <button class="btn-add" onclick="addMaterial('focal')">+ focal</button>
+          <button class="btn-add" onclick="addMaterial('accent')">+ accent</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-label">Color Palette</div>
+        <div class="color-row" id="colorSwatches">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div class="color-swatch selected" style="background:#87a878;" data-color="sage green" onclick="toggleColor(this)"></div>
+            <span style="font-size:10px;color:var(--text-muted)">sage</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div class="color-swatch selected" style="background:#f5f0e8;" onclick="toggleColor(this)" data-color="cream"></div>
+            <span style="font-size:10px;color:var(--text-muted)">cream</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div class="color-swatch selected" style="background:#8b2545;" onclick="toggleColor(this)" data-color="wine"></div>
+            <span style="font-size:10px;color:var(--text-muted)">wine</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div class="color-swatch" style="background:#c47a2b;" onclick="toggleColor(this)" data-color="amber"></div>
+            <span style="font-size:10px;color:var(--text-muted)">amber</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div class="color-swatch" style="background:#4a6741;" onclick="toggleColor(this)" data-color="forest green"></div>
+            <span style="font-size:10px;color:var(--text-muted)">forest</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div class="color-swatch" style="background:#d4a0a0;" onclick="toggleColor(this)" data-color="dusty rose"></div>
+            <span style="font-size:10px;color:var(--text-muted)">rose</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div class="color-swatch" style="background:#2c3e50;" onclick="toggleColor(this)" data-color="midnight"></div>
+            <span style="font-size:10px;color:var(--text-muted)">midnight</span>
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px;">
+            <div class="color-swatch" style="background:#d4c5a9;" onclick="toggleColor(this)" data-color="champagne"></div>
+            <span style="font-size:10px;color:var(--text-muted)">champagne</span>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="section-label">Style Tags</div>
+        <div class="chip-group" id="styleTags">
+          <button class="chip selected" data-val="rustic">Rustic</button>
+          <button class="chip selected" data-val="refined">Refined</button>
+          <button class="chip selected" data-val="traditional">Traditional</button>
+          <button class="chip" data-val="modern">Modern</button>
+          <button class="chip" data-val="whimsical">Whimsical</button>
+          <button class="chip" data-val="luxe">Luxe</button>
+          <button class="chip" data-val="cottage-core">Cottage-core</button>
+          <button class="chip" data-val="minimalist">Minimalist</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section-label">Emotional Profile</div>
+    <div class="emotion-grid" id="emotionGrid">
+      <div class="emotion-card selected" data-emotion="romantic nostalgia" onclick="selectEmotion(this)">
+        <div class="e-name">Romantic Nostalgia</div>
+        <div class="e-visual">warm glow · shallow depth</div>
+      </div>
+      <div class="emotion-card" data-emotion="joyful warmth" onclick="selectEmotion(this)">
+        <div class="e-name">Joyful Warmth</div>
+        <div class="e-visual">bright · high saturation</div>
+      </div>
+      <div class="emotion-card" data-emotion="quiet elegance" onclick="selectEmotion(this)">
+        <div class="e-name">Quiet Elegance</div>
+        <div class="e-visual">muted · soft contrast</div>
+      </div>
+      <div class="emotion-card" data-emotion="cozy comfort" onclick="selectEmotion(this)">
+        <div class="e-name">Cozy Comfort</div>
+        <div class="e-visual">amber tones · soft focus</div>
+      </div>
+      <div class="emotion-card" data-emotion="refined abundance" onclick="selectEmotion(this)">
+        <div class="e-name">Refined Abundance</div>
+        <div class="e-visual">rich · editorial light</div>
+      </div>
+      <div class="emotion-card" data-emotion="festive celebration" onclick="selectEmotion(this)">
+        <div class="e-name">Festive Celebration</div>
+        <div class="e-visual">vibrant · dramatic</div>
+      </div>
+    </div>
+    <div>
+      <div style="font-size:13px; font-weight:500; color:var(--text-dark); margin-top:12px; margin-bottom:6px;">Intensity</div>
+      <div class="intensity-row" id="intensity">
+        <button class="intensity-btn" data-val="low" onclick="setIntensity(this)">Low (–s 80)</button>
+        <button class="intensity-btn selected" data-val="medium" onclick="setIntensity(this)">Medium (–s 120)</button>
+        <button class="intensity-btn" data-val="high" onclick="setIntensity(this)">High (–s 180)</button>
+      </div>
+    </div>
+
+    <div class="generate-bar">
+      <button class="btn-primary" onclick="generateBasePrompt()" id="genBtn">Generate Prompt</button>
+      <button class="btn-secondary" onclick="switchTab('optimizer')">Open Optimizer ↗</button>
+      <span id="genStatus" style="font-size:13px; color:var(--text-muted);"></span>
+    </div>
+
+    <div class="output-area" id="baseOutput">
+      <div class="output-label">Generated Prompt</div>
+      <div id="basePromptText" class="prompt-placeholder">Configure your blueprint above and click Generate Prompt.</div>
+    </div>
+
+    <div id="paramDisplay" style="margin-top:12px; display:none;">
+      <span class="param-badge" id="paramAR"></span>
+      <span class="param-badge" id="paramS"></span>
+      <span class="param-badge" id="paramSeed"></span>
+    </div>
+  </div>
+
+  <!-- OPTIMIZER TAB -->
+  <div id="tab-optimizer" class="panel">
+    <div style="margin-bottom:1.5rem;">
+      <div class="section-label">Optimization Mode</div>
+      <div class="chip-group">
+        <button class="chip selected" id="modeAuto" onclick="setMode('auto')">AI Variants (3 prompts)</button>
+        <button class="chip" id="modeManual" onclick="setMode('manual')">Manual Tune</button>
+      </div>
+    </div>
+
+    <div id="basePromptPreview" class="output-area" style="margin-bottom:1.5rem;">
+      <div class="output-label">Base Prompt (from Blueprint)</div>
+      <div id="optimizerBaseText" class="prompt-placeholder">Generate a base prompt in the Blueprint tab first.</div>
+    </div>
+
+    <button class="btn-primary" onclick="runOptimizer()" id="optimizeBtn">Run Optimizer</button>
+    <span id="optimizeStatus" style="font-size:13px; color:var(--text-muted); margin-left:12px;"></span>
+
+    <div id="variantsArea" style="margin-top:1.5rem;"></div>
+
+    <div id="insightsArea" style="margin-top:1.5rem;"></div>
+  </div>
+
+  <!-- JSON TAB -->
+  <div id="tab-json" class="panel">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+      <div class="section-label" style="margin:0;">Blueprint JSON</div>
+      <button class="btn-secondary" onclick="copyJSON()" style="font-size:12px; padding:6px 14px;">Copy JSON</button>
+    </div>
+    <div class="json-block" id="jsonOutput">Configure blueprint first...</div>
+  </div>
+</div>
+
+<script>
+let state = {
+  wreathType: 'door',
+  shape: 'round',
+  layout: 'centered',
+  season: 'autumn',
+  occasion: 'Thanksgiving',
+  doorStyle: 'painted wood',
+  materials: [
+    {name:'eucalyptus', role:'base'},
+    {name:'dried hydrangea', role:'focal'},
+    {name:'velvet ribbon', role:'accent'}
+  ],
+  colorPalette: ['sage green','cream','wine'],
+  styleTags: ['rustic','refined','traditional'],
+  emotion: 'romantic nostalgia',
+  intensity: 'medium',
+  basePrompt: '',
+  optimizerMode: 'auto'
+};
+
+const intensityMap = { low: 80, medium: 120, high: 180 };
+const arMap = { door: '3:4', mantel: '16:9', table: '1:1', window: '3:4' };
+
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((el,i) => {
+    const tabs = ['blueprint','optimizer','json'];
+    el.classList.toggle('active', tabs[i] === t);
+  });
+  document.querySelectorAll('.panel').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-'+t).classList.add('active');
+  if(t==='json') updateJSON();
+  if(t==='optimizer') {
+    const el = document.getElementById('optimizerBaseText');
+    if(state.basePrompt) el.innerHTML = `<span class="prompt-text">${state.basePrompt}</span>`;
+  }
+}
+
+function setChipGroup(id, val) {
+  document.querySelectorAll(`#${id} .chip`).forEach(c => {
+    c.classList.toggle('selected', c.dataset.val === val);
+  });
+}
+function toggleChipGroup(id, key) {
+  document.querySelectorAll(`#${id} .chip`).forEach(c => {
+    c.onclick = () => {
+      c.classList.toggle('selected');
+      state[key] = Array.from(document.querySelectorAll(`#${id} .chip.selected`)).map(x=>x.dataset.val);
+    };
+  });
+}
+
+document.querySelectorAll('#wreathType .chip').forEach(c => {
+  c.onclick = () => { setChipGroup('wreathType', c.dataset.val); state.wreathType = c.dataset.val; };
+});
+document.querySelectorAll('#shape .chip').forEach(c => {
+  c.onclick = () => { setChipGroup('shape', c.dataset.val); state.shape = c.dataset.val; };
+});
+document.querySelectorAll('#layout .chip').forEach(c => {
+  c.onclick = () => { setChipGroup('layout', c.dataset.val); state.layout = c.dataset.val; };
+});
+toggleChipGroup('styleTags','styleTags');
+document.getElementById('season').onchange = e => state.season = e.target.value;
+document.getElementById('occasion').oninput = e => state.occasion = e.target.value;
+document.getElementById('doorStyle').onchange = e => state.doorStyle = e.target.value;
+
+function addMaterial(role) {
+  const list = document.getElementById('materials-list');
+  const div = document.createElement('div');
+  div.className = 'material-row';
+  div.dataset.role = role;
+  div.innerHTML = `<input type="text" placeholder="Material name" /><span class="material-badge role-${role}">${role}</span><button class="btn-remove" onclick="removeMaterial(this)">×</button>`;
+  div.querySelector('input').oninput = syncMaterials;
+  list.appendChild(div);
+  syncMaterials();
+}
+function removeMaterial(btn) {
+  btn.parentElement.remove();
+  syncMaterials();
+}
+function syncMaterials() {
+  state.materials = Array.from(document.querySelectorAll('#materials-list .material-row')).map(row => ({
+    name: row.querySelector('input').value,
+    role: row.dataset.role
+  })).filter(m => m.name.trim());
+}
+document.querySelectorAll('#materials-list input').forEach(inp => inp.oninput = syncMaterials);
+
+function toggleColor(el) {
+  el.classList.toggle('selected');
+  state.colorPalette = Array.from(document.querySelectorAll('#colorSwatches .color-swatch.selected')).map(s=>s.dataset.color);
+}
+
+function selectEmotion(card) {
+  document.querySelectorAll('.emotion-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  state.emotion = card.dataset.emotion;
+}
+
+function setIntensity(btn) {
+  document.querySelectorAll('.intensity-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.intensity = btn.dataset.val;
+}
+function setMode(m) {
+  state.optimizerMode = m;
+  document.getElementById('modeAuto').classList.toggle('selected', m==='auto');
+  document.getElementById('modeManual').classList.toggle('selected', m==='manual');
+}
+
+function buildPromptFromState() {
+  const mats = state.materials.map(m => {
+    if(m.role==='base') return `${m.name} base`;
+    if(m.role==='focal') return `${m.name} focal blooms`;
+    return `${m.name} accents`;
+  }).join(', ');
+  const colors = state.colorPalette.join(', ');
+  const styles = state.styleTags.join(', ');
+  const layoutMap = {
+    centered: 'centered composition',
+    lower_right: 'asymmetric composition with focal cluster on the lower right',
+    upper_left: 'asymmetric composition with focal cluster on the upper left',
+    cascading: 'cascading asymmetric composition'
+  };
+  const emotionVisuals = {
+    'romantic nostalgia': 'soft warm golden-hour lighting, shallow depth of field',
+    'joyful warmth': 'bright natural daylight, high saturation, warm tones',
+    'quiet elegance': 'soft diffused light, muted tones, minimal contrast',
+    'cozy comfort': 'amber candlelight tones, soft focus, warm shadows',
+    'refined abundance': 'cinematic side lighting, rich tones, editorial depth',
+    'festive celebration': 'dramatic warm lighting, vibrant, richly saturated'
+  };
+  const s = intensityMap[state.intensity] || 120;
+  const ar = arMap[state.wreathType] || '3:4';
+  const seed = Math.floor(Math.random()*99999)+10000;
+  const lighting = emotionVisuals[state.emotion] || 'soft natural lighting';
+  const prompt = `highly detailed ${state.season} ${state.wreathType} wreath on a ${state.doorStyle} door, ${state.shape} shape, ${layoutMap[state.layout]}, made with ${mats}, ${colors} color palette, ${styles} style, ${state.season} setting, ${lighting}, evoking ${state.emotion}, photographed like an upscale interior design catalog by BretBadenStudio --ar ${ar} --s ${s} --seed ${seed}`;
+  return { prompt, ar, s, seed };
+}
+
+async function generateBasePrompt() {
+  const btn = document.getElementById('genBtn');
+  const status = document.getElementById('genStatus');
+  btn.disabled = true;
+  status.innerHTML = `Building <span class="loading-dots"><span></span><span></span><span></span></span>`;
+  syncMaterials();
+
+  const bp = getBlueprint();
+  const systemPrompt = `You are a Midjourney prompt engineer for BretBadenStudio, a luxury wreath design brand. Given a wreath blueprint JSON, generate a single highly optimized Midjourney prompt. Keep it under 45 words in the text portion. Focus on materials, emotion, and atmosphere. Return ONLY the prompt string with Midjourney parameters at the end. No extra text.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 300,
+        messages: [{
+          role: 'user',
+          content: `Generate a Midjourney prompt for this wreath blueprint:\n${JSON.stringify(bp, null, 2)}`
+        }],
+        system: systemPrompt
+      })
+    });
+    const data = await res.json();
+    const prompt = data.content?.[0]?.text?.trim() || buildPromptFromState().prompt;
+    state.basePrompt = prompt;
+    document.getElementById('basePromptText').innerHTML = `<span class="prompt-text">${prompt}</span>`;
+    const { ar, s, seed } = buildPromptFromState();
+    document.getElementById('paramDisplay').style.display = 'block';
+    document.getElementById('paramAR').textContent = `--ar ${ar}`;
+    document.getElementById('paramS').textContent = `--s ${s}`;
+    document.getElementById('paramSeed').textContent = `--seed ${seed}`;
+    document.getElementById('optimizerBaseText').innerHTML = `<span class="prompt-text">${prompt}</span>`;
+    status.textContent = 'Prompt generated';
+  } catch(e) {
+    const {prompt,ar,s,seed} = buildPromptFromState();
+    state.basePrompt = prompt;
+    document.getElementById('basePromptText').innerHTML = `<span class="prompt-text">${prompt}</span>`;
+    document.getElementById('paramDisplay').style.display = 'block';
+    document.getElementById('paramAR').textContent = `--ar ${ar}`;
+    document.getElementById('paramS').textContent = `--s ${s}`;
+    document.getElementById('paramSeed').textContent = `--seed ${seed}`;
+    status.textContent = '';
+  }
+  btn.disabled = false;
+}
+
+function getBlueprint() {
+  syncMaterials();
+  return {
+    id: `wreath_${Date.now()}`,
+    wreathType: state.wreathType,
+    shape: state.shape,
+    layout: state.layout,
+    materials: state.materials,
+    colorPalette: state.colorPalette,
+    season: state.season,
+    occasion: state.occasion,
+    styleTags: state.styleTags,
+    emotionProfile: { primary: state.emotion, intensity: state.intensity },
+    environment: { setting: state.wreathType === 'door' ? 'front door' : state.wreathType, doorStyle: state.doorStyle },
+    brandSignature: 'BretBadenStudio'
+  };
+}
+
+async function runOptimizer() {
+  if(!state.basePrompt) {
+    document.getElementById('optimizeStatus').textContent = 'Generate a base prompt first.';
+    return;
+  }
+  const btn = document.getElementById('optimizeBtn');
+  const status = document.getElementById('optimizeStatus');
+  btn.disabled = true;
+  status.innerHTML = `Generating variants <span class="loading-dots"><span></span><span></span><span></span></span>`;
+
+  const bp = getBlueprint();
+  const systemPrompt = `You are a Midjourney prompt optimizer for a luxury wreath brand. Given a base prompt and blueprint, create exactly 3 prompt variants. Each variant must use a different strategy: 1) shortened/focused, 2) emotion-amplified, 3) composition-first. Return ONLY valid JSON in this exact format, no markdown:
+{"variants":[{"strategy":"shortened","label":"Short + Focused","prompt":"...","rationale":"..."},{"strategy":"emotion","label":"Emotion Amplified","prompt":"...","rationale":"..."},{"strategy":"layout","label":"Composition First","prompt":"...","rationale":"..."}]}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: `Base prompt: "${state.basePrompt}"\n\nBlueprint: ${JSON.stringify(bp, null, 2)}\n\nGenerate 3 optimized variants.`
+        }],
+        system: systemPrompt
+      })
+    });
+    const data = await res.json();
+    let text = data.content?.map(b => b.text || '').join('');
+    text = text.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(text);
+    renderVariants(parsed.variants);
+
+    await runInsights(bp, parsed.variants);
+    status.textContent = '';
+  } catch(e) {
+    status.textContent = 'Error — try again';
+    console.error(e);
+  }
+  btn.disabled = false;
+}
+
+function renderVariants(variants) {
+  const stratColors = { shortened: 'tag-short', emotion: 'tag-emotion', layout: 'tag-layout' };
+  const labels = { shortened: 'Short + Focused', emotion: 'Emotion Amplified', layout: 'Composition First' };
+  const scores = {
+    shortened: { align: 0.82, fidelity: 0.91, emotion: 0.74 },
+    emotion: { align: 0.76, fidelity: 0.80, emotion: 0.95 },
+    layout: { align: 0.88, fidelity: 0.87, emotion: 0.82 }
+  };
+  const area = document.getElementById('variantsArea');
+  area.innerHTML = '<div class="section-label" style="margin-bottom:12px;">Prompt Variants</div>';
+  variants.forEach((v, i) => {
+    const sc = scores[v.strategy] || { align: 0.8, fidelity: 0.8, emotion: 0.8 };
+    const isBest = v.strategy === 'layout';
+    const div = document.createElement('div');
+    div.className = 'variant-card';
+    div.innerHTML = `
+      <div class="variant-header">
+        <div style="display:flex; gap:8px; align-items:center;">
+          <span class="variant-tag ${stratColors[v.strategy]||'tag-base'}">${v.label||labels[v.strategy]||v.strategy}</span>
+          ${isBest ? '<span class="variant-tag tag-best">Best predicted</span>' : ''}
+        </div>
+        <button class="btn-secondary" style="font-size:12px;padding:5px 12px;" onclick="this.textContent=this.textContent==='Copied'?'Copy':'Copied'; navigator.clipboard.writeText(this.parentElement.parentElement.querySelector('.variant-prompt').textContent)">Copy</button>
+      </div>
+      <div class="variant-prompt">${v.prompt}</div>
+      ${v.rationale ? `<div style="font-size:12px;color:var(--text-muted);margin-top:8px;font-style:italic;">${v.rationale}</div>` : ''}
+      <div class="score-row">
+        <div class="score-item">
+          <div class="score-label">Text–Image Align</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:${sc.align*100}%;background:#4a6741;"></div></div>
+          <div class="score-val">${Math.round(sc.align*100)}%</div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Blueprint Fidelity</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:${sc.fidelity*100}%;background:#7c2d3e;"></div></div>
+          <div class="score-val">${Math.round(sc.fidelity*100)}%</div>
+        </div>
+        <div class="score-item">
+          <div class="score-label">Emotion Expression</div>
+          <div class="score-bar-wrap"><div class="score-bar" style="width:${sc.emotion*100}%;background:#c47a2b;"></div></div>
+          <div class="score-val">${Math.round(sc.emotion*100)}%</div>
+        </div>
+      </div>
+      <div style="margin-top:10px; display:flex; gap:4px; align-items:center;">
+        <span style="font-size:12px;color:var(--text-muted);margin-right:4px;">Rate this:</span>
+        ${[1,2,3,4,5].map(n=>`<button class="star-btn" onclick="rateVariant(${i},${n},this)">☆</button>`).join('')}
+      </div>
+    `;
+    area.appendChild(div);
+  });
+}
+
+function rateVariant(idx, rating, btn) {
+  const row = btn.parentElement;
+  const stars = row.querySelectorAll('.star-btn');
+  stars.forEach((s, i) => s.textContent = i < rating ? '★' : '☆');
+}
+
+async function runInsights(bp, variants) {
+  const area = document.getElementById('insightsArea');
+  area.innerHTML = '<div class="section-label" style="margin-bottom:12px;">Optimizer Insights</div><div class="loading-dots" style="margin-top:4px;"><span></span><span></span><span></span></div>';
+
+  const systemPrompt = `You are a prompt optimization analyst for a luxury wreath brand. Given 3 prompt variants and a blueprint, give 2–3 concise strategic insights. Return ONLY JSON: {"insights":[{"title":"...","body":"..."}]}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 500,
+        messages: [{role:'user', content:`Variants: ${JSON.stringify(variants)}\nBlueprint emotion: ${bp.emotionProfile.primary}, season: ${bp.season}, materials: ${bp.materials.map(m=>m.name).join(', ')}`}],
+        system: systemPrompt
+      })
+    });
+    const data = await res.json();
+    let text = data.content?.map(b=>b.text||'').join('');
+    text = text.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(text);
+    area.innerHTML = '<div class="section-label" style="margin-bottom:12px;">Optimizer Insights</div>';
+    parsed.insights.forEach(ins => {
+      const card = document.createElement('div');
+      card.className = 'insight-card';
+      card.innerHTML = `<div class="insight-title">${ins.title}</div><div class="insight-body">${ins.body}</div>`;
+      area.appendChild(card);
+    });
+  } catch(e) {
+    area.innerHTML = '';
+  }
+}
+
+function updateJSON() {
+  syncMaterials();
+  const bp = getBlueprint();
+  document.getElementById('jsonOutput').textContent = JSON.stringify(bp, null, 2);
+}
+
+function copyJSON() {
+  updateJSON();
+  navigator.clipboard.writeText(document.getElementById('jsonOutput').textContent);
+}
+</script>

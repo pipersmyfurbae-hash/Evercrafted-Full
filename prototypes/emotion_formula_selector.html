@@ -1,0 +1,273 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:.5rem 0 1.5rem}
+.label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-text-secondary);font-weight:500;margin-bottom:8px}
+.emotion-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:5px;margin-bottom:16px}
+.etag{padding:6px 8px;border-radius:8px;border:0.5px solid var(--color-border-tertiary);background:var(--color-background-secondary);cursor:pointer;transition:all .15s;text-align:center}
+.etag:hover{background:var(--color-background-primary)}
+.etag.on{border-color:currentColor;background:var(--color-background-primary)}
+.etag-name{font-size:11px;font-weight:500;display:block}
+.etag-sub{font-size:9px;color:var(--color-text-tertiary);display:block;margin-top:1px}
+.reads{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+.read-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:10px;padding:10px 12px}
+.read-name{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:6px}
+.read-bar-track{height:5px;background:var(--color-border-tertiary);border-radius:3px;overflow:hidden;margin-bottom:4px}
+.read-bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.read-value{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.read-sub{font-size:10px;color:var(--color-text-secondary);margin-top:2px}
+.result{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:12px;padding:14px 16px;margin-bottom:14px;transition:all .3s ease}
+.result-eyebrow{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:4px}
+.result-formula{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:2px}
+.result-arc{font-size:11px;color:var(--color-text-secondary);margin-bottom:8px}
+.result-why{font-size:12px;color:var(--color-text-secondary);line-height:1.6;padding:8px 10px;background:var(--color-background-secondary);border-radius:8px;border-left:2px solid var(--color-border-secondary)}
+.override-badge{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;margin-left:8px;background:rgba(224,100,80,.1);color:#c06050;border:0.5px solid rgba(224,100,80,.3)}
+.formula-alts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.alt-btn{padding:4px 10px;border-radius:6px;border:0.5px solid var(--color-border-tertiary);background:transparent;font-size:11px;color:var(--color-text-secondary);cursor:pointer;transition:all .12s;font-family:var(--font-sans)}
+.alt-btn:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.alt-btn.selected{border-color:var(--color-text-primary);color:var(--color-text-primary);background:var(--color-background-secondary)}
+.tension-row{display:flex;gap:6px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.tension-pill{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:500}
+.tp-green{background:rgba(80,140,80,.1);color:#50a060;border:0.5px solid rgba(80,140,80,.3)}
+.tp-orange{background:rgba(200,130,60,.1);color:#c08040;border:0.5px solid rgba(200,130,60,.3)}
+.tp-red{background:rgba(200,80,60,.1);color:#c06050;border:0.5px solid rgba(200,80,60,.3)}
+.polar-mini{display:block;margin:0 auto}
+@media(max-width:500px){.reads{grid-template-columns:1fr 1fr}}
+</style>
+<h2 class="sr-only">Emotion to formula selector — interactive</h2>
+<div class="wrap">
+<div class="label">Select emotion tags</div>
+<div class="emotion-grid" id="emotion-grid"></div>
+<div class="label">Profile reads</div>
+<div class="reads">
+  <div class="read-card">
+    <div class="read-name">Weight</div>
+    <div class="read-bar-track"><div class="read-bar-fill" id="bar-weight" style="background:#c49a5c;width:0%"></div></div>
+    <div class="read-value" id="val-weight">—</div>
+    <div class="read-sub" id="sub-weight">intensity level</div>
+  </div>
+  <div class="read-card">
+    <div class="read-name">Direction</div>
+    <div class="read-bar-track"><div class="read-bar-fill" id="bar-dir" style="background:#6b9a7c;width:0%"></div></div>
+    <div class="read-value" id="val-dir">—</div>
+    <div class="read-sub" id="sub-dir">movement type</div>
+  </div>
+  <div class="read-card">
+    <div class="read-name">Tension</div>
+    <div class="read-bar-track"><div class="read-bar-fill" id="bar-tension" style="background:#9a6b9a;width:0%"></div></div>
+    <div class="read-value" id="val-tension">—</div>
+    <div class="read-sub" id="sub-tension">sector complexity</div>
+  </div>
+</div>
+<div class="label">Tension analysis</div>
+<div class="tension-row" id="tension-row"></div>
+<div class="label">Selected formula</div>
+<div class="result" id="result-card">
+  <div class="result-eyebrow">composition formula</div>
+  <div class="result-formula" id="res-formula">Select emotions above</div>
+  <div class="result-arc" id="res-arc"></div>
+  <div class="result-why" id="res-why" style="display:none"></div>
+  <div class="formula-alts" id="formula-alts"></div>
+</div>
+</div>
+
+<script>
+const EMOTIONS = [
+  {id:'joy',label:'Joy',sector:'warm-gold',weight:2,dir:'expansive',wheel:0},
+  {id:'anticipation',label:'Anticipation',sector:'copper',weight:2,dir:'traveling',wheel:45},
+  {id:'trust',label:'Trust',sector:'sage',weight:1,dir:'still',wheel:90},
+  {id:'fear',label:'Fear',sector:'deep-green',weight:3,dir:'contained',wheel:135},
+  {id:'surprise',label:'Surprise',sector:'mist',weight:2,dir:'scattered',wheel:180},
+  {id:'sadness',label:'Sadness',sector:'slate',weight:1,dir:'draping',wheel:225},
+  {id:'disgust',label:'Disgust',sector:'olive',weight:1,dir:'contained',wheel:270},
+  {id:'anger',label:'Anger',sector:'crimson',weight:3,dir:'contained',wheel:315},
+  {id:'nostalgia',label:'Nostalgia',sector:'mauve',weight:1,dir:'draping',wheel:225,blend:['sadness','trust']},
+  {id:'romance',label:'Romance',sector:'dusty-rose',weight:2,dir:'still',wheel:45,blend:['joy','trust']},
+  {id:'awe',label:'Awe',sector:'deep-blue',weight:3,dir:'traveling',wheel:157,blend:['fear','surprise']},
+  {id:'melancholy',label:'Melancholy',sector:'blue-grey',weight:1,dir:'traveling',wheel:247,blend:['sadness','anticipation']},
+  {id:'reverence',label:'Reverence',sector:'violet',weight:2,dir:'still',wheel:112,blend:['fear','trust']},
+  {id:'optimism',label:'Optimism',sector:'warm-amber',weight:2,dir:'traveling',wheel:22,blend:['joy','anticipation']},
+  {id:'grief',label:'Grief',sector:'deep-slate',weight:1,dir:'draping',wheel:225},
+  {id:'delight',label:'Delight',sector:'bright',weight:2,dir:'scattered',wheel:0},
+];
+
+const EMOTION_COLORS = {
+  'warm-gold':'#b89a5c','copper':'#a06040','sage':'#6b7c5c','deep-green':'#3a5c3a',
+  'mist':'#8090a8','slate':'#607080','olive':'#7a7a5c','crimson':'#8a3030',
+  'mauve':'#9a8ab0','dusty-rose':'#a07080','deep-blue':'#4a5a7a','blue-grey':'#7080a0',
+  'violet':'#6a5a78','warm-amber':'#b09050','deep-slate':'#505870','bright':'#c0a040',
+};
+
+const FORMULAS = [
+  {id:'crescent', label:'Crescent', arc:'210°–330°', weight:'light', dir:'draping', desc:'Asymmetric sweep — soft, gravitational, memorial'},
+  {id:'side-sweep', label:'Side Sweep', arc:'240°–360°', weight:'medium', dir:'traveling', desc:'Trailing pull left — movement, longing, flow'},
+  {id:'bottom-heavy', label:'Bottom Heavy', arc:'150°–330°', weight:'heavy', dir:'draping', desc:'Weighted downward — gravitas, grief, solemnity'},
+  {id:'diagonal', label:'Diagonal Flow', arc:'225°–45°', weight:'heavy', dir:'traveling', desc:'Corner-to-corner tension — duality, momentum'},
+  {id:'focal-burst', label:'Focal Burst', arc:'270°–360°', weight:'heavy', dir:'expansive', desc:'Single commanding cascade — intensity, celebration'},
+  {id:'garden-scatter', label:'Garden Scatter', arc:'0°–360°', weight:'medium', dir:'scattered', desc:'Full ring, natural gaps — complexity, abundance'},
+  {id:'wild-asymmetry', label:'Wild Asymmetry', arc:'180°–315°', weight:'medium', dir:'contained', desc:'Structured chaos — tension, contradictory emotion'},
+  {id:'half-ring', label:'Half Ring', arc:'180°–360°', weight:'medium', dir:'still', desc:'Lower hemisphere — reverence, ceremony, stillness'},
+  {id:'spiral-flow', label:'Spiral Flow', arc:'240°–420°', weight:'medium', dir:'still', desc:'Unwinding arc — romance, tenderness, intimacy'},
+  {id:'twin-cluster', label:'Twin Cluster', arc:'210°–330°', weight:'medium', dir:'scattered', desc:'Two focal points — duality, partnership, contrast'},
+  {id:'top-cluster', label:'Top Cluster', arc:'30°–150°', weight:'heavy', dir:'expansive', desc:'Crown-weighted — elevation, pride, announcement'},
+  {id:'classic-balanced', label:'Classic Balanced', arc:'0°–360°', weight:'light', dir:'still', desc:'Even ring — harmony, trust, domesticity'},
+];
+
+const OPPOSITES = [['joy','sadness'],['trust','disgust'],['fear','surprise'],['anger','awe'],['anticipation','melancholy']];
+
+function formulaForProfile(emotions) {
+  if (!emotions.length) return null;
+  const weightVals = {1:1,2:2,3:3};
+  const avgWeight = emotions.reduce((a,e)=>a+(e.weight||1),0)/emotions.length;
+  const dirs = emotions.map(e=>e.dir);
+  const dirCounts = {};
+  dirs.forEach(d=>{dirCounts[d]=(dirCounts[d]||0)+1});
+  const dominantDir = Object.entries(dirCounts).sort((a,b)=>b[1]-a[1])[0]?.[0];
+  const wheelAngles = emotions.map(e=>e.wheel||0);
+  let maxDiff = 0;
+  for (let i=0;i<wheelAngles.length;i++) for (let j=i+1;j<wheelAngles.length;j++) {
+    const diff = Math.abs(wheelAngles[i]-wheelAngles[j]);
+    maxDiff = Math.max(maxDiff, Math.min(diff, 360-diff));
+  }
+  const hasOpposite = OPPOSITES.some(pair=>
+    emotions.some(e=>e.id===pair[0]||e.blend?.includes(pair[0])) &&
+    emotions.some(e=>e.id===pair[1]||e.blend?.includes(pair[1]))
+  );
+  const tension = hasOpposite ? 'opposite' : maxDiff > 120 ? 'wide' : maxDiff > 60 ? 'moderate' : 'harmonious';
+
+  let formula, reason, override = null;
+
+  if (emotions.length >= 4) {
+    formula = 'garden-scatter';
+    reason = `${emotions.length} emotion tags active — complexity needs full ring distribution to prevent hierarchy collapse.`;
+    override = '4+ emotions → scatter';
+  } else if (tension === 'opposite') {
+    formula = 'wild-asymmetry';
+    reason = `Opposing emotion sectors detected — Wild Asymmetry holds contradiction spatially. The composition mirrors the emotional tension rather than resolving it.`;
+    override = 'opposite sectors → asymmetry';
+  } else if (avgWeight >= 2.5 && emotions.some(e=>e.id==='joy'||e.id==='delight')) {
+    formula = 'focal-burst';
+    reason = `High-intensity joy/delight with strong emotional weight → single commanding cascade. One thing, fully committed.`;
+    override = 'high joy intensity → burst';
+  } else {
+    const map = {
+      expansive: avgWeight >= 2 ? 'focal-burst' : 'garden-scatter',
+      traveling: avgWeight >= 2 ? 'diagonal' : 'side-sweep',
+      draping: avgWeight >= 2 ? 'bottom-heavy' : 'crescent',
+      still: emotions.some(e=>e.id==='romance'||e.blend?.includes('joy')) ? 'spiral-flow' : emotions.some(e=>e.id==='reverence') ? 'half-ring' : 'classic-balanced',
+      scattered: 'garden-scatter',
+      contained: avgWeight >= 2.5 ? 'diagonal' : 'bottom-heavy',
+    };
+    formula = map[dominantDir] || 'crescent';
+    const dirName = dominantDir || 'draping';
+    const wLabel = avgWeight >= 2.5 ? 'heavy' : avgWeight >= 1.8 ? 'medium' : 'soft';
+    reason = `Dominant direction: <strong>${dirName}</strong> · Emotional weight: <strong>${wLabel}</strong> · Tension: <strong>${tension}</strong> → formula matched to movement archetype.`;
+  }
+
+  return { formula: FORMULAS.find(f=>f.id===formula), avgWeight, dominantDir, tension, reason, override };
+}
+
+let selected = new Set(['nostalgia','sadness','trust']);
+
+function init() {
+  const grid = document.getElementById('emotion-grid');
+  grid.innerHTML = EMOTIONS.map(e=>`
+    <div class="etag ${selected.has(e.id)?'on':''}" style="${selected.has(e.id)?`color:${EMOTION_COLORS[e.sector]}`:'color:var(--color-text-secondary)'}" onclick="toggle('${e.id}',this)" data-id="${e.id}">
+      <span class="etag-name">${e.label}</span>
+      <span class="etag-sub">${e.blend?'blend':'primary'}</span>
+    </div>
+  `).join('');
+  update();
+}
+
+function toggle(id, el) {
+  if (selected.has(id)) selected.delete(id);
+  else selected.add(id);
+  const e = EMOTIONS.find(x=>x.id===id);
+  el.classList.toggle('on', selected.has(id));
+  el.style.color = selected.has(id) ? EMOTION_COLORS[e.sector] : 'var(--color-text-secondary)';
+  update();
+}
+
+function update() {
+  const emotions = EMOTIONS.filter(e=>selected.has(e.id));
+  if (!emotions.length) {
+    document.getElementById('res-formula').textContent = 'Select emotions above';
+    document.getElementById('res-arc').textContent = '';
+    document.getElementById('res-why').style.display = 'none';
+    document.getElementById('formula-alts').innerHTML = '';
+    document.getElementById('tension-row').innerHTML = '';
+    ['weight','dir','tension'].forEach(k=>{
+      document.getElementById('val-'+k).textContent = '—';
+      document.getElementById('bar-'+k).style.width = '0%';
+    });
+    return;
+  }
+
+  const result = formulaForProfile(emotions);
+  if (!result) return;
+
+  const wLabel = result.avgWeight >= 2.5 ? 'Heavy' : result.avgWeight >= 1.8 ? 'Medium' : 'Soft';
+  const wPct = Math.round((result.avgWeight/3)*100);
+  document.getElementById('val-weight').textContent = wLabel;
+  document.getElementById('sub-weight').textContent = `avg ${result.avgWeight.toFixed(1)} / 3`;
+  document.getElementById('bar-weight').style.width = wPct+'%';
+
+  const dirLabels = {expansive:'Expansive',traveling:'Traveling',draping:'Draping',still:'Still',scattered:'Scattered',contained:'Contained'};
+  const dirPcts = {expansive:90,traveling:70,draping:40,still:30,scattered:80,contained:50};
+  document.getElementById('val-dir').textContent = dirLabels[result.dominantDir]||'Mixed';
+  document.getElementById('bar-dir').style.width = (dirPcts[result.dominantDir]||50)+'%';
+  document.getElementById('sub-dir').textContent = result.dominantDir||'—';
+
+  const tensionLabel = {opposite:'Opposite sectors',wide:'Wide spread',moderate:'Moderate blend',harmonious:'Harmonious'};
+  const tensionPcts = {opposite:100,wide:70,moderate:45,harmonious:20};
+  const tensionColors = {opposite:'#a06060',wide:'#a08040',moderate:'#808060',harmonious:'#6b7c5c'};
+  document.getElementById('val-tension').textContent = tensionLabel[result.tension]||result.tension;
+  document.getElementById('bar-tension').style.width = (tensionPcts[result.tension]||30)+'%';
+  document.getElementById('bar-tension').style.background = tensionColors[result.tension]||'#9a6b9a';
+  document.getElementById('sub-tension').textContent = `${emotions.length} emotion${emotions.length>1?'s':''} active`;
+
+  const tensionRow = document.getElementById('tension-row');
+  tensionRow.innerHTML = '';
+  if (result.override) {
+    const pill = document.createElement('span');
+    pill.className = 'tension-pill tp-orange';
+    pill.textContent = 'Override: ' + result.override;
+    tensionRow.appendChild(pill);
+  }
+  const tpill = document.createElement('span');
+  tpill.className = `tension-pill ${result.tension==='opposite'?'tp-red':result.tension==='wide'?'tp-orange':'tp-green'}`;
+  tpill.textContent = tensionLabel[result.tension];
+  tensionRow.appendChild(tpill);
+  emotions.forEach(e=>{
+    const pill = document.createElement('span');
+    pill.className = 'tension-pill';
+    pill.style.cssText = `background:${EMOTION_COLORS[e.sector]}20;color:${EMOTION_COLORS[e.sector]};border:0.5px solid ${EMOTION_COLORS[e.sector]}50`;
+    pill.textContent = e.label;
+    tensionRow.appendChild(pill);
+  });
+
+  const f = result.formula;
+  document.getElementById('res-formula').innerHTML = f.label + (result.override ? `<span class="override-badge">override</span>` : '');
+  document.getElementById('res-arc').textContent = f.arc + ' · ' + f.desc;
+  const why = document.getElementById('res-why');
+  why.style.display = 'block';
+  why.innerHTML = result.reason;
+
+  const altsEl = document.getElementById('formula-alts');
+  const alts = FORMULAS.filter(x=>x.id!==f.id).slice(0,5);
+  altsEl.innerHTML = '<span style="font-size:10px;color:var(--color-text-tertiary);align-self:center;margin-right:2px">Alt →</span>' + alts.map(a=>`<button class="alt-btn" onclick="forceFormula('${a.id}',this)">${a.label}</button>`).join('');
+}
+
+function forceFormula(id, btn) {
+  document.querySelectorAll('.alt-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  const f = FORMULAS.find(x=>x.id===id);
+  document.getElementById('res-formula').innerHTML = f.label + '<span class="override-badge">manual</span>';
+  document.getElementById('res-arc').textContent = f.arc + ' · ' + f.desc;
+  document.getElementById('res-why').innerHTML = `Manual override selected. Original auto-selection based on emotion profile was different — use this to explore alternative compositions with the same floral palette.`;
+}
+
+init();
+</script>

@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WreathBlueprint SaaS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --ec-cream: #F9F7F4;
+            --ec-green: #4A6741;
+            --ec-black: #1A1A1A;
+            --ec-gold: #c9a96e;
+            --ec-sage: #7a9e7e;
+            --bloom: #c8968f;
+            --craft: #7a9e7e;
+            --studio: #c9a96e;
+            --atelier: #8b7b6f;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--ec-cream);
+            color: var(--ec-black);
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-right: 1px solid rgba(26, 26, 26, 0.1);
+            padding: 30px 0;
+            position: fixed;
+            width: 260px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .sidebar-brand {
+            padding: 0 24px 24px;
+            border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+            margin-bottom: 24px;
+        }
+        
+        .sidebar-brand h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--ec-green);
+        }
+        
+        .sidebar-tier {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: var(--ec-cream);
+            border-radius: 6px;
+        }
+        
+        .tier-badge {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: white;
+        }
+        
+        .tier-craft { background: var(--craft); }
+        
+        .tier-credits {
+            font-size: 12px;
+            color: #666;
+            margin-left: auto;
+        }
+        
+        .nav-section {
+            padding: 0 16px;
+            margin-bottom: 24px;
+        }
+        
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #999;
+            padding: 0 8px;
+            margin-bottom: 8px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .nav-item:hover {
+            background: var(--ec-cream);
+            color: var(--ec-black);
+        }
+        
+        .nav-item.active {
+            background: var(--ec-green);
+            color: white;
+        }
+        
+        .nav-icon {
+            font-size: 18px;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 260px;
+            padding: 30px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--ec-green);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3d5434;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: white;
+            border: 1px solid #ddd;
+            color: var(--ec-black);
+        }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(26, 26, 26, 0.1);
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--ec-black);
+        }
+        
+        .stat-change {
+            font-size: 12px;
+            margin-top: 8px;
+            color: var(--ec-green);
+        }
+        
+        /* Blueprint Grid */
+        .blueprints-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+        
+        .blueprint-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(26, 26, 26, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .blueprint-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        
+        .blueprint-image {
+            width: 100%;
+            height: 200px;
+            background: #f5f5f5;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .blueprint-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .blueprint-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            background: rgba(255,255,255,0.95);
+        }
+        
+        .status-complete {
+            color: var(--ec-green);
+        }
+        
+        .status-processing {
+            color: #f59e0b;
+        }
+        
+        .blueprint-info {
+            padding: 20px;
+        }
+        
+        .blueprint-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .blueprint-meta {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .blueprint-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .blueprint-actions {
+            display: flex;
+            gap: 8px;
+            padding: 16px;
+            border-top: 1px solid rgba(26, 26, 26, 0.1);
+        }
+        
+        .blueprint-actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            background: var(--ec-cream);
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .blueprint-actions button:hover {
+            background: var(--ec-green);
+            color: white;
+        }
+        
+        /* Upload Area */
+        .upload-card {
+            background: white;
+            border: 2px dashed #ddd;
+            border-radius: 12px;
+            padding: 60px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .upload-card:hover {
+            border-color: var(--ec-green);
+            background: rgba(74, 103, 65, 0.02);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        
+        .upload-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .upload-subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        /* Tier Gate Overlay */
+        .tier-gate {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .tier-gate.active {
+            display: flex;
+        }
+        
+        .tier-modal {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+        }
+        
+        .tier-modal-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .tier-modal h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            margin-bottom: 16px;
+        }
+        
+        .tier-modal p {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+        
+        .tier-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .tier-option {
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tier-option:hover {
+            border-color: var(--ec-green);
+            background: rgba(74, 103, 65, 0.05);
+        }
+        
+        .tier-option-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .tier-option-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--ec-green);
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            opacity: 0.3;
+        }
+        
+        .empty-state h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+        
+        .empty-state p {
+            color: #666;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <h1>WreathBlueprint</h1>
+                <div class="sidebar-tier">
+                    <span class="tier-badge tier-craft">Craft</span>
+                    <span class="tier-credits">47 / 50</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-label">Create</div>
+                <div class="nav-item active">
+                    <span class="nav-icon">📐</span>
+                    <span>Blueprints</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">📤</span>
+                    <span>Upload</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">📁</span>
+                    <span>Gallery</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-label">Tools</div>
+                <div class="nav-item">
+                    <span class="nav-icon">🔍</span>
+                    <span>Search</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Analytics</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">🔌</span>
+                    <span>API</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <div class="nav-label">Account</div>
+                <div class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span>Settings</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">💳</span>
+                    <span>Billing</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">📖</span>
+                    <span>Documentation</span>
+                </div>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <h2>My Blueprints</h2>
+                <div class="header-actions">
+                    <button class="btn btn-secondary">
+                        <span>🔄</span>
+                        Refresh
+                    </button>
+                    <button class="btn btn-primary" onclick="showUpload()">
+                        <span>➕</span>
+                        New Blueprint
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Blueprints</div>
+                    <div class="stat-value">24</div>
+                    <div class="stat-change">+3 this month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Credits Remaining</div>
+                    <div class="stat-value">47</div>
+                    <div class="stat-change">Resets in 12 days</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">Exports Generated</div>
+                    <div class="stat-value">156</div>
+                    <div class="stat-change">+18 this week</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">API Calls</div>
+                    <div class="stat-value">1.2k</div>
+                    <div class="stat-change">+340 this month</div>
+                </div>
+            </div>
+            
+            <!-- Blueprints Grid -->
+            <div class="blueprints-grid">
+                <!-- Blueprint Card 1 -->
+                <div class="blueprint-card" onclick="openBlueprint(1)">
+                    <div class="blueprint-image">
+                        <svg width="100%" height="200" viewBox="0 0 400 200">
+                            <rect width="400" height="200" fill="#f8fafc"/>
+                            <circle cx="200" cy="100" r="60" fill="none" stroke="#4A6741" stroke-width="2"/>
+                            <circle cx="200" cy="100" r="40" fill="none" stroke="#4A6741" stroke-width="1" stroke-dasharray="3,3"/>
+                            <circle cx="200" cy="100" r="2" fill="#e53e3e"/>
+                        </svg>
+                        <div class="blueprint-status status-complete">✓ Complete</div>
+                    </div>
+                    <div class="blueprint-info">
+                        <div class="blueprint-title">Spring Garden Wreath</div>
+                        <div class="blueprint-meta">
+                            <span>📐 24 points</span>
+                            <span>📏 12"</span>
+                            <span>🕒 2 days ago</span>
+                        </div>
+                    </div>
+                    <div class="blueprint-actions">
+                        <button onclick="event.stopPropagation(); exportBlueprint(1)">Export</button>
+                        <button onclick="event.stopPropagation(); editBlueprint(1)">Edit</button>
+                        <button onclick="event.stopPropagation(); duplicateBlueprint(1)">Duplicate</button>
+                    </div>
+                </div>
+                
+                <!-- Blueprint Card 2 -->
+                <div class="blueprint-card">
+                    <div class="blueprint-image">
+                        <svg width="100%" height="200" viewBox="0 0 400 200">
+                            <rect width="400" height="200" fill="#f8fafc"/>
+                            <circle cx="200" cy="100" r="70" fill="none" stroke="#c9a96e" stroke-width="2"/>
+                            <circle cx="200" cy="100" r="45" fill="none" stroke="#c9a96e" stroke-width="1" stroke-dasharray="3,3"/>
+                            <circle cx="200" cy="100" r="2" fill="#e53e3e"/>
+                        </svg>
+                        <div class="blueprint-status status-complete">✓ Complete</div>
+                    </div>
+                    <div class="blueprint-info">
+                        <div class="blueprint-title">Autumn Harvest Design</div>
+                        <div class="blueprint-meta">
+                            <span>📐 36 points</span>
+                            <span>📏 18"</span>
+                            <span>🕒 5 days ago</span>
+                        </div>
+                    </div>
+                    <div class="blueprint-actions">
+                        <button>Export</button>
+                        <button>Edit</button>
+                        <button>Duplicate</button>
+                    </div>
+                </div>
+                
+                <!-- Blueprint Card 3 - Processing -->
+                <div class="blueprint-card">
+                    <div class="blueprint-image">
+                        <svg width="100%" height="200" viewBox="0 0 400 200">
+                            <rect width="400" height="200" fill="#f8fafc"/>
+                            <circle cx="200" cy="100" r="50" fill="none" stroke="#ddd" stroke-width="2" stroke-dasharray="10,5"/>
+                            <text x="200" y="105" text-anchor="middle" font-size="14" fill="#999">Processing...</text>
+                        </svg>
+                        <div class="blueprint-status status-processing">⏳ Processing</div>
+                    </div>
+                    <div class="blueprint-info">
+                        <div class="blueprint-title">Holiday Evergreen</div>
+                        <div class="blueprint-meta">
+                            <span>📐 Analyzing...</span>
+                            <span>📏 24"</span>
+                            <span>🕒 Just now</span>
+                        </div>
+                    </div>
+                    <div class="blueprint-actions">
+                        <button disabled>Processing...</button>
+                    </div>
+                </div>
+                
+                <!-- Upload Card -->
+                <div class="upload-card" onclick="showUpload()">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-title">Create New Blueprint</div>
+                    <div class="upload-subtitle">Upload a wreath image to generate coordinates</div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Tier Gate Modal -->
+    <div class="tier-gate" id="tierGate">
+        <div class="tier-modal">
+            <div class="tier-modal-icon">🔒</div>
+            <h3>Upgrade to Continue</h3>
+            <p>You've reached your monthly blueprint limit. Upgrade to Craft or Studio to create unlimited blueprints and unlock advanced features.</p>
+            
+            <div class="tier-options">
+                <div class="tier-option" onclick="upgradeTier('craft')">
+                    <div class="tier-option-name">Craft</div>
+                    <div class="tier-option-price">$9.99</div>
+                    <div style="font-size: 12px; color: #666; margin-top: 4px;">50/month</div>
+                </div>
+                <div class="tier-option" onclick="upgradeTier('studio')">
+                    <div class="tier-option-name">Studio</div>
+                    <div class="tier-option-price">$29.99</div>
+                    <div style="font-size: 12px; color: #666; margin-top: 4px;">Unlimited</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-secondary" onclick="closeTierGate()" style="width: 100%;">Maybe Later</button>
+        </div>
+    </div>
+    
+    <script>
+        function showUpload() {
+            // Check credits first
+            const credits = 47;
+            if (credits <= 0) {
+                document.getElementById('tierGate').classList.add('active');
+            } else {
+                window.location.href = '/blueprints/new';
+            }
+        }
+        
+        function closeTierGate() {
+            document.getElementById('tierGate').classList.remove('active');
+        }
+        
+        function upgradeTier(tier) {
+            window.location.href = `/upgrade?tier=${tier}`;
+        }
+        
+        function openBlueprint(id) {
+            window.location.href = `/blueprints/${id}`;
+        }
+        
+        function exportBlueprint(id) {
+            console.log('Export blueprint', id);
+        }
+        
+        function editBlueprint(id) {
+            window.location.href = `/blueprints/${id}/edit`;
+        }
+        
+        function duplicateBlueprint(id) {
+            console.log('Duplicate blueprint', id);
+        }
+    </script>
+</body>
+</html>

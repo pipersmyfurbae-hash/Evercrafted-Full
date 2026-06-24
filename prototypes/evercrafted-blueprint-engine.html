@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Blueprint Engine</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg: #0e0d0b;
+  --surface: #161410;
+  --surface-2: #1e1b17;
+  --surface-3: #252119;
+  --border: #2e2a22;
+  --border-2: #3d3830;
+  --text: #e8e2d8;
+  --text-muted: #9a9080;
+  --text-faint: #5a5248;
+  --gold: #b89a5c;
+  --gold-dim: rgba(184,154,92,0.12);
+  --sage: #6b7c5c;
+  --sage-dim: rgba(107,124,92,0.15);
+  --dust: #8b7fa0;
+  --dust-dim: rgba(139,127,160,0.15);
+  --clay: #a05c40;
+  --clay-dim: rgba(160,92,64,0.15);
+  --mist: #607080;
+  --mist-dim: rgba(96,112,128,0.15);
+  --success: #5a8a5a;
+  --error: #8a4a4a;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --radius-lg: 14px;
+  --serif: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Jost', system-ui, sans-serif;
+  --transition: 200ms ease;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.app {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.header {
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 1.5rem;
+}
+
+.header-eyebrow {
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+  margin-bottom: .4rem;
+}
+
+.header h1 {
+  font-family: var(--serif);
+  font-size: 2.2rem;
+  font-weight: 400;
+  color: var(--text);
+  line-height: 1.1;
+  letter-spacing: .01em;
+}
+
+.header-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: .4rem;
+  font-weight: 300;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 780px) {
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+}
+
+.card-label {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: 500;
+  margin-bottom: .75rem;
+}
+
+.section-title {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 1rem;
+  letter-spacing: .02em;
+}
+
+/* Controls */
+.control-group {
+  margin-bottom: 1.25rem;
+}
+
+.control-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: .5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.control-value {
+  color: var(--gold);
+  font-family: var(--serif);
+  font-size: 1rem;
+}
+
+.seg-buttons {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.seg-btn {
+  padding: 5px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-2);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.seg-btn:hover { background: var(--surface-3); color: var(--text); }
+.seg-btn.active {
+  background: var(--gold-dim);
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.formula-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.formula-btn {
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: left;
+  line-height: 1.3;
+}
+
+.formula-btn span {
+  display: block;
+  font-size: 9px;
+  color: var(--text-faint);
+  margin-top: 2px;
+}
+
+.formula-btn:hover { background: var(--surface-3); border-color: var(--border-2); }
+.formula-btn.active {
+  background: var(--sage-dim);
+  border-color: var(--sage);
+  color: var(--text);
+}
+.formula-btn.active span { color: var(--sage); }
+
+.inventory-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: all var(--transition);
+  user-select: none;
+}
+
+.inventory-item:hover { border-color: var(--border-2); background: var(--surface-3); }
+.inventory-item.selected {
+  border-color: var(--gold);
+  background: var(--gold-dim);
+}
+
+.item-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.item-name {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.item-tags {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.itag {
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 20px;
+  font-weight: 500;
+  background: var(--surface-3);
+  color: var(--text-faint);
+  border: 1px solid var(--border);
+}
+
+.itag.role { background: var(--sage-dim); color: var(--sage); border-color: transparent; }
+.itag.emotion { background: var(--dust-dim); color: var(--dust); border-color: transparent; }
+.itag.behavior { background: var(--clay-dim); color: var(--clay); border-color: transparent; }
+
+/* Run button */
+.run-btn {
+  width: 100%;
+  padding: 11px;
+  border-radius: var(--radius);
+  border: 1px solid var(--gold);
+  background: var(--gold-dim);
+  color: var(--gold);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  letter-spacing: .04em;
+  margin-top: .75rem;
+}
+
+.run-btn:hover { background: rgba(184,154,92,.22); }
+.run-btn:active { transform: scale(.99); }
+
+/* Steps tabs */
+.step-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+}
+
+.step-tab {
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-faint);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color var(--transition);
+  letter-spacing: .04em;
+}
+
+.step-tab:hover { color: var(--text-muted); }
+.step-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.step-panel { display: none; }
+.step-panel.active { display: block; }
+
+/* Slot visualization */
+.slot-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.slot-tier-label {
+  width: 70px;
+  flex-shrink: 0;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  font-weight: 500;
+  padding-top: 12px;
+  text-align: right;
+}
+
+.slot-cards {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+
+.slot-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  min-width: 130px;
+  flex: 1;
+  transition: all .3s ease;
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.slot-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.slot-card.blocked {
+  border-color: rgba(138,74,74,.4);
+  background: rgba(138,74,74,.06);
+}
+
+.slot-card.filled {
+  border-color: var(--sage);
+  background: var(--sage-dim);
+}
+
+.slot-role {
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 4px;
+}
+
+.slot-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+
+.slot-emotion {
+  font-size: 10px;
+  color: var(--dust);
+}
+
+.slot-blocked-msg {
+  font-size: 10px;
+  color: #8a4a4a;
+  font-style: italic;
+}
+
+.slot-stem-count {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  color: var(--gold);
+  font-weight: 400;
+  line-height: 1;
+  margin-top: 4px;
+}
+
+.slot-stem-label {
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-top: 1px;
+}
+
+/* Polar canvas */
+#polar-canvas {
+  width: 100%;
+  max-width: 340px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Stats row */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 1.25rem;
+}
+
+.stat-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.stat-value {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: var(--text-faint);
+  margin-top: 4px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+/* Budget bars */
+.budget-row {
+  margin-bottom: 10px;
+}
+
+.budget-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.budget-name { color: var(--text-muted); font-weight: 500; }
+.budget-nums { color: var(--text-faint); }
+
+.budget-track {
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.budget-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .6s ease;
+}
+
+/* Variety log */
+.variety-log {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.log-entry {
+  font-size: 11px;
+  padding: 3px 0;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  opacity: 0;
+  transition: opacity .3s ease;
+}
+
+.log-entry.visible { opacity: 1; }
+.log-entry:last-child { border: none; }
+
+.log-icon { font-size: 10px; flex-shrink: 0; }
+.log-pass { color: var(--success); }
+.log-block { color: var(--error); }
+.log-text { color: var(--text-muted); flex: 1; }
+.log-emotion { color: var(--dust); font-weight: 500; }
+
+/* Render prompt */
+.prompt-box {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  font-style: italic;
+  position: relative;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-2);
+  background: var(--surface-3);
+  color: var(--text-faint);
+  font-size: 10px;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: all var(--transition);
+}
+
+.copy-btn:hover { color: var(--text); border-color: var(--gold); }
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-faint);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.25rem 0;
+}
+
+.variety-note {
+  font-size: 11px;
+  color: var(--text-faint);
+  background: var(--surface-3);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+  border-left: 2px solid var(--gold);
+}
+
+.pill {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.pill-gold { background: var(--gold-dim); color: var(--gold); }
+.pill-sage { background: var(--sage-dim); color: var(--sage); }
+.pill-dust { background: var(--dust-dim); color: var(--dust); }
+
+.inv-scroll {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.inv-scroll::-webkit-scrollbar { width: 4px; }
+.inv-scroll::-webkit-scrollbar-track { background: var(--surface-2); }
+.inv-scroll::-webkit-scrollbar-thumb { background: var(--border-2); border-radius: 2px; }
+
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-eyebrow">Evercrafted Studio · Blueprint Engine</div>
+    <h1>Slot-Fill Placement Engine</h1>
+    <div class="header-sub">Rule-based floral selection · Zone placement · Stem count from diameter + behavior</div>
+  </div>
+
+  <div class="grid-2">
+
+    <!-- LEFT PANEL: Controls -->
+    <div>
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-label">Wreath parameters</div>
+
+        <div class="control-group">
+          <div class="control-label">
+            Diameter
+            <span class="control-value" id="diam-label">22"</span>
+          </div>
+          <div class="seg-buttons" id="diam-btns">
+            <button class="seg-btn" data-val="14" onclick="setDiam(14)">14"<br><span style="font-size:9px;color:var(--text-faint)">45 stems</span></button>
+            <button class="seg-btn" data-val="18" onclick="setDiam(18)">18"<br><span style="font-size:9px;color:var(--text-faint)">65 stems</span></button>
+            <button class="seg-btn active" data-val="22" onclick="setDiam(22)">22"<br><span style="font-size:9px;color:var(--text-faint)">90 stems</span></button>
+            <button class="seg-btn" data-val="26" onclick="setDiam(26)">26"<br><span style="font-size:9px;color:var(--text-faint)">120 stems</span></button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">Composition formula</div>
+          <div class="formula-grid" id="formula-btns"></div>
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">Emotion tags from memory</div>
+          <div class="seg-buttons" id="emotion-btns">
+            <button class="seg-btn active" onclick="toggleEmotion('nostalgia',this)">nostalgia</button>
+            <button class="seg-btn active" onclick="toggleEmotion('sadness',this)">sadness</button>
+            <button class="seg-btn active" onclick="toggleEmotion('trust',this)">trust</button>
+            <button class="seg-btn" onclick="toggleEmotion('joy',this)">joy</button>
+            <button class="seg-btn" onclick="toggleEmotion('anticipation',this)">anticipation</button>
+            <button class="seg-btn" onclick="toggleEmotion('awe',this)">awe</button>
+            <button class="seg-btn" onclick="toggleEmotion('romance',this)">romance</button>
+            <button class="seg-btn" onclick="toggleEmotion('melancholy',this)">melancholy</button>
+          </div>
+        </div>
+
+        <button class="run-btn" onclick="runEngine()">Run blueprint engine →</button>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Inventory pool — click to toggle</div>
+        <div class="inv-scroll" id="inv-list"></div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: Output -->
+    <div>
+      <div class="card">
+        <div class="step-tabs">
+          <div class="step-tab active" onclick="switchStep('slots')">Slot fill</div>
+          <div class="step-tab" onclick="switchStep('placement')">Placement</div>
+          <div class="step-tab" onclick="switchStep('stems')">Stem counts</div>
+          <div class="step-tab" onclick="switchStep('prompt')">Render prompt</div>
+        </div>
+
+        <!-- SLOT FILL -->
+        <div class="step-panel active" id="panel-slots">
+          <div id="slots-empty" class="empty-state">Run the engine to see slot filling →</div>
+          <div id="slots-content" style="display:none">
+            <div class="variety-note" id="variety-note"></div>
+            <div id="slot-tiers"></div>
+          </div>
+        </div>
+
+        <!-- PLACEMENT -->
+        <div class="step-panel" id="panel-placement">
+          <div id="placement-empty" class="empty-state">Run the engine to see placement →</div>
+          <div id="placement-content" style="display:none">
+            <svg id="polar-canvas" viewBox="0 0 340 340"></svg>
+            <div style="margin-top:1rem" id="placement-legend"></div>
+          </div>
+        </div>
+
+        <!-- STEMS -->
+        <div class="step-panel" id="panel-stems">
+          <div id="stems-empty" class="empty-state">Run the engine to see stem counts →</div>
+          <div id="stems-content" style="display:none">
+            <div class="stats-row" id="stats-row"></div>
+            <div id="budget-bars"></div>
+            <hr class="divider">
+            <div class="card-label">Variety constraint log</div>
+            <div class="variety-log" id="variety-log"></div>
+          </div>
+        </div>
+
+        <!-- RENDER PROMPT -->
+        <div class="step-panel" id="panel-prompt">
+          <div id="prompt-empty" class="empty-state">Run the engine to generate prompt →</div>
+          <div id="prompt-content" style="display:none">
+            <div class="card-label" style="margin-bottom:.5rem">Midjourney / Flux render prompt</div>
+            <div class="prompt-box" id="render-prompt">
+              <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+              <span id="prompt-text"></span>
+            </div>
+            <div style="margin-top:1rem;font-size:11px;color:var(--text-faint);line-height:1.7" id="prompt-meta"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const FORMULAS = [
+  {id:'crescent', label:'Crescent', arc:'210°–330°', desc:'asymmetric sweep'},
+  {id:'side-sweep', label:'Side Sweep', arc:'240°–360°', desc:'trailing left pull'},
+  {id:'bottom-heavy', label:'Bottom Heavy', arc:'150°–330°', desc:'weighted lower arc'},
+  {id:'diagonal', label:'Diagonal Flow', arc:'225°–45°', desc:'corner-to-corner'},
+  {id:'focal-burst', label:'Focal Burst', arc:'270°–360°', desc:'centered cascade'},
+  {id:'garden-scatter', label:'Garden Scatter', arc:'0°–360°', desc:'full ring, natural gaps'},
+  {id:'wild-asymmetry', label:'Wild Asymmetry', arc:'180°–315°', desc:'intentional chaos'},
+  {id:'half-ring', label:'Half Ring', arc:'180°–360°', desc:'lower hemisphere'},
+];
+
+const FORMULA_ARCS = {
+  'crescent': {start: 210, end: 330},
+  'side-sweep': {start: 240, end: 360},
+  'bottom-heavy': {start: 150, end: 330},
+  'diagonal': {start: 225, end: 405},
+  'focal-burst': {start: 270, end: 450},
+  'garden-scatter': {start: 0, end: 360},
+  'wild-asymmetry': {start: 180, end: 315},
+  'half-ring': {start: 180, end: 360},
+};
+
+const INVENTORY = [
+  {id:'INV-001', name:'Ivory Garden Rose', color:'#e8e0d0', role:'focal', ep:'joy', es:'trust', blend:'romance', behavior:'mid', bloomSize:3.5, stock:18},
+  {id:'INV-002', name:'Dusty Mauve Peony', color:'#c4a0a0', role:'focal', ep:'sadness', es:'trust', blend:'nostalgia', behavior:'heavy', bloomSize:5, stock:12},
+  {id:'INV-003', name:'Slate Hydrangea', color:'#8090a8', role:'secondary', ep:'sadness', es:'surprise', blend:'melancholy', behavior:'mid', bloomSize:4, stock:8},
+  {id:'INV-004', name:'Dusty Lavender Bundle', color:'#9a8ab0', role:'texture', ep:'sadness', es:'trust', blend:'nostalgia', behavior:'light', bloomSize:1.5, stock:24},
+  {id:'INV-005', name:'Copper Beech Stem', color:'#8c4a2a', role:'bridge', ep:'anticipation', es:'fear', blend:'awe', behavior:'mid', bloomSize:2, stock:15},
+  {id:'INV-006', name:'Sage Eucalyptus', color:'#7a9070', role:'greenery', ep:'trust', es:'joy', blend:'romance', behavior:'light', bloomSize:1, stock:30},
+  {id:'INV-007', name:'Silver Brunia Berry', color:'#b8c0c8', role:'accent', ep:'surprise', es:'sadness', blend:'melancholy', behavior:'wispy', bloomSize:0.8, stock:20},
+  {id:'INV-008', name:'Dried Thistle Head', color:'#7a7890', role:'texture', ep:'sadness', es:'disgust', blend:'remorse', behavior:'light', bloomSize:2, stock:16},
+  {id:'INV-009', name:'Black Fritillaria', color:'#3a3048', role:'accent', ep:'fear', es:'sadness', blend:'awe', behavior:'wispy', bloomSize:1, stock:10},
+  {id:'INV-010', name:'Golden Solidago', color:'#c4a040', role:'filler', ep:'joy', es:'anticipation', blend:'optimism', behavior:'wispy', bloomSize:0.8, stock:28},
+  {id:'INV-011', name:'Preserved Olive Branch', color:'#808860', role:'greenery', ep:'trust', es:'joy', blend:'romance', behavior:'light', bloomSize:1, stock:22},
+  {id:'INV-012', name:'Burgundy Velvet Rose', color:'#6a2838', role:'focal', ep:'anger', es:'trust', blend:'reverence', behavior:'heavy', bloomSize:4.5, stock:14},
+  {id:'INV-013', name:'Pale Ranunculus', color:'#e8d8c8', role:'secondary', ep:'joy', es:'surprise', blend:'optimism', behavior:'mid', bloomSize:2.5, stock:20},
+  {id:'INV-014', name:'Dried Pampas Grass', color:'#c8b890', role:'texture', ep:'anticipation', es:'sadness', blend:'melancholy', behavior:'wispy', bloomSize:1.5, stock:18},
+];
+
+const BEHAVIOR_UNITS = { heavy: 3.5, mid: 2.5, light: 1.5, wispy: 0.8 };
+const ZONE_SPLITS = { focal: 0.30, secondary: 0.25, bridge: 0.12, texture: 0.10, greenery: 0.18, accent: 0.08, filler: 0.07 };
+const BUDGET_BY_DIAM = { 14: 45, 18: 65, 22: 90, 26: 120 };
+
+const EMOTION_COLORS = {
+  nostalgia: '#9a8ab0', sadness: '#607080', trust: '#6b7c5c', joy: '#c9a84c',
+  anticipation: '#a05c40', awe: '#5a6a7a', romance: '#a07080', melancholy: '#7080a0',
+  optimism: '#b8a040', reverence: '#6a5a78', remorse: '#7a7070', fear: '#3a5c3a',
+  surprise: '#8090a8', anger: '#8a3838',
+};
+
+const ZONE_COLORS = {
+  focal: '#6b7c5c', secondary: '#8b7fa0', bridge: '#b89a5c',
+  texture: '#8b7065', greenery: '#4a6a40', accent: '#708090', filler: '#706858'
+};
+
+const SLOT_TEMPLATES = {
+  crescent: [{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'},{role:'texture',tier:'Texture'}],
+  'side-sweep': [{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
+  'bottom-heavy': [{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'}],
+  diagonal: [{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'accent',tier:'Accent'},{role:'greenery',tier:'Greenery'},{role:'filler',tier:'Filler'}],
+  'focal-burst': [{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'}],
+  'garden-scatter': [{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'texture',tier:'Texture'},{role:'texture',tier:'Texture'},{role:'greenery',tier:'Greenery'},{role:'greenery',tier:'Greenery'},{role:'accent',tier:'Accent'},{role:'filler',tier:'Filler'}],
+  'wild-asymmetry': [{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'texture',tier:'Texture'},{role:'accent',tier:'Accent'},{role:'greenery',tier:'Greenery'}],
+  'half-ring': [{role:'focal',tier:'Focal'},{role:'focal',tier:'Focal'},{role:'secondary',tier:'Secondary'},{role:'secondary',tier:'Secondary'},{role:'bridge',tier:'Bridge'},{role:'greenery',tier:'Greenery'},{role:'texture',tier:'Texture'},{role:'filler',tier:'Filler'}],
+};
+
+let state = {
+  diam: 22,
+  formula: 'crescent',
+  emotions: ['nostalgia','sadness','trust'],
+  activeInv: new Set(INVENTORY.map(i=>i.id)),
+  result: null,
+};
+
+function setDiam(d) {
+  state.diam = d;
+  document.getElementById('diam-label').textContent = d + '"';
+  document.querySelectorAll('#diam-btns .seg-btn').forEach(b => b.classList.toggle('active', +b.dataset.val === d));
+}
+
+function toggleEmotion(e, btn) {
+  if (state.emotions.includes(e)) {
+    if (state.emotions.length > 1) {
+      state.emotions = state.emotions.filter(x => x !== e);
+      btn.classList.remove('active');
+    }
+  } else {
+    state.emotions.push(e);
+    btn.classList.add('active');
+  }
+}
+
+function initFormulas() {
+  const el = document.getElementById('formula-btns');
+  el.innerHTML = FORMULAS.map(f => `
+    <button class="formula-btn ${f.id === state.formula ? 'active' : ''}" onclick="setFormula('${f.id}',this)">
+      ${f.label}
+      <span>${f.desc}</span>
+    </button>
+  `).join('');
+}
+
+function setFormula(id, btn) {
+  state.formula = id;
+  document.querySelectorAll('.formula-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function initInventory() {
+  const el = document.getElementById('inv-list');
+  el.innerHTML = INVENTORY.map(item => `
+    <div class="inventory-item ${state.activeInv.has(item.id) ? 'selected' : ''}" onclick="toggleInv('${item.id}',this)">
+      <span class="item-dot" style="background:${item.color}"></span>
+      <span class="item-name">${item.name}</span>
+      <div class="item-tags">
+        <span class="itag role">${item.role}</span>
+        <span class="itag emotion">${item.blend || item.ep}</span>
+        <span class="itag behavior">${item.behavior}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleInv(id, el) {
+  if (state.activeInv.has(id)) state.activeInv.delete(id);
+  else state.activeInv.add(id);
+  el.classList.toggle('selected', state.activeInv.has(id));
+}
+
+function runEngine() {
+  const budget = BUDGET_BY_DIAM[state.diam];
+  const slots = SLOT_TEMPLATES[state.formula] || SLOT_TEMPLATES.crescent;
+  const available = INVENTORY.filter(i => state.activeInv.has(i.id));
+  const emotions = state.emotions;
+  const log = [];
+  const filledSlots = [];
+  const emotionUsedPerTier = {};
+
+  for (const slot of slots) {
+    const tier = slot.tier;
+    if (!emotionUsedPerTier[tier]) emotionUsedPerTier[tier] = new Set();
+    const used = emotionUsedPerTier[tier];
+
+    const candidates = available.filter(i => i.role === slot.role || (slot.role === 'texture' && i.role === 'texture'));
+    const matchScored = candidates.map(c => {
+      const itemEmotions = [c.ep, c.es, c.blend].filter(Boolean);
+      const matches = itemEmotions.filter(e => emotions.includes(e)).length;
+      return { item: c, matches };
+    }).filter(c => c.matches > 0).sort((a,b) => b.matches - a.matches);
+
+    const fallback = candidates.slice();
+    let chosen = null;
+    let blocked = null;
+
+    for (const candidate of [...matchScored.map(m=>m.item), ...fallback]) {
+      const candidateEmotions = [candidate.ep, candidate.es, candidate.blend].filter(Boolean);
+      const overlap = candidateEmotions.filter(e => used.has(e));
+      if (overlap.length === 0) {
+        chosen = candidate;
+        candidateEmotions.forEach(e => used.add(e));
+        log.push({pass:true, slot:slot.role, tier, item:candidate.name, emotion:candidate.blend||candidate.ep});
+        break;
+      } else if (!blocked) {
+        blocked = {item: candidate, overlap};
+        log.push({pass:false, slot:slot.role, tier, item:candidate.name, emotion:candidate.blend||candidate.ep, overlap});
+      }
+    }
+
+    if (!chosen && candidates.length > 0) {
+      chosen = candidates[0];
+      log.push({pass:true, slot:slot.role, tier, item:chosen.name, emotion:chosen.blend||chosen.ep, forced:true});
+    }
+
+    const zoneBudget = Math.round(budget * (ZONE_SPLITS[slot.role] || 0.1));
+    const units = BEHAVIOR_UNITS[chosen ? chosen.behavior : 'mid'];
+    const stemCount = Math.max(1, Math.round(zoneBudget / units / Math.max(1, slots.filter(s=>s.role===slot.role).length)));
+
+    filledSlots.push({ ...slot, item: chosen, stemCount, zoneBudget: Math.round(zoneBudget / slots.filter(s=>s.role===slot.role).length), blocked: !chosen });
+  }
+
+  state.result = { budget, filledSlots, log, formula: state.formula, diam: state.diam, emotions: [...state.emotions] };
+  renderResults();
+}
+
+function renderResults() {
+  const r = state.result;
+  if (!r) return;
+
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.step-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-slots').classList.add('active');
+  document.querySelector('.step-tab').classList.add('active');
+
+  renderSlots(r);
+  renderPlacement(r);
+  renderStems(r);
+  renderPrompt(r);
+}
+
+function renderSlots(r) {
+  document.getElementById('slots-empty').style.display = 'none';
+  document.getElementById('slots-content').style.display = 'block';
+
+  const blocked = r.log.filter(l => !l.pass);
+  document.getElementById('variety-note').innerHTML =
+    blocked.length > 0
+      ? `<strong style="color:var(--gold)">Variety gate fired ${blocked.length}x</strong> — ${blocked.map(b=>`<em>${b.item}</em> skipped (emotion clash: ${b.overlap?.join(', ')})`).join('; ')}.`
+      : `<strong style="color:var(--sage)">All slots filled cleanly</strong> — no emotion repeats in any tier. Every floral brings a distinct emotional note.`;
+
+  const tiers = [...new Set(r.filledSlots.map(s => s.tier))];
+  const tiersEl = document.getElementById('slot-tiers');
+  tiersEl.innerHTML = '';
+
+  for (const tier of tiers) {
+    const tierSlots = r.filledSlots.filter(s => s.tier === tier);
+    const row = document.createElement('div');
+    row.className = 'slot-row';
+    row.innerHTML = `<div class="slot-tier-label">${tier}</div><div class="slot-cards" id="tier-${tier.replace(' ','')}"></div>`;
+    tiersEl.appendChild(row);
+
+    tierSlots.forEach((slot, i) => {
+      const card = document.createElement('div');
+      card.className = 'slot-card';
+      if (slot.item) {
+        card.classList.add('filled');
+        card.innerHTML = `
+          <div class="slot-role">${slot.role}</div>
+          <div class="slot-name">${slot.item.name}</div>
+          <div class="slot-emotion">${slot.item.blend || slot.item.ep}</div>
+        `;
+      } else {
+        card.classList.add('blocked');
+        card.innerHTML = `<div class="slot-role">${slot.role}</div><div class="slot-blocked-msg">No inventory match</div>`;
+      }
+      document.getElementById(`tier-${tier.replace(' ','')}`).appendChild(card);
+      setTimeout(() => card.classList.add('visible'), i * 120 + 60);
+    });
+  }
+}
+
+function renderPlacement(r) {
+  document.getElementById('placement-empty').style.display = 'none';
+  document.getElementById('placement-content').style.display = 'block';
+
+  const cx = 170, cy = 170, maxR = 130;
+  const arc = FORMULA_ARCS[r.formula] || {start:0, end:360};
+  const arcSpan = (arc.end - arc.start + 360) % 360 || 360;
+
+  const ROLE_RADII = {
+    focal: [0.62, 0.72], secondary: [0.48, 0.60], bridge: [0.35, 0.52],
+    greenery: [0.68, 0.90], accent: [0.60, 0.82], texture: [0.42, 0.65], filler: [0.30, 0.80]
+  };
+
+  const svg = document.getElementById('polar-canvas');
+  svg.innerHTML = '';
+
+  const mkEl = (tag, attrs) => {
+    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (const [k,v] of Object.entries(attrs)) el.setAttribute(k, v);
+    return el;
+  };
+
+  const arcPath = (startDeg, endDeg, r) => {
+    const toRad = d => (d - 90) * Math.PI / 180;
+    const span = ((endDeg - startDeg) + 360) % 360;
+    if (span >= 359) return `M ${cx} ${cy-r} A ${r} ${r} 0 1 1 ${cx-.01} ${cy-r}`;
+    const large = span > 180 ? 1 : 0;
+    const sx = cx + r * Math.cos(toRad(startDeg));
+    const sy = cy + r * Math.sin(toRad(startDeg));
+    const ex = cx + r * Math.cos(toRad(endDeg));
+    const ey = cy + r * Math.sin(toRad(endDeg));
+    return `M ${cx} ${cy} L ${sx.toFixed(1)} ${sy.toFixed(1)} A ${r} ${r} 0 ${large} 1 ${ex.toFixed(1)} ${ey.toFixed(1)} Z`;
+  };
+
+  for (let i = 1; i <= 4; i++) {
+    svg.appendChild(mkEl('circle', {cx, cy, r: maxR * i/4, fill:'none', stroke:'#2e2a22', 'stroke-width':'0.5'}));
+  }
+
+  const silFill = mkEl('path', {d: arcPath(arc.end%360, arc.start, maxR), fill:'rgba(30,27,23,0.6)', stroke:'none'});
+  svg.appendChild(silFill);
+
+  const activeArc = mkEl('path', {d: arcPath(arc.start, arc.end, maxR), fill:'rgba(107,124,92,0.06)', stroke:'#6b7c5c', 'stroke-width':'0.5', 'stroke-dasharray':'3 3'});
+  svg.appendChild(activeArc);
+
+  const placedSlots = r.filledSlots.filter(s => s.item);
+  const rng = (seed) => { let s = seed * 9301 + 49297; return (s % 233280) / 233280; };
+  let seed = 42;
+
+  const legend = [];
+
+  placedSlots.forEach((slot, idx) => {
+    seed++;
+    const rRange = ROLE_RADII[slot.role] || [0.4, 0.7];
+    const radiusNorm = rRange[0] + rng(seed) * (rRange[1] - rRange[0]);
+    const radius = radiusNorm * maxR;
+    seed++;
+    const angleInArc = arc.start + rng(seed) * arcSpan;
+    const angleRad = (angleInArc - 90) * Math.PI / 180;
+    const px = cx + radius * Math.cos(angleRad);
+    const py = cy + radius * Math.sin(angleRad);
+
+    const dotR = slot.role === 'focal' ? 9 : slot.role === 'secondary' ? 7 : slot.role === 'greenery' ? 5 : 4;
+    const color = slot.item.color;
+    const zoneColor = ZONE_COLORS[slot.role];
+
+    const g = mkEl('g', {style:'cursor:pointer'});
+    const outer = mkEl('circle', {cx: px.toFixed(1), cy: py.toFixed(1), r: dotR+2, fill: zoneColor, opacity:'0.3'});
+    const inner = mkEl('circle', {cx: px.toFixed(1), cy: py.toFixed(1), r: dotR, fill: color, stroke: zoneColor, 'stroke-width':'1'});
+    g.appendChild(outer);
+    g.appendChild(inner);
+    svg.appendChild(g);
+
+    legend.push({role: slot.role, name: slot.item.name, color: zoneColor, dotColor: color});
+  });
+
+  svg.appendChild(mkEl('circle', {cx, cy, r: 10, fill:'#1e1b17', stroke:'#2e2a22', 'stroke-width':'0.5'}));
+
+  const arcF = FORMULAS.find(f => f.id === r.formula);
+  const legendEl = document.getElementById('placement-legend');
+  legendEl.innerHTML = `
+    <div style="font-size:11px;color:var(--text-faint);margin-bottom:.6rem">
+      <span style="color:var(--sage)">${arcF?.label || r.formula}</span> — active arc ${arcF?.arc || ''} · shaded = silence zone
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      ${legend.map(l => `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--text-faint)">
+        <span style="width:8px;height:8px;border-radius:50%;background:${l.dotColor};border:1px solid ${l.color};display:inline-block"></span>
+        ${l.name}
+      </span>`).join('')}
+    </div>
+  `;
+}
+
+function renderStems(r) {
+  document.getElementById('stems-empty').style.display = 'none';
+  document.getElementById('stems-content').style.display = 'block';
+
+  const totalStems = r.filledSlots.filter(s=>s.item).reduce((a,b) => a + b.stemCount, 0);
+  const focalStems = r.filledSlots.filter(s=>s.role==='focal'&&s.item).reduce((a,b)=>a+b.stemCount,0);
+  const greenStems = r.filledSlots.filter(s=>s.role==='greenery'&&s.item).reduce((a,b)=>a+b.stemCount,0);
+  const filledCount = r.filledSlots.filter(s=>s.item).length;
+
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-value">${r.diam}"</div><div class="stat-label">Diameter</div></div>
+    <div class="stat-card"><div class="stat-value">${totalStems}</div><div class="stat-label">Total stems</div></div>
+    <div class="stat-card"><div class="stat-value">${focalStems}</div><div class="stat-label">Focal stems</div></div>
+    <div class="stat-card"><div class="stat-value">${filledCount}</div><div class="stat-label">Unique florals</div></div>
+  `;
+
+  const roles = [...new Set(r.filledSlots.map(s=>s.role))];
+  const barsEl = document.getElementById('budget-bars');
+  barsEl.innerHTML = '';
+
+  for (const role of roles) {
+    const roleSlots = r.filledSlots.filter(s=>s.role===role&&s.item);
+    if (!roleSlots.length) continue;
+    const totalZoneBudget = Math.round(r.budget * (ZONE_SPLITS[role] || 0.1));
+    const used = roleSlots.reduce((a,b)=>a+b.stemCount,0);
+    const pct = Math.min(100, Math.round(used/totalZoneBudget*100));
+    const color = ZONE_COLORS[role];
+
+    const row = document.createElement('div');
+    row.className = 'budget-row';
+    row.innerHTML = `
+      <div class="budget-header">
+        <span class="budget-name">${role}</span>
+        <span class="budget-nums">${used} of ${totalZoneBudget} stems · ${pct}%</span>
+      </div>
+      <div class="budget-track">
+        <div class="budget-fill" style="width:0%;background:${color}" id="bar-${role}"></div>
+      </div>
+      <div style="margin-top:4px;font-size:10px;color:var(--text-faint)">
+        ${roleSlots.map(s=>`${s.item.name}: ${s.stemCount} stems (${s.item.behavior})`).join(' · ')}
+      </div>
+    `;
+    barsEl.appendChild(row);
+    setTimeout(() => {
+      const bar = document.getElementById(`bar-${role}`);
+      if (bar) bar.style.width = pct + '%';
+    }, 100);
+  }
+
+  const logEl = document.getElementById('variety-log');
+  logEl.innerHTML = '';
+  r.log.forEach((entry, i) => {
+    const div = document.createElement('div');
+    div.className = 'log-entry';
+    div.innerHTML = entry.pass
+      ? `<span class="log-icon log-pass">✓</span><span class="log-text"><span class="log-emotion">${entry.emotion}</span> → ${entry.item} placed in <em>${entry.tier}</em> ${entry.forced ? '(forced fallback)' : ''}</span>`
+      : `<span class="log-icon log-block">✗</span><span class="log-text"><span class="log-emotion">${entry.emotion}</span> — ${entry.item} blocked (${entry.overlap?.join(', ')} already in ${entry.tier})</span>`;
+    logEl.appendChild(div);
+    setTimeout(() => div.classList.add('visible'), i * 60);
+  });
+}
+
+function renderPrompt(r) {
+  document.getElementById('prompt-empty').style.display = 'none';
+  document.getElementById('prompt-content').style.display = 'block';
+
+  const focals = r.filledSlots.filter(s=>s.role==='focal'&&s.item).map(s=>s.item.name);
+  const secondary = r.filledSlots.filter(s=>s.role==='secondary'&&s.item).map(s=>s.item.name);
+  const greens = r.filledSlots.filter(s=>s.role==='greenery'&&s.item).map(s=>s.item.name);
+  const textures = r.filledSlots.filter(s=>(s.role==='texture'||s.role==='accent')&&s.item).map(s=>s.item.name);
+  const arcF = FORMULAS.find(f=>f.id===r.formula);
+  const emotionStr = r.emotions.join(', ');
+
+  const prompt = `Luxury faux botanical wreath, ${arcF?.label.toLowerCase() || r.formula} composition, ${r.diam}-inch grapevine base, artisan-crafted. Emotional tone: ${emotionStr}. Focal blooms: ${focals.join(', ') || 'mixed florals'}. Supporting fill: ${secondary.join(', ') || 'soft secondary blooms'}. Structural greenery: ${greens.join(', ') || 'trailing foliage'}. Texture detail: ${textures.join(', ') || 'dried accent pieces'}. Intentional negative space exposes raw grapevine. Premium silk florals — no fresh flowers, no plastic, no craft-store aesthetic. Editorial product photography, shallow depth of field, warm diffused natural light from upper left, matte aged plaster wall, luxury handcrafted decor brand. --ar 4:5 --style raw --q 2`;
+
+  document.getElementById('prompt-text').textContent = prompt;
+  document.getElementById('prompt-meta').innerHTML = `
+    <strong style="color:var(--text-muted)">Blueprint ID:</strong> EC_WR_V2_${Math.floor(Math.random()*9000)+1000} &nbsp;·&nbsp;
+    <strong style="color:var(--text-muted)">Formula:</strong> ${arcF?.label} &nbsp;·&nbsp;
+    <strong style="color:var(--text-muted)">Diameter:</strong> ${r.diam}" &nbsp;·&nbsp;
+    <strong style="color:var(--text-muted)">Total stems:</strong> ${r.filledSlots.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0)} &nbsp;·&nbsp;
+    <strong style="color:var(--text-muted)">Unique florals:</strong> ${r.filledSlots.filter(s=>s.item).length}
+  `;
+}
+
+function switchStep(id) {
+  document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.step-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function copyPrompt() {
+  const text = document.getElementById('prompt-text').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+}
+
+initFormulas();
+initInventory();
+</script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Use Design Principles Coach — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ec-white:#FFFFFF; --ec-off:#F9F7F4; --ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A; --ec-charcoal:#2E2E2E; --ec-ink:#4A4A4A;
+  --ec-green:#4A6741; --ec-green-l:#6B8F67; --ec-green-pale:#EEF2ED; --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-gray-200:#E8E8E8; --ec-gray-300:#D0D0D0; --ec-gray-400:#A8A8A8; --ec-gray-500:#787878;
+  --ec-warn:#C4922A; --ec-info:#4A6785;
+  --ec-serif:'Cormorant Garamond',Georgia,serif;
+  --ec-sans:'Inter',system-ui,sans-serif;
+  --ec-script:'Dancing Script',cursive;
+  --ec-shadow-card:0 2px 8px rgba(0,0,0,0.06),0 0 0 1px var(--ec-gray-200);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--ec-sans);background:var(--ec-off);color:var(--ec-black);line-height:1.6;}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:100;background:rgba(249,247,244,0.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--ec-gray-200);padding:14px 48px;display:flex;align-items:center;justify-content:space-between;}
+.nav-brand{display:flex;align-items:baseline;gap:10px;}
+.script{font-family:var(--ec-script);font-size:1.35rem;color:var(--ec-green);}
+.nav-label{font-size:0.75rem;color:var(--ec-gray-500);letter-spacing:0.05em;}
+.nav-pill{font-size:0.6875rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:999px;background:#F5EEF4;color:#7A4A85;}
+@media(max-width:600px){.nav{padding:12px 20px;}}
+
+/* HERO */
+.hero{background:var(--ec-black);padding:80px 48px 72px;position:relative;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;pointer-events:none;}
+.hero-ring{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,0.05);}
+.hero-content{position:relative;z-index:2;max-width:720px;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;margin-bottom:24px;font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-green-l);}
+.hero h1{font-family:var(--ec-serif);font-size:clamp(2.5rem,6vw,4.5rem);font-weight:600;line-height:1.05;letter-spacing:-0.025em;color:#fff;margin-bottom:16px;}
+.hero h1 em{font-style:italic;color:var(--ec-green-l);}
+.hero-script{font-family:var(--ec-script);font-size:clamp(1.5rem,4vw,2.5rem);color:rgba(255,255,255,0.35);display:block;margin-bottom:24px;}
+.hero-sub{font-size:1.0625rem;color:rgba(255,255,255,0.6);line-height:1.7;max-width:540px;margin-bottom:32px;}
+.hero-meta{display:flex;align-items:center;gap:24px;flex-wrap:wrap;}
+.hero-meta-item{display:flex;align-items:center;gap:8px;font-size:0.8125rem;color:rgba(255,255,255,0.4);}
+.hero-meta-dot{width:5px;height:5px;border-radius:50%;background:var(--ec-green-l);}
+@media(max-width:600px){.hero{padding:56px 24px 48px;}}
+
+/* CONTENTS */
+.contents{background:var(--ec-white);border-bottom:1px solid var(--ec-gray-200);}
+.contents-inner{max-width:900px;margin:0 auto;padding:24px 48px;display:flex;align-items:center;gap:32px;flex-wrap:wrap;}
+.contents-label{font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-gray-400);flex-shrink:0;}
+.contents-links{display:flex;gap:8px;flex-wrap:wrap;}
+.contents-link{padding:5px 14px;border-radius:999px;font-size:0.8rem;color:var(--ec-ink);border:1.5px solid var(--ec-gray-200);text-decoration:none;transition:all .18s;}
+.contents-link:hover{border-color:var(--ec-green);color:var(--ec-green);background:var(--ec-green-pale);}
+@media(max-width:600px){.contents-inner{padding:20px;gap:16px;}}
+
+/* MAIN LAYOUT */
+.page{max-width:900px;margin:0 auto;padding:60px 48px;}
+@media(max-width:600px){.page{padding:40px 20px;}}
+
+/* SECTION */
+.guide-section{margin-bottom:72px;}
+.section-overline{font-size:0.75rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--ec-green);margin-bottom:12px;}
+.section-title{font-family:var(--ec-serif);font-size:clamp(1.75rem,4vw,2.5rem);font-weight:600;line-height:1.15;letter-spacing:-0.015em;margin-bottom:16px;}
+.section-intro{font-size:1.0625rem;color:var(--ec-ink);line-height:1.75;max-width:620px;margin-bottom:32px;}
+
+/* STEP CARDS */
+.steps{display:flex;flex-direction:column;gap:20px;}
+.step{display:grid;grid-template-columns:48px 1fr;gap:20px;align-items:start;background:var(--ec-white);border-radius:14px;padding:24px;box-shadow:var(--ec-shadow-card);transition:transform .2s ease,box-shadow .2s ease;}
+.step:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.08),0 0 0 1px var(--ec-gray-200);}
+.step-num{width:48px;height:48px;border-radius:50%;background:var(--ec-green);color:#fff;font-family:var(--ec-serif);font-size:1.25rem;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-body h3{font-family:var(--ec-serif);font-size:1.25rem;font-weight:600;margin-bottom:6px;}
+.step-body p{font-size:0.9rem;color:var(--ec-ink);line-height:1.7;}
+.step-body .tip{display:inline-flex;align-items:flex-start;gap:8px;margin-top:10px;padding:10px 14px;background:var(--ec-green-pale);border-radius:8px;font-size:0.8125rem;color:var(--ec-green);line-height:1.5;}
+.step-body .tip strong{font-weight:600;}
+
+/* MODULE CARDS */
+.module-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:560px){.module-grid{grid-template-columns:1fr;}}
+.mcard{background:var(--ec-white);border-radius:14px;padding:22px 24px;box-shadow:var(--ec-shadow-card);border-top:3px solid var(--ec-green);transition:transform .2s ease;}
+.mcard:hover{transform:translateY(-3px);}
+.mcard-icon{font-size:1.5rem;margin-bottom:10px;}
+.mcard h4{font-family:var(--ec-serif);font-size:1.125rem;font-weight:600;margin-bottom:6px;}
+.mcard p{font-size:0.8375rem;color:var(--ec-ink);line-height:1.65;margin-bottom:12px;}
+.mcard-pills{display:flex;flex-wrap:wrap;gap:5px;}
+.pill{padding:3px 10px;border-radius:999px;background:var(--ec-green-pale);color:var(--ec-green);font-size:0.7rem;font-weight:500;}
+
+/* QUICK PROMPT EXAMPLES */
+.prompt-examples{background:var(--ec-white);border-radius:14px;padding:28px;box-shadow:var(--ec-shadow-card);}
+.prompt-examples h4{font-family:var(--ec-serif);font-size:1.125rem;font-weight:600;margin-bottom:18px;}
+.prompt-list{display:flex;flex-direction:column;gap:0;}
+.prompt-row{display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--ec-gray-200);}
+.prompt-row:last-child{border-bottom:none;padding-bottom:0;}
+.prompt-module{font-size:0.7rem;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.pm-balance{background:var(--ec-green-pale);color:var(--ec-green);}
+.pm-rhythm{background:#EEF4F9;color:#4A6785;}
+.pm-focal{background:#FFF4E6;color:#C4922A;}
+.pm-color{background:#F5EEF4;color:#7A4A85;}
+.prompt-text{font-size:0.875rem;color:var(--ec-ink);line-height:1.5;font-style:italic;}
+
+/* SCORE EXPLAINER */
+.score-explainer{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:560px){.score-explainer{grid-template-columns:1fr;}}
+.scard{background:var(--ec-white);border-radius:12px;padding:20px;box-shadow:var(--ec-shadow-card);}
+.scard-label{font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-gray-500);margin-bottom:8px;}
+.scard-range{display:flex;flex-direction:column;gap:6px;}
+.srange{display:flex;align-items:center;gap:10px;}
+.srange-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.srange-text{font-size:0.8125rem;color:var(--ec-ink);}
+
+/* CALLOUT CARDS */
+.callout{border-radius:14px;padding:24px 28px;margin:32px 0;}
+.callout.green{background:var(--ec-green-pale);border-left:3px solid var(--ec-green);}
+.callout.warm{background:var(--ec-paper);border-left:3px solid var(--ec-warn);}
+.callout.dark{background:var(--ec-black);color:#fff;}
+.callout h4{font-family:var(--ec-serif);font-size:1.125rem;font-weight:600;margin-bottom:6px;}
+.callout p{font-size:0.875rem;line-height:1.65;}
+.callout.green p{color:var(--ec-green);}
+.callout.warm p{color:var(--ec-ink);}
+.callout.dark p{color:rgba(255,255,255,0.65);}
+.callout.dark h4{color:#fff;}
+
+/* RULES TABLE */
+.rules-table{width:100%;border-collapse:collapse;font-size:0.875rem;}
+.rules-table th{text-align:left;font-size:0.7rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-gray-400);padding:8px 16px;border-bottom:1px solid var(--ec-gray-200);}
+.rules-table td{padding:12px 16px;border-bottom:1px solid var(--ec-gray-200);color:var(--ec-ink);vertical-align:top;line-height:1.55;}
+.rules-table tr:last-child td{border-bottom:none;}
+.rules-table tr:hover td{background:var(--ec-off);}
+.rules-table .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:0.7rem;font-weight:600;}
+.tag-do{background:#EEF2ED;color:var(--ec-green);}
+.tag-dont{background:#FEEEEE;color:#B94040;}
+
+/* DIVIDER */
+.divider{display:flex;align-items:center;gap:16px;margin:56px 0;color:var(--ec-gray-300);font-size:1rem;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--ec-gray-200);}
+
+/* FOOTER */
+footer{background:var(--ec-black);padding:48px;text-align:center;}
+footer .script{display:block;margin-bottom:10px;}
+footer p{font-size:0.8125rem;color:rgba(255,255,255,0.35);}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease;}
+.reveal.in{opacity:1;transform:translateY(0);}
+.r2{transition-delay:.1s;}.r3{transition-delay:.2s;}.r4{transition-delay:.3s;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <span class="script">Evercrafted</span>
+    <span class="nav-label">Design Principles Coach</span>
+  </div>
+  <span class="nav-pill">Studio</span>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="hero-ring" style="width:500px;height:500px;top:-200px;right:-150px;"></div>
+    <div class="hero-ring" style="width:250px;height:250px;bottom:-60px;left:40px;"></div>
+    <svg style="position:absolute;bottom:30px;right:48px;opacity:0.07;" width="120" height="160" viewBox="0 0 120 160" fill="none">
+      <path d="M60 150 C60 150 20 100 20 60 C20 33 38 15 60 15 C82 15 100 33 100 60 C100 100 60 150 60 150Z" stroke="white" stroke-width="1.5" fill="none"/>
+      <path d="M60 150 L60 30" stroke="white" stroke-width="0.75" stroke-dasharray="3 3"/>
+      <path d="M60 100 C60 100 40 90 30 72" stroke="white" stroke-width="0.75"/>
+      <path d="M60 75 C60 75 80 65 90 47" stroke="white" stroke-width="0.75"/>
+    </svg>
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <svg width="14" height="14" viewBox="0 0 32 32" fill="none"><path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+      Getting Started Guide
+    </div>
+    <h1>Design with<br><em>intention.</em></h1>
+    <span class="hero-script">your coach is ready when you are.</span>
+    <p class="hero-sub">Everything you need to know to get the most out of your Design Principles Coach — four learning modules, an AI coach that speaks your language, and a live design scorer.</p>
+    <div class="hero-meta">
+      <span class="hero-meta-item"><span class="hero-meta-dot"></span>5 min read</span>
+      <span class="hero-meta-item"><span class="hero-meta-dot"></span>Studio tier</span>
+      <span class="hero-meta-item"><span class="hero-meta-dot"></span>No prior design training needed</span>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENTS -->
+<div class="contents">
+  <div class="contents-inner">
+    <span class="contents-label">In this guide</span>
+    <div class="contents-links">
+      <a class="contents-link" href="#overview">Overview</a>
+      <a class="contents-link" href="#modules">The Four Modules</a>
+      <a class="contents-link" href="#chat">Talking to the Coach</a>
+      <a class="contents-link" href="#score">Design Score Analyzer</a>
+      <a class="contents-link" href="#tips">Pro Tips</a>
+      <a class="contents-link" href="#rules">Do's & Don'ts</a>
+    </div>
+  </div>
+</div>
+
+<main class="page">
+
+  <!-- OVERVIEW -->
+  <section class="guide-section reveal" id="overview">
+    <p class="section-overline">What this is</p>
+    <h2 class="section-title">Your wreath design education — built into the platform.</h2>
+    <p class="section-intro">Design Principles Coach is a live, AI-powered learning tool inside your Evercrafted Studio dashboard. It doesn't teach generic design theory — it teaches design in the language of wreath making: polar coordinates, stem counts, clock-position placement, and seasonal palettes. Think of it as having a master florist on call, anytime you're building.</p>
+
+    <div class="steps">
+      <div class="step reveal r2">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Open the app from your Studio dashboard</h3>
+          <p>Find Design Principles Coach listed under your Studio tier apps. Click to open — it loads instantly in your browser. No separate login, no downloads.</p>
+        </div>
+      </div>
+      <div class="step reveal r3">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Choose a module to start with</h3>
+          <p>You'll see four tabs at the top: Balance, Rhythm, Focal Points, and Color Theory. Each one is a self-contained learning module with a reference panel and a live AI coach. Start wherever feels most relevant to what you're building right now.</p>
+          <div class="tip">
+            <svg width="14" height="14" viewBox="0 0 32 32" fill="none" style="flex-shrink:0;margin-top:1px;"><path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+            <span><strong>New to design?</strong> Start with Balance — it's the foundation everything else builds on.</span>
+          </div>
+        </div>
+      </div>
+      <div class="step reveal r4">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Read the reference panel, then ask questions</h3>
+          <p>The left side of the screen shows principle cards, diagrams, and placement examples for your active module. The right side is your AI chat coach. Use the reference panel to ground yourself, then ask the coach to apply those principles to your specific design.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">✦</div>
+
+  <!-- MODULES -->
+  <section class="guide-section reveal" id="modules">
+    <p class="section-overline">The four modules</p>
+    <h2 class="section-title">Each module is a discipline.<br>Each discipline is a superpower.</h2>
+    <p class="section-intro">The modules aren't a curriculum you follow in order — they're tools you reach for when you need them. Feeling like a design is off? Open Balance. Not sure why your wreath feels static? Try Rhythm.</p>
+
+    <div class="module-grid">
+      <div class="mcard reveal">
+        <div class="mcard-icon">⚖️</div>
+        <h4>Balance</h4>
+        <p>Teaches symmetrical, asymmetrical, and radial balance with exact polar coordinates. Includes an interactive placement diagram for 24" wreaths showing where P (primary), S (secondary), and f (filler) clusters live.</p>
+        <div class="mcard-pills">
+          <span class="pill">Visual weight</span>
+          <span class="pill">Golden angle</span>
+          <span class="pill">Polar coordinates</span>
+        </div>
+      </div>
+      <div class="mcard reveal r2">
+        <div class="mcard-icon">〰️</div>
+        <h4>Rhythm</h4>
+        <p>Covers repetition, alternation, and progression — the patterns that make a wreath feel alive instead of static. Includes specific angular interval targets and stem count guidance by wreath size.</p>
+        <div class="mcard-pills">
+          <span class="pill">A–B pattern</span>
+          <span class="pill">Flow direction</span>
+          <span class="pill">45° intervals</span>
+        </div>
+      </div>
+      <div class="mcard reveal r3">
+        <div class="mcard-icon">◎</div>
+        <h4>Focal Points</h4>
+        <p>Maps primary and secondary focal placement with size ratios and eye-path design. Includes the focal SVG diagram showing exactly where P and S should sit on the ring and how the eye should travel between them.</p>
+        <div class="mcard-pills">
+          <span class="pill">300–330° primary</span>
+          <span class="pill">Eye path</span>
+          <span class="pill">Size ratios</span>
+        </div>
+      </div>
+      <div class="mcard reveal r4">
+        <div class="mcard-icon">🎨</div>
+        <h4>Color Theory</h4>
+        <p>Applies 60–30–10 rules, warm/cool balance, and seasonal palette logic to stem counts. Includes four curated palettes — Warm Autumn, Cool Winter, Spring Soft, and Moody Editorial — with clickable swatch previews.</p>
+        <div class="mcard-pills">
+          <span class="pill">60–30–10</span>
+          <span class="pill">Seasonal palettes</span>
+          <span class="pill">Warm/cool split</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">✦</div>
+
+  <!-- CHAT -->
+  <section class="guide-section reveal" id="chat">
+    <p class="section-overline">The AI coach</p>
+    <h2 class="section-title">Ask it anything. It speaks wreath.</h2>
+    <p class="section-intro">The coach is scoped to whichever module you have open — so when you're in Balance, every answer is grounded in balance principles. Switch to Focal Points and it shifts completely. You never have to explain the context twice.</p>
+
+    <div class="callout green reveal">
+      <h4>How the quick-prompt buttons work</h4>
+      <p>Each module comes loaded with four quick-prompt buttons — these are the most common questions for that discipline. Tap any one to send it instantly. They're a great way to start a conversation or explore a principle you haven't thought about yet.</p>
+    </div>
+
+    <div class="prompt-examples reveal">
+      <h4>Example questions that work well</h4>
+      <div class="prompt-list">
+        <div class="prompt-row">
+          <span class="prompt-module pm-balance">Balance</span>
+          <span class="prompt-text">"My 24-inch wreath feels heavy at the bottom. Walk me through how to redistribute the weight."</span>
+        </div>
+        <div class="prompt-row">
+          <span class="prompt-module pm-balance">Balance</span>
+          <span class="prompt-text">"What's the exact polar coordinate for the primary focal on an asymmetric 18-inch layout?"</span>
+        </div>
+        <div class="prompt-row">
+          <span class="prompt-module pm-rhythm">Rhythm</span>
+          <span class="prompt-text">"I have burgundy peonies and eucalyptus. How do I create an A-B alternation pattern?"</span>
+        </div>
+        <div class="prompt-row">
+          <span class="prompt-module pm-rhythm">Rhythm</span>
+          <span class="prompt-text">"How many repetitions do I need before a pattern reads as intentional rather than random?"</span>
+        </div>
+        <div class="prompt-row">
+          <span class="prompt-module pm-focal">Focal Points</span>
+          <span class="prompt-text">"I have two large blooms that are competing. How do I make one clearly dominant?"</span>
+        </div>
+        <div class="prompt-row">
+          <span class="prompt-module pm-focal">Focal Points</span>
+          <span class="prompt-text">"Design me an eye path for a fall wreath with a primary focal at 315° and two secondaries."</span>
+        </div>
+        <div class="prompt-row">
+          <span class="prompt-module pm-color">Color Theory</span>
+          <span class="prompt-text">"Build me a 60-30-10 fall palette using burgundy as my dominant color with a warm accent."</span>
+        </div>
+        <div class="prompt-row">
+          <span class="prompt-module pm-color">Color Theory</span>
+          <span class="prompt-text">"My palette feels too warm and heavy. What cool-toned greenery should I add, and how many stems?"</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warm reveal" style="margin-top:24px;">
+      <h4>Keep the conversation going</h4>
+      <p>The coach remembers your full conversation within the session. If the first answer raises a follow-up question, just ask — it has the context. You don't need to re-explain your design every time. Start a new session (by switching modules or refreshing) to reset the context.</p>
+    </div>
+  </section>
+
+  <div class="divider">✦</div>
+
+  <!-- SCORE -->
+  <section class="guide-section reveal" id="score">
+    <p class="section-overline">Design Score Analyzer</p>
+    <h2 class="section-title">Describe your design.<br>See exactly what's working.</h2>
+    <p class="section-intro">Scroll below the module area to find the Design Score Analyzer. Describe your current design in plain language — florals, placement, size, colors — and the coach will score it across all four principles. You'll get a number and a one-sentence repair note for anything that needs attention.</p>
+
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <h3>Write a plain-language design description</h3>
+          <p>Don't worry about being technical. Describe what you have: the size, the main flowers, roughly where you placed things, and the color palette. The more specific you are, the sharper the score.</p>
+          <div class="tip">
+            <svg width="14" height="14" viewBox="0 0 32 32" fill="none" style="flex-shrink:0;margin-top:1px;"><path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+            <span><strong>Good example:</strong> "24-inch grapevine, large burgundy peonies clustered near the top-left, eucalyptus filler spread around the ring, small amber berries as accents, mostly warm tones."</span>
+          </div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <h3>Hit "Score It" and read your results</h3>
+          <p>Four score cards will appear — one for each principle. Each shows a score from 0–100, a color-coded bar, and a single repair note. Focus first on any axis scoring below 70.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <h3>Take the repair note back to the coach</h3>
+          <p>Copy the repair note for your weakest score and paste it into the coach chat in the relevant module. Ask: "Help me fix this." The coach will walk you through specific changes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="score-explainer reveal" style="margin-top:32px;">
+      <div class="scard">
+        <div class="scard-label">Score ranges explained</div>
+        <div class="scard-range">
+          <div class="srange"><div class="srange-dot" style="background:#4A6741;"></div><div class="srange-text"><strong>80–100</strong> — Strong. This principle is working well in your design.</div></div>
+          <div class="srange"><div class="srange-dot" style="background:#C4922A;"></div><div class="srange-text"><strong>60–79</strong> — Decent, but improvable. Read the repair note for a targeted fix.</div></div>
+          <div class="srange"><div class="srange-dot" style="background:#B94040;"></div><div class="srange-text"><strong>0–59</strong> — Needs attention. Take the repair note directly to the coach for a walkthrough.</div></div>
+        </div>
+      </div>
+      <div class="scard">
+        <div class="scard-label">What each axis scores</div>
+        <div class="scard-range" style="gap:8px;">
+          <div class="srange"><div class="srange-dot" style="background:#4A6741;"></div><div class="srange-text"><strong>Balance</strong> — Visual weight distribution across the ring</div></div>
+          <div class="srange"><div class="srange-dot" style="background:#4A6785;"></div><div class="srange-text"><strong>Rhythm</strong> — Pattern, repetition, and flow direction</div></div>
+          <div class="srange"><div class="srange-dot" style="background:#C4922A;"></div><div class="srange-text"><strong>Focal Impact</strong> — Clarity of primary focal and eye path</div></div>
+          <div class="srange"><div class="srange-dot" style="background:#7A4A85;"></div><div class="srange-text"><strong>Color Harmony</strong> — Palette ratio, warm/cool balance, seasonal fit</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">✦</div>
+
+  <!-- PRO TIPS -->
+  <section class="guide-section reveal" id="tips">
+    <p class="section-overline">Pro tips</p>
+    <h2 class="section-title">Get more out of every session.</h2>
+    <p class="section-intro">These habits will help you build faster, score higher, and actually internalize what you're learning — not just get through the exercise.</p>
+
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">★</div>
+        <div class="step-body">
+          <h3>Score before you build, not just after</h3>
+          <p>Describe your intended design before you start building and run a score. You'll catch structural problems — like a focal placement that will compete with your secondary — before you've already wired everything in.</p>
+        </div>
+      </div>
+      <div class="step reveal r2">
+        <div class="step-num">★</div>
+        <div class="step-body">
+          <h3>Use the module you struggle with most, not the one you like</h3>
+          <p>Most makers have one or two principles they naturally get and one or two they skip. The coach works best when you lean into the uncomfortable ones. If your color is always decent but your rhythm is always flat, live in the Rhythm module for a while.</p>
+        </div>
+      </div>
+      <div class="step reveal r3">
+        <div class="step-num">★</div>
+        <div class="step-body">
+          <h3>Give the coach a specific design, not a general question</h3>
+          <p>"How does rhythm work?" will get you a solid answer. "I have a 20-inch wreath with 5 white hydrangeas and lamb's ear — how do I create rhythm?" will get you an actionable plan with stem counts and intervals. Specificity is the multiplier.</p>
+        </div>
+      </div>
+      <div class="step reveal r4">
+        <div class="step-num">★</div>
+        <div class="step-body">
+          <h3>Run the same design through all four modules</h3>
+          <p>A design that scores 90 on balance can still score 55 on rhythm. Use all four axes to build a complete picture of your design's strengths and gaps. The best designs score 75+ across the board.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider">✦</div>
+
+  <!-- DOS AND DONTS -->
+  <section class="guide-section reveal" id="rules">
+    <p class="section-overline">Quick reference</p>
+    <h2 class="section-title">Do's and Don'ts.</h2>
+    <p class="section-intro">A fast reference for getting the best results from the coach and the scorer.</p>
+
+    <div style="background:var(--ec-white);border-radius:14px;overflow:hidden;box-shadow:var(--ec-shadow-card);">
+      <table class="rules-table">
+        <thead>
+          <tr>
+            <th style="width:70px;"></th>
+            <th>Action</th>
+            <th>Why it matters</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td><span class="tag tag-do">Do</span></td><td>Include your wreath size when asking questions</td><td>Stem counts and placement intervals are size-specific. "18-inch" and "24-inch" get very different answers.</td></tr>
+          <tr><td><span class="tag tag-do">Do</span></td><td>Name the specific florals you're working with</td><td>The coach references real species — "burgundy peonies" gets better advice than "large red flowers."</td></tr>
+          <tr><td><span class="tag tag-do">Do</span></td><td>Follow up if an answer feels off</td><td>The coach has your conversation history. Push back, ask for clarification, or ask it to explain differently.</td></tr>
+          <tr><td><span class="tag tag-do">Do</span></td><td>Use the quick-prompt buttons as jumping-off points</td><td>They're designed to surface the most useful questions for each module — great for when you're not sure what to ask.</td></tr>
+          <tr><td><span class="tag tag-dont">Don't</span></td><td>Ask about cherry blossoms, pussy willow, or twig-based blossom florals</td><td>These are permanently excluded from Evercrafted designs by platform guidelines.</td></tr>
+          <tr><td><span class="tag tag-dont">Don't</span></td><td>Run a score with a vague description</td><td>"I made a wreath with flowers and greenery" won't produce a useful score. Specificity drives accuracy.</td></tr>
+          <tr><td><span class="tag tag-dont">Don't</span></td><td>Switch modules mid-conversation expecting continuity</td><td>Each module has its own chat context. Switching resets the conversation — that's by design, not a bug.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout dark reveal" style="margin-top:32px;">
+      <h4>A note on the Atelier lock</h4>
+      <p>If you see a blurred section at the bottom of the app labeled "Generate Blueprint from Principles" — that's the Atelier-tier feature for turning your principle choices into a full WGS genome string and QACS placement coordinates. It's visible so you can see what's coming. Upgrade to Atelier from your account settings to unlock it.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="script" style="color:var(--ec-green-l);font-size:1.5rem;">Evercrafted</span>
+  <p>Design Principles Coach · Studio Tier · Questions? Contact support from your dashboard.</p>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

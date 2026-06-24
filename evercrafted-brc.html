@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Evercrafted — Blueprint-to-Render Compositor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html,body{margin:0;padding:0;background:#F9F7F4;}
+  input[type=range]{accent-color:#4A6741;}
+  input[type=checkbox]{accent-color:#4A6741;}
+  ::selection{background:rgba(74,103,65,.22);}
+  button:disabled{opacity:.45;cursor:default;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<!-- Vendored React (no CDN — sandbox blocks runtime CDN/Babel; JSX is pre-transpiled
+     into /assets/brc-app.js by scripts/build-brc.js, the same pattern as the Academy port). -->
+<script src="/assets/react.production.min.js"></script>
+<script src="/assets/react-dom.production.min.js"></script>
+<script src="/assets/brc-app.js"></script>
+<!-- Entitlement gate: BRC is the flagship of the Pro toolkit (Studio tier). -->
+<script src="/evercrafted-tier-gate.js"></script>
+<script>ECGate.require({pack:"pro",title:"Blueprint-to-Render Compositor",description:"Render the actual SKUs of any blueprint into a photographic preview — geometry places every stem, AI only retextures. Part of the Pro toolkit."});</script>
+</body>
+</html>

@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blueprint Studio · Evercrafted</title>
+    <style>
+        :root {
+            --gold: #C9A961;
+            --dark: #1a1a1a;
+            --charcoal: #2c2c2c;
+            --light-gray: #f5f5f5;
+            --medium-gray: #666;
+            --border: #d4d4d4;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: var(--white);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .app-header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 0 40px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .brand-logo {
+            font-size: 24px;
+            font-weight: 400;
+            letter-spacing: 4px;
+            color: var(--dark);
+        }
+
+        .brand-divider {
+            width: 1px;
+            height: 24px;
+            background: var(--border);
+        }
+
+        .app-name {
+            font-size: 14px;
+            letter-spacing: 2px;
+            color: var(--medium-gray);
+            text-transform: uppercase;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            font-family: 'Georgia', serif;
+            font-size: 13px;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--dark);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover { border-color: var(--dark); }
+
+        .btn-primary {
+            background: var(--dark);
+            color: var(--white);
+        }
+
+        .btn-primary:hover { background: var(--charcoal); }
+
+        .btn-gold {
+            background: var(--gold);
+            color: var(--dark);
+        }
+
+        .btn-gold:hover { background: #b89550; }
+
+        .app-container {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 320px 1fr 360px;
+            gap: 40px;
+            min-height: calc(100vh - 70px);
+        }
+
+        .templates-panel {
+            border-right: 1px solid var(--border);
+            padding-right: 40px;
+        }
+
+        .panel-title {
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--medium-gray);
+            margin-bottom: 16px;
+        }
+
+        .template-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .template-card {
+            border: 1px solid var(--border);
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--white);
+        }
+
+        .template-card:hover {
+            border-color: var(--dark);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .template-card.active {
+            border-color: var(--gold);
+            background: #fdfcfa;
+        }
+
+        .template-name {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .template-desc {
+            font-size: 12px;
+            color: var(--medium-gray);
+            line-height: 1.5;
+        }
+
+        .template-stats {
+            margin-top: 8px;
+            font-size: 11px;
+            color: var(--medium-gray);
+            font-family: 'Courier New', monospace;
+        }
+
+        .canvas-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .canvas-controls {
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .control-group { display: flex; gap: 12px; }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: var(--white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--dark);
+            background: var(--light-gray);
+        }
+
+        .blueprint-canvas {
+            background: var(--white);
+            border: 1px solid var(--border);
+            position: relative;
+            height: 700px;
+            overflow: hidden;
+        }
+
+        .wreath-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+        }
+
+        .guide-circle {
+            position: absolute;
+            border: 1px solid #e0e0e0;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .guide-inner { width: 240px; height: 240px; border-style: dashed; }
+        .guide-outer { width: 480px; height: 480px; border-style: dashed; }
+        .guide-center { width: 360px; height: 360px; border: 2px solid var(--dark); }
+
+        .crosshair {
+            position: absolute;
+            background: #e0e0e0;
+            top: 50%;
+            left: 50%;
+        }
+
+        .crosshair-h { width: 100%; height: 1px; transform: translateY(-50%); }
+        .crosshair-v { width: 1px; height: 100%; transform: translateX(-50%); }
+
+        .element {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .element:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+            z-index: 100 !important;
+        }
+
+        .element-shape {
+            border-radius: 50%;
+            border: 2px solid var(--dark);
+            background: var(--white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .element.selected .element-shape {
+            border-color: var(--gold);
+            background: #fdfcfa;
+            box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.2);
+        }
+
+        .element-label {
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            font-family: 'Courier New', monospace;
+            background: var(--dark);
+            color: var(--white);
+            padding: 3px 8px;
+            white-space: nowrap;
+            opacity: 0;
+            transition: opacity 0.2s;
+            pointer-events: none;
+        }
+
+        .element:hover .element-label { opacity: 1; }
+
+        .properties-panel {
+            border-left: 1px solid var(--border);
+            padding-left: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .property-section {
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 24px;
+        }
+
+        .property-section:last-child { border-bottom: none; }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .stat-label {
+            color: var(--medium-gray);
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-weight: 500;
+            color: var(--dark);
+            font-family: 'Courier New', monospace;
+        }
+
+        .slider-control { margin-top: 16px; }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--medium-gray);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 2px;
+            background: var(--border);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--dark);
+            cursor: pointer;
+            border-radius: 50%;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: var(--white);
+            padding: 48px;
+            max-width: 540px;
+            width: 90%;
+            border: 1px solid var(--border);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .modal-subtitle {
+            font-size: 14px;
+            color: var(--medium-gray);
+            margin-bottom: 32px;
+        }
+
+        .form-group { margin-bottom: 24px; }
+
+        .form-label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--medium-gray);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            font-family: 'Georgia', serif;
+            font-size: 15px;
+            color: var(--dark);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--dark);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 32px;
+        }
+
+        .saved-blueprints {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px solid var(--border);
+        }
+
+        .blueprint-item {
+            padding: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .blueprint-item:hover { border-color: var(--dark); }
+
+        .blueprint-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .blueprint-meta {
+            font-size: 11px;
+            color: var(--medium-gray);
+            font-family: 'Courier New', monospace;
+        }
+
+        .coordinates {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            color: var(--medium-gray);
+            background: var(--white);
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+        }
+
+        .export-section {
+            display: none;
+            padding: 32px;
+            border: 1px solid var(--border);
+            margin-top: 24px;
+            background: var(--light-gray);
+        }
+
+        .export-section.active { display: block; }
+
+        .export-title {
+            font-size: 18px;
+            letter-spacing: 2px;
+            margin-bottom: 24px;
+        }
+
+        .export-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .export-tab {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            font-family: 'Georgia', serif;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            color: var(--medium-gray);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+
+        .export-tab.active {
+            color: var(--dark);
+            border-bottom-color: var(--gold);
+        }
+
+        .export-content {
+            display: none;
+            background: var(--white);
+            padding: 24px;
+            border: 1px solid var(--border);
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            max-height: 500px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .export-content.active { display: block; }
+        .copy-btn { margin-top: 16px; }
+
+        @media (max-width: 1024px) {
+            .app-container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .templates-panel,
+            .properties-panel {
+                border: 1px solid var(--border);
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="app-header">
+        <div class="header-content">
+            <div class="brand">
+                <div class="brand-logo">EVERCRAFTED</div>
+                <div class="brand-divider"></div>
+                <div class="app-name">Blueprint Studio</div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="myBlueprintsBtn">My Blueprints</button>
+                <button class="btn btn-primary" id="saveBtn">Save Blueprint</button>
+                <button class="btn btn-gold" id="upgradeBtn">Upgrade to Craft</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="app-container">
+        <aside class="templates-panel">
+            <h2 class="panel-title">Design Templates</h2>
+            <div class="template-grid" id="templateGrid"></div>
+        </aside>
+
+        <main class="canvas-panel">
+            <div class="canvas-controls">
+                <div class="control-group">
+                    <button class="icon-btn" title="Undo">↶</button>
+                    <button class="icon-btn" title="Redo">↷</button>
+                    <button class="icon-btn" title="Zoom In">+</button>
+                    <button class="icon-btn" title="Zoom Out">−</button>
+                </div>
+                <div class="control-group">
+                    <button class="icon-btn" title="Toggle Grid">⊞</button>
+                    <button class="icon-btn" title="Center View">⊙</button>
+                </div>
+            </div>
+
+            <div class="blueprint-canvas" id="canvas">
+                <div class="wreath-container">
+                    <div class="guide-circle guide-inner"></div>
+                    <div class="guide-circle guide-center"></div>
+                    <div class="guide-circle guide-outer"></div>
+                    <div class="crosshair crosshair-h"></div>
+                    <div class="crosshair crosshair-v"></div>
+                    <div id="elementsContainer"></div>
+                </div>
+                <div class="coordinates" id="coords">X: 300 | Y: 300 | 0°</div>
+            </div>
+
+            <div class="export-section" id="exportSection">
+                <h3 class="export-title">Export Blueprint</h3>
+                <div class="export-tabs">
+                    <button class="export-tab active" data-tab="json">JSON Data</button>
+                    <button class="export-tab" data-tab="instructions">Build Guide</button>
+                    <button class="export-tab" data-tab="wgs">WGS Genome</button>
+                </div>
+                <div class="export-content active" id="jsonContent"></div>
+                <div class="export-content" id="instructionsContent"></div>
+                <div class="export-content" id="wgsContent"></div>
+                <button class="btn btn-secondary copy-btn" id="copyExportBtn">Copy to Clipboard</button>
+            </div>
+        </main>
+
+        <aside class="properties-panel">
+            <div class="property-section">
+                <h2 class="panel-title">Blueprint Stats</h2>
+                <div class="stat-row">
+                    <span class="stat-label">Total Elements</span>
+                    <span class="stat-value" id="totalCount">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Greenery</span>
+                    <span class="stat-value" id="greeneryCount">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Florals</span>
+                    <span class="stat-value" id="floralCount">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Texture</span>
+                    <span class="stat-value" id="textureCount">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Berries</span>
+                    <span class="stat-value" id="berryCount">0</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Ribbons</span>
+                    <span class="stat-value" id="ribbonCount">0</span>
+                </div>
+            </div>
+
+            <div class="property-section">
+                <h2 class="panel-title">Configuration</h2>
+                <div class="stat-row">
+                    <span class="stat-label">Diameter</span>
+                    <span class="stat-value">24 inches</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Layout Style</span>
+                    <span class="stat-value" id="layoutStyle">SYMMETRIC</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-label">Density</span>
+                    <span class="stat-value">MEDIUM</span>
+                </div>
+
+                <div class="slider-control">
+                    <div class="slider-label">
+                        <span>Element Spacing</span>
+                        <span id="spacingValue">100%</span>
+                    </div>
+                    <input type="range" id="spacingSlider" min="70" max="130" value="100">
+                </div>
+
+                <div class="slider-control">
+                    <div class="slider-label">
+                        <span>Rotation Variance</span>
+                        <span id="rotationValue">50%</span>
+                    </div>
+                    <input type="range" id="rotationSlider" min="0" max="100" value="50">
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="regenerateBtn">Regenerate Design</button>
+                <button class="btn btn-secondary" id="randomizeBtn">Randomize Placement</button>
+                <button class="btn btn-secondary" id="exportToggleBtn">View Export Options</button>
+            </div>
+
+            <div class="saved-blueprints" id="savedBlueprintsPanel" style="display: none;">
+                <h2 class="panel-title">Recent Saves</h2>
+                <div id="savedList"></div>
+            </div>
+        </aside>
+    </div>
+
+    <div class="modal-overlay" id="saveModal">
+        <div class="modal">
+            <h2 class="modal-title">Save Blueprint</h2>
+            <p class="modal-subtitle">Give your wreath design a name and description</p>
+            <form id="saveForm">
+                <div class="form-group">
+                    <label class="form-label">Blueprint Name</label>
+                    <input type="text" class="form-input" id="blueprintName" placeholder="Winter Elegance" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description (Optional)</label>
+                    <textarea class="form-input form-textarea" id="blueprintDesc" placeholder="Classic winter wreath with pine, white roses, and gold ribbon"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" id="cancelSaveBtn" style="flex: 1;">Cancel</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Save Blueprint</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const ELEMENT_TYPES = {
+            greenery: { size: 48, symbol: 'G' },
+            floral: { size: 42, symbol: 'F' },
+            texture: { size: 30, symbol: 'T' },
+            berry: { size: 24, symbol: 'B' },
+            ribbon: { size: 54, symbol: 'R' }
+        };
+
+        const TEMPLATES = {
+            SYMMETRIC: {
+                name: 'Symmetric Classic',
+                desc: 'Traditional balanced design with radial symmetry',
+                greenery: { count: 6, positions: [30, 90, 150, 210, 270, 330] },
+                floral: { count: 4, positions: [45, 135, 225, 315] },
+                texture: { count: 3, positions: [0, 120, 240] },
+                berry: { count: 8, positions: [15, 75, 105, 165, 195, 255, 285, 345] },
+                ribbon: { count: 1, positions: [270] }
+            },
+            TRADITIONAL: {
+                name: 'Traditional Full',
+                desc: 'Dense, classic wreath with full coverage',
+                greenery: { count: 8, positions: [0, 45, 90, 135, 180, 225, 270, 315] },
+                floral: { count: 3, positions: [60, 180, 300] },
+                texture: { count: 4, positions: [30, 150, 210, 330] },
+                berry: { count: 6, positions: [15, 105, 165, 195, 255, 345] },
+                ribbon: { count: 1, positions: [270] }
+            },
+            MODERN: {
+                name: 'Modern Asymmetric',
+                desc: 'Contemporary design with intentional imbalance',
+                greenery: { count: 5, positions: [20, 60, 140, 220, 300] },
+                floral: { count: 3, positions: [40, 80, 340] },
+                texture: { count: 2, positions: [180, 260] },
+                berry: { count: 5, positions: [0, 100, 200, 240, 320] },
+                ribbon: { count: 1, positions: [50] }
+            },
+            MINIMALIST: {
+                name: 'Minimalist Scandinavian',
+                desc: 'Clean, sparse design with intentional negative space',
+                greenery: { count: 4, positions: [45, 135, 225, 315] },
+                floral: { count: 2, positions: [90, 270] },
+                texture: { count: 2, positions: [0, 180] },
+                berry: { count: 4, positions: [60, 150, 240, 330] },
+                ribbon: { count: 0, positions: [] }
+            },
+            DIRECTIONAL: {
+                name: 'Directional Flow',
+                desc: 'Dynamic design with cascading movement',
+                greenery: { count: 7, positions: [10, 40, 80, 120, 200, 280, 340] },
+                floral: { count: 3, positions: [60, 150, 300] },
+                texture: { count: 4, positions: [30, 100, 180, 270] },
+                berry: { count: 6, positions: [45, 90, 135, 225, 270, 315] },
+                ribbon: { count: 1, positions: [315] }
+            }
+        };
+
+        let currentTemplate = 'SYMMETRIC';
+        let elements = [];
+        let elementIdCounter = 0;
+        let savedBlueprints = JSON.parse(localStorage.getItem('evercrafted_blueprints') || '[]');
+        let selectedElement = null;
+        let spacingMultiplier = 1.0;
+        let rotationVariance = 0.5;
+
+        function init() {
+            renderTemplateCards();
+            generateBlueprint(currentTemplate);
+            setupEventListeners();
+            updateSavedList();
+        }
+
+        function renderTemplateCards() {
+            const grid = document.getElementById('templateGrid');
+            grid.innerHTML = '';
+
+            Object.entries(TEMPLATES).forEach(([key, template]) => {
+                const counts = Object.values(template).reduce((acc, val) => 
+                    val.count !== undefined ? acc + val.count : acc, 0);
+
+                const card = document.createElement('div');
+                card.className = `template-card ${key === currentTemplate ? 'active' : ''}`;
+                card.innerHTML = `
+                    <div class="template-name">${template.name}</div>
+                    <div class="template-desc">${template.desc}</div>
+                    <div class="template-stats">${counts} elements</div>
+                `;
+                card.onclick = () => selectTemplate(key);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectTemplate(key) {
+            currentTemplate = key;
+            renderTemplateCards();
+            generateBlueprint(key);
+            document.getElementById('layoutStyle').textContent = key;
+        }
+
+        function generateBlueprint(templateKey) {
+            const template = TEMPLATES[templateKey];
+            elements = [];
+            elementIdCounter = 0;
+
+            Object.entries(template).forEach(([type, config]) => {
+                if (type === 'name' || type === 'desc') return;
+
+                config.positions.forEach(angle => {
+                    const angleVar = (Math.random() - 0.5) * 8 * rotationVariance;
+                    const finalAngle = angle + angleVar;
+
+                    const baseRadius = 168 * spacingMultiplier;
+                    const radiusVar = (Math.random() - 0.5) * 20;
+                    const radius = baseRadius + radiusVar;
+
+                    const rotation = (Math.random() - 0.5) * 60 * rotationVariance;
+
+                    const x = Math.cos(finalAngle * Math.PI / 180) * radius + 300;
+                    const y = Math.sin(finalAngle * Math.PI / 180) * radius + 300;
+
+                    elements.push({
+                        id: elementIdCounter++,
+                        type,
+                        x,
+                        y,
+                        angle: finalAngle,
+                        radius,
+                        rotation
+                    });
+                });
+            });
+
+            renderElements();
+            updateStats();
+        }
+
+        function renderElements() {
+            const container = document.getElementById('elementsContainer');
+            container.innerHTML = '';
+
+            elements.forEach(elem => {
+                const config = ELEMENT_TYPES[elem.type];
+                const div = document.createElement('div');
+                div.className = `element ${selectedElement?.id === elem.id ? 'selected' : ''}`;
+                div.style.left = `${elem.x}px`;
+                div.style.top = `${elem.y}px`;
+                div.style.transform = `translate(-50%, -50%) rotate(${elem.rotation}deg)`;
+                div.style.zIndex = elem.id;
+
+                const shape = document.createElement('div');
+                shape.className = 'element-shape';
+                shape.style.width = `${config.size}px`;
+                shape.style.height = `${config.size}px`;
+                shape.style.fontSize = `${config.size * 0.4}px`;
+                shape.textContent = config.symbol;
+
+                const label = document.createElement('div');
+                label.className = 'element-label';
+                label.textContent = `${elem.type.toUpperCase()} | ${Math.round(elem.angle)}°`;
+
+                div.appendChild(shape);
+                div.appendChild(label);
+                div.onclick = () => { selectedElement = elem; renderElements(); };
+                container.appendChild(div);
+            });
+        }
+
+        function updateStats() {
+            const counts = elements.reduce((acc, elem) => {
+                acc[elem.type] = (acc[elem.type] || 0) + 1;
+                return acc;
+            }, {});
+
+            document.getElementById('totalCount').textContent = elements.length;
+            document.getElementById('greeneryCount').textContent = counts.greenery || 0;
+            document.getElementById('floralCount').textContent = counts.floral || 0;
+            document.getElementById('textureCount').textContent = counts.texture || 0;
+            document.getElementById('berryCount').textContent = counts.berry || 0;
+            document.getElementById('ribbonCount').textContent = counts.ribbon || 0;
+        }
+
+        function generateJSON() {
+            return JSON.stringify({
+                template: currentTemplate,
+                templateName: TEMPLATES[currentTemplate].name,
+                diameter: 24,
+                totalElements: elements.length,
+                elements: elements.map(e => ({
+                    id: e.id,
+                    type: e.type,
+                    position: { x: Math.round(e.x * 10) / 10, y: Math.round(e.y * 10) / 10 },
+                    angle: Math.round(e.angle * 10) / 10,
+                    radius: Math.round(e.radius * 10) / 10,
+                    rotation: Math.round(e.rotation * 10) / 10
+                })),
+                timestamp: new Date().toISOString()
+            }, null, 2);
+        }
+
+        function generateBuildInstructions() {
+            const grouped = elements.reduce((acc, elem) => {
+                if (!acc[elem.type]) acc[elem.type] = [];
+                acc[elem.type].push(elem);
+                return acc;
+            }, {});
+
+            let instructions = `WREATH BUILD GUIDE\nTemplate: ${TEMPLATES[currentTemplate].name}\nTotal Elements: ${elements.length}\n\n`;
+
+            let step = 1;
+            ['greenery', 'texture', 'floral', 'berry', 'ribbon'].forEach(type => {
+                if (grouped[type]) {
+                    instructions += `STEP ${step++}: ${type.toUpperCase()}\nPlace ${grouped[type].length} ${type} elements\n`;
+                    grouped[type].forEach((e, i) => {
+                        const hour = Math.round(((e.angle + 90) % 360 + 360) % 360 / 30) || 12;
+                        instructions += `  ${i + 1}. ${Math.round(e.angle)}° (${hour}:00)\n`;
+                    });
+                    instructions += `\n`;
+                }
+            });
+
+            return instructions;
+        }
+
+        function generateWGS() {
+            const genome = elements.map(e => 
+                `${e.type.charAt(0).toUpperCase()}:${Math.round(e.angle)}:${Math.round(e.radius)}`
+            ).join('|');
+            return `WGS-GENOME-${currentTemplate}\n${genome}`;
+        }
+
+        function saveBlueprint(name, description) {
+            const blueprint = {
+                id: Date.now(),
+                name,
+                description,
+                template: currentTemplate,
+                elements: elements,
+                timestamp: new Date().toISOString()
+            };
+
+            savedBlueprints.unshift(blueprint);
+            if (savedBlueprints.length > 10) savedBlueprints.pop();
+            
+            localStorage.setItem('evercrafted_blueprints', JSON.stringify(savedBlueprints));
+            updateSavedList();
+        }
+
+        function updateSavedList() {
+            const panel = document.getElementById('savedBlueprintsPanel');
+            const list = document.getElementById('savedList');
+            
+            if (savedBlueprints.length === 0) {
+                panel.style.display = 'none';
+                return;
+            }
+
+            panel.style.display = 'block';
+            list.innerHTML = '';
+
+            savedBlueprints.slice(0, 5).forEach(bp => {
+                const item = document.createElement('div');
+                item.className = 'blueprint-item';
+                item.innerHTML = `
+                    <div class="blueprint-title">${bp.name}</div>
+                    <div class="blueprint-meta">${bp.elements.length} elements · ${new Date(bp.timestamp).toLocaleDateString()}</div>
+                `;
+                item.onclick = () => {
+                    currentTemplate = bp.template;
+                    elements = bp.elements;
+                    elementIdCounter = Math.max(...elements.map(e => e.id)) + 1;
+                    renderTemplateCards();
+                    renderElements();
+                    updateStats();
+                };
+                list.appendChild(item);
+            });
+        }
+
+        function setupEventListeners() {
+            document.getElementById('saveBtn').onclick = () => {
+                document.getElementById('saveModal').classList.add('active');
+            };
+
+            document.getElementById('myBlueprintsBtn').onclick = () => {
+                document.getElementById('savedBlueprintsPanel').scrollIntoView({ behavior: 'smooth' });
+            };
+
+            document.getElementById('upgradeBtn').onclick = () => {
+                alert('Upgrade to Craft tier for unlimited blueprints, advanced export options, and premium templates!');
+            };
+
+            document.getElementById('cancelSaveBtn').onclick = () => {
+                document.getElementById('saveModal').classList.remove('active');
+            };
+
+            document.getElementById('saveForm').onsubmit = (e) => {
+                e.preventDefault();
+                const name = document.getElementById('blueprintName').value;
+                const desc = document.getElementById('blueprintDesc').value;
+                saveBlueprint(name, desc);
+                document.getElementById('saveModal').classList.remove('active');
+                document.getElementById('saveForm').reset();
+            };
+
+            document.getElementById('regenerateBtn').onclick = () => generateBlueprint(currentTemplate);
+            
+            document.getElementById('randomizeBtn').onclick = () => {
+                elements.forEach(e => {
+                    e.angle += (Math.random() - 0.5) * 30;
+                    e.rotation += (Math.random() - 0.5) * 90;
+                    e.x = Math.cos(e.angle * Math.PI / 180) * e.radius + 300;
+                    e.y = Math.sin(e.angle * Math.PI / 180) * e.radius + 300;
+                });
+                renderElements();
+            };
+
+            document.getElementById('spacingSlider').oninput = (e) => {
+                spacingMultiplier = e.target.value / 100;
+                document.getElementById('spacingValue').textContent = `${e.target.value}%`;
+                generateBlueprint(currentTemplate);
+            };
+
+            document.getElementById('rotationSlider').oninput = (e) => {
+                rotationVariance = e.target.value / 100;
+                document.getElementById('rotationValue').textContent = `${e.target.value}%`;
+                generateBlueprint(currentTemplate);
+            };
+
+            document.getElementById('exportToggleBtn').onclick = () => {
+                const section = document.getElementById('exportSection');
+                section.classList.toggle('active');
+                
+                if (section.classList.contains('active')) {
+                    document.getElementById('jsonContent').textContent = generateJSON();
+                    document.getElementById('instructionsContent').textContent = generateBuildInstructions();
+                    document.getElementById('wgsContent').textContent = generateWGS();
+                    section.scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+
+            document.querySelectorAll('.export-tab').forEach(tab => {
+                tab.onclick = () => {
+                    document.querySelectorAll('.export-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.export-content').forEach(c => c.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(`${tab.dataset.tab}Content`).classList.add('active');
+                };
+            });
+
+            document.getElementById('copyExportBtn').onclick = () => {
+                const activeContent = document.querySelector('.export-content.active');
+                navigator.clipboard.writeText(activeContent.textContent);
+                alert('Copied to clipboard!');
+            };
+
+            document.getElementById('canvas').onmousemove = (e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = Math.round(e.clientX - rect.left);
+                const y = Math.round(e.clientY - rect.top);
+                const angle = Math.round(Math.atan2(y - 300, x - 300) * 180 / Math.PI);
+                document.getElementById('coords').textContent = `X: ${x} | Y: ${y} | ${angle}°`;
+            };
+        }
+
+        init();
+    </script>
+</body>
+</html>

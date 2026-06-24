@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Floral Inventory Tagger</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap');
+:root{
+  --bg:#f5f3ef;--sf:#ffffff;--s2:#f0ede8;--s3:#e8e4de;
+  --bd:#ddd8d0;--bd2:#c8c2b8;
+  --tx:#2a2420;--mu:#6a6058;--fa:#9a9088;
+  --gold:#9a7a40;--gd:rgba(154,122,64,.09);
+  --sage:#4a6040;--sgd:rgba(74,96,64,.09);
+  --dust:#6a5a80;--dsd:rgba(106,90,128,.09);
+  --clay:#8a4a2e;--cld:rgba(138,74,46,.09);
+  --ok:#3a6a3c;--er:#8a3030;
+  --r:10px;--rsm:6px;--rlg:14px;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Jost',system-ui,sans-serif;
+  --tr:180ms ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100vh;font-size:13px;line-height:1.6}
+.app{max-width:960px;margin:0 auto;padding:1.75rem 1.5rem 4rem}
+.hdr{margin-bottom:1.5rem;border-bottom:1px solid var(--bd);padding-bottom:1rem}
+.eyebrow{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:.2rem}
+h1{font-family:var(--serif);font-size:1.9rem;font-weight:500;line-height:1.1;color:var(--tx)}
+.sub{font-size:11px;color:var(--mu);margin-top:.25rem;font-weight:400}
+/* tabs */
+.input-tabs{display:flex;gap:0;border-bottom:1px solid var(--bd);margin-bottom:1.25rem}
+.itab{padding:8px 16px;font-size:12px;font-weight:500;color:var(--fa);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color var(--tr);letter-spacing:.04em;display:flex;align-items:center;gap:6px}
+.itab:hover{color:var(--mu)}
+.itab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.itab i{font-size:14px}
+.ipanel{display:none}.ipanel.on{display:block}
+/* layout */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;align-items:start}
+@media(max-width:680px){.grid{grid-template-columns:1fr}}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--rlg);padding:1.1rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.cl{font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--fa);font-weight:600;margin-bottom:.65rem}
+/* drop zone */
+.dropzone{border:1.5px dashed var(--bd2);border-radius:var(--r);padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:all .2s ease;background:var(--s2);position:relative}
+.dropzone:hover,.dropzone.drag{border-color:var(--gold);background:rgba(154,122,64,.06)}
+.dropzone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dz-icon{font-size:28px;color:var(--fa);margin-bottom:.6rem;display:block}
+.dz-text{font-size:13px;color:var(--mu);margin-bottom:.25rem;font-weight:500}
+.dz-sub{font-size:11px;color:var(--fa)}
+/* preview */
+.img-preview{width:100%;border-radius:var(--r);border:1px solid var(--bd);overflow:hidden;background:var(--s2);margin-bottom:.75rem;aspect-ratio:4/3;display:flex;align-items:center;justify-content:center}
+.img-preview img{width:100%;height:100%;object-fit:contain}
+.img-placeholder{text-align:center;color:var(--fa);font-size:12px;padding:2rem}
+/* text input */
+textarea{width:100%;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);color:var(--tx);font-family:var(--sans);font-size:13px;padding:.75rem 1rem;resize:vertical;min-height:100px;outline:none;transition:border-color .2s;line-height:1.6}
+textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(154,122,64,.1)}
+textarea::placeholder{color:var(--fa)}
+/* analyze btn */
+.analyze-btn{width:100%;padding:11px;border-radius:var(--r);border:1.5px solid var(--gold);background:var(--gold);color:#fff;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:all var(--tr);letter-spacing:.04em;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:.6rem}
+.analyze-btn:hover{background:#7a6030;border-color:#7a6030}
+.analyze-btn:disabled{opacity:.45;cursor:not-allowed}
+/* loading */
+.spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-msg{font-size:12px;color:var(--mu);text-align:center;padding:.75rem;display:flex;align-items:center;justify-content:center;gap:8px}
+.loading-msg .spinner{border-color:rgba(154,122,64,.25);border-top-color:var(--gold)}
+/* field group */
+.fgroup{margin-bottom:.9rem}
+.flabel{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--mu);font-weight:600;margin-bottom:.4rem;display:flex;align-items:center;gap:6px}
+.flabel .conf{font-size:9px;padding:1px 6px;border-radius:20px;font-weight:500;letter-spacing:.04em}
+.conf-high{background:rgba(58,106,60,.1);color:#3a6a3c;border:1px solid rgba(58,106,60,.25)}
+.conf-med{background:rgba(154,122,64,.1);color:var(--gold);border:1px solid rgba(154,122,64,.25)}
+.conf-low{background:rgba(106,90,128,.1);color:var(--dust);border:1px solid rgba(106,90,128,.25)}
+/* seg buttons for options */
+.seg{display:flex;flex-wrap:wrap;gap:4px}
+.sopt{padding:5px 10px;border-radius:var(--rsm);border:1px solid var(--bd);background:var(--sf);color:var(--mu);font-family:var(--sans);font-size:11px;cursor:pointer;transition:all var(--tr)}
+.sopt:hover{background:var(--s2);color:var(--tx);border-color:var(--bd2)}
+.sopt.on{border-color:currentColor;background:var(--s2)}
+.sopt.role-on{border-color:var(--sage);color:var(--sage);background:var(--sgd)}
+.sopt.emot-on{border-color:var(--dust);color:var(--dust);background:var(--dsd)}
+.sopt.arch-on{border-color:var(--gold);color:var(--gold);background:var(--gd)}
+.sopt.fin-on{border-color:var(--bd2);color:var(--tx);background:var(--s2)}
+.sopt.pal-on{border-color:var(--clay);color:var(--clay);background:var(--cld)}
+/* text field */
+input[type=text]{width:100%;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rsm);color:var(--tx);font-family:var(--sans);font-size:13px;padding:.5rem .75rem;outline:none;transition:all .2s}
+input[type=text]:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(154,122,64,.1)}
+input[type=text]::placeholder{color:var(--fa)}
+/* intensity */
+.int-row{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.int-btn{padding:7px 4px;border-radius:var(--rsm);border:1px solid var(--bd);background:var(--sf);color:var(--mu);font-family:var(--sans);font-size:10px;cursor:pointer;transition:all var(--tr);text-align:center;line-height:1.3}
+.int-btn:hover{background:var(--s2);color:var(--tx);border-color:var(--bd2)}
+.int-btn.on{border-color:var(--gold);color:var(--gold);background:var(--gd);font-weight:500}
+.int-btn .isub{display:block;font-size:8px;color:var(--fa);margin-top:1px}
+/* derived tags */
+.derived{background:var(--s2);border-radius:var(--rsm);padding:.6rem .75rem;margin-top:.5rem;border:1px solid var(--bd)}
+.derived-label{font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);margin-bottom:.35rem;font-weight:600}
+.dtag{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:20px;margin:2px;font-weight:500}
+/* record preview */
+.record-preview{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:1rem;font-size:11px;font-family:monospace;line-height:1.9;color:var(--mu);overflow-x:auto}
+.rk{color:var(--gold);font-weight:600}.rv{color:var(--dust)}.rn{color:var(--sage)}
+/* save row */
+.save-row{display:flex;gap:.5rem;margin-top:.75rem}
+.save-btn{flex:1;padding:10px;border-radius:var(--r);border:1.5px solid var(--sage);background:var(--sage);color:#fff;font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;transition:all var(--tr);letter-spacing:.04em}
+.save-btn:hover{background:#3a5030;border-color:#3a5030}
+.export-btn{padding:10px 16px;border-radius:var(--r);border:1px solid var(--bd);background:var(--sf);color:var(--mu);font-family:var(--sans);font-size:12px;font-weight:500;cursor:pointer;transition:all var(--tr)}
+.export-btn:hover{border-color:var(--bd2);color:var(--tx);background:var(--s2)}
+/* saved items */
+.saved-list{display:flex;flex-direction:column;gap:6px;max-height:420px;overflow-y:auto;padding-right:2px}
+.saved-list::-webkit-scrollbar{width:3px}
+.saved-list::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+.saved-item{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;border-radius:var(--rsm);border:1px solid var(--bd);background:var(--sf);cursor:pointer;transition:all var(--tr)}
+.saved-item:hover{border-color:var(--bd2);background:var(--s2)}
+.si-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.si-right{flex:1;min-width:0}
+.si-name{font-size:12px;font-weight:500;color:var(--tx);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.si-tags{display:flex;gap:3px;flex-wrap:wrap}
+.stag{font-size:9px;padding:1px 5px;border-radius:20px;font-weight:500}
+.t-role{background:var(--sgd);color:var(--sage);border:1px solid rgba(74,96,64,.2)}
+.t-emot{background:var(--dsd);color:var(--dust);border:1px solid rgba(106,90,128,.2)}
+.t-arch{background:var(--gd);color:var(--gold);border:1px solid rgba(154,122,64,.2)}
+.t-fin{background:var(--s2);color:var(--mu);border:1px solid var(--bd)}
+.si-del{font-size:12px;color:var(--fa);padding:2px 4px;cursor:pointer;border-radius:4px;transition:color .15s;margin-top:1px;flex-shrink:0;background:none;border:none;font-family:var(--sans)}
+.si-del:hover{color:var(--er)}
+.empty-list{text-align:center;padding:2rem;color:var(--fa);font-size:12px;font-style:italic}
+/* export area */
+.export-area{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);padding:.75rem;font-size:10px;font-family:monospace;color:var(--mu);max-height:200px;overflow:auto;white-space:pre;line-height:1.6;display:none}
+.export-area.vis{display:block;margin-top:.75rem}
+/* notice */
+.notice{font-size:11px;color:var(--mu);background:rgba(154,122,64,.07);border-left:2px solid var(--gold);border-radius:0 var(--rsm) var(--rsm) 0;padding:7px 10px;margin-bottom:.75rem;line-height:1.6}
+hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
+/* count badge */
+.count-badge{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--gold);color:#fff;font-size:9px;font-weight:600}
+</style>
+</head>
+<body>
+<div class="app">
+
+<div class="hdr">
+  <div class="eyebrow">Evercrafted Studio · Inventory System</div>
+  <h1>Floral Inventory Tagger</h1>
+  <div class="sub">Photo upload · Text / product name · Manual form — all three paths, one schema. <a href="evercrafted-inventory-dashboard.html" onclick="return ecGoTo('dashboard','evercrafted-inventory-dashboard.html')" style="color:var(--sage,#6b7c5c);font-weight:600">View inventory →</a> &nbsp;(background removal / cutouts are done there, per item)</div>
+</div>
+<script>function ecGoTo(tool, url){ if(window.parent && window.parent!==window){ window.parent.postMessage({ecNav:tool},'*'); return false; } location.href=url; return false; }</script>
+
+<div class="grid">
+
+<!-- LEFT: Input + Tag Form -->
+<div>
+  <!-- Input source tabs -->
+  <div class="card" style="margin-bottom:1rem">
+    <div class="input-tabs">
+      <div class="itab on" onclick="switchInput('photo',this)"><i class="ti ti-photo"></i> Photo</div>
+      <div class="itab" onclick="switchInput('text',this)"><i class="ti ti-text-size"></i> Text / Name</div>
+      <div class="itab" onclick="switchInput('manual',this)"><i class="ti ti-edit"></i> Manual</div>
+    </div>
+
+    <!-- PHOTO PATH -->
+    <div class="ipanel on" id="ip-photo">
+      <div class="img-preview" id="img-preview">
+        <div class="img-placeholder"><i class="ti ti-photo-off" style="font-size:28px;display:block;margin-bottom:.5rem;color:var(--fa)"></i>No image yet</div>
+      </div>
+      <div class="dropzone" id="dropzone" ondragover="ev.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+        <input type="file" accept="image/*,image/jpeg,image/png,image/webp" onchange="handleFile(this.files[0])">
+        <span class="dz-icon"><i class="ti ti-cloud-upload"></i></span>
+        <div class="dz-text">Drop image here or click to browse</div>
+        <div class="dz-sub">Your photo · Supplier image · Melrose product shot</div>
+      </div>
+      <button class="analyze-btn" id="photo-btn" onclick="analyzePhoto()" disabled>
+        <i class="ti ti-sparkles"></i> Analyze with Vision
+      </button>
+    </div>
+
+    <!-- TEXT PATH -->
+    <div class="ipanel" id="ip-text">
+      <div class="cl">Product name or description</div>
+      <textarea id="text-input" placeholder="Paste a product name, supplier description, or Melrose listing…
+
+Examples:
+• Matte Charcoal Manzanita Branch 28"
+• Cream silk peony spray with dusty leaf, 3-head, approx 18"
+• Frosted champagne eucalyptus pick with metallic finish, 12 stems/bundle"></textarea>
+      <button class="analyze-btn" id="text-btn" onclick="analyzeText()">
+        <i class="ti ti-sparkles"></i> Analyze description
+      </button>
+    </div>
+
+    <!-- MANUAL PATH -->
+    <div class="ipanel" id="ip-manual">
+      <div class="notice">Fill each field manually. Tags derive automatically from your selections.</div>
+      <div class="fgroup">
+        <div class="flabel">Item name</div>
+        <input type="text" id="manual-name" placeholder="e.g. Dusty Mauve Garden Rose Spray">
+      </div>
+      <button class="analyze-btn" style="background:transparent;border-color:var(--sage);color:var(--sage)" onclick="loadManualIntoForm()">
+        <i class="ti ti-arrow-down"></i> Start tagging this item
+      </button>
+    </div>
+
+    <div id="loading-row" style="display:none">
+      <div class="loading-msg"><span class="spinner"></span><span id="loading-text">Analyzing…</span></div>
+    </div>
+  </div>
+
+  <!-- TAG FORM -->
+  <div class="card" id="tag-form" style="display:none">
+    <div class="cl">Tag fields — <span style="color:var(--gold)" id="form-source-label">from analysis</span></div>
+
+    <div class="fgroup">
+      <div class="flabel">Item name <span class="conf conf-high" id="conf-name" style="display:none">high</span></div>
+      <input type="text" id="f-name" placeholder="Item name">
+    </div>
+
+    <div class="fgroup">
+      <div class="flabel">Role <span class="conf" id="conf-role" style="display:none"></span></div>
+      <div class="seg" id="seg-role">
+        <button class="sopt" onclick="setField('role','structural',this,'role-on')">structural</button>
+        <button class="sopt" onclick="setField('role','focal',this,'role-on')">focal</button>
+        <button class="sopt" onclick="setField('role','secondary',this,'role-on')">secondary</button>
+        <button class="sopt" onclick="setField('role','greenery',this,'role-on')">greenery</button>
+        <button class="sopt" onclick="setField('role','texture',this,'role-on')">texture</button>
+        <button class="sopt" onclick="setField('role','accent',this,'role-on')">accent</button>
+        <button class="sopt" onclick="setField('role','filler',this,'role-on')">filler</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <div class="flabel">Movement archetype <span class="conf" id="conf-arch" style="display:none"></span></div>
+      <div class="seg" id="seg-arch">
+        <button class="sopt" onclick="setField('movement','weeping',this,'arch-on')">weeping</button>
+        <button class="sopt" onclick="setField('movement','reaching',this,'arch-on')">reaching</button>
+        <button class="sopt" onclick="setField('movement','sweeping',this,'arch-on')">sweeping</button>
+        <button class="sopt" onclick="setField('movement','architectural',this,'arch-on')">architectural</button>
+        <button class="sopt" onclick="setField('movement','cascading',this,'arch-on')">cascading</button>
+        <button class="sopt" onclick="setField('movement','still',this,'arch-on')">still</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <div class="flabel">Finish <span class="conf" id="conf-finish" style="display:none"></span></div>
+      <div class="seg" id="seg-finish">
+        <button class="sopt" onclick="setField('finish','matte',this,'fin-on')">matte</button>
+        <button class="sopt" onclick="setField('finish','satin',this,'fin-on')">satin</button>
+        <button class="sopt" onclick="setField('finish','metallic',this,'fin-on')">metallic</button>
+        <button class="sopt" onclick="setField('finish','gloss',this,'fin-on')">gloss</button>
+        <button class="sopt" onclick="setField('finish','raw',this,'fin-on')">raw</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <div class="flabel">Palette family <span class="conf" id="conf-palette" style="display:none"></span></div>
+      <div class="seg" id="seg-palette">
+        <button class="sopt" onclick="setField('palette','neutral-dark',this,'pal-on')">neutral-dark</button>
+        <button class="sopt" onclick="setField('palette','neutral-light',this,'pal-on')">neutral-light</button>
+        <button class="sopt" onclick="setField('palette','neutral-mid',this,'pal-on')">neutral-mid</button>
+        <button class="sopt" onclick="setField('palette','champagne',this,'pal-on')">champagne</button>
+        <button class="sopt" onclick="setField('palette','silver',this,'pal-on')">silver</button>
+        <button class="sopt" onclick="setField('palette','botanical-green',this,'pal-on')">botanical-green</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <div class="flabel">Contrast level <span class="conf" id="conf-contrast" style="display:none"></span></div>
+      <div class="seg" id="seg-contrast">
+        <button class="sopt" onclick="setField('contrast','stark',this,'fin-on')">stark — stands out</button>
+        <button class="sopt" onclick="setField('contrast','unified',this,'fin-on')">unified — blends</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <div class="flabel">Primary emotion <span class="conf" id="conf-ep" style="display:none"></span></div>
+      <div class="seg" id="seg-ep">
+        <button class="sopt" onclick="setField('ep','nostalgia',this,'emot-on')">nostalgia</button>
+        <button class="sopt" onclick="setField('ep','grief',this,'emot-on')">grief</button>
+        <button class="sopt" onclick="setField('ep','sadness',this,'emot-on')">sadness</button>
+        <button class="sopt" onclick="setField('ep','peace',this,'emot-on')">peace</button>
+        <button class="sopt" onclick="setField('ep','joy',this,'emot-on')">joy</button>
+        <button class="sopt" onclick="setField('ep','longing',this,'emot-on')">longing</button>
+        <button class="sopt" onclick="setField('ep','warmth',this,'emot-on')">warmth</button>
+        <button class="sopt" onclick="setField('ep','trust',this,'emot-on')">trust</button>
+        <button class="sopt" onclick="setField('ep','awe',this,'emot-on')">awe</button>
+        <button class="sopt" onclick="setField('ep','tenderness',this,'emot-on')">tenderness</button>
+        <button class="sopt" onclick="setField('ep','melancholy',this,'emot-on')">melancholy</button>
+        <button class="sopt" onclick="setField('ep','reverence',this,'emot-on')">reverence</button>
+        <button class="sopt" onclick="setField('ep','anticipation',this,'emot-on')">anticipation</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <div class="flabel">Secondary emotion <span class="conf" id="conf-es" style="display:none"></span></div>
+      <div class="seg" id="seg-es">
+        <button class="sopt" onclick="setField('es','nostalgia',this,'emot-on')">nostalgia</button>
+        <button class="sopt" onclick="setField('es','grief',this,'emot-on')">grief</button>
+        <button class="sopt" onclick="setField('es','sadness',this,'emot-on')">sadness</button>
+        <button class="sopt" onclick="setField('es','peace',this,'emot-on')">peace</button>
+        <button class="sopt" onclick="setField('es','joy',this,'emot-on')">joy</button>
+        <button class="sopt" onclick="setField('es','longing',this,'emot-on')">longing</button>
+        <button class="sopt" onclick="setField('es','warmth',this,'emot-on')">warmth</button>
+        <button class="sopt" onclick="setField('es','trust',this,'emot-on')">trust</button>
+        <button class="sopt" onclick="setField('es','awe',this,'emot-on')">awe</button>
+        <button class="sopt" onclick="setField('es','tenderness',this,'emot-on')">tenderness</button>
+        <button class="sopt" onclick="setField('es','melancholy',this,'emot-on')">melancholy</button>
+        <button class="sopt" onclick="setField('es','reverence',this,'emot-on')">reverence</button>
+        <button class="sopt" onclick="setField('es','anticipation',this,'emot-on')">anticipation</button>
+        <button class="sopt" onclick="setField('es','none',this,'emot-on')">none</button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <div class="flabel">Intensity range</div>
+      <div class="int-row" id="int-row">
+        <button class="int-btn" data-v="1" onclick="setIntensity([1,1],this)">1 — Soft<span class="isub">muted, gentle</span></button>
+        <button class="int-btn" data-v="2" onclick="setIntensity([1,2],this)">1–2 — Mid<span class="isub">versatile</span></button>
+        <button class="int-btn" data-v="3" onclick="setIntensity([2,3],this)">2–3 — Strong<span class="isub">bold, architectural</span></button>
+      </div>
+    </div>
+
+    <div class="fgroup">
+      <div class="flabel">Est. bloom / form size <span class="conf" id="conf-weight" style="display:none"></span></div>
+      <div class="seg" id="seg-weight">
+        <button class="sopt" data-w="wispy" onclick="setField('weight','wispy',this,'fin-on')">wispy &lt;1"</button>
+        <button class="sopt" data-w="light" onclick="setField('weight','light',this,'fin-on')">light 1–2"</button>
+        <button class="sopt" data-w="mid" onclick="setField('weight','mid',this,'fin-on')">mid 2–4"</button>
+        <button class="sopt" data-w="heavy" onclick="setField('weight','heavy',this,'fin-on')">heavy 4"+'</button>
+      </div>
+    </div>
+
+    <!-- Derived tags preview -->
+    <div class="derived" id="derived-wrap" style="display:none">
+      <div class="derived-label">Derived tags</div>
+      <div id="derived-tags"></div>
+    </div>
+
+    <hr>
+
+    <!-- JSON preview -->
+    <div class="cl" style="margin-bottom:.5rem">Record preview</div>
+    <div class="record-preview" id="record-preview"></div>
+
+    <div class="save-row">
+      <button class="save-btn" onclick="saveItem()"><i class="ti ti-circle-check" style="font-size:14px;vertical-align:-1px;margin-right:4px"></i>Save to inventory</button>
+      <button class="export-btn" onclick="clearForm()"><i class="ti ti-refresh" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Clear</button>
+    </div>
+  </div>
+</div>
+
+<!-- RIGHT: Saved inventory -->
+<div>
+  <div class="card">
+    <div class="cl" style="display:flex;align-items:center;gap:6px">Saved inventory <span class="count-badge" id="inv-count">0</span></div>
+    <div id="saved-list-wrap">
+      <div class="empty-list" id="inv-empty"><i class="ti ti-leaf" style="font-size:22px;display:block;margin-bottom:.5rem;color:var(--fa)"></i>No items yet — tag your first floral to begin</div>
+      <div class="saved-list" id="saved-list" style="display:none"></div>
+    </div>
+    <hr>
+    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+      <button class="export-btn" onclick="exportJSON()" style="flex:1;font-size:11px"><i class="ti ti-download" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Export JSON</button>
+      <button class="export-btn" onclick="exportCSV()" style="flex:1;font-size:11px"><i class="ti ti-file-spreadsheet" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Export CSV</button>
+      <button class="export-btn" onclick="clearInventory()" style="font-size:11px;color:var(--er);border-color:rgba(138,66,66,.3)"><i class="ti ti-trash" style="font-size:13px;vertical-align:-1px;margin-right:3px"></i>Clear all</button>
+    </div>
+    <div class="export-area" id="export-area"></div>
+  </div>
+
+  <!-- Quick reference -->
+  <div class="card">
+    <div class="cl">Tagging quick reference</div>
+    <div style="font-size:11px;color:var(--mu);line-height:1.9">
+      <div style="margin-bottom:.5rem"><span style="color:var(--sage);font-weight:500">Role</span> — what the item does in the wreath, not what it is</div>
+      <div style="margin-bottom:.5rem"><span style="color:var(--gold);font-weight:500">Movement</span> — which direction does gravity pull it?</div>
+      <div style="margin-bottom:.5rem"><span style="color:var(--mu);font-weight:500">Finish</span> — how does light interact with the surface?</div>
+      <div style="margin-bottom:.5rem"><span style="color:var(--clay);font-weight:500">Palette</span> — color family, not specific color</div>
+      <div style="margin-bottom:.5rem"><span style="color:var(--dust);font-weight:500">Emotion</span> — what does the combination of form + finish + palette feel like?</div>
+      <div><span style="color:var(--tx);font-weight:500">Intensity</span> — 1 = gentle/muted, 2 = versatile, 3 = bold/architectural</div>
+    </div>
+    <hr>
+    <div style="font-size:10px;color:var(--fa);line-height:1.8">
+      <div><span style="color:var(--gold)">Pass 1</span> items: structural, focal — inner wheel, heavy archetypes</div>
+      <div><span style="color:var(--dust)">Pass 2</span> items: secondary, texture, accent, greenery — outer ring, nuanced</div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+let currentFile = null;
+let currentImageB64 = null;
+let currentMediaType = null;
+
+const BLEND_MAP = {
+  'sadness+trust':'nostalgia','joy+trust':'romance','fear+surprise':'awe',
+  'sadness+anticipation':'melancholy','fear+trust':'reverence','joy+anticipation':'optimism',
+  'trust+peace':'serenity','grief+awe':'solemnity','sadness+longing':'wistfulness',
+};
+
+const PASS_MAP = {
+  structural:1,focal:1,secondary:2,greenery:2,texture:2,accent:2,filler:2
+};
+
+const PALETTE_COLORS = {
+  'neutral-dark':'#3a3530','neutral-light':'#e0dcd4','neutral-mid':'#b09080',
+  'champagne':'#c8b070','silver':'#a8b0b8','botanical-green':'#6a8060',
+};
+
+let form = {
+  name:'',role:'',movement:'',finish:'',palette:'',contrast:'',
+  ep:'',es:'',intensity:[1,2],weight:'mid'
+};
+let savedItems = [];
+let lastColorHex = '';
+
+// apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
+const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost','127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
+
+async function callTag(body) {
+  const res = await fetch(`${CONFIG.apiBase}/api/tag`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  const json = await res.json();
+  if (!json.success) throw new Error(json.error || 'tagging failed');
+  return json.data;
+}
+function applyTagData(data, label) {
+  lastColorHex = data.colorHex || '';
+  const record = {
+    name: data.name || '',
+    role: data.role || '', movement: data.movement || '',
+    finish: data.finish || '', palette: data.palette || '',
+    contrast: data.contrast || '',
+    ep: data.ep || '', es: data.es || '',
+    intensity: Array.isArray(data.intensity) ? data.intensity : [1,2],
+    weight: data.behavior || data.weight || 'mid',
+    confidence: data.confidence || undefined,
+  };
+  applyAnalysisResult(JSON.stringify(record), label);
+}
+
+/* ─── INPUT SWITCHING ─── */
+function switchInput(id, el) {
+  document.querySelectorAll('.itab').forEach(t=>t.classList.remove('on'));
+  document.querySelectorAll('.ipanel').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('ip-'+id).classList.add('on');
+}
+
+/* ─── FILE HANDLING ─── */
+function handleFile(file) {
+  if (!file) return;
+  currentFile = file;
+  currentMediaType = file.type || 'image/jpeg';
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentImageB64 = e.target.result.split(',')[1];
+    const preview = document.getElementById('img-preview');
+    preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+    document.getElementById('photo-btn').disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('dropzone').classList.remove('drag');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) handleFile(file);
+}
+
+/* ─── ANALYSIS: PHOTO (via secure /api/tag) ─── */
+async function analyzePhoto() {
+  if (!currentImageB64) return;
+  setLoading(true, 'Vision is reading your image…');
+  try {
+    const data = await callTag({ image: `data:${currentMediaType};base64,${currentImageB64}` });
+    applyTagData(data, 'Vision analysis');
+  } catch(e) {
+    showError('Vision analysis failed — ' + e.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
+/* ─── ANALYSIS: TEXT (via secure /api/tag) ─── */
+async function analyzeText() {
+  const txt = document.getElementById('text-input').value.trim();
+  if (!txt) return;
+  setLoading(true, 'Reading product description…');
+  try {
+    const data = await callTag({ description: txt });
+    applyTagData(data, 'Text analysis');
+  } catch(e) {
+    showError('Text analysis failed — ' + e.message);
+  } finally {
+    setLoading(false);
+  }
+}
+
+/* ─── MANUAL FORM ─── */
+function loadManualIntoForm() {
+  const name = document.getElementById('manual-name').value.trim() || 'Untitled item';
+  form = { name, role:'', movement:'', finish:'', palette:'', contrast:'', ep:'', es:'', intensity:[1,2], weight:'mid' };
+  document.getElementById('f-name').value = name;
+  document.getElementById('tag-form').style.display = 'block';
+  document.getElementById('form-source-label').textContent = 'manual entry';
+  clearSegSelections();
+  updatePreview();
+  document.getElementById('tag-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ─── SYSTEM PROMPT ─── */
+function buildSystemPrompt() {
+  return `You are the Evercrafted Floral Inventory Tagger. You analyze faux botanical items and return a structured JSON tag record.
+
+SCHEMA (return ONLY this JSON, no markdown, no backticks, no explanation):
+{
+  "name": "descriptive item name",
+  "role": "structural|focal|secondary|greenery|texture|accent|filler",
+  "movement": "weeping|reaching|sweeping|architectural|cascading|still",
+  "finish": "matte|satin|metallic|gloss|raw",
+  "palette": "neutral-dark|neutral-light|neutral-mid|champagne|silver|botanical-green",
+  "contrast": "stark|unified",
+  "ep": "peace|joy|sadness|grief|fear|anger|trust|anticipation|nostalgia|longing|hope|reverence|awe|melancholy",
+  "es": "peace|joy|sadness|grief|fear|trust|anticipation|nostalgia|longing|reflective|hope|reverence|awe|none",
+  "intensity": [min, max],
+  "weight": "wispy|light|mid|heavy",
+  "confidence": { "name":"high|medium|low", "role":"high|medium|low", "movement":"high|medium|low", "finish":"high|medium|low", "palette":"high|medium|low", "contrast":"high|medium|low", "ep":"high|medium|low", "es":"high|medium|low", "weight":"high|medium|low" }
+}
+
+TAGGING RULES:
+- role: what it DOES in the wreath — structural=heavy backbone branch/spray, focal=dominant bloom face, secondary=supporting bloom, greenery=base/edge, texture=pod/berry/dried/bundle, accent=small punctuation piece, filler=volume fill
+- movement: weeping=droops downward, reaching=extends up/outward, sweeping=horizontal arc, architectural=rigid/angular/structural, cascading=falling clusters, still=compact/non-directional
+- finish: look at light interaction — matte=absorbs light, satin=slight sheen, metallic=clearly reflective, gloss=high shine lacquered, raw=dried/unfinished natural
+- palette: neutral-dark=charcoal/near-black/deep burgundy, neutral-light=white/ivory/cream, neutral-mid=mauve/dusty rose/sage/muted terracotta, champagne=warm gold/aged brass/wheat, silver=cool grey/platinum, botanical-green=any true green
+- contrast: stark=will stand out against anything near it, unified=blends naturally
+- ep/es: choose the emotion the form+finish+palette combination evokes, not what the species symbolizes
+- intensity: [1,1]=very soft/muted, [1,2]=versatile mid-range, [2,3]=bold/architectural/high-contrast
+- weight: wispy=<1" / very fine, light=1-2", mid=2-4" bloom/form, heavy=4"+ or dominant visual mass
+- For Pass assignment: structural/focal = Pass 1 (inner wheel, core emotions). secondary/greenery/texture/accent/filler = Pass 2 (outer ring, nuanced emotions).`;
+}
+
+/* ─── APPLY RESULT ─── */
+function applyAnalysisResult(text, sourceLabel) {
+  try {
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    form.name = parsed.name || '';
+    form.role = parsed.role || '';
+    form.movement = parsed.movement || '';
+    form.finish = parsed.finish || '';
+    form.palette = parsed.palette || '';
+    form.contrast = parsed.contrast || '';
+    form.ep = parsed.ep || '';
+    form.es = parsed.es || '';
+    form.intensity = parsed.intensity || [1,2];
+    form.weight = parsed.weight || 'mid';
+
+    document.getElementById('f-name').value = form.name;
+    document.getElementById('tag-form').style.display = 'block';
+    document.getElementById('form-source-label').textContent = sourceLabel;
+
+    clearSegSelections();
+    const fieldMap = { role:'seg-role', movement:'seg-arch', finish:'seg-finish', palette:'seg-palette', contrast:'seg-contrast', ep:'seg-ep', es:'seg-es' };
+    const classMap = { role:'role-on', movement:'arch-on', finish:'fin-on', palette:'pal-on', contrast:'fin-on', ep:'emot-on', es:'emot-on' };
+
+    for (const [field, segId] of Object.entries(fieldMap)) {
+      const val = form[field];
+      if (!val || val === 'none') continue;
+      const seg = document.getElementById(segId);
+      if (!seg) continue;
+      seg.querySelectorAll('.sopt').forEach(b => {
+        const bt = b.textContent.trim().toLowerCase();
+        const v = String(val).toLowerCase();
+        if (bt === v || bt.startsWith(v + ' ')) {
+          b.classList.add(classMap[field]);
+        }
+      });
+    }
+
+    // weight — select the matching bloom size button by data-weight attr or text match
+    if (form.weight) {
+      document.querySelectorAll('#seg-weight .sopt').forEach(b => {
+        if (b.dataset.w === form.weight) b.classList.add('fin-on');
+      });
+    }
+
+    // intensity
+    const intMap = {'1,1':0,'1,2':1,'2,3':2};
+    const intKey = form.intensity.join(',');
+    document.querySelectorAll('#int-row .int-btn').forEach((b,i) => b.classList.toggle('on', i === (intMap[intKey] ?? 1)));
+
+    // confidence
+    if (parsed.confidence) {
+      const confFields = ['name','role','movement','finish','palette','contrast','ep','es','weight'];
+      confFields.forEach(f => {
+        const el = document.getElementById('conf-'+f.replace('ep','ep').replace('es','es'));
+        if (el && parsed.confidence[f]) {
+          const c = parsed.confidence[f];
+          el.textContent = c;
+          el.className = 'conf conf-'+c.replace('medium','med');
+          el.style.display = 'inline-flex';
+        }
+      });
+    }
+
+    updateDerived();
+    updatePreview();
+    document.getElementById('tag-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch(e) {
+    showError('Could not parse analysis result. Try again or use manual form.');
+  }
+}
+
+/* ─── FIELD SETTERS ─── */
+function setField(field, value, btn, activeClass) {
+  form[field] = value;
+  const segMap = { role:'seg-role', movement:'seg-arch', finish:'seg-finish', palette:'seg-palette', contrast:'seg-contrast', ep:'seg-ep', es:'seg-es', weight:'seg-weight' };
+  const seg = document.getElementById(segMap[field]);
+  if (seg) seg.querySelectorAll('.sopt').forEach(b => b.classList.remove('role-on','emot-on','arch-on','fin-on','pal-on'));
+  btn.classList.add(activeClass);
+  updateDerived();
+  updatePreview();
+}
+
+function setIntensity(range, btn) {
+  form.intensity = range;
+  document.querySelectorAll('#int-row .int-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  updatePreview();
+}
+
+function clearSegSelections() {
+  document.querySelectorAll('.seg .sopt, #int-row .int-btn').forEach(b => b.classList.remove('role-on','emot-on','arch-on','fin-on','pal-on','on'));
+  ['conf-name','conf-role','conf-arch','conf-finish','conf-palette','conf-contrast','conf-ep','conf-es','conf-weight'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  document.getElementById('derived-wrap').style.display = 'none';
+}
+
+/* ─── DERIVED TAGS ─── */
+function updateDerived() {
+  const blendKey = [form.ep, form.es].sort().join('+');
+  const blend = BLEND_MAP[blendKey] || BLEND_MAP[[form.es,form.ep].join('+')] || '';
+  const pass = PASS_MAP[form.role] || 2;
+  const tags = [];
+  if (blend) tags.push({ label: 'blend: ' + blend, color: 'var(--dust)', bg: 'rgba(138,125,158,.14)' });
+  tags.push({ label: 'pass ' + pass, color: pass===1?'var(--sage)':'var(--dust)', bg: pass===1?'var(--sgd)':'var(--dsd)' });
+  if (form.ep && form.movement) {
+    const arcHint = form.movement==='architectural'||form.movement==='reaching' ? 'foundational arc' : form.movement==='weeping'||form.movement==='sweeping' ? 'sweep arc' : 'fill zone';
+    tags.push({ label: arcHint, color: 'var(--gold)', bg: 'var(--gd)' });
+  }
+  const wrap = document.getElementById('derived-wrap');
+  const dt = document.getElementById('derived-tags');
+  if (tags.length) {
+    wrap.style.display = 'block';
+    dt.innerHTML = tags.map(t => `<span class="dtag" style="background:${t.bg};color:${t.color};border:1px solid ${t.color}40">${t.label}</span>`).join('');
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+/* ─── RECORD PREVIEW ─── */
+function updatePreview() {
+  const name = document.getElementById('f-name')?.value || form.name || '—';
+  const blendKey = [form.ep, form.es].sort().join('+');
+  const blend = BLEND_MAP[blendKey] || BLEND_MAP[[form.es,form.ep].join('+')] || '';
+  const pass = PASS_MAP[form.role] || 2;
+  const palCol = PALETTE_COLORS[form.palette] || '#888';
+  const rec = document.getElementById('record-preview');
+  rec.innerHTML = `{
+  <span class="rk">"item_id"</span>: <span class="rv">"INV-${String(savedItems.length+1).padStart(3,'0')}"</span>,
+  <span class="rk">"name"</span>: <span class="rv">"${name}"</span>,
+  <span class="rk">"pass"</span>: <span class="rn">${pass}</span>,
+  <span class="rk">"role"</span>: <span class="rv">"${form.role||'—'}"</span>,
+  <span class="rk">"movement"</span>: <span class="rv">"${form.movement||'—'}"</span>,
+  <span class="rk">"finish"</span>: <span class="rv">"${form.finish||'—'}"</span>,
+  <span class="rk">"palette"</span>: <span class="rv">"${form.palette||'—'}"</span>,
+  <span class="rk">"contrast"</span>: <span class="rv">"${form.contrast||'—'}"</span>,
+  <span class="rk">"color"</span>: <span class="rv">"${palCol}"</span>,
+  <span class="rk">"ep"</span>: <span class="rv">"${form.ep||'—'}"</span>,
+  <span class="rk">"es"</span>: <span class="rv">"${form.es||'—'}"</span>,
+  <span class="rk">"blend"</span>: <span class="rv">"${blend||'—'}"</span>,
+  <span class="rk">"intensity"</span>: <span class="rn">[${form.intensity.join(', ')}]</span>,
+  <span class="rk">"weight"</span>: <span class="rv">"${form.weight||'—'}"</span>
+}`;
+}
+
+/* ─── SAVE (to server: /api/inventory) ─── */
+async function saveItem() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name || !form.role || !form.ep) {
+    showError('Please fill in at least name, role, and primary emotion before saving.');
+    return;
+  }
+  const palCol = PALETTE_COLORS[form.palette] || '';
+  const imgEl = document.querySelector('#img-preview img');
+  const imageDataUrl = imgEl ? imgEl.src : '';
+  const rec = {
+    name, role: form.role, behavior: form.weight, movement: form.movement,
+    finish: form.finish, palette: form.palette, ep: form.ep, es: form.es,
+    intensity: [...form.intensity],
+    colorHex: /^#[0-9a-fA-F]{6}$/.test(lastColorHex) ? lastColorHex : (/^#[0-9a-fA-F]{6}$/.test(palCol) ? palCol : ''),
+    stock: 0, image: imageDataUrl,
+  };
+  try {
+    const res = await fetch(`${CONFIG.apiBase}/api/inventory`, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(rec) });
+    const json = await res.json();
+    if (!json.success) throw new Error(json.error || 'save failed');
+    await loadInventory();
+    clearForm();
+  } catch(e) {
+    showError('Could not save: ' + e.message);
+  }
+}
+
+function renderSavedList() {
+  const list = document.getElementById('saved-list');
+  const empty = document.getElementById('inv-empty');
+  document.getElementById('inv-count').textContent = savedItems.length;
+  if (!savedItems.length) {
+    empty.style.display = 'block';
+    list.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  list.style.display = 'flex';
+  list.innerHTML = savedItems.map((item, i) => `
+    <div class="saved-item">
+      <span class="si-dot" style="background:${item.color}"></span>
+      <div class="si-right">
+        <div class="si-name">${item.name}</div>
+        <div class="si-tags">
+          <span class="stag t-role">${item.role}</span>
+          <span class="stag t-arch">${item.movement||'—'}</span>
+          <span class="stag t-fin">${item.finish||'—'}</span>
+          <span class="stag t-emot">${item.blend||item.ep||'—'}</span>
+          <span class="stag" style="background:${item.pass===1?'var(--sgd)':'var(--dsd)'};color:${item.pass===1?'var(--sage)':'var(--dust)'}">P${item.pass}</span>
+        </div>
+      </div>
+      <button class="si-del" onclick="deleteItem(${i})" title="Remove"><i class="ti ti-x" style="font-size:11px"></i></button>
+    </div>`).join('');
+}
+
+async function deleteItem(i) {
+  const it = savedItems[i];
+  if (!it) return;
+  try { await fetch(`${CONFIG.apiBase}/api/inventory/${it.id}`, { method:'DELETE' }); } catch(e) {}
+  await loadInventory();
+}
+
+async function clearInventory() {
+  if (savedItems.length && !confirm('Clear all saved inventory items?')) return;
+  for (const it of [...savedItems]) {
+    try { await fetch(`${CONFIG.apiBase}/api/inventory/${it.id}`, { method:'DELETE' }); } catch(e) {}
+  }
+  await loadInventory();
+  document.getElementById('export-area').classList.remove('vis');
+}
+
+function persistInventory() { /* server-backed now — no-op */ }
+
+async function loadInventory() {
+  try {
+    const res = await fetch(`${CONFIG.apiBase}/api/inventory`);
+    const json = await res.json();
+    const items = (json && json.success) ? (json.data || []) : [];
+    savedItems = items.map(i => ({
+      id: i.id, name: i.name, pass: i.pass, role: i.role, movement: i.movement,
+      finish: i.finish, palette: i.palette, contrast: 'unified',
+      color: i.colorHex || PALETTE_COLORS[i.palette] || '#888',
+      ep: i.ep, es: i.es, blend: '', intensity: i.intensity, weight: i.behavior,
+      stock: i.stock, imageDataUrl: i.imageUrl || '',
+    }));
+    renderSavedList();
+  } catch(e) { /* offline — leave list as-is */ }
+}
+
+function clearForm() {
+  form = { name:'', role:'', movement:'', finish:'', palette:'', contrast:'', ep:'', es:'', intensity:[1,2], weight:'mid' };
+  document.getElementById('f-name').value = '';
+  document.getElementById('tag-form').style.display = 'none';
+  clearSegSelections();
+  document.getElementById('export-area').classList.remove('vis');
+}
+
+/* ─── EXPORT ─── */
+function exportJSON() {
+  if (!savedItems.length) return;
+  const out = JSON.stringify(savedItems, null, 2);
+  const ea = document.getElementById('export-area');
+  ea.textContent = out;
+  ea.classList.add('vis');
+  try {
+    navigator.clipboard.writeText(out);
+  } catch(e) {}
+}
+
+function exportCSV() {
+  if (!savedItems.length) return;
+  const keys = ['id','name','pass','role','movement','finish','palette','contrast','color','ep','es','blend','intensity','weight','stock'];
+  const rows = [keys.join(','), ...savedItems.map(item =>
+    keys.map(k => {
+      const v = item[k];
+      const s = Array.isArray(v) ? `"[${v.join(',')}]"` : `"${v??''}"`;
+      return s;
+    }).join(',')
+  )];
+  const csv = rows.join('\n');
+  const ea = document.getElementById('export-area');
+  ea.textContent = csv;
+  ea.classList.add('vis');
+  try {
+    navigator.clipboard.writeText(csv);
+  } catch(e) {}
+}
+
+/* ─── UI UTILS ─── */
+function setLoading(on, msg='Analyzing…') {
+  document.getElementById('loading-row').style.display = on ? 'block' : 'none';
+  document.getElementById('loading-text').textContent = msg;
+  document.getElementById('photo-btn').disabled = on;
+  document.getElementById('text-btn').disabled = on;
+}
+
+function showError(msg) {
+  const ea = document.getElementById('export-area');
+  ea.textContent = '⚠ ' + msg;
+  ea.classList.add('vis');
+  setTimeout(() => ea.classList.remove('vis'), 4000);
+}
+
+document.getElementById('f-name').addEventListener('input', e => {
+  form.name = e.target.value;
+  updatePreview();
+});
+
+loadInventory();
+</script>
+<script src="/evercrafted-nav.js" defer></script>
+</body>
+</html>

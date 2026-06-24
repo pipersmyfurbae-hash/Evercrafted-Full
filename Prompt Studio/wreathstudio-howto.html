@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WreathStudio — How to Use</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@300;400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ec-white:#FFFFFF;--ec-off-white:#F9F7F4;--ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A;--ec-charcoal:#2E2E2E;--ec-ink:#4A4A4A;
+  --ec-green:#4A6741;--ec-green-light:#6B8F67;--ec-green-pale:#EEF2ED;
+  --ec-border:#E8E8E8;--ec-gray-400:#A8A8A8;--ec-gray-500:#787878;
+  --ec-font-serif:'Cormorant Garamond',serif;
+  --ec-font-sans:'Inter',sans-serif;
+  --ec-font-script:'Dancing Script',cursive;
+  --ec-font-mono:'DM Mono',monospace;
+  --ec-radius-md:8px;--ec-radius-lg:14px;--ec-radius-full:9999px;
+  --ec-shadow-md:0 4px 16px rgba(0,0,0,0.08)
+}
+body{font-family:var(--ec-font-sans);background:var(--ec-off-white);color:var(--ec-black);font-size:15px;line-height:1.7}
+
+/* NAV */
+.guide-nav{position:sticky;top:0;background:rgba(249,247,244,0.96);backdrop-filter:blur(10px);border-bottom:1px solid var(--ec-border);padding:14px 40px;display:flex;align-items:center;justify-content:space-between;z-index:100}
+.guide-brand{font-family:var(--ec-font-script);font-size:22px;color:var(--ec-black);display:flex;align-items:center;gap:9px}
+.nav-leaf{width:15px;height:15px;background:var(--ec-green);border-radius:50% 0 50% 0;transform:rotate(-15deg)}
+.guide-tag{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ec-green);font-weight:500}
+.back-link{font-size:13px;color:var(--ec-gray-500);text-decoration:none;transition:color 0.15s}
+.back-link:hover{color:var(--ec-black)}
+
+/* LAYOUT */
+.guide-layout{display:grid;grid-template-columns:240px 1fr;gap:0;max-width:1100px;margin:0 auto;padding:0 40px;min-height:calc(100vh - 55px)}
+
+/* TOC SIDEBAR */
+.toc{padding:32px 24px 32px 0;position:sticky;top:55px;height:calc(100vh - 55px);overflow-y:auto;border-right:1px solid var(--ec-border)}
+.toc-title{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ec-gray-400);font-weight:500;margin-bottom:14px}
+.toc-section{margin-bottom:20px}
+.toc-section-label{font-size:11px;font-weight:600;color:var(--ec-charcoal);margin-bottom:6px;letter-spacing:0.3px}
+.toc-link{display:block;font-size:13px;color:var(--ec-gray-500);text-decoration:none;padding:4px 0 4px 10px;border-left:2px solid transparent;transition:all 0.15s}
+.toc-link:hover{color:var(--ec-black);border-left-color:var(--ec-green-pale)}
+.toc-link.active{color:var(--ec-green);border-left-color:var(--ec-green);font-weight:500}
+
+/* CONTENT */
+.guide-content{padding:40px 0 80px 48px}
+
+/* HERO */
+.guide-hero{margin-bottom:56px}
+.guide-eyebrow{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--ec-green);font-weight:500;margin-bottom:14px}
+.guide-hero h1{font-family:var(--ec-font-serif);font-size:52px;font-weight:300;line-height:1.12;color:var(--ec-black);margin-bottom:18px;letter-spacing:-0.01em}
+.guide-hero h1 em{font-style:italic;color:var(--ec-green)}
+.guide-hero p{font-size:17px;color:var(--ec-ink);line-height:1.72;font-weight:300;max-width:560px}
+
+/* SECTIONS */
+.guide-section{margin-bottom:64px;scroll-margin-top:80px}
+.guide-section h2{font-family:var(--ec-font-serif);font-size:36px;font-weight:300;color:var(--ec-black);margin-bottom:6px;letter-spacing:-0.01em}
+.section-intro{font-size:15px;color:var(--ec-ink);font-weight:300;margin-bottom:28px;line-height:1.7;max-width:600px}
+.guide-section h3{font-size:16px;font-weight:600;color:var(--ec-black);margin:28px 0 10px}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:20px}
+.step-card{display:flex;gap:20px;align-items:flex-start;background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--ec-radius-lg);padding:20px}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--ec-green-pale);color:var(--ec-green);font-size:13px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-body h4{font-size:14px;font-weight:600;color:var(--ec-black);margin-bottom:6px}
+.step-body p{font-size:13px;color:var(--ec-ink);line-height:1.65;font-weight:300}
+.step-body code{font-family:var(--ec-font-mono);font-size:12px;background:var(--ec-paper);padding:1px 6px;border-radius:4px;color:var(--ec-green)}
+
+/* TIP BOXES */
+.tip-box{background:var(--ec-green-pale);border:1px solid rgba(74,103,65,0.2);border-radius:var(--ec-radius-lg);padding:18px 20px;margin:20px 0;display:flex;gap:12px}
+.tip-box-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.tip-box-body{flex:1}
+.tip-box-title{font-size:13px;font-weight:600;color:var(--ec-green);margin-bottom:5px}
+.tip-box-text{font-size:13px;color:var(--ec-ink);line-height:1.65;font-weight:300}
+
+.warn-box{background:#FFF8ED;border:1px solid rgba(196,146,42,0.25);border-radius:var(--ec-radius-lg);padding:18px 20px;margin:20px 0;display:flex;gap:12px}
+.warn-box .tip-box-title{color:#C4922A}
+
+/* PARAMETER TABLE */
+.param-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:13px}
+.param-table th{text-align:left;padding:9px 12px;background:var(--ec-paper);border-bottom:1px solid var(--ec-border);font-size:11px;letter-spacing:0.5px;text-transform:uppercase;font-weight:500;color:var(--ec-gray-500)}
+.param-table td{padding:9px 12px;border-bottom:1px solid var(--ec-border);vertical-align:top;line-height:1.6}
+.param-table tr:last-child td{border-bottom:none}
+.param-table td:first-child{font-family:var(--ec-font-mono);font-size:12px;color:var(--ec-green);font-weight:500;white-space:nowrap}
+
+/* TARGET CARDS */
+.target-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.target-card{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--ec-radius-md);padding:16px}
+.target-name{font-size:13px;font-weight:600;color:var(--ec-black);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.target-badge{font-size:10px;padding:2px 9px;border-radius:var(--ec-radius-full);background:var(--ec-green-pale);color:var(--ec-green);font-weight:500;letter-spacing:0.3px}
+.target-desc{font-size:13px;color:var(--ec-ink);line-height:1.6;font-weight:300}
+.target-best{font-size:11px;color:var(--ec-gray-500);margin-top:6px}
+.target-best strong{color:var(--ec-black)}
+
+/* CODE BLOCK */
+.code-block{background:var(--ec-charcoal);color:#e0e0e0;border-radius:var(--ec-radius-md);padding:16px 18px;font-family:var(--ec-font-mono);font-size:12px;line-height:1.85;overflow-x:auto;margin:14px 0}
+.code-block .green{color:#a3d97f}
+.code-block .blue{color:#82b4e0}
+.code-block .gray{color:#888}
+
+/* DIVIDER */
+.ec-divider{text-align:center;color:var(--ec-green-pale);letter-spacing:6px;padding:8px 0;margin:40px 0}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--ec-border);padding:18px 0}
+.faq-q{font-size:15px;font-weight:500;color:var(--ec-black);margin-bottom:10px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.faq-q::after{content:'↓';font-size:13px;color:var(--ec-gray-400)}
+.faq-a{font-size:14px;color:var(--ec-ink);line-height:1.7;font-weight:300}
+
+@media(max-width:900px){
+  .guide-layout{grid-template-columns:1fr;padding:0 24px}
+  .toc{display:none}
+  .guide-content{padding:32px 0 60px 0}
+  .target-grid{grid-template-columns:1fr}
+  .guide-hero h1{font-size:36px}
+}
+</style>
+</head>
+<body>
+
+<nav class="guide-nav">
+  <div class="guide-brand"><div class="nav-leaf"></div>WreathStudio</div>
+  <div class="guide-tag">How-To Guide</div>
+  <a class="back-link" href="#">← Back to app</a>
+</nav>
+
+<div class="guide-layout">
+
+  <!-- TOC -->
+  <nav class="toc">
+    <div class="toc-title">Contents</div>
+    <div class="toc-section">
+      <div class="toc-section-label">Getting Started</div>
+      <a class="toc-link active" href="#overview">What WreathStudio does</a>
+      <a class="toc-link" href="#quickstart">Your first prompt</a>
+    </div>
+    <div class="toc-section">
+      <div class="toc-section-label">The Composer</div>
+      <a class="toc-link" href="#blueprint-structure">Blueprint structure</a>
+      <a class="toc-link" href="#emotion-target">Emotion + target</a>
+      <a class="toc-link" href="#mj-controls">Midjourney controls</a>
+    </div>
+    <div class="toc-section">
+      <div class="toc-section-label">Prompt Targets</div>
+      <a class="toc-link" href="#targets">All six targets</a>
+    </div>
+    <div class="toc-section">
+      <div class="toc-section-label">Advanced Use</div>
+      <a class="toc-link" href="#fidelity">Fidelity control</a>
+      <a class="toc-link" href="#remix">Remix + variants</a>
+      <a class="toc-link" href="#ai-enhance">AI enhance</a>
+      <a class="toc-link" href="#history">Prompt history</a>
+      <a class="toc-link" href="#sref">Style references</a>
+    </div>
+    <div class="toc-section">
+      <div class="toc-section-label">Reference</div>
+      <a class="toc-link" href="#param-guide">Parameter guide</a>
+      <a class="toc-link" href="#faq">FAQ</a>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="guide-content">
+
+    <div class="guide-hero">
+      <div class="guide-eyebrow">Documentation</div>
+      <h1>How to use<br><em>WreathStudio</em></h1>
+      <p>Everything you need to go from wreath blueprint to Midjourney-ready prompt in under 60 seconds — and keep going from there.</p>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="guide-section" id="overview">
+      <h2>What WreathStudio does</h2>
+      <p class="section-intro">WreathStudio converts your wreath design parameters into precision Midjourney prompts. Instead of writing prompts from scratch, you configure your design through structured inputs — and the engine assembles the right prompt language for your chosen output type.</p>
+      <p style="font-size:14px;color:var(--ec-ink);line-height:1.7;font-weight:300;margin-bottom:16px">There are two things WreathStudio is not:</p>
+      <div class="tip-box" style="background:#FFF3F3;border-color:rgba(185,64,64,0.2)">
+        <div class="tip-box-icon">⚠️</div>
+        <div class="tip-box-body">
+          <div class="tip-box-title" style="color:#B94040">WreathStudio does not generate images.</div>
+          <div class="tip-box-text">It generates the <em>prompt text</em> you paste into Midjourney. You still use Midjourney to create the actual image.</div>
+        </div>
+      </div>
+      <div class="tip-box">
+        <div class="tip-box-icon">✦</div>
+        <div class="tip-box-body">
+          <div class="tip-box-title">What it replaces</div>
+          <div class="tip-box-text">The 20–40 minutes you currently spend manually writing Midjourney prompts from scratch — figuring out what parameters to use, how to describe your florals, which lighting direction to specify.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ec-divider">✦ ✦ ✦</div>
+
+    <!-- QUICKSTART -->
+    <div class="guide-section" id="quickstart">
+      <h2>Your first prompt</h2>
+      <p class="section-intro">From login to copied prompt in five steps.</p>
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Fill in Blueprint structure</h4>
+            <p>Select your wreath's <strong>Shape</strong> and <strong>Season</strong> using the chip selectors. Then type your <strong>Focal flowers</strong>, <strong>Greenery</strong>, and <strong>Ribbon</strong> into the text fields. Be specific — <code>ivory garden roses</code> produces better results than <code>roses</code>.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Set emotion and target</h4>
+            <p>Choose the <strong>Emotional mood</strong> that matches your design intent. This automatically maps to the right lighting descriptor in your prompt. Then pick your <strong>Prompt target</strong> — what kind of shot you want.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Pick your door color and aspect ratio</h4>
+            <p>For hero and lifestyle shots, select the <strong>Door / wall color</strong> that contrasts your wreath. Choose an <strong>Aspect ratio</strong> — <code>2:3</code> is best for Etsy listings, <code>1:1</code> for Instagram.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Click "Generate prompt"</h4>
+            <p>The prompt assembles instantly and appears in the output panel below. The parameter tags — <code>--ar</code>, <code>--s</code>, <code>--chaos</code>, <code>--sw</code> — are shown for quick reference.</p>
+          </div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h4>Copy and paste into Midjourney</h4>
+            <p>Click <strong>Copy to clipboard</strong>. Open Midjourney, type <code>/imagine</code>, paste your prompt, and press Enter. Before submitting, replace <code>{your_lighting_ref_url}</code> with your actual <code>--sref</code> URL — or remove the <code>--sref</code> parameter entirely for your first test.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ec-divider">✦ ✦ ✦</div>
+
+    <!-- BLUEPRINT STRUCTURE -->
+    <div class="guide-section" id="blueprint-structure">
+      <h2>Blueprint structure</h2>
+      <p class="section-intro">The left panel translates your physical wreath design into the inputs that drive your prompt.</p>
+
+      <h3>Shape</h3>
+      <p style="font-size:14px;color:var(--ec-ink);line-height:1.7;font-weight:300;margin-bottom:12px">Controls the wreath's silhouette in the rendered image.</p>
+      <table class="param-table">
+        <tr><th>Shape</th><th>Best for</th></tr>
+        <tr><td>full round</td><td>Classic catalog shots, symmetrical designs</td></tr>
+        <tr><td>asymmetrical</td><td>Modern editorial, organic/wildflower styles</td></tr>
+        <tr><td>oval</td><td>Door wreaths with vertical tension</td></tr>
+        <tr><td>grapevine</td><td>Rustic, natural, textured base designs</td></tr>
+        <tr><td>open minimal</td><td>Sparse, sculptural, high-end editorial</td></tr>
+      </table>
+
+      <h3>Focal flowers, Greenery, and Ribbon</h3>
+      <p style="font-size:14px;color:var(--ec-ink);line-height:1.7;font-weight:300;margin-bottom:12px">These three fields have the most impact on output quality. The more specific, the better.</p>
+      <div class="tip-box">
+        <div class="tip-box-icon">✦</div>
+        <div class="tip-box-body">
+          <div class="tip-box-title">Specificity tip</div>
+          <div class="tip-box-text">Include color modifiers and texture descriptors. <code>soft dusty blue hydrangeas</code> outperforms <code>hydrangeas</code>. For ribbon, include width, material, and drape: <code>wide ivory linen ribbon with cascading tails</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMOTION + TARGET -->
+    <div class="guide-section" id="emotion-target">
+      <h2>Emotion + target</h2>
+      <p class="section-intro">The right panel controls the mood of the image and what type of shot gets rendered.</p>
+
+      <h3>Emotional mood mapping</h3>
+      <p style="font-size:14px;color:var(--ec-ink);line-height:1.7;font-weight:300;margin-bottom:12px">Each emotion maps to a specific lighting and atmosphere descriptor in your prompt:</p>
+      <table class="param-table">
+        <tr><th>Emotion</th><th>Lighting descriptor injected</th></tr>
+        <tr><td>Calm</td><td>soft, serene, gentle, low contrast</td></tr>
+        <tr><td>Joyful</td><td>bright, lively, cheerful, vivid</td></tr>
+        <tr><td>Cozy</td><td>warm, inviting, soft amber shadows</td></tr>
+        <tr><td>Dramatic</td><td>high contrast, bold focal points, dramatic light and shadow</td></tr>
+        <tr><td>Romantic</td><td>dreamy, delicate, rose-tinted diffused light</td></tr>
+        <tr><td>Fresh</td><td>clean, crisp, open, breezy natural light</td></tr>
+      </table>
+    </div>
+
+    <!-- TARGETS -->
+    <div class="guide-section" id="targets">
+      <h2>All six prompt targets</h2>
+      <p class="section-intro">Each target generates a completely different prompt template, optimized for that shot type. Choose based on how you'll use the image.</p>
+      <div class="target-grid">
+        <div class="target-card">
+          <div class="target-name"><span class="target-badge">Hero door</span></div>
+          <div class="target-desc">Premium catalog shot. Wreath on door, straight-on, shallow depth of field. Hyper-realistic product photography.</div>
+          <div class="target-best"><strong>Best for:</strong> Etsy hero images, shop banners, product listings</div>
+        </div>
+        <div class="target-card">
+          <div class="target-name"><span class="target-badge">Studio</span></div>
+          <div class="target-desc">Neutral backdrop, even commercial lighting. Wreath isolated. Clean, high-end e-commerce.</div>
+          <div class="target-best"><strong>Best for:</strong> Variant shots, catalog pages, white-background listings</div>
+        </div>
+        <div class="target-card">
+          <div class="target-name"><span class="target-badge">Lifestyle</span></div>
+          <div class="target-desc">Cozy porch scene, ambient light, slight angle. Shows the wreath in context of a home.</div>
+          <div class="target-best"><strong>Best for:</strong> Social media, email campaigns, mood-driven selling</div>
+        </div>
+        <div class="target-card">
+          <div class="target-name"><span class="target-badge">Close-up</span></div>
+          <div class="target-desc">Macro texture shot. Petal detail, color gradients, material quality. Bokeh background.</div>
+          <div class="target-best"><strong>Best for:</strong> Instagram, Pinterest, detail gallery images</div>
+        </div>
+        <div class="target-card">
+          <div class="target-name"><span class="target-badge">Editorial</span></div>
+          <div class="target-desc">Magazine-quality architectural lighting. Elevated color story. Clean color narrative.</div>
+          <div class="target-best"><strong>Best for:</strong> Lookbooks, press kits, brand campaigns, wholesale catalogs</div>
+        </div>
+        <div class="target-card">
+          <div class="target-name"><span class="target-badge">Experimental</span></div>
+          <div class="target-desc">Drops --style raw. Abstract, painterly, concept-art aesthetic. No product photography constraints.</div>
+          <div class="target-best"><strong>Best for:</strong> Moodboards, creative direction, seasonal launch teasers</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MJ CONTROLS -->
+    <div class="guide-section" id="mj-controls">
+      <h2>Midjourney controls</h2>
+      <p class="section-intro">Four sliders control how Midjourney renders your prompt. Defaults are optimized for product photography.</p>
+      <table class="param-table">
+        <tr><th>Slider</th><th>Range</th><th>Default</th><th>What it does</th></tr>
+        <tr><td>Blueprint fidelity</td><td>0–100</td><td>75</td><td>Controls how strictly the prompt language tells Midjourney to follow your exact materials. Above 70 = "must follow exact details". 40–70 = allow tasteful variations. Below 40 = creative interpretation.</td></tr>
+        <tr><td>--stylize (--s)</td><td>50–750</td><td>180</td><td>How strongly Midjourney applies its aesthetic training. Lower = closer to photo-real. Higher = more stylized, artistic, magazine-like. 100–200 is the sweet spot for product photography.</td></tr>
+        <tr><td>--chaos</td><td>0–50</td><td>5</td><td>How much variation between renders. 0–10 = predictable, consistent results. 20–50 = more unexpected outputs. Keep low (0–10) for shop hero images.</td></tr>
+        <tr><td>--sw (style weight)</td><td>0–300</td><td>100</td><td>How much your --sref lighting reference influences the output. 60–120 = balanced. Above 200 = the reference dominates over your prompt. Only matters if you're using --sref.</td></tr>
+      </table>
+    </div>
+
+    <!-- FIDELITY -->
+    <div class="guide-section" id="fidelity">
+      <h2>Fidelity control</h2>
+      <p class="section-intro">The fidelity slider changes the instruction language in your prompt — not a Midjourney parameter.</p>
+      <div class="code-block">
+        <span class="green">Fidelity 75–100:</span><br>
+        "…<span class="blue">must follow these exact material and structural details</span>…"<br><br>
+        <span class="green">Fidelity 40–74:</span><br>
+        "…<span class="blue">allow tasteful variations in secondary blooms and foliage</span>…"<br><br>
+        <span class="green">Fidelity 0–39:</span><br>
+        "…<span class="blue">allow creative interpretation inspired by the color story and emotion</span>…"
+      </div>
+      <div class="tip-box">
+        <div class="tip-box-icon">✦</div>
+        <div class="tip-box-body">
+          <div class="tip-box-title">When to lower fidelity</div>
+          <div class="tip-box-text">If Midjourney isn't recognizing your specific florals (e.g. a proprietary name or niche variety), lower fidelity to 30–50. This lets Midjourney interpret the emotional and color intent rather than fighting to render an exact botanical it doesn't recognize.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REMIX -->
+    <div class="guide-section" id="remix">
+      <h2>Remix variants</h2>
+      <p class="section-intro">Remix generates a slight compositional reinterpretation of your current prompt without changing any of your inputs.</p>
+      <p style="font-size:14px;color:var(--ec-ink);line-height:1.7;font-weight:300;margin-bottom:16px">It adds the phrase <code>slight compositional reinterpretation</code> to the base prompt, which signals Midjourney to vary the arrangement while keeping materials and mood consistent. Use it to get 3–4 different crops or angles from the same design brief.</p>
+      <div class="warn-box">
+        <div class="tip-box-icon">⚠️</div>
+        <div class="tip-box-body">
+          <div class="tip-box-title">Craft plan and above</div>
+          <div class="tip-box-text">Remix is available on Craft, Studio, and Atelier tiers. Bloom users can upgrade to access it.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI ENHANCE -->
+    <div class="guide-section" id="ai-enhance">
+      <h2>AI enhance</h2>
+      <p class="section-intro">The AI Enhance button sends your generated prompt to Claude, which rewrites and enriches it with more specific lighting direction, surface detail, and atmosphere language — without changing your Midjourney parameters.</p>
+      <div class="steps">
+        <div class="step-card">
+          <div class="step-num">1</div>
+          <div class="step-body"><h4>Generate your prompt first</h4><p>AI Enhance works on an existing generated prompt. Click "Generate prompt" before hitting Enhance.</p></div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">2</div>
+          <div class="step-body"><h4>Click "✦ AI enhance"</h4><p>Claude receives your current prompt and returns an enriched version. All <code>--parameters</code> are preserved unchanged.</p></div>
+        </div>
+        <div class="step-card">
+          <div class="step-num">3</div>
+          <div class="step-body"><h4>Review and copy</h4><p>The output panel updates with the enhanced prompt. If you prefer the original, click "Remix variant" to regenerate from your inputs.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="guide-section" id="history">
+      <h2>Prompt history</h2>
+      <p class="section-intro">Save any generated prompt to your history. Prompts are labeled with the target type and season for easy recall.</p>
+      <p style="font-size:14px;color:var(--ec-ink);line-height:1.7;font-weight:300">Click any saved prompt in the history panel to load it back into the output area. Bloom users can save 5 prompts. Craft and above have unlimited history.</p>
+    </div>
+
+    <!-- SREF -->
+    <div class="guide-section" id="sref">
+      <h2>Style references (--sref)</h2>
+      <p class="section-intro">The <code>--sref</code> parameter tells Midjourney to match the lighting style of a reference image. WreathStudio includes a placeholder in every non-experimental prompt.</p>
+      <div class="tip-box">
+        <div class="tip-box-icon">✦</div>
+        <div class="tip-box-body">
+          <div class="tip-box-title">How to use --sref</div>
+          <div class="tip-box-text">Find a photo with the lighting you love (warm moody, bright studio, golden hour). Upload it to any public image host (Imgur, Discord, your own CDN). Copy the direct image URL and replace <code>{your_lighting_ref_url}</code> in your copied prompt. The <code>--sw</code> value controls how dominant the reference is.</div>
+        </div>
+      </div>
+      <p style="font-size:14px;color:var(--ec-ink);line-height:1.7;font-weight:300;margin-top:14px">If you don't have a reference, simply delete <code>--sref {your_lighting_ref_url} --sw 100</code> from your prompt before submitting to Midjourney. The prompt will still work — it just won't have a lighting reference applied.</p>
+    </div>
+
+    <div class="ec-divider">✦ ✦ ✦</div>
+
+    <!-- PARAM GUIDE -->
+    <div class="guide-section" id="param-guide">
+      <h2>Parameter guide</h2>
+      <p class="section-intro">Quick reference for every Midjourney parameter WreathStudio appends to your prompts.</p>
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Meaning</th><th>WreathStudio default</th></tr>
+        <tr><td>--v 6.1</td><td>Midjourney version — use latest for best photorealism</td><td>Always 6.1</td></tr>
+        <tr><td>--style raw</td><td>Reduces Midjourney's aesthetic over-processing. Essential for realistic product photography.</td><td>All except Experimental</td></tr>
+        <tr><td>--q 1</td><td>Quality setting. 1 = standard. Use 2 for final hero shots (2x render time).</td><td>1 (change manually for finals)</td></tr>
+        <tr><td>--ar</td><td>Aspect ratio. 2:3 for Etsy, 1:1 for Instagram, 16:9 for banners.</td><td>2:3</td></tr>
+        <tr><td>--s</td><td>Stylize. Lower = realistic, higher = artistic.</td><td>180</td></tr>
+        <tr><td>--chaos</td><td>Variation between renders. Keep low for consistent product shots.</td><td>5</td></tr>
+        <tr><td>--sw</td><td>Style weight — controls how much --sref influences output.</td><td>100</td></tr>
+        <tr><td>--sref</td><td>Style reference image URL. Replace the placeholder with your own URL.</td><td>Placeholder included</td></tr>
+        <tr><td>--no</td><td>Negative prompt — things to exclude. WreathStudio always excludes text, logos, people.</td><td>text, watermark, logo, frame, people, hands</td></tr>
+      </table>
+    </div>
+
+    <!-- FAQ -->
+    <div class="guide-section" id="faq">
+      <h2>FAQ</h2>
+      <div class="faq-item">
+        <div class="faq-q">My output doesn't look like my wreath. What's wrong?</div>
+        <div class="faq-a">Usually a fidelity issue. Raise fidelity to 80–100 and be more specific in your focal flower field. Also check that your floral names are common enough for Midjourney to recognize — very niche botanical names may need to be simplified.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What's the best aspect ratio for Etsy listings?</div>
+        <div class="faq-a">2:3 (portrait) works best for Etsy hero images. It fills the listing card on both desktop and mobile. Use 1:1 for any secondary images you want to display in a grid.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I use WreathStudio for garlands or centerpieces?</div>
+        <div class="faq-a">Yes, with manual edits. Generate a prompt with the closest wreath shape, then manually edit the output to change "wreath" to "garland" or "centerpiece" before pasting into Midjourney. A dedicated garland/centerpiece mode is on the roadmap.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Why does my prompt still say {your_lighting_ref_url}?</div>
+        <div class="faq-a">That's a placeholder for your personal --sref URL. Either replace it with a real image URL before submitting to Midjourney, or delete the entire --sref {url} --sw 100 section from your prompt. Both work.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What does --style raw do?</div>
+        <div class="faq-a">--style raw tells Midjourney to render your prompt more literally, with less of its own "art direction" applied. This is important for product photography — without it, Midjourney tends to add painterly effects and over-stylized lighting that makes wreaths look less like real products.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">How many prompts does each plan include?</div>
+        <div class="faq-a">Bloom (free): 25/month. Craft ($19/mo): 300/month. Studio ($49/mo): unlimited. Prompt counts reset on your billing date.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Active TOC highlighting
+const sections=document.querySelectorAll('.guide-section');
+const links=document.querySelectorAll('.toc-link');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      links.forEach(l=>l.classList.remove('active'));
+      const active=document.querySelector(`.toc-link[href="#${e.target.id}"]`);
+      if(active)active.classList.add('active');
+    }
+  });
+},{rootMargin:'-30% 0px -60% 0px'});
+sections.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>

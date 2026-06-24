@@ -1,0 +1,1428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory Weaver — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ec-white:        #FFFFFF;
+  --ec-off-white:    #F9F7F4;
+  --ec-paper:        #F2EFE9;
+  --ec-black:        #1A1A1A;
+  --ec-charcoal:     #2E2E2E;
+  --ec-ink:          #4A4A4A;
+  --ec-green:        #4A6741;
+  --ec-green-light:  #6B8F67;
+  --ec-green-pale:   #EEF2ED;
+  --ec-green-dim:    rgba(74,103,65,0.12);
+  --ec-gray-100:     #F5F5F5;
+  --ec-gray-200:     #E8E8E8;
+  --ec-gray-300:     #D0D0D0;
+  --ec-gray-400:     #A8A8A8;
+  --ec-gray-500:     #787878;
+  --ec-warning:      #C4922A;
+  --ec-warning-pale: #FDF5E6;
+  --ec-error:        #B94040;
+  --ec-error-pale:   #FDEAEA;
+  --ec-success:      #4A6741;
+  --ec-surface:      var(--ec-white);
+  --ec-surface-alt:  var(--ec-off-white);
+  --ec-surface-warm: var(--ec-paper);
+  --ec-border:       var(--ec-gray-200);
+  --ec-border-dark:  var(--ec-gray-300);
+  --ec-text:         var(--ec-black);
+  --ec-text-muted:   var(--ec-ink);
+  --ec-text-faint:   var(--ec-gray-500);
+  --ec-font-serif:   'Cormorant Garamond', Georgia, serif;
+  --ec-font-sans:    'Inter', system-ui, sans-serif;
+  --ec-font-script:  'Dancing Script', cursive;
+  --ec-font-mono:    'DM Mono', monospace;
+  --ec-space-1: 0.25rem; --ec-space-2: 0.5rem; --ec-space-3: 0.75rem;
+  --ec-space-4: 1rem;    --ec-space-5: 1.5rem; --ec-space-6: 2rem;
+  --ec-space-8: 2.5rem;  --ec-space-10: 3rem;
+  --ec-radius-sm: 4px; --ec-radius-md: 8px; --ec-radius-lg: 14px; --ec-radius-full: 9999px;
+  --ec-shadow-sm:  0 1px 3px rgba(0,0,0,0.06);
+  --ec-shadow-md:  0 4px 16px rgba(0,0,0,0.08);
+  --ec-shadow-card:0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px var(--ec-border);
+  --ec-transition: 200ms ease;
+}
+
+body {
+  font-family: var(--ec-font-sans);
+  background: var(--ec-off-white);
+  color: var(--ec-text);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── APP HEADER ── */
+.ec-app-header {
+  background: var(--ec-white);
+  border-bottom: 1px solid var(--ec-border);
+  padding: 0 var(--ec-space-6);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--ec-shadow-sm);
+}
+.ec-app-header__brand {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ec-space-3);
+}
+.ec-script {
+  font-family: var(--ec-font-script);
+  font-size: 1.25rem;
+  color: var(--ec-green);
+  font-weight: 600;
+}
+.ec-app-header__app-name {
+  font-family: var(--ec-font-sans);
+  font-size: 0.8125rem;
+  color: var(--ec-text-faint);
+  letter-spacing: 0.05em;
+}
+.ec-tier-badge {
+  font-family: var(--ec-font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: var(--ec-radius-full);
+}
+.ec-tier-craft { background: #EEF4F9; color: #4A6785; }
+
+/* ── LAYOUT ── */
+.ec-app-body {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--ec-space-6) var(--ec-space-5);
+}
+
+/* ── TOOLBAR ── */
+.ec-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--ec-space-4);
+  margin-bottom: var(--ec-space-5);
+  flex-wrap: wrap;
+}
+.ec-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--ec-space-3);
+  flex: 1;
+  flex-wrap: wrap;
+}
+.ec-search {
+  position: relative;
+  flex: 1;
+  min-width: 200px;
+  max-width: 320px;
+}
+.ec-search__icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ec-gray-400);
+  font-size: 14px;
+  pointer-events: none;
+}
+.ec-input {
+  width: 100%;
+  padding: 8px 12px 8px 34px;
+  background: var(--ec-white);
+  border: 1.5px solid var(--ec-border);
+  border-radius: var(--ec-radius-md);
+  font-family: var(--ec-font-sans);
+  font-size: 0.875rem;
+  color: var(--ec-text);
+  outline: none;
+  transition: border-color var(--ec-transition);
+}
+.ec-input:focus { border-color: var(--ec-green); box-shadow: 0 0 0 3px var(--ec-green-dim); }
+.ec-input::placeholder { color: var(--ec-gray-400); }
+
+/* Category filter chips */
+.ec-chips {
+  display: flex;
+  gap: var(--ec-space-2);
+  flex-wrap: wrap;
+}
+.ec-chip {
+  padding: 5px 12px;
+  border-radius: var(--ec-radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid var(--ec-border);
+  background: var(--ec-white);
+  color: var(--ec-text-muted);
+  transition: all var(--ec-transition);
+  white-space: nowrap;
+}
+.ec-chip:hover { border-color: var(--ec-green); color: var(--ec-green); }
+.ec-chip.active {
+  background: var(--ec-green);
+  border-color: var(--ec-green);
+  color: var(--ec-white);
+}
+
+/* ── STATS ROW ── */
+.ec-stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--ec-space-4);
+  margin-bottom: var(--ec-space-5);
+}
+.ec-stat-card {
+  background: var(--ec-white);
+  border-radius: var(--ec-radius-lg);
+  box-shadow: var(--ec-shadow-card);
+  padding: var(--ec-space-4) var(--ec-space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--ec-space-4);
+}
+.ec-stat-icon {
+  width: 40px; height: 40px;
+  border-radius: var(--ec-radius-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.ec-stat-icon.green  { background: var(--ec-green-pale); }
+.ec-stat-icon.amber  { background: #FDF5E6; }
+.ec-stat-icon.red    { background: #FDEAEA; }
+.ec-stat-icon.blue   { background: #EEF4F9; }
+.ec-stat-num {
+  font-family: var(--ec-font-serif);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--ec-text);
+  line-height: 1;
+}
+.ec-stat-label {
+  font-size: 0.75rem;
+  color: var(--ec-text-faint);
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ── MAIN TABLE CARD ── */
+.ec-card {
+  background: var(--ec-surface);
+  border-radius: var(--ec-radius-lg);
+  box-shadow: var(--ec-shadow-card);
+}
+.ec-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ec-space-4) var(--ec-space-5);
+  border-bottom: 1px solid var(--ec-border);
+}
+.ec-card-title {
+  font-family: var(--ec-font-serif);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--ec-text);
+}
+.ec-card-count {
+  font-size: 0.75rem;
+  color: var(--ec-text-faint);
+  margin-left: var(--ec-space-2);
+}
+
+/* ── TABLE ── */
+.ec-table-wrap { overflow-x: auto; }
+.ec-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.ec-table th {
+  font-family: var(--ec-font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ec-text-faint);
+  padding: var(--ec-space-3) var(--ec-space-4);
+  text-align: left;
+  background: var(--ec-surface-alt);
+  border-bottom: 1px solid var(--ec-border);
+  white-space: nowrap;
+}
+.ec-table th:last-child { text-align: right; }
+.ec-table td {
+  padding: var(--ec-space-3) var(--ec-space-4);
+  font-size: 0.875rem;
+  color: var(--ec-text);
+  border-bottom: 1px solid var(--ec-border);
+  vertical-align: middle;
+}
+.ec-table tbody tr:last-child td { border-bottom: none; }
+.ec-table tbody tr:hover { background: var(--ec-surface-alt); }
+.ec-table td:last-child { text-align: right; }
+
+/* Item name */
+.ec-item-name {
+  font-weight: 500;
+  color: var(--ec-text);
+}
+.ec-item-notes {
+  font-size: 0.75rem;
+  color: var(--ec-text-faint);
+  margin-top: 2px;
+}
+
+/* Category pill */
+.ec-cat-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: var(--ec-radius-full);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.cat-greenery  { background: var(--ec-green-pale); color: var(--ec-green); }
+.cat-florals   { background: #F8EFF4; color: #7A4A85; }
+.cat-accents   { background: #FEF5E4; color: #9A6A1A; }
+.cat-bases     { background: #EEF4F9; color: #4A6785; }
+.cat-ribbon    { background: #FDE8E8; color: #944040; }
+.cat-tools     { background: #F2F2F2; color: #5A5A5A; }
+
+/* Stock status */
+.ec-stock-val {
+  font-family: var(--ec-font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.ec-stock-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--ec-space-2);
+  min-width: 100px;
+}
+.ec-stock-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--ec-gray-200);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.ec-stock-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width var(--ec-transition);
+}
+.fill-ok      { background: var(--ec-green); }
+.fill-low     { background: var(--ec-warning); }
+.fill-critical{ background: var(--ec-error); }
+
+/* Status dot */
+.ec-status-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dot-ok       { background: var(--ec-green); }
+.dot-low      { background: var(--ec-warning); }
+.dot-critical { background: var(--ec-error); }
+
+/* Row actions */
+.ec-row-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ec-space-2);
+  justify-content: flex-end;
+  opacity: 0;
+  transition: opacity var(--ec-transition);
+}
+.ec-table tbody tr:hover .ec-row-actions { opacity: 1; }
+.ec-icon-btn {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: none;
+  border: 1.5px solid var(--ec-border);
+  border-radius: var(--ec-radius-sm);
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--ec-text-muted);
+  transition: all var(--ec-transition);
+}
+.ec-icon-btn:hover { border-color: var(--ec-black); color: var(--ec-black); background: var(--ec-gray-100); }
+.ec-icon-btn.danger:hover { border-color: var(--ec-error); color: var(--ec-error); }
+
+/* ── BUTTONS ── */
+.ec-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ec-space-2);
+  padding: 8px var(--ec-space-5);
+  border-radius: var(--ec-radius-md);
+  font-family: var(--ec-font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all var(--ec-transition);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.ec-btn-primary { background: var(--ec-black); color: var(--ec-white); }
+.ec-btn-primary:hover { background: var(--ec-charcoal); transform: translateY(-1px); box-shadow: var(--ec-shadow-md); }
+.ec-btn-green { background: var(--ec-green); color: var(--ec-white); }
+.ec-btn-green:hover { background: var(--ec-green-light); transform: translateY(-1px); }
+.ec-btn-outline { background: transparent; color: var(--ec-text); border: 1.5px solid var(--ec-border-dark); }
+.ec-btn-outline:hover { border-color: var(--ec-black); background: var(--ec-gray-100); }
+.ec-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+
+/* ── DRAWER (Add/Edit panel) ── */
+.ec-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,26,26,0.35);
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease;
+  backdrop-filter: blur(1px);
+}
+.ec-drawer-overlay.open { opacity: 1; pointer-events: all; }
+.ec-drawer {
+  position: fixed;
+  top: 0; right: 0; bottom: 0;
+  width: 420px;
+  background: var(--ec-white);
+  z-index: 201;
+  transform: translateX(100%);
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 40px rgba(0,0,0,0.12);
+}
+.ec-drawer.open { transform: translateX(0); }
+.ec-drawer-header {
+  padding: var(--ec-space-5) var(--ec-space-6);
+  border-bottom: 1px solid var(--ec-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+.ec-drawer-title {
+  font-family: var(--ec-font-serif);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.ec-drawer-close {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--ec-text-faint);
+  font-size: 18px;
+  border-radius: var(--ec-radius-sm);
+  transition: all var(--ec-transition);
+}
+.ec-drawer-close:hover { background: var(--ec-gray-100); color: var(--ec-text); }
+.ec-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--ec-space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ec-space-5);
+}
+.ec-drawer-footer {
+  padding: var(--ec-space-4) var(--ec-space-6);
+  border-top: 1px solid var(--ec-border);
+  display: flex;
+  gap: var(--ec-space-3);
+  flex-shrink: 0;
+}
+
+/* Form fields */
+.ec-field { display: flex; flex-direction: column; gap: var(--ec-space-2); }
+.ec-label {
+  font-family: var(--ec-font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ec-text-faint);
+}
+.ec-input-full {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--ec-white);
+  border: 1.5px solid var(--ec-border);
+  border-radius: var(--ec-radius-md);
+  font-family: var(--ec-font-sans);
+  font-size: 0.875rem;
+  color: var(--ec-text);
+  outline: none;
+  transition: border-color var(--ec-transition);
+}
+.ec-input-full:focus { border-color: var(--ec-green); box-shadow: 0 0 0 3px var(--ec-green-dim); }
+.ec-input-full::placeholder { color: var(--ec-gray-400); }
+select.ec-input-full { cursor: pointer; }
+
+.ec-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ec-space-4);
+}
+
+/* ── EMPTY STATE ── */
+.ec-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--ec-space-10) var(--ec-space-6);
+  gap: var(--ec-space-3);
+  color: var(--ec-text-faint);
+  text-align: center;
+}
+.ec-empty__icon { font-size: 2.5rem; }
+.ec-empty__title {
+  font-family: var(--ec-font-serif);
+  font-size: 1.25rem;
+  color: var(--ec-text-muted);
+}
+.ec-empty__desc { font-size: 0.875rem; max-width: 280px; line-height: 1.6; }
+
+/* ── LOCKED SECTION ── */
+.ec-locked-section {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--ec-radius-lg);
+  margin-top: var(--ec-space-6);
+}
+.ec-locked-blur {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+.ec-lock-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(249,247,244,0.7);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ec-radius-lg);
+}
+.ec-lock-badge {
+  background: var(--ec-white);
+  border: 1.5px solid var(--ec-border-dark);
+  border-radius: var(--ec-radius-lg);
+  padding: var(--ec-space-5) var(--ec-space-6);
+  text-align: center;
+  box-shadow: var(--ec-shadow-md);
+  max-width: 320px;
+}
+.ec-lock-icon { font-size: 1.5rem; margin-bottom: var(--ec-space-2); }
+.ec-lock-tier {
+  font-family: var(--ec-font-script);
+  font-size: 1rem;
+  color: var(--ec-green);
+  margin-bottom: var(--ec-space-2);
+}
+.ec-lock-desc {
+  font-size: 0.8125rem;
+  color: var(--ec-text-muted);
+  line-height: 1.55;
+  margin-bottom: var(--ec-space-4);
+}
+
+/* ── BOTANICAL DIVIDER ── */
+.ec-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--ec-space-4);
+  margin: var(--ec-space-8) 0;
+  color: var(--ec-gray-300);
+}
+.ec-divider::before, .ec-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--ec-border);
+}
+
+/* ── TOAST ── */
+.ec-toast {
+  position: fixed;
+  bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  background: var(--ec-black);
+  color: var(--ec-white);
+  padding: 10px 20px;
+  border-radius: var(--ec-radius-md);
+  font-size: 0.8125rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 300ms ease;
+  z-index: 999;
+  white-space: nowrap;
+  box-shadow: var(--ec-shadow-md);
+}
+.ec-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ── LOW STOCK ALERT BANNER ── */
+.ec-alert-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--ec-space-3);
+  padding: var(--ec-space-3) var(--ec-space-4);
+  background: var(--ec-warning-pale);
+  border: 1.5px solid rgba(196,146,42,0.25);
+  border-radius: var(--ec-radius-md);
+  margin-bottom: var(--ec-space-5);
+  font-size: 0.8125rem;
+  color: #7A5A1A;
+}
+.ec-alert-banner.hidden { display: none; }
+.ec-alert-icon { font-size: 16px; flex-shrink: 0; }
+
+/* ── IMPORT/EXPORT BAR ── */
+.ec-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ec-space-5);
+  flex-wrap: wrap;
+  gap: var(--ec-space-3);
+}
+.ec-action-bar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ec-page-title {
+  font-family: var(--ec-font-serif);
+  font-size: 1.75rem;
+  font-weight: 400;
+  color: var(--ec-text);
+}
+.ec-page-sub {
+  font-size: 0.8125rem;
+  color: var(--ec-text-faint);
+}
+.ec-action-bar-right {
+  display: flex;
+  gap: var(--ec-space-3);
+  align-items: center;
+}
+
+/* CSV Import modal */
+.ec-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,26,26,0.5);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 250ms ease;
+  backdrop-filter: blur(2px);
+}
+.ec-modal-overlay.open { opacity: 1; pointer-events: all; }
+.ec-modal {
+  background: var(--ec-white);
+  border-radius: var(--ec-radius-lg);
+  box-shadow: var(--ec-shadow-lg);
+  width: 520px;
+  max-width: 95vw;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0.96);
+  transition: transform 250ms ease;
+}
+.ec-modal-overlay.open .ec-modal { transform: scale(1); }
+.ec-modal-header {
+  padding: var(--ec-space-5) var(--ec-space-6);
+  border-bottom: 1px solid var(--ec-border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ec-modal-title { font-family: var(--ec-font-serif); font-size: 1.25rem; font-weight: 600; }
+.ec-modal-body { padding: var(--ec-space-5) var(--ec-space-6); flex: 1; overflow-y: auto; }
+.ec-modal-footer { padding: var(--ec-space-4) var(--ec-space-6); border-top: 1px solid var(--ec-border); display: flex; gap: var(--ec-space-3); justify-content: flex-end; }
+
+.ec-csv-drop {
+  border: 2px dashed var(--ec-border-dark);
+  border-radius: var(--ec-radius-md);
+  padding: var(--ec-space-8);
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--ec-transition);
+  color: var(--ec-text-faint);
+}
+.ec-csv-drop:hover, .ec-csv-drop.drag-over {
+  border-color: var(--ec-green);
+  background: var(--ec-green-pale);
+  color: var(--ec-green);
+}
+.ec-csv-drop p { font-size: 0.875rem; margin-top: var(--ec-space-2); }
+.ec-csv-textarea {
+  width: 100%;
+  height: 140px;
+  padding: var(--ec-space-3);
+  border: 1.5px solid var(--ec-border);
+  border-radius: var(--ec-radius-md);
+  font-family: var(--ec-font-mono);
+  font-size: 0.75rem;
+  color: var(--ec-text);
+  resize: vertical;
+  outline: none;
+  margin-top: var(--ec-space-4);
+  transition: border-color var(--ec-transition);
+}
+.ec-csv-textarea:focus { border-color: var(--ec-green); }
+
+/* quick-add qty row */
+.ec-qty-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--ec-space-2);
+}
+.ec-qty-btn {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--ec-gray-100);
+  border: 1.5px solid var(--ec-border);
+  border-radius: var(--ec-radius-sm);
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  color: var(--ec-text-muted);
+  transition: all var(--ec-transition);
+}
+.ec-qty-btn:hover { background: var(--ec-green-pale); border-color: var(--ec-green); color: var(--ec-green); }
+.ec-qty-display {
+  font-family: var(--ec-font-mono);
+  font-size: 0.875rem;
+  min-width: 36px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .ec-stats-row { grid-template-columns: repeat(2, 1fr); }
+  .ec-drawer { width: 100%; }
+  .ec-toolbar { flex-direction: column; align-items: stretch; }
+  .ec-action-bar { flex-direction: column; align-items: stretch; }
+  .ec-action-bar-right { flex-wrap: wrap; }
+}
+</style>
+</head>
+<body>
+
+<!-- APP HEADER -->
+<header class="ec-app-header">
+  <div class="ec-app-header__brand">
+    <span class="ec-script">Evercrafted</span>
+    <span class="ec-app-header__app-name">Inventory Weaver</span>
+  </div>
+  <div class="ec-tier-badge ec-tier-craft">Craft</div>
+</header>
+
+<!-- TOAST -->
+<div class="ec-toast" id="toast"></div>
+
+<!-- DRAWER OVERLAY -->
+<div class="ec-drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+
+<!-- ADD / EDIT DRAWER -->
+<div class="ec-drawer" id="itemDrawer">
+  <div class="ec-drawer-header">
+    <span class="ec-drawer-title" id="drawerTitle">Add Item</span>
+    <button class="ec-drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="ec-drawer-body">
+    <input type="hidden" id="editId">
+    <div class="ec-field">
+      <label class="ec-label">Item Name</label>
+      <input class="ec-input-full" id="f-name" type="text" placeholder="e.g. Ivory peony stem">
+    </div>
+    <div class="ec-field-row">
+      <div class="ec-field">
+        <label class="ec-label">Category</label>
+        <select class="ec-input-full" id="f-category">
+          <option value="Greenery">Greenery</option>
+          <option value="Florals">Florals</option>
+          <option value="Accents">Accents</option>
+          <option value="Bases">Bases</option>
+          <option value="Ribbon">Ribbon</option>
+          <option value="Tools">Tools</option>
+        </select>
+      </div>
+      <div class="ec-field">
+        <label class="ec-label">Unit</label>
+        <select class="ec-input-full" id="f-unit">
+          <option value="stems">stems</option>
+          <option value="yards">yards</option>
+          <option value="pieces">pieces</option>
+          <option value="bundles">bundles</option>
+          <option value="spools">spools</option>
+          <option value="oz">oz</option>
+        </select>
+      </div>
+    </div>
+    <div class="ec-field-row">
+      <div class="ec-field">
+        <label class="ec-label">Quantity in Stock</label>
+        <input class="ec-input-full" id="f-qty" type="number" min="0" placeholder="0">
+      </div>
+      <div class="ec-field">
+        <label class="ec-label">Reorder Threshold</label>
+        <input class="ec-input-full" id="f-threshold" type="number" min="0" placeholder="5">
+      </div>
+    </div>
+    <div class="ec-field-row">
+      <div class="ec-field">
+        <label class="ec-label">Unit Cost ($)</label>
+        <input class="ec-input-full" id="f-cost" type="number" min="0" step="0.01" placeholder="0.00">
+      </div>
+      <div class="ec-field">
+        <label class="ec-label">Supplier / Source</label>
+        <input class="ec-input-full" id="f-supplier" type="text" placeholder="e.g. Afloral">
+      </div>
+    </div>
+    <div class="ec-field">
+      <label class="ec-label">Notes</label>
+      <input class="ec-input-full" id="f-notes" type="text" placeholder="Color, size, season, etc.">
+    </div>
+  </div>
+  <div class="ec-drawer-footer">
+    <button class="ec-btn ec-btn-green" style="flex:1" onclick="saveItem()">Save Item</button>
+    <button class="ec-btn ec-btn-outline" onclick="closeDrawer()">Cancel</button>
+  </div>
+</div>
+
+<!-- CSV IMPORT MODAL -->
+<div class="ec-modal-overlay" id="importModal">
+  <div class="ec-modal">
+    <div class="ec-modal-header">
+      <span class="ec-modal-title">Import Inventory</span>
+      <button class="ec-drawer-close" onclick="closeImportModal()">✕</button>
+    </div>
+    <div class="ec-modal-body">
+      <p style="font-size:0.8125rem;color:var(--ec-text-muted);margin-bottom:var(--ec-space-4);line-height:1.6">
+        Paste CSV text or type your inventory below. One item per line.<br>
+        <strong>Format:</strong> <code style="font-family:var(--ec-font-mono);font-size:0.75rem">Name, Category, Qty, Unit, Threshold, Cost, Supplier, Notes</code>
+      </p>
+      <p style="font-size:0.75rem;color:var(--ec-text-faint);margin-bottom:var(--ec-space-3)">
+        Example: <code style="font-family:var(--ec-font-mono)">Ivory peony stem, Florals, 24, stems, 5, 1.50, Afloral, Large blooms</code>
+      </p>
+      <textarea class="ec-csv-textarea" id="csvInput" placeholder="Ivory peony stem, Florals, 24, stems, 5, 1.50, Afloral, Large blooms
+Eucalyptus spray, Greenery, 40, stems, 10, 0.75, Michaels
+10-inch grapevine base, Bases, 6, pieces, 2, 3.00"></textarea>
+      <div id="csvPreview" style="margin-top:var(--ec-space-4);"></div>
+    </div>
+    <div class="ec-modal-footer">
+      <button class="ec-btn ec-btn-outline" onclick="closeImportModal()">Cancel</button>
+      <button class="ec-btn ec-btn-green" onclick="importCSV()">Import Items</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP BODY -->
+<div class="ec-app-body">
+
+  <!-- Page title + actions -->
+  <div class="ec-action-bar">
+    <div class="ec-action-bar-left">
+      <h1 class="ec-page-title">Your Inventory</h1>
+      <p class="ec-page-sub">Track every stem, spool, and supply across all your wreath projects.</p>
+    </div>
+    <div class="ec-action-bar-right">
+      <button class="ec-btn ec-btn-outline" onclick="exportCSV()">↓ Export CSV</button>
+      <button class="ec-btn ec-btn-outline" onclick="openImportModal()">↑ Import CSV</button>
+      <button class="ec-btn ec-btn-green" onclick="openDrawer(null)">+ Add Item</button>
+    </div>
+  </div>
+
+  <!-- Low stock alert -->
+  <div class="ec-alert-banner hidden" id="lowStockBanner">
+    <span class="ec-alert-icon">⚠️</span>
+    <span id="lowStockMsg">You have items running low.</span>
+    <button class="ec-btn ec-btn-outline" style="margin-left:auto;padding:4px 12px;font-size:0.75rem" onclick="filterLowStock()">View Low Stock</button>
+  </div>
+
+  <!-- Stats row -->
+  <div class="ec-stats-row" id="statsRow">
+    <div class="ec-stat-card">
+      <div class="ec-stat-icon green">🌿</div>
+      <div>
+        <div class="ec-stat-num" id="statTotal">0</div>
+        <div class="ec-stat-label">Total Items</div>
+      </div>
+    </div>
+    <div class="ec-stat-card">
+      <div class="ec-stat-icon amber">⚠️</div>
+      <div>
+        <div class="ec-stat-num" id="statLow">0</div>
+        <div class="ec-stat-label">Low Stock</div>
+      </div>
+    </div>
+    <div class="ec-stat-card">
+      <div class="ec-stat-icon red">🔴</div>
+      <div>
+        <div class="ec-stat-num" id="statCritical">0</div>
+        <div class="ec-stat-label">Critical</div>
+      </div>
+    </div>
+    <div class="ec-stat-card">
+      <div class="ec-stat-icon blue">💵</div>
+      <div>
+        <div class="ec-stat-num" id="statValue">$0</div>
+        <div class="ec-stat-label">Stock Value</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toolbar: search + filter chips -->
+  <div class="ec-toolbar">
+    <div class="ec-toolbar-left">
+      <div class="ec-search">
+        <span class="ec-search__icon">🔍</span>
+        <input class="ec-input" id="searchInput" type="text" placeholder="Search items…" oninput="renderTable()">
+      </div>
+      <div class="ec-chips" id="categoryChips">
+        <button class="ec-chip active" data-cat="All" onclick="selectChip(this)">All</button>
+        <button class="ec-chip" data-cat="Greenery" onclick="selectChip(this)">Greenery</button>
+        <button class="ec-chip" data-cat="Florals" onclick="selectChip(this)">Florals</button>
+        <button class="ec-chip" data-cat="Accents" onclick="selectChip(this)">Accents</button>
+        <button class="ec-chip" data-cat="Bases" onclick="selectChip(this)">Bases</button>
+        <button class="ec-chip" data-cat="Ribbon" onclick="selectChip(this)">Ribbon</button>
+        <button class="ec-chip" data-cat="Tools" onclick="selectChip(this)">Tools</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:var(--ec-space-2);align-items:center">
+      <select class="ec-input-full" id="sortSelect" onchange="renderTable()" style="width:auto;padding:7px 12px">
+        <option value="name">Sort: Name</option>
+        <option value="cat">Sort: Category</option>
+        <option value="qty-asc">Sort: Qty ↑</option>
+        <option value="qty-desc">Sort: Qty ↓</option>
+        <option value="status">Sort: Status</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Table card -->
+  <div class="ec-card">
+    <div class="ec-card-header">
+      <div>
+        <span class="ec-card-title">Inventory</span>
+        <span class="ec-card-count" id="itemCount">0 items</span>
+      </div>
+    </div>
+    <div class="ec-table-wrap">
+      <table class="ec-table">
+        <thead>
+          <tr>
+            <th style="width:36px">
+              <span class="ec-status-dot" style="display:inline-block"></span>
+            </th>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Stock</th>
+            <th>Unit Cost</th>
+            <th>Supplier</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+      <div class="ec-empty hidden" id="emptyState">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--ec-green)">
+          <path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+          <path d="M16 18 C16 18 12 16 10 13" stroke="currentColor" stroke-width="1" fill="none"/>
+          <path d="M16 14 C16 14 20 12 22 9" stroke="currentColor" stroke-width="1" fill="none"/>
+        </svg>
+        <p class="ec-empty__title">No items yet</p>
+        <p class="ec-empty__desc">Add your first inventory item or import a CSV to get started.</p>
+        <button class="ec-btn ec-btn-green" onclick="openDrawer(null)">+ Add First Item</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTANICAL DIVIDER -->
+  <div class="ec-divider">✦</div>
+
+  <!-- LOCKED: Studio features -->
+  <div class="ec-locked-section">
+    <div class="ec-locked-blur">
+      <div class="ec-card">
+        <div class="ec-card-header">
+          <span class="ec-card-title">Usage History</span>
+        </div>
+        <div style="padding:var(--ec-space-5)">
+          <p style="font-size:0.875rem;color:var(--ec-text-faint);margin-bottom:var(--ec-space-4)">Track which projects consumed each inventory item.</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:var(--ec-space-4)">
+            <div style="background:var(--ec-surface-alt);border-radius:var(--ec-radius-md);padding:var(--ec-space-4);">
+              <div style="font-weight:600;margin-bottom:4px">Ivory Peony</div>
+              <div style="font-size:0.75rem;color:var(--ec-text-faint)">Used in 4 blueprints</div>
+            </div>
+            <div style="background:var(--ec-surface-alt);border-radius:var(--ec-radius-md);padding:var(--ec-space-4);">
+              <div style="font-weight:600;margin-bottom:4px">Eucalyptus Spray</div>
+              <div style="font-size:0.75rem;color:var(--ec-text-faint)">Used in 7 blueprints</div>
+            </div>
+            <div style="background:var(--ec-surface-alt);border-radius:var(--ec-radius-md);padding:var(--ec-space-4);">
+              <div style="font-weight:600;margin-bottom:4px">Cream Ribbon</div>
+              <div style="font-size:0.75rem;color:var(--ec-text-faint)">Used in 3 blueprints</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ec-lock-overlay">
+      <div class="ec-lock-badge">
+        <div class="ec-lock-icon">🔒</div>
+        <div class="ec-lock-tier">Studio Feature</div>
+        <p class="ec-lock-desc">Upgrade to Studio to unlock usage history — see which blueprints consumed each inventory item, and auto-deduct stock when a design is marked complete.</p>
+        <button class="ec-btn ec-btn-primary" style="font-size:0.8125rem;width:100%">Upgrade to Studio →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOCKED: Atelier AI features -->
+  <div class="ec-locked-section" style="margin-top:var(--ec-space-5)">
+    <div class="ec-locked-blur">
+      <div class="ec-card" style="background:var(--ec-surface-warm)">
+        <div class="ec-card-header">
+          <span class="ec-card-title">AI Reorder Intelligence</span>
+        </div>
+        <div style="padding:var(--ec-space-5)">
+          <p style="font-size:0.875rem;color:var(--ec-text-faint);margin-bottom:var(--ec-space-4)">Smart reorder suggestions and seasonal demand forecasting.</p>
+          <div style="display:flex;flex-direction:column;gap:var(--ec-space-3)">
+            <div style="background:var(--ec-white);border-radius:var(--ec-radius-md);padding:var(--ec-space-4);border:1px solid var(--ec-border)">
+              <div style="font-size:0.75rem;font-weight:600;color:var(--ec-green);margin-bottom:4px">AI SUGGESTION</div>
+              <div style="font-size:0.875rem">You're low on eucalyptus stems — Fall season typically needs 3× your spring stock. Recommend ordering 60+ stems before September.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ec-lock-overlay">
+      <div class="ec-lock-badge">
+        <div class="ec-lock-icon">✨</div>
+        <div class="ec-lock-tier">Atelier Feature</div>
+        <p class="ec-lock-desc">Upgrade to Atelier for AI-powered reorder suggestions and seasonal demand forecasting powered by Claude.</p>
+        <button class="ec-btn ec-btn-primary" style="font-size:0.8125rem;width:100%">Upgrade to Atelier →</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /ec-app-body -->
+
+<script>
+// ─── DATA STORE ───────────────────────────────────────────
+const STORAGE_KEY = 'ec_inventory_v1';
+let inventory = [];
+let activeCategory = 'All';
+let editingId = null;
+
+const CATEGORY_CLASSES = {
+  Greenery: 'cat-greenery',
+  Florals:  'cat-florals',
+  Accents:  'cat-accents',
+  Bases:    'cat-bases',
+  Ribbon:   'cat-ribbon',
+  Tools:    'cat-tools',
+};
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) inventory = JSON.parse(raw);
+  } catch(e) { inventory = []; }
+  if (!inventory.length) seedDefaults();
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory));
+}
+
+function seedDefaults() {
+  inventory = [
+    { id: uid(), name: 'Ivory peony stem', category: 'Florals', qty: 24, unit: 'stems', threshold: 5, cost: 1.50, supplier: 'Afloral', notes: 'Large blooms, ivory/cream' },
+    { id: uid(), name: 'Eucalyptus spray', category: 'Greenery', qty: 38, unit: 'stems', threshold: 10, cost: 0.75, supplier: 'Michaels', notes: 'Seeded variety' },
+    { id: uid(), name: 'Dusty miller sprig', category: 'Greenery', qty: 4, unit: 'stems', threshold: 8, cost: 0.60, supplier: 'Afloral', notes: 'Silvery grey' },
+    { id: uid(), name: '10-inch grapevine base', category: 'Bases', qty: 8, unit: 'pieces', threshold: 2, cost: 3.00, supplier: 'Hobby Lobby', notes: 'Natural brown' },
+    { id: uid(), name: 'Wired stem wrap', category: 'Tools', qty: 2, unit: 'spools', threshold: 1, cost: 2.50, supplier: 'Amazon', notes: 'Green floral wire' },
+    { id: uid(), name: 'Cream grosgrain ribbon', category: 'Ribbon', qty: 1, unit: 'spools', threshold: 1, cost: 6.00, supplier: 'Afloral', notes: '2.5 inch width' },
+    { id: uid(), name: 'Lavender stem', category: 'Florals', qty: 3, unit: 'stems', threshold: 6, cost: 0.90, supplier: 'Etsy - FloralCo', notes: 'Dried look, faux silk' },
+    { id: uid(), name: 'Preserved cedar bunch', category: 'Greenery', qty: 14, unit: 'bundles', threshold: 4, cost: 1.20, supplier: 'Amazon', notes: 'Fall/winter use' },
+    { id: uid(), name: 'Birch twig accent', category: 'Accents', qty: 0, unit: 'pieces', threshold: 3, cost: 0.40, supplier: 'Michaels', notes: 'Winter designs' },
+    { id: uid(), name: 'Velvet pumpkin pick', category: 'Accents', qty: 11, unit: 'pieces', threshold: 5, cost: 1.10, supplier: 'Hobby Lobby', notes: 'Fall accent' },
+  ];
+  saveData();
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+
+// ─── STATUS LOGIC ─────────────────────────────────────────
+function getStatus(item) {
+  if (item.qty === 0) return 'critical';
+  if (item.qty <= item.threshold) return 'low';
+  return 'ok';
+}
+
+function stockPercent(item) {
+  const max = Math.max(item.threshold * 3, item.qty, 1);
+  return Math.min(100, (item.qty / max) * 100);
+}
+
+// ─── STATS ────────────────────────────────────────────────
+function updateStats() {
+  const total = inventory.length;
+  const low = inventory.filter(i => getStatus(i) === 'low').length;
+  const critical = inventory.filter(i => getStatus(i) === 'critical').length;
+  const value = inventory.reduce((s, i) => s + (i.qty * (i.cost || 0)), 0);
+
+  document.getElementById('statTotal').textContent    = total;
+  document.getElementById('statLow').textContent      = low;
+  document.getElementById('statCritical').textContent = critical;
+  document.getElementById('statValue').textContent    = '$' + value.toFixed(0);
+
+  const banner = document.getElementById('lowStockBanner');
+  const issues = low + critical;
+  if (issues > 0) {
+    banner.classList.remove('hidden');
+    document.getElementById('lowStockMsg').textContent =
+      `${issues} item${issues > 1 ? 's' : ''} running low or out of stock — reorder before your next build.`;
+  } else {
+    banner.classList.add('hidden');
+  }
+}
+
+// ─── RENDER TABLE ─────────────────────────────────────────
+function renderTable() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const sort   = document.getElementById('sortSelect').value;
+
+  let filtered = inventory.filter(i => {
+    const matchCat = activeCategory === 'All' || i.category === activeCategory;
+    const matchSearch = !search ||
+      i.name.toLowerCase().includes(search) ||
+      (i.notes || '').toLowerCase().includes(search) ||
+      (i.supplier || '').toLowerCase().includes(search);
+    return matchCat && matchSearch;
+  });
+
+  filtered.sort((a, b) => {
+    if (sort === 'name')     return a.name.localeCompare(b.name);
+    if (sort === 'cat')      return a.category.localeCompare(b.category);
+    if (sort === 'qty-asc')  return a.qty - b.qty;
+    if (sort === 'qty-desc') return b.qty - a.qty;
+    if (sort === 'status') {
+      const order = {critical:0, low:1, ok:2};
+      return order[getStatus(a)] - order[getStatus(b)];
+    }
+    return 0;
+  });
+
+  const tbody = document.getElementById('tableBody');
+  const empty = document.getElementById('emptyState');
+  const count = document.getElementById('itemCount');
+
+  count.textContent = filtered.length + ' item' + (filtered.length !== 1 ? 's' : '');
+
+  if (!filtered.length) {
+    tbody.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  tbody.innerHTML = filtered.map(item => {
+    const status = getStatus(item);
+    const pct = stockPercent(item);
+    const dotClass = status === 'ok' ? 'dot-ok' : status === 'low' ? 'dot-low' : 'dot-critical';
+    const fillClass = status === 'ok' ? 'fill-ok' : status === 'low' ? 'fill-low' : 'fill-critical';
+    const catClass = CATEGORY_CLASSES[item.category] || 'cat-tools';
+    const costStr = item.cost ? '$' + Number(item.cost).toFixed(2) : '—';
+    const supplierStr = item.supplier || '—';
+
+    return `<tr>
+      <td><span class="ec-status-dot ${dotClass}"></span></td>
+      <td>
+        <div class="ec-item-name">${escHtml(item.name)}</div>
+        ${item.notes ? `<div class="ec-item-notes">${escHtml(item.notes)}</div>` : ''}
+      </td>
+      <td><span class="ec-cat-pill ${catClass}">${item.category}</span></td>
+      <td>
+        <div class="ec-stock-bar-wrap">
+          <span class="ec-stock-val">${item.qty} <span style="font-size:0.75rem;color:var(--ec-text-faint)">${item.unit}</span></span>
+          <div class="ec-stock-bar" style="min-width:60px">
+            <div class="ec-stock-fill ${fillClass}" style="width:${pct}%"></div>
+          </div>
+        </div>
+        ${status !== 'ok' ? `<div style="font-size:0.6875rem;color:${status==='critical'?'var(--ec-error)':'var(--ec-warning)'};margin-top:2px">${status==='critical'?'Out of stock':'Low — reorder soon'}</div>` : ''}
+      </td>
+      <td style="font-family:var(--ec-font-mono);font-size:0.8125rem">${costStr}</td>
+      <td style="font-size:0.8125rem;color:var(--ec-text-muted)">${escHtml(supplierStr)}</td>
+      <td>
+        <div class="ec-row-actions">
+          <button class="ec-icon-btn" title="Adjust quantity" onclick="quickAdjust('${item.id}')">±</button>
+          <button class="ec-icon-btn" title="Edit" onclick="openDrawer('${item.id}')">✎</button>
+          <button class="ec-icon-btn danger" title="Delete" onclick="deleteItem('${item.id}')">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  updateStats();
+}
+
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── CATEGORY CHIPS ───────────────────────────────────────
+function selectChip(el) {
+  document.querySelectorAll('.ec-chip').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  activeCategory = el.dataset.cat;
+  renderTable();
+}
+
+function filterLowStock() {
+  activeCategory = 'All';
+  document.querySelectorAll('.ec-chip').forEach(c => c.classList.remove('active'));
+  document.querySelector('[data-cat="All"]').classList.add('active');
+  document.getElementById('sortSelect').value = 'status';
+  renderTable();
+}
+
+// ─── DRAWER ───────────────────────────────────────────────
+function openDrawer(id) {
+  editingId = id;
+  const overlay = document.getElementById('drawerOverlay');
+  const drawer  = document.getElementById('itemDrawer');
+  const title   = document.getElementById('drawerTitle');
+
+  if (id) {
+    const item = inventory.find(i => i.id === id);
+    if (!item) return;
+    title.textContent = 'Edit Item';
+    document.getElementById('f-name').value      = item.name;
+    document.getElementById('f-category').value  = item.category;
+    document.getElementById('f-unit').value      = item.unit;
+    document.getElementById('f-qty').value       = item.qty;
+    document.getElementById('f-threshold').value = item.threshold;
+    document.getElementById('f-cost').value      = item.cost || '';
+    document.getElementById('f-supplier').value  = item.supplier || '';
+    document.getElementById('f-notes').value     = item.notes || '';
+  } else {
+    title.textContent = 'Add Item';
+    ['f-name','f-qty','f-threshold','f-cost','f-supplier','f-notes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('f-category').value = 'Florals';
+    document.getElementById('f-unit').value     = 'stems';
+  }
+
+  overlay.classList.add('open');
+  drawer.classList.add('open');
+  document.getElementById('f-name').focus();
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('open');
+  document.getElementById('itemDrawer').classList.remove('open');
+  editingId = null;
+}
+
+function saveItem() {
+  const name      = document.getElementById('f-name').value.trim();
+  const category  = document.getElementById('f-category').value;
+  const unit      = document.getElementById('f-unit').value;
+  const qty       = parseInt(document.getElementById('f-qty').value) || 0;
+  const threshold = parseInt(document.getElementById('f-threshold').value) || 0;
+  const cost      = parseFloat(document.getElementById('f-cost').value) || 0;
+  const supplier  = document.getElementById('f-supplier').value.trim();
+  const notes     = document.getElementById('f-notes').value.trim();
+
+  if (!name) { showToast('Item name is required.'); return; }
+
+  if (editingId) {
+    const idx = inventory.findIndex(i => i.id === editingId);
+    if (idx > -1) {
+      inventory[idx] = { ...inventory[idx], name, category, unit, qty, threshold, cost, supplier, notes };
+      showToast('Item updated.');
+    }
+  } else {
+    inventory.push({ id: uid(), name, category, unit, qty, threshold, cost, supplier, notes });
+    showToast('Item added.');
+  }
+
+  saveData();
+  closeDrawer();
+  renderTable();
+}
+
+// ─── QUICK ADJUST ─────────────────────────────────────────
+function quickAdjust(id) {
+  const item = inventory.find(i => i.id === id);
+  if (!item) return;
+  const input = prompt(`Adjust quantity for "${item.name}" (currently: ${item.qty} ${item.unit}).\nEnter new quantity or +/-adjustment (e.g. +5, -3, or 20):`);
+  if (input === null) return;
+  const val = input.trim();
+  let newQty;
+  if (val.startsWith('+')) newQty = item.qty + parseInt(val.slice(1));
+  else if (val.startsWith('-')) newQty = item.qty - parseInt(val.slice(1));
+  else newQty = parseInt(val);
+  if (isNaN(newQty) || newQty < 0) { showToast('Invalid quantity.'); return; }
+  item.qty = newQty;
+  saveData();
+  renderTable();
+  showToast(`Updated to ${newQty} ${item.unit}.`);
+}
+
+// ─── DELETE ───────────────────────────────────────────────
+function deleteItem(id) {
+  const item = inventory.find(i => i.id === id);
+  if (!item) return;
+  if (!confirm(`Delete "${item.name}"? This cannot be undone.`)) return;
+  inventory = inventory.filter(i => i.id !== id);
+  saveData();
+  renderTable();
+  showToast('Item deleted.');
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────
+function exportCSV() {
+  if (!inventory.length) { showToast('Nothing to export.'); return; }
+  const header = 'Name,Category,Qty,Unit,Threshold,Cost,Supplier,Notes';
+  const rows = inventory.map(i =>
+    [i.name, i.category, i.qty, i.unit, i.threshold, i.cost, i.supplier||'', i.notes||'']
+    .map(v => `"${String(v).replace(/"/g,'""')}"`)
+    .join(',')
+  );
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = 'evercrafted-inventory.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('CSV exported.');
+}
+
+// ─── IMPORT CSV ───────────────────────────────────────────
+function openImportModal() {
+  document.getElementById('importModal').classList.add('open');
+  document.getElementById('csvInput').value = '';
+  document.getElementById('csvPreview').innerHTML = '';
+}
+function closeImportModal() {
+  document.getElementById('importModal').classList.remove('open');
+}
+
+function importCSV() {
+  const raw = document.getElementById('csvInput').value.trim();
+  if (!raw) { showToast('Paste some CSV data first.'); return; }
+
+  const lines = raw.split('\n').filter(l => l.trim());
+  let added = 0, skipped = 0;
+
+  for (const line of lines) {
+    // Skip header row if present
+    if (line.toLowerCase().startsWith('name,')) { skipped++; continue; }
+
+    const parts = parseCSVLine(line);
+    const name = (parts[0] || '').trim();
+    if (!name) { skipped++; continue; }
+
+    const validCats = ['Greenery','Florals','Accents','Bases','Ribbon','Tools'];
+    const rawCat = (parts[1] || '').trim();
+    const category = validCats.find(c => c.toLowerCase() === rawCat.toLowerCase()) || 'Florals';
+
+    inventory.push({
+      id:        uid(),
+      name,
+      category,
+      qty:       parseInt(parts[2]) || 0,
+      unit:      (parts[3] || 'stems').trim(),
+      threshold: parseInt(parts[4]) || 5,
+      cost:      parseFloat(parts[5]) || 0,
+      supplier:  (parts[6] || '').trim(),
+      notes:     (parts[7] || '').trim(),
+    });
+    added++;
+  }
+
+  saveData();
+  closeImportModal();
+  renderTable();
+  showToast(`Imported ${added} item${added !== 1 ? 's' : ''}.${skipped ? ` (${skipped} skipped)` : ''}`);
+}
+
+function parseCSVLine(line) {
+  // Handle quoted fields
+  const result = [];
+  let inQuote = false, field = '';
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') { inQuote = !inQuote; }
+    else if (ch === ',' && !inQuote) { result.push(field); field = ''; }
+    else { field += ch; }
+  }
+  result.push(field);
+  return result;
+}
+
+// ─── TOAST ────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+// ─── KEYBOARD ─────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeDrawer();
+    closeImportModal();
+  }
+});
+
+// ─── INIT ─────────────────────────────────────────────────
+loadData();
+renderTable();
+</script>
+</body>
+</html>

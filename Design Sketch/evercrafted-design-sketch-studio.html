@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Evercrafted — Design Sketch Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ec-white:        #FFFFFF;
+      --ec-off-white:    #F9F7F4;
+      --ec-paper:        #F2EFE9;
+      --ec-black:        #1A1A1A;
+      --ec-charcoal:     #2E2E2E;
+      --ec-ink:          #4A4A4A;
+      --ec-green:        #4A6741;
+      --ec-green-light:  #6B8F67;
+      --ec-green-pale:   #EEF2ED;
+      --ec-green-dim:    rgba(74, 103, 65, 0.12);
+      --ec-gray-100:     #F5F5F5;
+      --ec-gray-200:     #E8E8E8;
+      --ec-gray-300:     #D0D0D0;
+      --ec-gray-400:     #A8A8A8;
+      --ec-gray-500:     #787878;
+      --ec-success:      #4A6741;
+      --ec-warning:      #C4922A;
+      --ec-error:        #B94040;
+      --ec-surface:      var(--ec-white);
+      --ec-surface-alt:  var(--ec-off-white);
+      --ec-surface-warm: var(--ec-paper);
+      --ec-border:       var(--ec-gray-200);
+      --ec-border-dark:  var(--ec-gray-300);
+      --ec-text:         var(--ec-black);
+      --ec-text-muted:   var(--ec-ink);
+      --ec-text-faint:   var(--ec-gray-500);
+      --ec-font-serif:   'Cormorant Garamond', 'Georgia', serif;
+      --ec-font-sans:    'Inter', system-ui, sans-serif;
+      --ec-font-script:  'Dancing Script', cursive;
+      --ec-font-mono:    'DM Mono', 'Fira Code', monospace;
+      --ec-text-xs:      0.6875rem;
+      --ec-text-sm:      0.8125rem;
+      --ec-text-base:    1rem;
+      --ec-text-lg:      1.125rem;
+      --ec-text-xl:      1.375rem;
+      --ec-text-2xl:     1.75rem;
+      --ec-text-3xl:     2.25rem;
+      --ec-text-4xl:     3rem;
+      --ec-space-1:      0.25rem;
+      --ec-space-2:      0.5rem;
+      --ec-space-3:      0.75rem;
+      --ec-space-4:      1rem;
+      --ec-space-5:      1.5rem;
+      --ec-space-6:      2rem;
+      --ec-space-8:      2.5rem;
+      --ec-space-10:     3rem;
+      --ec-space-12:     4rem;
+      --ec-radius-sm:    4px;
+      --ec-radius-md:    8px;
+      --ec-radius-lg:    14px;
+      --ec-radius-xl:    20px;
+      --ec-radius-full:  9999px;
+      --ec-shadow-sm:    0 1px 3px rgba(0,0,0,0.06);
+      --ec-shadow-md:    0 4px 16px rgba(0,0,0,0.08);
+      --ec-shadow-lg:    0 8px 32px rgba(0,0,0,0.10);
+      --ec-shadow-card:  0 2px 8px rgba(0,0,0,0.06), 0 0 0 1px var(--ec-border);
+      --ec-transition:   200ms ease;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--ec-font-sans);
+      background: var(--ec-off-white);
+      color: var(--ec-text);
+      min-height: 100vh;
+    }
+
+    /* ── APP HEADER ── */
+    .ec-app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--ec-space-5) var(--ec-space-8);
+      background: var(--ec-white);
+      border-bottom: 1px solid var(--ec-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .ec-app-header__brand {
+      display: flex;
+      align-items: baseline;
+      gap: var(--ec-space-3);
+    }
+    .ec-script {
+      font-family: var(--ec-font-script);
+      font-size: var(--ec-text-xl);
+      color: var(--ec-green);
+      font-weight: 600;
+      line-height: 1;
+    }
+    .ec-app-header__app-name {
+      font-family: var(--ec-font-sans);
+      font-size: var(--ec-text-sm);
+      color: var(--ec-text-faint);
+      letter-spacing: 0.05em;
+    }
+    .ec-tier-badge {
+      font-family: var(--ec-font-sans);
+      font-size: var(--ec-text-xs);
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: var(--ec-radius-full);
+    }
+    .ec-tier-studio { background: #F5EEF4; color: #7A4A85; }
+
+    /* ── HERO STRIP ── */
+    .ec-hero {
+      background: var(--ec-white);
+      border-bottom: 1px solid var(--ec-border);
+      padding: var(--ec-space-8) var(--ec-space-8) var(--ec-space-6);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: var(--ec-space-5);
+      flex-wrap: wrap;
+    }
+    .ec-hero__text h1 {
+      font-family: var(--ec-font-serif);
+      font-size: var(--ec-text-3xl);
+      font-weight: 600;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--ec-text);
+      margin-bottom: var(--ec-space-2);
+    }
+    .ec-hero__text p {
+      font-size: var(--ec-text-base);
+      color: var(--ec-text-faint);
+      font-style: italic;
+      font-family: var(--ec-font-serif);
+    }
+    .ec-hero__controls {
+      display: flex;
+      gap: var(--ec-space-3);
+      flex-wrap: wrap;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .ec-app {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: var(--ec-space-8);
+    }
+
+    /* ── FILTER BAR ── */
+    .ec-filter-bar {
+      display: flex;
+      gap: var(--ec-space-2);
+      margin-bottom: var(--ec-space-6);
+      flex-wrap: wrap;
+    }
+    .ec-filter-btn {
+      font-family: var(--ec-font-sans);
+      font-size: var(--ec-text-xs);
+      font-weight: 500;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: var(--ec-radius-full);
+      border: 1.5px solid var(--ec-border-dark);
+      background: var(--ec-white);
+      color: var(--ec-text-muted);
+      cursor: pointer;
+      transition: all var(--ec-transition);
+    }
+    .ec-filter-btn:hover {
+      border-color: var(--ec-green);
+      color: var(--ec-green);
+    }
+    .ec-filter-btn.active {
+      background: var(--ec-green);
+      border-color: var(--ec-green);
+      color: var(--ec-white);
+    }
+
+    /* ── GRID ── */
+    .designs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+      gap: var(--ec-space-6);
+    }
+
+    /* ── DESIGN CARD ── */
+    .design-card {
+      background: var(--ec-surface);
+      border-radius: var(--ec-radius-xl);
+      box-shadow: var(--ec-shadow-card);
+      overflow: hidden;
+      transition: all var(--ec-transition);
+    }
+    .design-card:hover {
+      box-shadow: var(--ec-shadow-lg);
+      transform: translateY(-2px);
+    }
+
+    .design-card__header {
+      padding: var(--ec-space-5) var(--ec-space-6) var(--ec-space-4);
+      border-bottom: 1px solid var(--ec-border);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--ec-space-3);
+    }
+    .design-card__titles {}
+    .design-card__title {
+      font-family: var(--ec-font-serif);
+      font-size: var(--ec-text-xl);
+      font-weight: 600;
+      color: var(--ec-text);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+    .design-card__subtitle {
+      font-size: var(--ec-text-sm);
+      color: var(--ec-text-faint);
+      font-style: italic;
+      font-family: var(--ec-font-serif);
+      margin-top: 2px;
+    }
+    .design-card__actions {
+      display: flex;
+      gap: var(--ec-space-2);
+      flex-shrink: 0;
+    }
+
+    .ec-icon-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--ec-radius-md);
+      border: 1.5px solid var(--ec-border);
+      background: var(--ec-surface-alt);
+      color: var(--ec-text-faint);
+      cursor: pointer;
+      transition: all var(--ec-transition);
+      font-size: 14px;
+    }
+    .ec-icon-btn:hover {
+      border-color: var(--ec-green);
+      color: var(--ec-green);
+      background: var(--ec-green-pale);
+    }
+
+    /* ── CANVAS AREA ── */
+    .design-card__canvas {
+      padding: var(--ec-space-5);
+      background: var(--ec-surface-warm);
+      display: flex;
+      justify-content: center;
+    }
+
+    .wreath-sketch {
+      width: 300px;
+      height: 300px;
+      position: relative;
+      background: var(--ec-white);
+      border-radius: 50%;
+      box-shadow: var(--ec-shadow-md);
+    }
+
+    /* Wreath ring drawn via radial gradient (clean) */
+    .wreath-base-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at center, transparent 28%, var(--ec-green-dim) 30%, rgba(74,103,65,0.18) 32%, transparent 34%),
+        radial-gradient(circle at center, transparent 63%, var(--ec-green-dim) 65%, rgba(74,103,65,0.18) 67%, transparent 69%);
+    }
+
+    /* Ring outline stroke */
+    .wreath-ring-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Center no-fly zone */
+    .center-guide {
+      position: absolute;
+      width: 54%;
+      height: 54%;
+      top: 23%;
+      left: 23%;
+      border: 1px dashed var(--ec-gray-300);
+      border-radius: 50%;
+    }
+    .center-guide::after {
+      content: "open";
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 9px;
+      font-family: var(--ec-font-mono);
+      color: var(--ec-gray-300);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    /* ── SKETCH ELEMENTS ── */
+    .sketch-element {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: var(--ec-ink);
+      animation: sketchAppear 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0);
+    }
+
+    @keyframes sketchAppear {
+      0%   { opacity: 0; transform: translate(-50%, -50%) scale(0) rotate(-8deg); }
+      60%  { opacity: 1; transform: translate(-50%, -50%) scale(1.08) rotate(1deg); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+    }
+
+    .element-pine {
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      background: var(--ec-green-pale);
+      border: 1.5px solid var(--ec-green);
+    }
+    .element-berry {
+      border-radius: 50%;
+      background: #FDEEE8;
+      border: 1.5px solid #C4922A;
+    }
+    .element-floral {
+      border-radius: 40% 60% 60% 40% / 60% 30% 70% 40%;
+      background: #F5EEF4;
+      border: 1.5px solid #9B7BAB;
+    }
+    .element-filler {
+      border-radius: 20%;
+      background: var(--ec-gray-100);
+      border: 1.5px solid var(--ec-gray-400);
+    }
+    .element-bow {
+      border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+      background: #F9F7F4;
+      border: 1.5px solid var(--ec-charcoal);
+    }
+
+    .element-count {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: var(--ec-black);
+      color: var(--ec-white);
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-family: var(--ec-font-mono);
+    }
+
+    /* Directional arrows */
+    .direction-arrow {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border: 1.5px solid var(--ec-green);
+      border-left: none;
+      border-bottom: none;
+      transform: translate(-50%, -50%);
+      opacity: 0.5;
+    }
+    .arrow-inward          { transform: translate(-50%, -50%) rotate(135deg); }
+    .arrow-clockwise       { transform: translate(-50%, -50%) rotate(45deg); }
+    .arrow-outward         { transform: translate(-50%, -50%) rotate(-45deg); }
+    .arrow-counter-clockwise { transform: translate(-50%, -50%) rotate(-135deg); }
+
+    /* ── SPECS BAR ── */
+    .design-card__specs {
+      padding: var(--ec-space-4) var(--ec-space-6);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--ec-space-2);
+      border-bottom: 1px solid var(--ec-border);
+    }
+    .spec-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .spec-label {
+      font-family: var(--ec-font-sans);
+      font-size: var(--ec-text-xs);
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ec-text-faint);
+    }
+    .spec-value {
+      font-family: var(--ec-font-mono);
+      font-size: var(--ec-text-sm);
+      color: var(--ec-text);
+    }
+
+    /* ── DESIGN NOTE ── */
+    .design-card__note {
+      padding: var(--ec-space-5) var(--ec-space-6);
+      font-size: var(--ec-text-sm);
+      line-height: var(--ec-leading-base);
+      color: var(--ec-text-muted);
+      font-style: italic;
+      font-family: var(--ec-font-serif);
+      font-size: 15px;
+      position: relative;
+    }
+    .design-card__note::before {
+      content: '';
+      position: absolute;
+      left: var(--ec-space-6);
+      top: var(--ec-space-5);
+      bottom: var(--ec-space-5);
+      width: 2px;
+      background: linear-gradient(to bottom, var(--ec-green), transparent);
+      border-radius: 2px;
+    }
+    .design-card__note p {
+      padding-left: var(--ec-space-5);
+    }
+
+    /* ── BUTTONS ── */
+    .ec-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--ec-space-2);
+      padding: 9px var(--ec-space-5);
+      border-radius: var(--ec-radius-md);
+      font-family: var(--ec-font-sans);
+      font-size: var(--ec-text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all var(--ec-transition);
+      letter-spacing: 0.02em;
+    }
+    .ec-btn-primary {
+      background: var(--ec-black);
+      color: var(--ec-white);
+    }
+    .ec-btn-primary:hover {
+      background: var(--ec-charcoal);
+      transform: translateY(-1px);
+      box-shadow: var(--ec-shadow-md);
+    }
+    .ec-btn-outline {
+      background: transparent;
+      color: var(--ec-text);
+      border: 1.5px solid var(--ec-border-dark);
+    }
+    .ec-btn-outline:hover {
+      border-color: var(--ec-black);
+      background: var(--ec-gray-100);
+    }
+    .ec-btn-green {
+      background: var(--ec-green);
+      color: var(--ec-white);
+    }
+    .ec-btn-green:hover {
+      background: var(--ec-green-light);
+      transform: translateY(-1px);
+    }
+
+    /* ── DIVIDER ── */
+    .ec-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--ec-space-4);
+      margin: var(--ec-space-8) 0 var(--ec-space-6);
+      color: var(--ec-gray-400);
+      font-size: var(--ec-text-lg);
+    }
+    .ec-divider::before,
+    .ec-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--ec-border);
+    }
+
+    /* ── LEGEND ── */
+    .ec-legend {
+      background: var(--ec-white);
+      border-radius: var(--ec-radius-xl);
+      box-shadow: var(--ec-shadow-card);
+      padding: var(--ec-space-6);
+    }
+    .ec-legend__title {
+      font-family: var(--ec-font-serif);
+      font-size: var(--ec-text-2xl);
+      font-weight: 400;
+      color: var(--ec-text);
+      margin-bottom: var(--ec-space-5);
+    }
+    .ec-legend__grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--ec-space-4);
+    }
+    .ec-legend__item {
+      display: flex;
+      align-items: center;
+      gap: var(--ec-space-3);
+      padding: var(--ec-space-3);
+      background: var(--ec-surface-alt);
+      border-radius: var(--ec-radius-md);
+      border: 1px solid var(--ec-border);
+    }
+    .legend-shape {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+    .legend-label {
+      font-family: var(--ec-font-sans);
+      font-size: var(--ec-text-sm);
+      font-weight: 500;
+      color: var(--ec-text);
+      display: block;
+    }
+    .legend-desc {
+      font-size: var(--ec-text-xs);
+      color: var(--ec-text-faint);
+      line-height: 1.4;
+      margin-top: 2px;
+      display: block;
+    }
+
+    /* ── FLOATING ACTIONS ── */
+    .ec-fab-group {
+      position: fixed;
+      bottom: var(--ec-space-6);
+      right: var(--ec-space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--ec-space-2);
+      z-index: 200;
+    }
+    .ec-fab {
+      display: flex;
+      align-items: center;
+      gap: var(--ec-space-2);
+      padding: 10px var(--ec-space-4);
+      background: var(--ec-white);
+      border: 1.5px solid var(--ec-border-dark);
+      border-radius: var(--ec-radius-full);
+      font-family: var(--ec-font-sans);
+      font-size: var(--ec-text-xs);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--ec-transition);
+      box-shadow: var(--ec-shadow-sm);
+      color: var(--ec-text);
+    }
+    .ec-fab:hover {
+      background: var(--ec-black);
+      color: var(--ec-white);
+      border-color: var(--ec-black);
+      box-shadow: var(--ec-shadow-md);
+      transform: translateY(-1px);
+    }
+    .ec-fab--green {
+      background: var(--ec-green);
+      border-color: var(--ec-green);
+      color: var(--ec-white);
+    }
+    .ec-fab--green:hover {
+      background: var(--ec-green-light);
+      border-color: var(--ec-green-light);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .ec-app { padding: var(--ec-space-4); }
+      .ec-app-header { padding: var(--ec-space-4); }
+      .ec-hero { padding: var(--ec-space-5) var(--ec-space-4); }
+      .designs-grid { grid-template-columns: 1fr; }
+      .design-card__specs { grid-template-columns: repeat(2, 1fr); }
+      .wreath-sketch { width: 260px; height: 260px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- APP HEADER -->
+  <header class="ec-app-header">
+    <div class="ec-app-header__brand">
+      <span class="ec-script">Evercrafted</span>
+      <span class="ec-app-header__app-name">Design Sketch Studio</span>
+    </div>
+    <div class="ec-tier-badge ec-tier-studio">Studio</div>
+  </header>
+
+  <!-- HERO STRIP -->
+  <div class="ec-hero">
+    <div class="ec-hero__text">
+      <h1>Wreath Design Studies</h1>
+      <p>Botanical arrangement sketches with technical specifications</p>
+    </div>
+    <div class="ec-hero__controls">
+      <button class="ec-btn ec-btn-outline" onclick="animateSequential()">
+        ↻ Sequential Draw
+      </button>
+      <button class="ec-btn ec-btn-primary" onclick="regenerateAll()">
+        ✦ Redraw All
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="ec-app">
+
+    <!-- FILTER BAR -->
+    <div class="ec-filter-bar">
+      <button class="ec-filter-btn active" onclick="filterCards('all', this)">All Styles</button>
+      <button class="ec-filter-btn" onclick="filterCards('symmetrical', this)">Symmetrical</button>
+      <button class="ec-filter-btn" onclick="filterCards('asymmetrical', this)">Asymmetrical</button>
+      <button class="ec-filter-btn" onclick="filterCards('minimal', this)">Minimal</button>
+      <button class="ec-filter-btn" onclick="filterCards('abundant', this)">Abundant</button>
+    </div>
+
+    <!-- DESIGN GRID -->
+    <div class="designs-grid" id="designsGrid">
+
+      <!-- TRADITIONAL VICTORIAN -->
+      <div class="design-card" data-style="symmetrical abundant">
+        <div class="design-card__header">
+          <div class="design-card__titles">
+            <div class="design-card__title">Traditional Victorian</div>
+            <div class="design-card__subtitle">Classic symmetrical arrangement</div>
+          </div>
+          <div class="design-card__actions">
+            <button class="ec-icon-btn" title="Redraw" onclick="redrawCard('victorian', this)">↻</button>
+            <button class="ec-icon-btn" title="Save sketch">↓</button>
+          </div>
+        </div>
+        <div class="design-card__canvas">
+          <div class="wreath-sketch" id="victorian">
+            <div class="wreath-base-ring"></div>
+            <svg class="wreath-ring-svg" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="150" cy="150" r="116" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.25"/>
+              <circle cx="150" cy="150" r="85" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.15"/>
+            </svg>
+            <div class="center-guide"></div>
+          </div>
+        </div>
+        <div class="design-card__specs">
+          <div class="spec-item"><span class="spec-label">Diameter</span><span class="spec-value">24 in</span></div>
+          <div class="spec-item"><span class="spec-label">Elements</span><span class="spec-value">16</span></div>
+          <div class="spec-item"><span class="spec-label">Style</span><span class="spec-value">Formal</span></div>
+          <div class="spec-item"><span class="spec-label">Balance</span><span class="spec-value">Symmetric</span></div>
+        </div>
+        <div class="design-card__note">
+          <p>Six noble fir branches form the foundation, with four holly berry clusters at cardinal points. Three pinecones provide textural contrast, two cream roses serve as focal elements. Single burgundy velvet bow completes the composition.</p>
+        </div>
+      </div>
+
+      <!-- SCANDINAVIAN MINIMAL -->
+      <div class="design-card" data-style="asymmetrical minimal">
+        <div class="design-card__header">
+          <div class="design-card__titles">
+            <div class="design-card__title">Scandinavian Minimal</div>
+            <div class="design-card__subtitle">Nordic simplicity with natural elements</div>
+          </div>
+          <div class="design-card__actions">
+            <button class="ec-icon-btn" title="Redraw" onclick="redrawCard('scandinavian', this)">↻</button>
+            <button class="ec-icon-btn" title="Save sketch">↓</button>
+          </div>
+        </div>
+        <div class="design-card__canvas">
+          <div class="wreath-sketch" id="scandinavian">
+            <div class="wreath-base-ring"></div>
+            <svg class="wreath-ring-svg" viewBox="0 0 300 300" fill="none">
+              <circle cx="150" cy="150" r="116" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.25"/>
+              <circle cx="150" cy="150" r="85" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.15"/>
+            </svg>
+            <div class="center-guide"></div>
+          </div>
+        </div>
+        <div class="design-card__specs">
+          <div class="spec-item"><span class="spec-label">Diameter</span><span class="spec-value">20 in</span></div>
+          <div class="spec-item"><span class="spec-label">Elements</span><span class="spec-value">9</span></div>
+          <div class="spec-item"><span class="spec-label">Style</span><span class="spec-value">Minimalist</span></div>
+          <div class="spec-item"><span class="spec-label">Balance</span><span class="spec-value">Asymmetric</span></div>
+        </div>
+        <div class="design-card__note">
+          <p>Four eucalyptus branches create an airy foundation. Three white winter berries provide subtle color punctuation. Two dried thistle heads add architectural interest. Clean linen ribbon maintains the understated aesthetic.</p>
+        </div>
+      </div>
+
+      <!-- ENGLISH GARDEN -->
+      <div class="design-card" data-style="asymmetrical abundant">
+        <div class="design-card__header">
+          <div class="design-card__titles">
+            <div class="design-card__title">English Garden</div>
+            <div class="design-card__subtitle">Cottage-style abundance</div>
+          </div>
+          <div class="design-card__actions">
+            <button class="ec-icon-btn" title="Redraw" onclick="redrawCard('english', this)">↻</button>
+            <button class="ec-icon-btn" title="Save sketch">↓</button>
+          </div>
+        </div>
+        <div class="design-card__canvas">
+          <div class="wreath-sketch" id="english">
+            <div class="wreath-base-ring"></div>
+            <svg class="wreath-ring-svg" viewBox="0 0 300 300" fill="none">
+              <circle cx="150" cy="150" r="116" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.25"/>
+              <circle cx="150" cy="150" r="85" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.15"/>
+            </svg>
+            <div class="center-guide"></div>
+          </div>
+        </div>
+        <div class="design-card__specs">
+          <div class="spec-item"><span class="spec-label">Diameter</span><span class="spec-value">26 in</span></div>
+          <div class="spec-item"><span class="spec-label">Elements</span><span class="spec-value">23</span></div>
+          <div class="spec-item"><span class="spec-label">Style</span><span class="spec-value">Romantic</span></div>
+          <div class="spec-item"><span class="spec-label">Balance</span><span class="spec-value">Organic</span></div>
+        </div>
+        <div class="design-card__note">
+          <p>Eight mixed greenery sprigs create layered texture. Six rose hips in varying stages provide graduated color. Five dried hydrangea clusters add volume. Four birch twigs introduce linear elements for movement and natural asymmetry.</p>
+        </div>
+      </div>
+
+      <!-- MODERN ARCHITECTURAL -->
+      <div class="design-card" data-style="asymmetrical minimal">
+        <div class="design-card__header">
+          <div class="design-card__titles">
+            <div class="design-card__title">Modern Architectural</div>
+            <div class="design-card__subtitle">Geometric contemporary design</div>
+          </div>
+          <div class="design-card__actions">
+            <button class="ec-icon-btn" title="Redraw" onclick="redrawCard('modern', this)">↻</button>
+            <button class="ec-icon-btn" title="Save sketch">↓</button>
+          </div>
+        </div>
+        <div class="design-card__canvas">
+          <div class="wreath-sketch" id="modern">
+            <div class="wreath-base-ring"></div>
+            <svg class="wreath-ring-svg" viewBox="0 0 300 300" fill="none">
+              <circle cx="150" cy="150" r="116" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.25"/>
+              <circle cx="150" cy="150" r="85" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.15"/>
+            </svg>
+            <div class="center-guide"></div>
+          </div>
+        </div>
+        <div class="design-card__specs">
+          <div class="spec-item"><span class="spec-label">Diameter</span><span class="spec-value">22 in</span></div>
+          <div class="spec-item"><span class="spec-label">Elements</span><span class="spec-value">11</span></div>
+          <div class="spec-item"><span class="spec-label">Style</span><span class="spec-value">Contemporary</span></div>
+          <div class="spec-item"><span class="spec-label">Balance</span><span class="spec-value">Geometric</span></div>
+        </div>
+        <div class="design-card__note">
+          <p>Five silver-dollar eucalyptus branches at precise intervals. Three white ceramic spheres create focal points. Two preserved magnolia leaves add scale variation. Single steel wire sculpture provides contemporary edge.</p>
+        </div>
+      </div>
+
+      <!-- FRENCH PROVINCIAL -->
+      <div class="design-card" data-style="symmetrical abundant">
+        <div class="design-card__header">
+          <div class="design-card__titles">
+            <div class="design-card__title">French Provincial</div>
+            <div class="design-card__subtitle">Rustic elegance with lavender</div>
+          </div>
+          <div class="design-card__actions">
+            <button class="ec-icon-btn" title="Redraw" onclick="redrawCard('french', this)">↻</button>
+            <button class="ec-icon-btn" title="Save sketch">↓</button>
+          </div>
+        </div>
+        <div class="design-card__canvas">
+          <div class="wreath-sketch" id="french">
+            <div class="wreath-base-ring"></div>
+            <svg class="wreath-ring-svg" viewBox="0 0 300 300" fill="none">
+              <circle cx="150" cy="150" r="116" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.25"/>
+              <circle cx="150" cy="150" r="85" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.15"/>
+            </svg>
+            <div class="center-guide"></div>
+          </div>
+        </div>
+        <div class="design-card__specs">
+          <div class="spec-item"><span class="spec-label">Diameter</span><span class="spec-value">25 in</span></div>
+          <div class="spec-item"><span class="spec-label">Elements</span><span class="spec-value">19</span></div>
+          <div class="spec-item"><span class="spec-label">Style</span><span class="spec-value">Provincial</span></div>
+          <div class="spec-item"><span class="spec-label">Balance</span><span class="spec-value">Casual</span></div>
+        </div>
+        <div class="design-card__note">
+          <p>Seven olive branches establish Mediterranean foundation. Six dried lavender bundles provide signature purple accents. Four wheat stalks add textural height. Two burlap ribbon loops complete the rustic French countryside aesthetic.</p>
+        </div>
+      </div>
+
+      <!-- JAPANESE ZEN -->
+      <div class="design-card" data-style="symmetrical minimal">
+        <div class="design-card__header">
+          <div class="design-card__titles">
+            <div class="design-card__title">Japanese Zen</div>
+            <div class="design-card__subtitle">Minimalist balance and space</div>
+          </div>
+          <div class="design-card__actions">
+            <button class="ec-icon-btn" title="Redraw" onclick="redrawCard('zen', this)">↻</button>
+            <button class="ec-icon-btn" title="Save sketch">↓</button>
+          </div>
+        </div>
+        <div class="design-card__canvas">
+          <div class="wreath-sketch" id="zen">
+            <div class="wreath-base-ring"></div>
+            <svg class="wreath-ring-svg" viewBox="0 0 300 300" fill="none">
+              <circle cx="150" cy="150" r="116" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.25"/>
+              <circle cx="150" cy="150" r="85" stroke="#4A6741" stroke-width="1" stroke-dasharray="3 4" opacity="0.15"/>
+            </svg>
+            <div class="center-guide"></div>
+          </div>
+        </div>
+        <div class="design-card__specs">
+          <div class="spec-item"><span class="spec-label">Diameter</span><span class="spec-value">18 in</span></div>
+          <div class="spec-item"><span class="spec-label">Elements</span><span class="spec-value">7</span></div>
+          <div class="spec-item"><span class="spec-label">Style</span><span class="spec-value">Zen</span></div>
+          <div class="spec-item"><span class="spec-label">Balance</span><span class="spec-value">Meditative</span></div>
+        </div>
+        <div class="design-card__note">
+          <p>Three bamboo shoots create vertical emphasis. Two river stones provide grounding weight. One preserved moss cluster adds organic texture. Single black silk ribbon maintains clean lines and emphasizes negative space.</p>
+        </div>
+      </div>
+
+    </div><!-- /designs-grid -->
+
+    <!-- DIVIDER -->
+    <div class="ec-divider">✦</div>
+
+    <!-- LEGEND -->
+    <div class="ec-legend">
+      <div class="ec-legend__title">Design Element Reference</div>
+      <div class="ec-legend__grid">
+        <div class="ec-legend__item">
+          <div class="legend-shape element-pine" style="width:36px;height:36px;border-radius:30% 70% 70% 30% / 30% 30% 70% 70%;background:var(--ec-green-pale);border:1.5px solid var(--ec-green);"></div>
+          <div>
+            <span class="legend-label">Greenery / Foundation</span>
+            <span class="legend-desc">Pine, fir, eucalyptus, olive branches</span>
+          </div>
+        </div>
+        <div class="ec-legend__item">
+          <div class="legend-shape" style="width:36px;height:36px;border-radius:50%;background:#FDEEE8;border:1.5px solid #C4922A;"></div>
+          <div>
+            <span class="legend-label">Berries / Color</span>
+            <span class="legend-desc">Holly berries, rose hips, dried fruits</span>
+          </div>
+        </div>
+        <div class="ec-legend__item">
+          <div class="legend-shape" style="width:36px;height:36px;border-radius:40% 60% 60% 40% / 60% 30% 70% 40%;background:#F5EEF4;border:1.5px solid #9B7BAB;"></div>
+          <div>
+            <span class="legend-label">Floral Focal Points</span>
+            <span class="legend-desc">Roses, hydrangeas, seasonal blooms</span>
+          </div>
+        </div>
+        <div class="ec-legend__item">
+          <div class="legend-shape" style="width:36px;height:36px;border-radius:20%;background:var(--ec-gray-100);border:1.5px solid var(--ec-gray-400);"></div>
+          <div>
+            <span class="legend-label">Texture / Filler</span>
+            <span class="legend-desc">Pinecones, twigs, seed pods</span>
+          </div>
+        </div>
+        <div class="ec-legend__item">
+          <div class="legend-shape" style="width:36px;height:36px;border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;background:#F9F7F4;border:1.5px solid var(--ec-charcoal);"></div>
+          <div>
+            <span class="legend-label">Ribbons / Statement</span>
+            <span class="legend-desc">Velvet, silk, burlap, wire ribbons</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main><!-- /ec-app -->
+
+  <!-- FLOATING ACTIONS -->
+  <div class="ec-fab-group">
+    <button class="ec-fab ec-fab--green" onclick="animateSequential()">↻ Sequential</button>
+    <button class="ec-fab" onclick="regenerateAll()">✦ Redraw All</button>
+  </div>
+
+  <script>
+    const wreathDesigns = {
+      victorian: {
+        elements: [
+          { type: 'pine', size: 26, positions: [
+            { x: 50, y: 15, delay: 0, count: 1, arrow: 'clockwise' },
+            { x: 78, y: 30, delay: 150, count: 2, arrow: 'clockwise' },
+            { x: 85, y: 50, delay: 300, count: 3, arrow: 'clockwise' },
+            { x: 78, y: 70, delay: 450, count: 4, arrow: 'clockwise' },
+            { x: 50, y: 85, delay: 600, count: 5, arrow: 'clockwise' },
+            { x: 22, y: 70, delay: 750, count: 6, arrow: 'clockwise' }
+          ]},
+          { type: 'berry', size: 18, positions: [
+            { x: 65, y: 20, delay: 900, count: 1, arrow: 'inward' },
+            { x: 80, y: 40, delay: 1050, count: 2, arrow: 'inward' },
+            { x: 80, y: 62, delay: 1200, count: 3, arrow: 'inward' },
+            { x: 65, y: 80, delay: 1350, count: 4, arrow: 'inward' }
+          ]},
+          { type: 'filler', size: 15, positions: [
+            { x: 72, y: 32, delay: 1500, count: 1, arrow: 'outward' },
+            { x: 70, y: 68, delay: 1650, count: 2, arrow: 'outward' },
+            { x: 28, y: 68, delay: 1800, count: 3, arrow: 'outward' }
+          ]},
+          { type: 'floral', size: 20, positions: [
+            { x: 75, y: 25, delay: 1950, count: 1, arrow: 'clockwise' },
+            { x: 35, y: 75, delay: 2100, count: 2, arrow: 'clockwise' }
+          ]},
+          { type: 'bow', size: 30, positions: [
+            { x: 50, y: 88, delay: 2250, count: 1, arrow: 'outward' }
+          ]}
+        ]
+      },
+      scandinavian: {
+        elements: [
+          { type: 'pine', size: 32, positions: [
+            { x: 30, y: 18, delay: 0, count: 1, arrow: 'clockwise' },
+            { x: 75, y: 25, delay: 200, count: 2, arrow: 'clockwise' },
+            { x: 82, y: 52, delay: 400, count: 3, arrow: 'clockwise' },
+            { x: 65, y: 80, delay: 600, count: 4, arrow: 'clockwise' }
+          ]},
+          { type: 'berry', size: 16, positions: [
+            { x: 70, y: 15, delay: 800, count: 1, arrow: 'inward' },
+            { x: 85, y: 37, delay: 1000, count: 2, arrow: 'inward' },
+            { x: 75, y: 75, delay: 1200, count: 3, arrow: 'inward' }
+          ]},
+          { type: 'filler', size: 18, positions: [
+            { x: 60, y: 85, delay: 1400, count: 1, arrow: 'outward' },
+            { x: 25, y: 28, delay: 1600, count: 2, arrow: 'outward' }
+          ]}
+        ]
+      },
+      english: {
+        elements: [
+          { type: 'pine', size: 22, positions: [
+            { x: 50, y: 15, delay: 0, count: 1, arrow: 'clockwise' },
+            { x: 72, y: 18, delay: 100, count: 2, arrow: 'clockwise' },
+            { x: 85, y: 37, delay: 200, count: 3, arrow: 'clockwise' },
+            { x: 85, y: 63, delay: 300, count: 4, arrow: 'clockwise' },
+            { x: 72, y: 82, delay: 400, count: 5, arrow: 'clockwise' },
+            { x: 50, y: 85, delay: 500, count: 6, arrow: 'clockwise' },
+            { x: 28, y: 82, delay: 600, count: 7, arrow: 'clockwise' },
+            { x: 15, y: 52, delay: 700, count: 8, arrow: 'clockwise' }
+          ]},
+          { type: 'berry', size: 14, positions: [
+            { x: 60, y: 15, delay: 800, count: 1, arrow: 'inward' },
+            { x: 85, y: 26, delay: 900, count: 2, arrow: 'inward' },
+            { x: 88, y: 52, delay: 1000, count: 3, arrow: 'inward' },
+            { x: 85, y: 75, delay: 1100, count: 4, arrow: 'inward' },
+            { x: 60, y: 85, delay: 1200, count: 5, arrow: 'inward' },
+            { x: 15, y: 26, delay: 1300, count: 6, arrow: 'inward' }
+          ]},
+          { type: 'floral', size: 18, positions: [
+            { x: 75, y: 20, delay: 1400, count: 1, arrow: 'clockwise' },
+            { x: 80, y: 42, delay: 1500, count: 2, arrow: 'clockwise' },
+            { x: 80, y: 62, delay: 1600, count: 3, arrow: 'clockwise' },
+            { x: 40, y: 85, delay: 1700, count: 4, arrow: 'clockwise' },
+            { x: 20, y: 42, delay: 1800, count: 5, arrow: 'clockwise' }
+          ]},
+          { type: 'filler', size: 12, positions: [
+            { x: 82, y: 30, delay: 1900, count: 1, arrow: 'outward' },
+            { x: 78, y: 70, delay: 2000, count: 2, arrow: 'outward' },
+            { x: 30, y: 78, delay: 2100, count: 3, arrow: 'outward' },
+            { x: 18, y: 30, delay: 2200, count: 4, arrow: 'outward' }
+          ]}
+        ]
+      },
+      modern: {
+        elements: [
+          { type: 'pine', size: 30, positions: [
+            { x: 50, y: 15, delay: 0, count: 1, arrow: 'clockwise' },
+            { x: 78, y: 22, delay: 250, count: 2, arrow: 'clockwise' },
+            { x: 85, y: 52, delay: 500, count: 3, arrow: 'clockwise' },
+            { x: 78, y: 78, delay: 750, count: 4, arrow: 'clockwise' },
+            { x: 22, y: 22, delay: 1000, count: 5, arrow: 'clockwise' }
+          ]},
+          { type: 'berry', size: 22, positions: [
+            { x: 70, y: 30, delay: 1250, count: 1, arrow: 'inward' },
+            { x: 50, y: 85, delay: 1500, count: 2, arrow: 'inward' },
+            { x: 30, y: 70, delay: 1750, count: 3, arrow: 'inward' }
+          ]},
+          { type: 'floral', size: 24, positions: [
+            { x: 75, y: 75, delay: 2000, count: 1, arrow: 'outward' },
+            { x: 25, y: 25, delay: 2250, count: 2, arrow: 'outward' }
+          ]},
+          { type: 'filler', size: 18, positions: [
+            { x: 50, y: 88, delay: 2500, count: 1, arrow: 'outward' }
+          ]}
+        ]
+      },
+      french: {
+        elements: [
+          { type: 'pine', size: 24, positions: [
+            { x: 50, y: 13, delay: 0, count: 1, arrow: 'clockwise' },
+            { x: 75, y: 18, delay: 120, count: 2, arrow: 'clockwise' },
+            { x: 88, y: 50, delay: 240, count: 3, arrow: 'clockwise' },
+            { x: 75, y: 82, delay: 360, count: 4, arrow: 'clockwise' },
+            { x: 50, y: 88, delay: 480, count: 5, arrow: 'clockwise' },
+            { x: 25, y: 82, delay: 600, count: 6, arrow: 'clockwise' },
+            { x: 13, y: 50, delay: 720, count: 7, arrow: 'clockwise' }
+          ]},
+          { type: 'floral', size: 16, positions: [
+            { x: 65, y: 15, delay: 840, count: 1, arrow: 'inward' },
+            { x: 85, y: 30, delay: 960, count: 2, arrow: 'inward' },
+            { x: 85, y: 70, delay: 1080, count: 3, arrow: 'inward' },
+            { x: 65, y: 85, delay: 1200, count: 4, arrow: 'inward' },
+            { x: 15, y: 70, delay: 1320, count: 5, arrow: 'inward' },
+            { x: 15, y: 30, delay: 1440, count: 6, arrow: 'inward' }
+          ]},
+          { type: 'filler', size: 20, positions: [
+            { x: 78, y: 22, delay: 1560, count: 1, arrow: 'outward' },
+            { x: 82, y: 60, delay: 1680, count: 2, arrow: 'outward' },
+            { x: 35, y: 85, delay: 1800, count: 3, arrow: 'outward' },
+            { x: 18, y: 42, delay: 1920, count: 4, arrow: 'outward' }
+          ]},
+          { type: 'bow', size: 26, positions: [
+            { x: 50, y: 90, delay: 2040, count: 1, arrow: 'outward' },
+            { x: 30, y: 88, delay: 2160, count: 2, arrow: 'outward' }
+          ]}
+        ]
+      },
+      zen: {
+        elements: [
+          { type: 'pine', size: 36, positions: [
+            { x: 25, y: 20, delay: 0, count: 1, arrow: 'clockwise' },
+            { x: 75, y: 17, delay: 400, count: 2, arrow: 'clockwise' },
+            { x: 50, y: 85, delay: 800, count: 3, arrow: 'clockwise' }
+          ]},
+          { type: 'filler', size: 22, positions: [
+            { x: 17, y: 75, delay: 1200, count: 1, arrow: 'inward' },
+            { x: 83, y: 80, delay: 1600, count: 2, arrow: 'inward' }
+          ]},
+          { type: 'berry', size: 18, positions: [
+            { x: 80, y: 26, delay: 2000, count: 1, arrow: 'inward' }
+          ]},
+          { type: 'bow', size: 28, positions: [
+            { x: 50, y: 88, delay: 2400, count: 1, arrow: 'outward' }
+          ]}
+        ]
+      }
+    };
+
+    // Deep clone so redraw variations don't permanently modify base data
+    const baseDesigns = JSON.parse(JSON.stringify(wreathDesigns));
+
+    function createSketchElements(wreathId, design) {
+      const container = document.getElementById(wreathId);
+      if (!container) return;
+      container.querySelectorAll('.sketch-element, .direction-arrow').forEach(el => el.remove());
+
+      design.elements.forEach(group => {
+        group.positions.forEach(pos => {
+          const el = document.createElement('div');
+          el.className = `sketch-element element-${group.type}`;
+          el.style.cssText = `width:${group.size}px;height:${group.size}px;left:${pos.x}%;top:${pos.y}%;animation-delay:${pos.delay}ms`;
+
+          if (pos.count) {
+            const badge = document.createElement('div');
+            badge.className = 'element-count';
+            badge.textContent = pos.count;
+            el.appendChild(badge);
+          }
+          container.appendChild(el);
+
+          if (pos.arrow) {
+            const arrow = document.createElement('div');
+            arrow.className = `direction-arrow arrow-${pos.arrow}`;
+            arrow.style.cssText = `left:${pos.x}%;top:${pos.y}%;animation-delay:${pos.delay + 200}ms`;
+            container.appendChild(arrow);
+          }
+        });
+      });
+    }
+
+    function initAll() {
+      Object.keys(wreathDesigns).forEach(id => createSketchElements(id, wreathDesigns[id]));
+    }
+
+    function regenerateAll() {
+      // Restore base positions then apply small jitter
+      const fresh = JSON.parse(JSON.stringify(baseDesigns));
+      Object.keys(fresh).forEach(id => {
+        fresh[id].elements.forEach(group => {
+          group.positions.forEach(pos => {
+            pos.x = Math.max(13, Math.min(88, pos.x + (Math.random() - 0.5) * 5));
+            pos.y = Math.max(13, Math.min(88, pos.y + (Math.random() - 0.5) * 5));
+          });
+        });
+        createSketchElements(id, fresh[id]);
+      });
+    }
+
+    function redrawCard(wreathId, btn) {
+      const design = JSON.parse(JSON.stringify(baseDesigns[wreathId]));
+      design.elements.forEach(group => {
+        group.positions.forEach(pos => {
+          pos.x = Math.max(13, Math.min(88, pos.x + (Math.random() - 0.5) * 6));
+          pos.y = Math.max(13, Math.min(88, pos.y + (Math.random() - 0.5) * 6));
+        });
+      });
+      createSketchElements(wreathId, design);
+      btn.style.transform = 'rotate(180deg)';
+      setTimeout(() => { btn.style.transform = ''; }, 400);
+    }
+
+    function animateSequential() {
+      Object.keys(wreathDesigns).forEach(id => {
+        const container = document.getElementById(id);
+        if (container) container.querySelectorAll('.sketch-element, .direction-arrow').forEach(el => el.remove());
+      });
+      Object.keys(wreathDesigns).forEach((id, i) => {
+        setTimeout(() => createSketchElements(id, wreathDesigns[id]), i * 400);
+      });
+    }
+
+    function filterCards(filter, btn) {
+      document.querySelectorAll('.ec-filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      document.querySelectorAll('.design-card').forEach(card => {
+        if (filter === 'all') {
+          card.style.display = '';
+        } else {
+          const styles = card.dataset.style || '';
+          card.style.display = styles.includes(filter) ? '' : 'none';
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initAll);
+  </script>
+
+</body>
+</html>

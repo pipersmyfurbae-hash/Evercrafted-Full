@@ -6,7 +6,7 @@
 <title>Try Evercrafted — Describe a Memory</title>
 <meta name="description" content="Share a real memory. See what Evercrafted does with it. Two minutes. No signup required.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Italiana&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#f5f3ef;--sf:#fff;--s2:#f0ede8;--s3:#e8e4de;
@@ -16,8 +16,8 @@
   --gold:#9a7a40;--goldp:#f5efe4;--goldd:rgba(154,122,64,.10);
   --dust:#6a5a80;--dustp:#f5eef4;
   --r:12px;--rsm:7px;--rlg:16px;
-  --serif:'Cormorant Garamond',Georgia,serif;
-  --sans:'Jost',system-ui,sans-serif;
+  --serif:'Italiana',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
   --tr:200ms ease;--sh:0 1px 4px rgba(0,0,0,.06);--sm:0 4px 20px rgba(0,0,0,.09);--sl:0 12px 48px rgba(0,0,0,.12);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -34,9 +34,12 @@ body{font-family:var(--sans);background:var(--bg);color:var(--tx);min-height:100
 .nav-cta:hover{background:#3a5030}
 
 /* HERO */
-.try-hero{padding:3rem 2rem 2rem;text-align:center;max-width:640px;margin:0 auto}
+.try-hero{padding:3rem 2rem 2rem;text-align:center;position:relative;overflow:hidden}
+.try-hero>.hero-vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.try-hero>.hero-scrim{position:absolute;inset:0;z-index:1;background:radial-gradient(ellipse 92% 88% at 50% 42%,rgba(245,243,239,.76),rgba(245,243,239,.94))}
+.try-hero>.hero-overline,.try-hero>.hero-h1,.try-hero>.hero-lead,.try-hero>.hero-note{position:relative;z-index:2;max-width:640px;margin-left:auto;margin-right:auto}
 .hero-overline{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:.75rem}
-.hero-h1{font-family:var(--serif);font-size:clamp(2.2rem,5vw,3.5rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;margin-bottom:.9rem}
+.hero-h1{font-family:var(--serif);font-size:clamp(1.8rem, 3.5vw, 2.4rem);font-weight:400;line-height:1.1;letter-spacing:-.02em;margin-bottom:.9rem}
 .hero-h1 em{font-style:italic;color:var(--green)}
 .hero-lead{font-size:16px;color:var(--mu);line-height:1.65;font-weight:300;margin-bottom:.5rem}
 .hero-note{font-size:12px;color:var(--fa)}
@@ -160,6 +163,7 @@ input.qi-text::placeholder{color:var(--fa)}
 
 <div id="intake-view">
   <div class="try-hero">
+    <video class="hero-vid" autoplay loop muted playsinline><source src="/assets/hero-try.mp4" type="video/mp4"></video><div class="hero-scrim"></div>
     <div class="hero-overline">Try Evercrafted</div>
     <h1 class="hero-h1">Share a real memory.<br><em>See what we do with it.</em></h1>
     <p class="hero-lead">Two minutes. No signup. Your words become something you will want to build.</p>
@@ -270,7 +274,8 @@ input.qi-text::placeholder{color:var(--fa)}
 </div>
 
 <script>
-const CONFIG = { apiBase: 'http://localhost:3001' };
+// apiBase auto-detects: localhost/file:// → local API server; otherwise same-origin (production)
+const CONFIG = { apiBase: (location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(location.hostname)) ? 'http://localhost:3001' : '' };
 
 const STEPS = [
   { id:'memory', type:'textarea', eye:'The memory', q:'What should this wreath hold?', sub:'A person, a place, a season, a feeling. Plain language only.', placeholder:'My grandmother\'s garden in late September — cosmos swaying, dried lavender, that warmth before the cold arrived…', key:'memory' },
@@ -448,14 +453,46 @@ function showOutput(){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-function handleGate(e){
+async function handleGate(e){
   e.preventDefault();
   const email=document.getElementById('gate-email').value;
+  try{
+    await fetch(`${CONFIG.apiBase}/api/waitlist`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email,
+        scene_title: sceneData?.scene_title || '',
+        memory: answers.memory || '',
+        source: 'try-page',
+      }),
+    });
+  }catch(err){ console.warn('Waitlist:',err.message); }
   document.getElementById('gate-note').textContent=`✓ ${email} is on the list. Founding pricing locked in.`;
   document.getElementById('gate-note').style.color='var(--green)';
   document.getElementById('gate-note').style.fontWeight='500';
   document.getElementById('gate-email').value='';
-  // In production: POST to /api/waitlist with { email, scene_title: sceneData?.scene_title, memory: answers.memory }
+  showFeedback();
+}
+
+// Calibration corpus: did the generated scene capture the memory? (kind='scene')
+function showFeedback(){
+  const form=document.querySelector('.gate-form'); if(!form||document.getElementById('fb-wrap'))return;
+  const w=document.createElement('div'); w.id='fb-wrap';
+  w.style.cssText='margin-top:1.1rem;text-align:center';
+  w.innerHTML=`<div style="font-size:12px;color:var(--mu);margin-bottom:.5rem">Did this capture the feeling?</div>`
+    +`<div style="display:flex;gap:.5rem;justify-content:center">`
+    +`<button type="button" id="fb-up" style="cursor:pointer;border:1.5px solid var(--bd);background:var(--sf);border-radius:100px;padding:7px 16px;font-size:13px">Yes ✦</button>`
+    +`<button type="button" id="fb-down" style="cursor:pointer;border:1.5px solid var(--bd);background:var(--sf);border-radius:100px;padding:7px 16px;font-size:13px">Not quite</button></div>`;
+  form.parentNode.insertBefore(w,form.nextSibling);
+  const send=async vote=>{
+    w.innerHTML=`<div style="font-size:12px;color:var(--green);font-weight:500">Thank you — that helps us tune the design.</div>`;
+    try{ await fetch(`${CONFIG.apiBase}/api/layout-feedback`,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({vote,kind:'scene',scene_title:sceneData?.scene_title||'',memory:answers.memory||'',source:'try-page'})}); }
+    catch(err){ console.warn('Feedback:',err.message); }
+  };
+  document.getElementById('fb-up').onclick=()=>send('up');
+  document.getElementById('fb-down').onclick=()=>send('down');
 }
 
 function resetAll(){
@@ -469,5 +506,6 @@ function resetAll(){
 
 renderStep();
 </script>
+<script src="/evercrafted-nav.js" defer></script>
 </body>
 </html>

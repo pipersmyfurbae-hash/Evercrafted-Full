@@ -1,0 +1,1850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Studio — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Dancing+Script:wght@600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* Core palette */
+  --cream:#F8F5EF;--cream2:#F0EBE2;--cream3:#E6DFCF;--white:#FDFCF9;
+  --ink:#1B1916;--ink2:#332F28;--muted:#8A8278;--muted2:#B4AFA8;
+  /* Brand green */
+  --sage:#506347;--sage-l:#C4D4BF;--sage-ll:#EBF1E8;--sage-d:#324030;
+  --sage-dim:rgba(80,99,71,.1);
+  /* Bark / warm accent */
+  --bark:#8A6E52;--bark-l:#C2A98E;--bark-ll:#EDE5D8;--bark-d:#5A4535;
+  /* Rules */
+  --rule:rgba(27,25,22,.07);--rule2:rgba(27,25,22,.13);--ruledark:rgba(27,25,22,.22);
+  /* Tier colors */
+  --tier-studio:#7A4A85;--tier-studio-bg:#F5EEF4;
+  --tier-atelier:#1A1A1A;--tier-atelier-bg:#F2EFE9;
+  /* Pipeline step colors */
+  --step1:#506347;--step2:#6e7f8a;--step3:#8a6e52;--step4:#7a5a8a;--step5:#4a7a6e;
+}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden}
+
+/* ─── NAV ─── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:200;height:56px;background:rgba(253,252,249,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--rule)}
+.nav-i{max-width:1180px;margin:0 auto;padding:0 32px;height:100%;display:flex;align-items:center;gap:36px}
+.logo{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:500;letter-spacing:.06em;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:8px;flex-shrink:0;text-decoration:none}
+.logo-leaf{width:18px;height:18px}
+.nav-links{display:flex;gap:20px}
+.nav-links a{font-size:12px;color:var(--muted);letter-spacing:.03em;cursor:pointer;transition:color .15s;font-weight:400;text-decoration:none}
+.nav-links a:hover,.nav-links a.on{color:var(--ink)}
+.nav-links a.on{font-weight:500}
+.nav-r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn-ghost{background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.03em;transition:color .15s;padding:6px 8px}
+.btn-ghost:hover{color:var(--ink)}
+.btn-cta{padding:8px 20px;background:var(--ink);color:var(--white);border:none;border-radius:3px;font-size:12px;font-weight:500;letter-spacing:.05em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-cta:hover{background:var(--ink2)}
+
+/* ─── SHARED ─── */
+.wrap{max-width:1180px;margin:0 auto;padding:0 32px}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--sage)}
+h2.display{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3.6vw,46px);font-weight:300;line-height:1.1;letter-spacing:-.02em;color:var(--ink)}
+h2.display em{font-style:italic;color:var(--bark)}
+.script-accent{font-family:'Dancing Script',cursive;color:var(--sage);font-size:1.1em}
+.rule-line{height:1px;background:var(--rule)}
+
+/* tier badge */
+.tier-badge{display:inline-flex;align-items:center;gap:5px;font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:99px}
+.tier-studio{background:var(--tier-studio-bg);color:var(--tier-studio)}
+.tier-atelier{background:#1A1A1A;color:#F2EFE9}
+
+/* ─── HERO ─── */
+.hero{min-height:100vh;padding-top:56px;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;background:var(--white)}
+.hero-l{padding:80px 56px 60px 72px;display:flex;flex-direction:column;justify-content:center}
+.hero-tag{display:flex;align-items:center;gap:8px;margin-bottom:20px}
+.hero-tag-pill{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:2px;background:var(--sage-ll);color:var(--sage-d)}
+.hero-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,5vw,68px);font-weight:300;line-height:1.05;letter-spacing:-.025em;color:var(--ink);margin-bottom:18px}
+.hero-h1 em{font-style:italic;color:var(--bark)}
+.hero-sub{font-size:15px;font-weight:300;line-height:1.8;color:var(--muted);max-width:400px;margin-bottom:28px}
+.hero-btns{display:flex;gap:10px;margin-bottom:52px;flex-wrap:wrap}
+.btn-p{padding:13px 30px;background:var(--ink);color:var(--white);border:none;border-radius:3px;font-size:13px;font-weight:500;letter-spacing:.06em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-p:hover{background:var(--ink2)}
+.btn-o{padding:13px 22px;background:transparent;color:var(--ink2);border:1px solid var(--rule2);border-radius:3px;font-size:13px;font-weight:400;letter-spacing:.04em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-o:hover{background:var(--cream2);border-color:var(--bark-l)}
+.hero-proof{display:flex;gap:36px}
+.hp-n{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink);line-height:1}
+.hp-l{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted2);margin-top:2px}
+
+/* Hero right — dark preview panel */
+.hero-r{background:var(--ink);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:40px 32px}
+.hero-r::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 70%,rgba(80,99,71,.18) 0%,transparent 60%)}
+.hero-r::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(138,110,82,.12) 0%,transparent 55%)}
+.app-mock{width:100%;max-width:460px;background:rgba(253,252,249,.06);border:1px solid rgba(253,252,249,.1);border-radius:12px;overflow:hidden;position:relative;z-index:2}
+.mock-topbar{height:38px;background:rgba(253,252,249,.05);border-bottom:1px solid rgba(253,252,249,.07);display:flex;align-items:center;padding:0 16px;gap:10px}
+.mock-dots{display:flex;gap:5px}
+.mock-dot{width:7px;height:7px;border-radius:50%;background:rgba(253,252,249,.12)}
+.mock-title{font-size:11px;color:rgba(253,252,249,.35);margin-left:8px;letter-spacing:.05em;font-family:'DM Sans',sans-serif}
+.mock-badge{margin-left:auto;font-size:8px;letter-spacing:.1em;text-transform:uppercase;background:rgba(80,99,71,.25);color:rgba(196,212,191,.9);padding:2px 8px;border-radius:2px}
+.mock-body{display:grid;grid-template-columns:170px 1fr;min-height:340px}
+.mock-sidebar{border-right:1px solid rgba(253,252,249,.06);padding:14px 8px;display:flex;flex-direction:column;gap:2px}
+.mock-sec-lbl{font-size:8px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(253,252,249,.18);padding:0 8px;margin:8px 0 4px}
+.mock-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:3px;font-size:10px;color:rgba(253,252,249,.3);font-weight:300;font-family:'DM Sans',sans-serif}
+.mock-item.on{color:rgba(253,252,249,.82);background:rgba(253,252,249,.07);font-weight:500}
+.mock-item-dot{width:4px;height:4px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0}
+.mock-main{padding:16px;display:flex;flex-direction:column;gap:12px}
+.mock-canvas{background:rgba(253,252,249,.04);border:1px solid rgba(253,252,249,.07);border-radius:8px;height:192px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.mock-canvas-lbl{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:rgba(253,252,249,.2);position:absolute;top:10px;left:12px}
+.mock-tags{display:flex;gap:5px;flex-wrap:wrap}
+.mock-tag{font-size:9px;padding:3px 8px;border-radius:2px;background:rgba(253,252,249,.07);color:rgba(253,252,249,.38);border:1px solid rgba(253,252,249,.08)}
+.mock-tag.on{background:rgba(80,99,71,.25);color:rgba(196,212,191,.85);border-color:rgba(80,99,71,.4)}
+.mock-stats-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+.mock-stat{background:rgba(253,252,249,.05);border:1px solid rgba(253,252,249,.07);border-radius:4px;padding:7px 9px}
+.mock-sn{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:300;color:rgba(253,252,249,.7);line-height:1}
+.mock-sl{font-size:8px;color:rgba(253,252,249,.28);margin-top:2px}
+
+/* Wreath SVG in mock canvas */
+.wreath-preview{width:140px;height:140px;opacity:.7}
+
+/* ─── PIPELINE SECTION ─── */
+.pipeline{padding:88px 0;background:var(--cream2)}
+.pipeline-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:52px;border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--rule)}
+.pipeline-step{background:var(--white);padding:28px 22px;position:relative;transition:background .18s}
+.pipeline-step:hover{background:var(--sage-ll)}
+.pipeline-step-n{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:300;color:var(--cream3);line-height:1;margin-bottom:16px}
+.pipeline-step-icon{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:12px;font-size:14px}
+.pipeline-step-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;color:var(--ink);margin-bottom:6px;letter-spacing:-.01em}
+.pipeline-step-desc{font-size:11px;font-weight:300;color:var(--muted);line-height:1.7}
+.pipeline-step-arrow{position:absolute;top:50%;right:-1px;transform:translateY(-50%);width:12px;height:12px;z-index:2;color:var(--muted2);font-size:10px;display:flex;align-items:center;justify-content:center}
+
+/* ─── LIVE ENGINE SECTION ─── */
+.engine-section{padding:88px 0;background:var(--white)}
+.engine-intro{max-width:560px;margin-bottom:48px}
+.engine-intro p{font-size:14px;font-weight:300;color:var(--muted);line-height:1.8;margin-top:10px}
+.engine-wrapper{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start}
+.engine-input-panel{background:var(--cream);border:1px solid var(--rule2);border-radius:10px;padding:28px}
+.engine-label{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px}
+.engine-textarea{width:100%;padding:14px 16px;background:var(--white);border:1.5px solid var(--rule2);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:14px;color:var(--ink);line-height:1.7;resize:vertical;min-height:110px;outline:none;transition:border-color .18s;font-weight:300}
+.engine-textarea:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(80,99,71,.08)}
+.engine-textarea::placeholder{color:var(--muted2);font-style:italic}
+
+/* Inventory quick-add */
+.inv-section{margin-top:18px}
+.inv-grid{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.inv-tag{font-size:11px;padding:4px 10px;border-radius:2px;border:1px solid var(--rule2);background:var(--white);color:var(--muted);cursor:pointer;transition:all .14s;user-select:none}
+.inv-tag:hover{border-color:var(--sage-l);color:var(--sage-d)}
+.inv-tag.selected{background:var(--sage-ll);border-color:rgba(80,99,71,.25);color:var(--sage-d);font-weight:500}
+.inv-input-row{display:flex;gap:8px;margin-top:10px}
+.inv-input{flex:1;padding:8px 12px;background:var(--white);border:1.5px solid var(--rule2);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);outline:none;transition:border-color .16s}
+.inv-input:focus{border-color:var(--sage)}
+.btn-inv-add{padding:8px 14px;background:transparent;color:var(--sage-d);border:1px solid var(--sage-l);border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .14s;white-space:nowrap}
+.btn-inv-add:hover{background:var(--sage-ll)}
+
+/* options row */
+.engine-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.opt-select{padding:8px 12px;background:var(--white);border:1.5px solid var(--rule2);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);outline:none;transition:border-color .16s;-webkit-appearance:none;cursor:pointer}
+.opt-select:focus{border-color:var(--sage)}
+
+.engine-run-btn{margin-top:18px;width:100%;padding:13px;background:var(--ink);color:var(--white);border:none;border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;letter-spacing:.06em;cursor:pointer;transition:background .15s;display:flex;align-items:center;justify-content:center;gap:8px}
+.engine-run-btn:hover{background:var(--ink2)}
+.engine-run-btn:disabled{opacity:.4;cursor:not-allowed}
+.engine-run-btn svg{animation:spin .8s linear infinite;display:none}
+.engine-run-btn.loading svg{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Output panel */
+.engine-output-panel{display:flex;flex-direction:column;gap:0}
+.output-tabs{display:flex;border-bottom:1px solid var(--rule2);background:var(--cream);border-radius:10px 10px 0 0;border:1px solid var(--rule2);border-bottom:none;overflow:hidden}
+.output-tab{padding:12px 18px;font-size:11px;font-weight:500;letter-spacing:.04em;color:var(--muted);cursor:pointer;transition:all .15s;border-bottom:2px solid transparent;white-space:nowrap;border-right:1px solid var(--rule)}
+.output-tab:last-child{border-right:none}
+.output-tab:hover{color:var(--ink);background:var(--cream2)}
+.output-tab.on{color:var(--sage-d);background:var(--white);border-bottom:2px solid var(--sage)}
+.output-body{background:var(--white);border:1px solid var(--rule2);border-top:none;border-radius:0 0 10px 10px;min-height:420px;padding:22px;position:relative}
+
+/* Output states */
+.output-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:380px;gap:14px;text-align:center}
+.output-empty-icon{width:56px;height:56px;background:var(--cream2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px}
+.output-empty-t{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--ink)}
+.output-empty-s{font-size:12px;font-weight:300;color:var(--muted);max-width:220px;line-height:1.7}
+
+.output-loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:380px;gap:16px}
+.output-spinner{width:28px;height:28px;border:2px solid var(--rule2);border-top-color:var(--sage);border-radius:50%;animation:spin .7s linear infinite}
+.output-loading-label{font-size:12px;color:var(--muted);letter-spacing:.04em}
+.output-loading-step{font-size:11px;color:var(--muted2);margin-top:4px;transition:all .3s}
+
+/* Result cards */
+.result-section{margin-bottom:24px}
+.result-section:last-child{margin-bottom:0}
+.result-lbl{font-size:9px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.result-lbl::after{content:'';flex:1;height:1px;background:var(--rule)}
+.result-body{font-size:13px;font-weight:300;color:var(--ink2);line-height:1.8}
+.emotion-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.emotion-chip{font-size:11px;padding:4px 12px;border-radius:99px;border:1px solid var(--rule2);color:var(--muted);background:var(--cream)}
+.emotion-chip.primary{background:var(--sage-ll);border-color:rgba(80,99,71,.2);color:var(--sage-d)}
+.emotion-chip.accent{background:var(--bark-ll);border-color:rgba(138,110,82,.2);color:var(--bark-d)}
+.palette-row{display:flex;gap:8px;margin-top:8px;align-items:center}
+.palette-swatch{width:32px;height:32px;border-radius:4px;border:1px solid rgba(0,0,0,.06)}
+.palette-label{font-size:11px;color:var(--muted);font-weight:300}
+
+/* Blueprint elements */
+.bp-elements{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.bp-el{display:grid;grid-template-columns:80px 1fr auto;gap:10px;align-items:center;padding:8px 12px;background:var(--cream);border-radius:4px;border:1px solid var(--rule)}
+.bp-el-name{font-size:12px;font-weight:400;color:var(--ink)}
+.bp-el-meta{font-size:11px;font-weight:300;color:var(--muted);display:flex;gap:8px;flex-wrap:wrap}
+.bp-el-meta span{background:var(--white);border:1px solid var(--rule);padding:2px 7px;border-radius:2px}
+.bp-el-count{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--ink);text-align:right}
+.bp-el-count small{font-size:10px;font-weight:300;color:var(--muted);display:block;font-family:'DM Sans',sans-serif}
+
+/* Prompt output */
+.prompt-box{font-family:'DM Mono',monospace;font-size:11px;font-weight:300;color:var(--ink2);background:var(--cream);border:1px solid var(--rule2);border-radius:6px;padding:16px;line-height:1.7;white-space:pre-wrap;position:relative;margin-top:8px}
+.copy-btn{position:absolute;top:8px;right:8px;padding:4px 10px;background:var(--white);border:1px solid var(--rule2);border-radius:3px;font-size:10px;font-weight:500;letter-spacing:.04em;cursor:pointer;font-family:'DM Sans',sans-serif;color:var(--muted);transition:all .15s}
+.copy-btn:hover{border-color:var(--sage-l);color:var(--sage-d)}
+
+/* Build guide steps */
+.build-steps{display:flex;flex-direction:column;gap:10px;margin-top:8px}
+.build-step{display:flex;gap:14px;align-items:flex-start;padding:12px 14px;background:var(--cream);border-radius:6px;border:1px solid var(--rule)}
+.build-step-n{width:26px;height:26px;border-radius:50%;background:var(--sage-ll);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--sage-d);flex-shrink:0;font-family:'DM Mono',monospace}
+.build-step-text{font-size:12px;font-weight:300;color:var(--ink2);line-height:1.7;padding-top:2px}
+.build-step-method{font-size:10px;font-weight:500;color:var(--bark-d);background:var(--bark-ll);border:1px solid rgba(138,110,82,.15);padding:1px 7px;border-radius:2px;white-space:nowrap;margin-top:4px;display:inline-block}
+
+/* Listing */
+.listing-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--ink);margin-bottom:6px}
+.listing-desc{font-size:13px;font-weight:300;color:var(--ink2);line-height:1.8;margin-bottom:14px}
+.listing-bullets{list-style:none;margin-bottom:14px}
+.listing-bullets li{font-size:12px;font-weight:300;color:var(--ink2);padding:4px 0;display:flex;gap:8px;line-height:1.5}
+.listing-bullets li::before{content:'✦';color:var(--sage);font-size:8px;flex-shrink:0;margin-top:4px}
+.tags-row{display:flex;flex-wrap:wrap;gap:5px}
+.listing-tag{font-size:10px;color:var(--muted);border:1px solid var(--rule2);border-radius:2px;padding:2px 8px}
+.listing-price{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:300;color:var(--ink);margin-top:14px;display:flex;align-items:baseline;gap:6px}
+.listing-price small{font-size:12px;font-weight:300;color:var(--muted);font-family:'DM Sans',sans-serif}
+
+/* ─── FEATURES SECTION ─── */
+.features-section{padding:88px 0;background:var(--cream2)}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:8px;overflow:hidden;margin-top:52px}
+.feat{background:var(--white);padding:30px 26px;transition:background .18s}
+.feat:hover{background:var(--sage-ll)}
+.feat-ico{width:36px;height:36px;border-radius:50%;background:var(--sage-ll);display:flex;align-items:center;justify-content:center;margin-bottom:16px;flex-shrink:0;font-size:16px}
+.feat-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:7px;letter-spacing:-.01em}
+.feat-desc{font-size:12px;font-weight:300;color:var(--muted);line-height:1.75}
+.feat-tier{display:inline-block;margin-top:10px;font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:2px}
+.feat-tier.studio{background:var(--tier-studio-bg);color:var(--tier-studio)}
+.feat-tier.atelier{background:#1A1A1A;color:#F2EFE9}
+
+/* ─── TESTIMONIAL STRIP ─── */
+.testi-section{padding:88px 0;background:var(--white)}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:52px}
+.testi{background:var(--cream);border:1px solid var(--rule);border-radius:8px;padding:28px;transition:box-shadow .18s}
+.testi:hover{box-shadow:0 8px 32px rgba(27,25,22,.06)}
+.testi-stars{letter-spacing:3px;color:var(--sage);font-size:11px;margin-bottom:12px}
+.testi-body{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;font-style:italic;line-height:1.65;color:var(--ink);margin-bottom:20px}
+.testi-av{display:flex;align-items:center;gap:10px}
+.tav-circle{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--sage-d);background:var(--sage-ll);flex-shrink:0}
+.tav-name{font-size:12px;font-weight:500;color:var(--ink)}
+.tav-role{font-size:11px;color:var(--muted2)}
+
+/* ─── PRICING CTA ─── */
+.cta-section{padding:88px 0;background:var(--ink);text-align:center}
+.cta-script{font-family:'Dancing Script',cursive;font-size:22px;color:rgba(196,212,191,.9);margin-bottom:16px;display:block}
+.cta-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,4vw,52px);font-weight:300;line-height:1.1;color:rgba(253,252,249,.95);letter-spacing:-.02em;margin-bottom:16px}
+.cta-h2 em{font-style:italic;color:rgba(196,212,191,.9)}
+.cta-sub{font-size:14px;font-weight:300;color:rgba(253,252,249,.5);max-width:400px;margin:0 auto 36px;line-height:1.8}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-cta-p{padding:14px 36px;background:var(--sage);color:var(--white);border:none;border-radius:3px;font-size:13px;font-weight:500;letter-spacing:.06em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-cta-p:hover{background:var(--sage-d)}
+.btn-cta-o{padding:14px 28px;background:transparent;color:rgba(253,252,249,.6);border:1px solid rgba(253,252,249,.18);border-radius:3px;font-size:13px;letter-spacing:.04em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-cta-o:hover{color:rgba(253,252,249,.9);border-color:rgba(253,252,249,.4)}
+.cta-note{margin-top:18px;font-size:11px;color:rgba(253,252,249,.28);letter-spacing:.04em}
+
+/* ─── RELATED APPS ─── */
+.related-section{padding:72px 0;background:var(--cream2)}
+.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:40px}
+.related-card{background:var(--white);border:1px solid var(--rule);border-radius:8px;padding:22px;cursor:pointer;transition:all .18s;text-decoration:none;display:block}
+.related-card:hover{box-shadow:0 4px 24px rgba(27,25,22,.06);transform:translateY(-2px);border-color:var(--rule2)}
+.related-cat{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);margin-bottom:6px}
+.related-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:4px;letter-spacing:-.01em}
+.related-price{font-size:11px;color:var(--sage-d);margin-bottom:8px;font-weight:400}
+.related-tagline{font-size:12px;font-weight:300;color:var(--muted);line-height:1.6}
+
+/* ─── FOOTER ─── */
+footer{background:var(--ink);padding:56px 0 28px}
+.footer-top{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;margin-bottom:40px}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:500;letter-spacing:.06em;color:rgba(253,252,249,.75);margin-bottom:8px}
+.footer-tag{font-size:11px;font-weight:300;color:rgba(253,252,249,.28);line-height:1.7;max-width:200px}
+.footer-col h4{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(253,252,249,.25);margin-bottom:12px}
+.footer-col a{display:block;font-size:12px;font-weight:300;color:rgba(253,252,249,.4);margin-bottom:6px;cursor:pointer;transition:color .12s;text-decoration:none}
+.footer-col a:hover{color:rgba(253,252,249,.75)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:18px;border-top:1px solid rgba(253,252,249,.07)}
+.footer-copy{font-size:11px;color:rgba(253,252,249,.22)}
+
+/* ─── TOAST ─── */
+.toast{position:fixed;bottom:18px;right:18px;z-index:999;background:var(--ink);color:var(--white);padding:8px 16px;border-radius:3px;font-size:11px;opacity:0;transform:translateY(6px);transition:all .22s;pointer-events:none;letter-spacing:.02em;display:flex;align-items:center;gap:8px}
+.toast.on{opacity:1;transform:none}
+.toast-icon{font-size:13px}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+.fade-up{animation:fadeUp .6s ease both}
+.d1{animation-delay:.06s;opacity:0}.d2{animation-delay:.14s;opacity:0}.d3{animation-delay:.24s;opacity:0}.d4{animation-delay:.34s;opacity:0}
+
+/* ─── API KEY GATE ─── */
+.api-gate{padding:18px 20px;background:var(--cream2);border:1px solid var(--rule2);border-radius:8px;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+.api-gate-icon{font-size:18px;flex-shrink:0}
+.api-gate-text{flex:1}
+.api-gate-text p{font-size:12px;font-weight:300;color:var(--muted);margin-top:2px;line-height:1.5}
+.api-gate-text strong{font-size:13px;font-weight:500;color:var(--ink)}
+.api-key-row{display:flex;gap:8px;margin-top:10px}
+.api-key-input{flex:1;padding:8px 12px;background:var(--white);border:1.5px solid var(--rule2);border-radius:4px;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink);outline:none;transition:border-color .16s}
+.api-key-input:focus{border-color:var(--sage)}
+.btn-api-save{padding:8px 16px;background:var(--ink);color:var(--white);border:none;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .14s;white-space:nowrap}
+.btn-api-save:hover{background:var(--ink2)}
+
+/* Confidence bar */
+.confidence-row{display:flex;align-items:center;gap:10px;margin-top:16px;padding:10px 14px;background:var(--sage-ll);border:1px solid rgba(80,99,71,.15);border-radius:4px}
+.conf-label{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--sage-d)}
+.conf-bar{flex:1;height:4px;background:var(--sage-l);border-radius:2px;overflow:hidden}
+.conf-fill{height:100%;background:var(--sage);border-radius:2px;transition:width .6s ease}
+.conf-pct{font-family:'DM Mono',monospace;font-size:11px;color:var(--sage-d);white-space:nowrap}
+
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--cream3);border-radius:2px}
+
+/* ─── VISUALIZER ─── */
+.viz-section{margin-top:32px;background:var(--white);border:1px solid var(--rule2);border-radius:10px;overflow:hidden}
+.viz-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--rule);background:var(--cream)}
+.viz-title{font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2);display:flex;align-items:center;gap:8px}
+.viz-live-dot{width:6px;height:6px;border-radius:50%;background:var(--sage);animation:vizpulse 2s ease-in-out infinite}
+@keyframes vizpulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.viz-controls{display:flex;gap:6px}
+.viz-btn{padding:4px 10px;background:transparent;border:1px solid var(--rule2);border-radius:3px;font-size:10px;font-weight:500;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .14s;letter-spacing:.03em}
+.viz-btn:hover{border-color:var(--sage-l);color:var(--sage-d);background:var(--sage-ll)}
+.viz-btn.on{background:var(--sage-ll);border-color:rgba(80,99,71,.25);color:var(--sage-d)}
+.viz-canvas-wrap{display:grid;grid-template-columns:1fr 180px;min-height:320px}
+.viz-canvas{display:flex;align-items:center;justify-content:center;padding:24px;background:var(--white)}
+#wreath-svg{width:280px;height:280px;overflow:visible;filter:drop-shadow(0 4px 16px rgba(27,25,22,.08))}
+.viz-legend{padding:16px;background:var(--cream);border-left:1px solid var(--rule);display:flex;flex-direction:column;gap:8px;overflow-y:auto}
+.viz-legend-title{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:4px}
+.viz-legend-item{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:300;color:var(--ink2)}
+.viz-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(0,0,0,.08)}
+.viz-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:280px;gap:12px;color:var(--muted2);font-size:12px;font-weight:300;grid-column:1/-1}
+.viz-empty-icon{font-size:28px;opacity:.5}
+
+/* ─── GENOME STRIP ─── */
+.genome-section{margin-top:16px;background:var(--cream);border:1px solid var(--rule2);border-radius:8px;padding:14px 18px}
+.genome-label{font-size:9px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.genome-copy-btn{font-size:10px;font-weight:500;color:var(--sage-d);background:var(--sage-ll);border:1px solid rgba(80,99,71,.2);border-radius:3px;padding:2px 9px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .14s;letter-spacing:.02em}
+.genome-copy-btn:hover{background:var(--sage-l)}
+.genome-string{font-family:'DM Mono',monospace;font-size:11px;font-weight:300;color:var(--ink2);background:var(--white);border:1px solid var(--rule);border-radius:4px;padding:10px 14px;word-break:break-all;line-height:1.7;position:relative}
+.genome-segment{display:inline;cursor:default}
+.genome-segment:hover{background:var(--sage-ll);border-radius:2px}
+.genome-hash{font-weight:500;color:var(--sage-d)}
+
+/* ─── VALIDATOR ─── */
+.validator-section{margin-top:16px;background:var(--white);border:1px solid var(--rule2);border-radius:10px;overflow:hidden}
+.val-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--rule);background:var(--cream);cursor:pointer;user-select:none}
+.val-title{font-size:10px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2);display:flex;align-items:center;gap:8px}
+.val-overall{display:flex;align-items:center;gap:8px}
+.val-score-big{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ink);line-height:1}
+.val-badge{font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:2px 8px;border-radius:2px}
+.val-badge.pass{background:var(--sage-ll);color:var(--sage-d)}
+.val-badge.warn{background:#FEF3C7;color:#92400E}
+.val-badge.fail{background:#FEE2E2;color:#991B1B}
+.val-chevron{font-size:10px;color:var(--muted2);transition:transform .2s}
+.val-header.open .val-chevron{transform:rotate(180deg)}
+.val-body{display:none;padding:18px}
+.val-header.open + .val-body{display:block}
+.val-layers{display:flex;flex-direction:column;gap:10px}
+.val-layer{padding:12px 14px;background:var(--cream);border-radius:6px;border:1px solid var(--rule);border-left:3px solid transparent}
+.val-layer.pass{border-left-color:var(--sage)}
+.val-layer.warn{border-left-color:#F59E0B}
+.val-layer.fail{border-left-color:#EF4444}
+.val-layer-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.val-layer-name{font-size:12px;font-weight:500;color:var(--ink);flex:1}
+.val-layer-score{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)}
+.val-layer-status{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:2px}
+.val-layer.pass .val-layer-status{background:var(--sage-ll);color:var(--sage-d)}
+.val-layer.warn .val-layer-status{background:#FEF3C7;color:#92400E}
+.val-layer.fail .val-layer-status{background:#FEE2E2;color:#991B1B}
+.val-layer-bar{height:3px;background:var(--rule2);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.val-layer-fill{height:100%;border-radius:2px;transition:width .6s ease}
+.val-layer.pass .val-layer-fill{background:var(--sage)}
+.val-layer.warn .val-layer-fill{background:#F59E0B}
+.val-layer.fail .val-layer-fill{background:#EF4444}
+.val-layer-notes{font-size:11px;font-weight:300;color:var(--muted);line-height:1.6}
+.val-empty{padding:28px;text-align:center;color:var(--muted2);font-size:12px;font-weight:300}
+
+/* ─── PDF EXPORT ─── */
+.export-bar{margin-top:16px;display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--ink);border-radius:8px;gap:16px}
+.export-bar-text strong{font-size:13px;color:var(--white);font-weight:500;display:block}
+.export-bar-text span{font-size:11px;color:rgba(253,252,249,.4);font-weight:300}
+.export-btns{display:flex;gap:8px;flex-shrink:0}
+.btn-export{padding:9px 18px;border-radius:3px;font-size:11px;font-weight:500;letter-spacing:.05em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap;border:none}
+.btn-export-pdf{background:var(--sage);color:var(--white)}
+.btn-export-pdf:hover{background:var(--sage-d)}
+.btn-export-pdf:disabled{opacity:.4;cursor:not-allowed}
+.btn-export-json{background:transparent;color:rgba(253,252,249,.6);border:1px solid rgba(253,252,249,.18)}
+.btn-export-json:hover{color:rgba(253,252,249,.9);border-color:rgba(253,252,249,.4)}
+.btn-export-json:disabled{opacity:.4;cursor:not-allowed}
+
+/* ─── PRINT LAYOUT ─── */
+@media print{
+  .nav,.hero,.pipeline,.features-section,.testi-section,.cta-section,.related-section,footer,
+  .engine-input-panel,.output-tabs,.export-bar,.viz-controls,.viz-btn,.genome-copy-btn,
+  .val-chevron,.copy-btn,.toast,.api-gate,.api-active,.engine-options,.inv-section,.engine-run-btn{display:none!important}
+  body{background:white;color:black;font-size:12px}
+  .engine-section{padding:0!important}
+  .wrap{max-width:100%!important;padding:0 20px!important}
+  .engine-wrapper{display:block!important}
+  .engine-output-panel{page-break-inside:avoid}
+  .output-tabs{display:none!important}
+  #output-results{display:block!important}
+  .output-body{border:none!important;min-height:auto!important;padding:0!important}
+  .print-only{display:block!important}
+  .print-package{display:block!important}
+  @page{margin:18mm 14mm;size:A4}
+}
+.print-only{display:none}
+.print-package{display:none}
+
+/* Responsive */
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr}
+  .hero-r{display:none}
+  .hero-l{padding:72px 32px 56px}
+  .pipeline-grid{grid-template-columns:1fr 1fr}
+  .engine-wrapper{grid-template-columns:1fr}
+  .feat-grid{grid-template-columns:1fr 1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .related-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .feat-grid,.related-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .pipeline-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-i">
+    <a class="logo" href="#">
+      <svg class="logo-leaf" viewBox="0 0 20 20" fill="none">
+        <path d="M10 18C10 18 4 12 4 7C4 4.2 6.7 2 10 2C13.3 2 16 4.2 16 7C16 12 10 18 10 18Z" stroke="#506347" stroke-width="1.4" fill="none"/>
+        <path d="M10 18L10 6" stroke="#506347" stroke-width="1" stroke-dasharray="2 2"/>
+        <path d="M10 13C10 13 7.5 11.5 6 9" stroke="#506347" stroke-width="1" fill="none"/>
+        <path d="M10 9C10 9 12.5 7.5 14 5" stroke="#506347" stroke-width="1" fill="none"/>
+      </svg>
+      Evercrafted
+    </a>
+    <div class="nav-links">
+      <a href="#">Features</a>
+      <a href="#">Apps</a>
+      <a href="#">Marketplace</a>
+      <a href="#">Pricing</a>
+    </div>
+    <div class="nav-r">
+      <button class="btn-ghost">Sign in</button>
+      <button class="btn-cta">Start free trial</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-l">
+    <div class="hero-tag fade-up">
+      <span class="hero-tag-pill">Studio Tier</span>
+      <span style="font-size:10px;color:var(--muted);letter-spacing:.04em">AI-Powered · Live Engine</span>
+    </div>
+    <h1 class="hero-h1 fade-up d1">Describe the feeling.<br><em>Build the wreath.</em></h1>
+    <p class="hero-sub fade-up d2">Design Studio is a complete AI-powered design tool for wreath makers. Emotion in — blueprint, build guide, and listing out. No guessing, no wasted stems.</p>
+    <div class="hero-btns fade-up d3">
+      <button class="btn-p" onclick="scrollToEngine()">Try it live ↓</button>
+      <button class="btn-o">See how it works</button>
+    </div>
+    <div class="hero-proof fade-up d4">
+      <div>
+        <div class="hp-n">7</div>
+        <div class="hp-l">Pipeline stages</div>
+      </div>
+      <div>
+        <div class="hp-n">3,200+</div>
+        <div class="hp-l">Designs generated</div>
+      </div>
+      <div>
+        <div class="hp-n">14 days</div>
+        <div class="hp-l">Free trial</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-r">
+    <!-- App mockup -->
+    <div class="app-mock">
+      <div class="mock-topbar">
+        <div class="mock-dots">
+          <div class="mock-dot"></div><div class="mock-dot"></div><div class="mock-dot"></div>
+        </div>
+        <span class="mock-title">Design Studio</span>
+        <span class="mock-badge">Studio</span>
+      </div>
+      <div class="mock-body">
+        <div class="mock-sidebar">
+          <div class="mock-sec-lbl">Pipeline</div>
+          <div class="mock-item on"><span class="mock-item-dot"></span>Emotion Parser</div>
+          <div class="mock-item"><span class="mock-item-dot"></span>Inventory</div>
+          <div class="mock-item"><span class="mock-item-dot"></span>Blueprint</div>
+          <div class="mock-item"><span class="mock-item-dot"></span>Style DNA</div>
+          <div class="mock-item"><span class="mock-item-dot"></span>Render Prompt</div>
+          <div class="mock-sec-lbl" style="margin-top:4px">Output</div>
+          <div class="mock-item"><span class="mock-item-dot"></span>Build Guide</div>
+          <div class="mock-item"><span class="mock-item-dot"></span>Listing</div>
+        </div>
+        <div class="mock-main">
+          <div class="mock-canvas">
+            <span class="mock-canvas-lbl">Blueprint Canvas</span>
+            <!-- Wreath SVG Preview -->
+            <svg class="wreath-preview" viewBox="0 0 140 140" fill="none">
+              <circle cx="70" cy="70" r="52" stroke="rgba(253,252,249,0.12)" stroke-width="18" fill="none"/>
+              <!-- Greenery clusters -->
+              <ellipse cx="70" cy="20" rx="10" ry="6" fill="rgba(80,99,71,0.5)" transform="rotate(0 70 70)"/>
+              <ellipse cx="70" cy="20" rx="7" ry="4" fill="rgba(80,99,71,0.35)" transform="rotate(30 70 70)"/>
+              <ellipse cx="70" cy="20" rx="8" ry="5" fill="rgba(80,99,71,0.4)" transform="rotate(60 70 70)"/>
+              <ellipse cx="70" cy="20" rx="9" ry="5" fill="rgba(80,99,71,0.45)" transform="rotate(90 70 70)"/>
+              <ellipse cx="70" cy="20" rx="7" ry="4" fill="rgba(80,99,71,0.35)" transform="rotate(120 70 70)"/>
+              <ellipse cx="70" cy="20" rx="9" ry="5" fill="rgba(80,99,71,0.4)" transform="rotate(150 70 70)"/>
+              <ellipse cx="70" cy="20" rx="8" ry="5" fill="rgba(80,99,71,0.45)" transform="rotate(180 70 70)"/>
+              <ellipse cx="70" cy="20" rx="7" ry="4" fill="rgba(80,99,71,0.35)" transform="rotate(210 70 70)"/>
+              <ellipse cx="70" cy="20" rx="9" ry="5" fill="rgba(80,99,71,0.4)" transform="rotate(240 70 70)"/>
+              <ellipse cx="70" cy="20" rx="8" ry="5" fill="rgba(80,99,71,0.45)" transform="rotate(270 70 70)"/>
+              <ellipse cx="70" cy="20" rx="7" ry="4" fill="rgba(80,99,71,0.35)" transform="rotate(300 70 70)"/>
+              <ellipse cx="70" cy="20" rx="9" ry="5" fill="rgba(80,99,71,0.4)" transform="rotate(330 70 70)"/>
+              <!-- Focal flowers - asymmetric -->
+              <circle cx="70" cy="22" r="8" fill="rgba(253,252,249,0.75)" transform="rotate(45 70 70)"/>
+              <circle cx="70" cy="22" r="6" fill="rgba(253,252,249,0.6)" transform="rotate(160 70 70)"/>
+              <circle cx="70" cy="22" r="7" fill="rgba(253,252,249,0.65)" transform="rotate(285 70 70)"/>
+              <!-- Accent dots -->
+              <circle cx="70" cy="21" r="3" fill="rgba(138,110,82,0.7)" transform="rotate(80 70 70)"/>
+              <circle cx="70" cy="21" r="2.5" fill="rgba(138,110,82,0.6)" transform="rotate(200 70 70)"/>
+              <circle cx="70" cy="21" r="3" fill="rgba(138,110,82,0.65)" transform="rotate(320 70 70)"/>
+              <!-- Center hole -->
+              <circle cx="70" cy="70" r="30" fill="rgba(10,9,7,0.9)"/>
+            </svg>
+          </div>
+          <div class="mock-tags">
+            <span class="mock-tag on">warm</span>
+            <span class="mock-tag on">nostalgic</span>
+            <span class="mock-tag">airy</span>
+            <span class="mock-tag on">asymmetric</span>
+            <span class="mock-tag">24in</span>
+          </div>
+          <div class="mock-stats-row">
+            <div class="mock-stat"><div class="mock-sn">47</div><div class="mock-sl">Stems</div></div>
+            <div class="mock-stat"><div class="mock-sn">5</div><div class="mock-sl">Clusters</div></div>
+            <div class="mock-stat"><div class="mock-sn">94</div><div class="mock-sl">Score</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section class="pipeline">
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2 class="display">Seven stages. <em>One complete design.</em></h2>
+    <div class="pipeline-grid">
+      <div class="pipeline-step">
+        <div class="pipeline-step-n">01</div>
+        <div class="pipeline-step-icon" style="background:var(--sage-ll)">🌿</div>
+        <div class="pipeline-step-title">Emotion Parsing</div>
+        <div class="pipeline-step-desc">Converts your words into colors, contrast, shape language, and design intent using bouba/kiki mapping.</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-n">02</div>
+        <div class="pipeline-step-icon" style="background:#EEF4F9">📦</div>
+        <div class="pipeline-step-title">Inventory Intelligence</div>
+        <div class="pipeline-step-desc">Structures your available materials and flags any gaps before a single stem is assigned.</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-n">03</div>
+        <div class="pipeline-step-icon" style="background:var(--bark-ll)">🗺️</div>
+        <div class="pipeline-step-title">Blueprint Generation</div>
+        <div class="pipeline-step-desc">Radial 360° layout with 3–5 asymmetric focal clusters. Every element gets a clock position and stem count.</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-n">04</div>
+        <div class="pipeline-step-icon" style="background:var(--tier-studio-bg)">✦</div>
+        <div class="pipeline-step-title">Style DNA Validation</div>
+        <div class="pipeline-step-desc">Enforces asymmetry, natural growth flow, and editorial realism. Overrides any symmetry violations automatically.</div>
+      </div>
+      <div class="pipeline-step">
+        <div class="pipeline-step-n">05–07</div>
+        <div class="pipeline-step-icon" style="background:#EEF2F0">🎨</div>
+        <div class="pipeline-step-title">Prompt + Build + Listing</div>
+        <div class="pipeline-step-desc">Midjourney render prompt, step-by-step build guide, and a ready-to-post Etsy listing — all in one pass.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LIVE ENGINE -->
+<section class="engine-section" id="engine-section">
+  <div class="wrap">
+    <div class="engine-intro">
+      <div class="eyebrow">Live engine</div>
+      <h2 class="display">Try it <em>right now.</em></h2>
+      <p>Describe a feeling or occasion, add your inventory, and let the full Evercrafted pipeline run. This is the real engine — not a demo.</p>
+    </div>
+
+    <div class="engine-wrapper">
+      <!-- Input Panel -->
+      <div class="engine-input-panel">
+        <!-- API Key Gate -->
+        <div class="api-gate" id="api-gate">
+          <span class="api-gate-icon">🔑</span>
+          <div class="api-gate-text">
+            <strong>Anthropic API Key</strong>
+            <p>Enter your API key to activate the live engine. Your key stays in-browser only.</p>
+            <div class="api-key-row">
+              <input class="api-key-input" type="password" id="api-key-input" placeholder="sk-ant-…">
+              <button class="btn-api-save" onclick="saveApiKey()">Activate</button>
+            </div>
+          </div>
+        </div>
+        <div class="api-gate" id="api-active" style="display:none;background:var(--sage-ll);border-color:rgba(80,99,71,.2)">
+          <span class="api-gate-icon">✅</span>
+          <div class="api-gate-text">
+            <strong style="color:var(--sage-d)">Engine active</strong>
+            <p style="color:var(--sage)">Your API key is loaded. Ready to generate.</p>
+          </div>
+          <button onclick="clearApiKey()" style="font-size:11px;color:var(--muted);background:none;border:none;cursor:pointer;padding:4px 8px;white-space:nowrap">Change key</button>
+        </div>
+
+        <div class="engine-label">Design intent</div>
+        <textarea class="engine-textarea" id="engine-input" placeholder="e.g. warm autumn welcome, like the smell of cinnamon and dried oak leaves at a farmhouse door…"></textarea>
+
+        <!-- Inventory -->
+        <div class="inv-section">
+          <div class="engine-label">Quick inventory <span style="font-size:10px;font-weight:300;text-transform:none;letter-spacing:0;color:var(--muted2)">(tap to add)</span></div>
+          <div class="inv-grid" id="inv-grid">
+            <span class="inv-tag" onclick="toggleInv(this)">white peony stem</span>
+            <span class="inv-tag" onclick="toggleInv(this)">dried eucalyptus</span>
+            <span class="inv-tag" onclick="toggleInv(this)">dusty miller</span>
+            <span class="inv-tag" onclick="toggleInv(this)">seeded eucalyptus</span>
+            <span class="inv-tag" onclick="toggleInv(this)">cream rose stem</span>
+            <span class="inv-tag" onclick="toggleInv(this)">dried orange slice</span>
+            <span class="inv-tag" onclick="toggleInv(this)">pampas grass</span>
+            <span class="inv-tag" onclick="toggleInv(this)">dried thistle</span>
+            <span class="inv-tag" onclick="toggleInv(this)">cotton stem</span>
+            <span class="inv-tag" onclick="toggleInv(this)">grapevine base 24in</span>
+          </div>
+          <div class="inv-input-row">
+            <input class="inv-input" type="text" id="inv-custom" placeholder="Add custom item…">
+            <button class="btn-inv-add" onclick="addCustomInv()">+ Add</button>
+          </div>
+        </div>
+
+        <!-- Options -->
+        <div class="engine-options">
+          <div>
+            <div class="engine-label" style="margin-bottom:5px">Wreath size</div>
+            <select class="opt-select" id="opt-size">
+              <option value="18in">18 inch</option>
+              <option value="24in" selected>24 inch (standard)</option>
+              <option value="30in">30 inch</option>
+            </select>
+          </div>
+          <div>
+            <div class="engine-label" style="margin-bottom:5px">Output</div>
+            <select class="opt-select" id="opt-output">
+              <option value="full">Full package</option>
+              <option value="blueprint">Blueprint only</option>
+              <option value="listing">+ Etsy listing</option>
+            </select>
+          </div>
+        </div>
+
+        <button class="engine-run-btn" id="run-btn" onclick="runEngine()">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2">
+            <path d="M2 7h10M7 2l5 5-5 5"/>
+          </svg>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="white" stroke-width="2" style="display:none" id="spinner-icon">
+            <circle cx="7" cy="7" r="5" stroke-dasharray="20" stroke-dashoffset="5" stroke-linecap="round"/>
+          </svg>
+          <span id="run-btn-label">Generate Full Design Package</span>
+        </button>
+      </div>
+
+      <!-- Output Panel -->
+      <div class="engine-output-panel" id="output-panel">
+        <div class="output-tabs">
+          <div class="output-tab on" data-tab="emotion" onclick="switchTab(this)">Emotion Profile</div>
+          <div class="output-tab" data-tab="blueprint" onclick="switchTab(this)">Blueprint</div>
+          <div class="output-tab" data-tab="prompt" onclick="switchTab(this)">Render Prompt</div>
+          <div class="output-tab" data-tab="build" onclick="switchTab(this)">Build Guide</div>
+          <div class="output-tab" data-tab="listing" onclick="switchTab(this)">Listing</div>
+        </div>
+        <div class="output-body" id="output-body">
+          <!-- Empty state -->
+          <div class="output-empty" id="output-empty">
+            <div class="output-empty-icon">🌿</div>
+            <div class="output-empty-t">Ready to design</div>
+            <div class="output-empty-s">Enter a design intent and click Generate to run the full pipeline.</div>
+          </div>
+          <!-- Loading state (hidden) -->
+          <div class="output-loading" id="output-loading" style="display:none">
+            <div class="output-spinner"></div>
+            <div class="output-loading-label">Running Evercrafted pipeline…</div>
+            <div class="output-loading-step" id="loading-step">Parsing emotion profile</div>
+          </div>
+          <!-- Results container (hidden) -->
+          <div id="output-results" style="display:none"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── LIVE WREATH VISUALIZER ─── -->
+    <div class="viz-section" id="viz-section" style="margin-top:32px">
+      <div class="viz-header">
+        <div class="viz-title">
+          <span class="viz-live-dot"></span>
+          Blueprint Visualizer
+        </div>
+        <div class="viz-controls">
+          <button class="viz-btn on" id="viz-btn-color" onclick="vizToggle('color',this)">Color</button>
+          <button class="viz-btn" id="viz-btn-labels" onclick="vizToggle('labels',this)">Labels</button>
+          <button class="viz-btn" id="viz-btn-grid" onclick="vizToggle('grid',this)">Grid</button>
+        </div>
+      </div>
+      <div class="viz-canvas-wrap" id="viz-canvas-wrap">
+        <div class="viz-empty" id="viz-empty" style="grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;gap:12px;color:var(--muted2);font-size:12px;font-weight:300">
+          <div style="font-size:28px;opacity:.4">🌿</div>
+          <div>Visualizer activates after generation</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── WGS GENOME STRIP ─── -->
+    <div class="genome-section" id="genome-section" style="display:none;margin-top:16px">
+      <div class="genome-label">
+        <span>WGS Genome String</span>
+        <button class="genome-copy-btn" onclick="copyGenome()">Copy genome</button>
+      </div>
+      <div class="genome-string" id="genome-string">—</div>
+    </div>
+
+    <!-- ─── EC_WR_V2 VALIDATOR ─── -->
+    <div class="validator-section" id="validator-section" style="display:none;margin-top:16px">
+      <div class="val-header" id="val-header" onclick="toggleValidator()">
+        <div class="val-title">EC_WR_V2 Validator</div>
+        <div class="val-overall">
+          <div class="val-score-big" id="val-score-big">—</div>
+          <div class="val-badge" id="val-badge">—</div>
+          <div class="val-chevron">▼</div>
+        </div>
+      </div>
+      <div class="val-body" id="val-body">
+        <div class="val-empty" id="val-empty">Run the engine to validate blueprint.</div>
+        <div class="val-layers" id="val-layers" style="display:none"></div>
+      </div>
+    </div>
+
+    <!-- ─── EXPORT BAR ─── -->
+    <div class="export-bar" id="export-bar" style="display:none;margin-top:16px">
+      <div class="export-bar-text">
+        <strong>Export Design Package</strong>
+        <span>Blueprint · Build Guide · Render Prompt · Listing · Genome</span>
+      </div>
+      <div class="export-btns">
+        <button class="btn-export btn-export-json" id="export-json-btn" onclick="exportJSON()">↓ JSON</button>
+        <button class="btn-export btn-export-pdf" id="export-pdf-btn" onclick="exportPDF()">↓ PDF Package</button>
+      </div>
+    </div>
+
+    <!-- PRINT TEMPLATE (hidden, used for PDF export) -->
+    <div class="print-package" id="print-package"></div>
+
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <div class="wrap">
+    <div class="eyebrow">Included features</div>
+    <h2 class="display">Everything Design Studio <em>gives you.</em></h2>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="feat-ico">🎨</div>
+        <div class="feat-name">Emotion-to-palette mapping</div>
+        <div class="feat-desc">Describe any feeling in plain language. The engine converts it to colors, contrast levels, and shape language using bouba/kiki theory.</div>
+        <span class="feat-tier studio">Studio</span>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">🗺️</div>
+        <div class="feat-name">Polar coordinate blueprint</div>
+        <div class="feat-desc">Every stem gets a clock position, radius, density, and count. The blueprint is buildable — not just conceptual.</div>
+        <span class="feat-tier studio">Studio</span>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">📦</div>
+        <div class="feat-name">Inventory intelligence</div>
+        <div class="feat-desc">Paste your inventory and the engine structures it, counts quantities, and flags any missing categories before designing.</div>
+        <span class="feat-tier studio">Studio</span>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">✦</div>
+        <div class="feat-name">Style DNA enforcement</div>
+        <div class="feat-desc">Hard override that rejects perfect symmetry, twig blossom florals, and artificial aesthetics. Runs automatically before output.</div>
+        <span class="feat-tier studio">Studio</span>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">📸</div>
+        <div class="feat-name">Midjourney render prompt</div>
+        <div class="feat-desc">Full photorealistic render prompt for DALL·E or Midjourney. Grapevine base, silk textures, 85mm lens, luxury editorial setting.</div>
+        <span class="feat-tier atelier">Atelier</span>
+      </div>
+      <div class="feat">
+        <div class="feat-ico">🏷️</div>
+        <div class="feat-name">Etsy listing generator</div>
+        <div class="feat-desc">SEO title, emotional description, 13 tags, feature bullets, pricing suggestion, and a photo shot list — ready to paste and post.</div>
+        <span class="feat-tier atelier">Atelier</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section">
+  <div class="wrap">
+    <div class="eyebrow">What designers say</div>
+    <h2 class="display">Real wreaths. <em>Real results.</em></h2>
+    <div class="testi-grid">
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-body">"I described a 'grandmother's garden in late September' and it gave me a complete 47-stem blueprint. First try. I was floored."</div>
+        <div class="testi-av">
+          <div class="tav-circle">MR</div>
+          <div><div class="tav-name">Morgan R.</div><div class="tav-role">Studio tier · Etsy seller</div></div>
+        </div>
+      </div>
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-body">"The inventory gate alone saved me three wasted custom orders. It flags missing categories before you ever start building."</div>
+        <div class="testi-av">
+          <div class="tav-circle">JK</div>
+          <div><div class="tav-name">Joanna K.</div><div class="tav-role">Atelier tier · wholesale</div></div>
+        </div>
+      </div>
+      <div class="testi">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-body">"The render prompt is genuinely better than what I was writing manually. My Midjourney mockups now look like catalog photography."</div>
+        <div class="testi-av">
+          <div class="tav-circle">SP</div>
+          <div><div class="tav-name">Sasha P.</div><div class="tav-role">Atelier tier · brand photographer</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="wrap">
+    <span class="cta-script">ready to begin?</span>
+    <h2 class="cta-h2">Try Design Studio <em>free for 14 days.</em></h2>
+    <p class="cta-sub">A complete AI design pipeline for wreath makers. No credit card until your trial ends.</p>
+    <div class="cta-btns">
+      <button class="btn-cta-p">Start free trial</button>
+      <button class="btn-cta-o">View all plans</button>
+    </div>
+    <div class="cta-note">14-day free trial · $9.95/mo after · Cancel anytime</div>
+  </div>
+</section>
+
+<!-- RELATED APPS -->
+<section class="related-section">
+  <div class="wrap">
+    <div class="eyebrow">Related tools</div>
+    <h2 class="display">Works well <em>alongside Design Studio.</em></h2>
+    <div class="related-grid">
+      <a class="related-card" href="#">
+        <div class="related-cat">Design & Planning</div>
+        <div class="related-name">Layout Studio</div>
+        <div class="related-price">$7.95/mo</div>
+        <div class="related-tagline">Plan your wreath visually before you buy a single stem.</div>
+      </a>
+      <a class="related-card" href="#">
+        <div class="related-cat">Design & Planning</div>
+        <div class="related-name">Parametric Lab</div>
+        <div class="related-price">$9.95/mo</div>
+        <div class="related-tagline">Choose a shape and let the mood decide how it looks.</div>
+      </a>
+      <a class="related-card" href="#">
+        <div class="related-cat">Included free</div>
+        <div class="related-name">Design Library</div>
+        <div class="related-price">Free with any tier</div>
+        <div class="related-tagline">Every wreath you've designed, saved and organised.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">Evercrafted</div>
+        <div class="footer-tag">Design tools for wreath makers who take their craft seriously.</div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a href="#">How it works</a>
+        <a href="#">All apps</a>
+        <a href="#">Marketplace</a>
+        <a href="#">Pricing</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="#">Documentation</a>
+        <a href="#">Blog</a>
+        <a href="#">Community</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 Evercrafted. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon">🌿</span><span id="toast-msg"></span></div>
+
+<script>
+// ─── UTILITIES ───────────────────────────────────────────────────
+let apiKey = '';
+let currentResults = {};
+let activeTab = 'emotion';
+
+function toast(msg, icon='🌿') {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.querySelector('.toast-icon').textContent = icon;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2600);
+}
+
+function scrollToEngine() {
+  document.getElementById('engine-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ─── API KEY ─────────────────────────────────────────────────────
+function saveApiKey() {
+  const val = document.getElementById('api-key-input').value.trim();
+  if (!val.startsWith('sk-')) {
+    toast('Key must start with sk-ant or sk-', '⚠️');
+    return;
+  }
+  apiKey = val;
+  document.getElementById('api-gate').style.display = 'none';
+  document.getElementById('api-active').style.display = 'flex';
+  toast('Engine activated', '✅');
+}
+function clearApiKey() {
+  apiKey = '';
+  document.getElementById('api-key-input').value = '';
+  document.getElementById('api-gate').style.display = 'flex';
+  document.getElementById('api-active').style.display = 'none';
+}
+
+// ─── INVENTORY ───────────────────────────────────────────────────
+function toggleInv(el) {
+  el.classList.toggle('selected');
+}
+function addCustomInv() {
+  const input = document.getElementById('inv-custom');
+  const val = input.value.trim();
+  if (!val) return;
+  const grid = document.getElementById('inv-grid');
+  const tag = document.createElement('span');
+  tag.className = 'inv-tag selected';
+  tag.textContent = val;
+  tag.onclick = () => toggleInv(tag);
+  grid.appendChild(tag);
+  input.value = '';
+}
+document.getElementById('inv-custom').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addCustomInv();
+});
+function getSelectedInventory() {
+  return Array.from(document.querySelectorAll('.inv-tag.selected')).map(t => t.textContent);
+}
+
+// ─── TABS ────────────────────────────────────────────────────────
+function switchTab(el) {
+  document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  activeTab = el.dataset.tab;
+  renderActiveTab();
+}
+function renderActiveTab() {
+  const body = document.getElementById('output-results');
+  if (!currentResults[activeTab]) {
+    body.innerHTML = `<div class="output-empty" style="height:360px">
+      <div class="output-empty-icon">⌛</div>
+      <div class="output-empty-t">Not yet generated</div>
+      <div class="output-empty-s">Run the engine to see ${activeTab} output.</div>
+    </div>`;
+    return;
+  }
+  body.innerHTML = renderTab(activeTab, currentResults[activeTab]);
+}
+
+// ─── RENDER FUNCTIONS ────────────────────────────────────────────
+function renderTab(tab, data) {
+  switch(tab) {
+    case 'emotion': return renderEmotion(data);
+    case 'blueprint': return renderBlueprint(data);
+    case 'prompt': return renderPrompt(data);
+    case 'build': return renderBuild(data);
+    case 'listing': return renderListing(data);
+    default: return '<div class="output-empty"><p>No data</p></div>';
+  }
+}
+
+function renderEmotion(d) {
+  const swatches = (d.colors||[]).map(c => {
+    const hex = colorToHex(c);
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+      <div class="palette-swatch" style="background:${hex}"></div>
+      <div style="font-size:10px;color:var(--muted);text-align:center;max-width:60px">${c}</div>
+    </div>`;
+  }).join('');
+  const intentChips = [d.intent, d.density, d.textures, d.contrast+' contrast'].filter(Boolean).map((x,i) =>
+    `<span class="emotion-chip ${i===0?'primary':i===1?'accent':''}">${x}</span>`
+  ).join('');
+  const shapeChips = (d.shapes||'mixed').split(',').map(s =>
+    `<span class="emotion-chip">${s.trim()}</span>`
+  ).join('');
+
+  let conf = d.confidence || 92;
+  return `
+    <div class="result-section">
+      <div class="result-lbl">Emotion Tags</div>
+      <div class="emotion-chips">${intentChips}</div>
+    </div>
+    <div class="result-section">
+      <div class="result-lbl">Color Palette</div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;margin-top:8px">${swatches}</div>
+    </div>
+    <div class="result-section">
+      <div class="result-lbl">Shape Language</div>
+      <div class="emotion-chips">${shapeChips}</div>
+    </div>
+    ${d.designIntent ? `<div class="result-section">
+      <div class="result-lbl">Design Intent</div>
+      <div class="result-body">${d.designIntent}</div>
+    </div>` : ''}
+    <div class="confidence-row">
+      <div class="conf-label">Confidence</div>
+      <div class="conf-bar"><div class="conf-fill" style="width:${conf}%"></div></div>
+      <div class="conf-pct">${conf}%</div>
+    </div>`;
+}
+
+function renderBlueprint(d) {
+  const els = (d.elements||[]).map(el => `
+    <div class="bp-el">
+      <div class="bp-el-name">${el.name||el.element||'Element'}</div>
+      <div class="bp-el-meta">
+        <span>🕐 ${el.clock_position||el.clock||el.theta||'—'}</span>
+        <span>${el.radius||el.r||'mid'}</span>
+        <span>${el.category||el.type||'filler'}</span>
+      </div>
+      <div class="bp-el-count">${el.stem_count||el.count||'—'}<small>stems</small></div>
+    </div>`).join('');
+
+  let conf = d.confidence || 89;
+  return `
+    <div class="result-section">
+      <div class="result-lbl">Wreath — ${d.title||'Design'} · ${d.size||d.size_in||'24'}in</div>
+      <div class="result-body">${d.designNotes||d.notes||''}</div>
+    </div>
+    <div class="result-section">
+      <div class="result-lbl">Element Placement (${(d.elements||[]).length} elements)</div>
+      <div class="bp-elements">${els||'<div style="color:var(--muted);font-size:12px">No elements generated.</div>'}</div>
+    </div>
+    <div class="confidence-row">
+      <div class="conf-label">Blueprint Score</div>
+      <div class="conf-bar"><div class="conf-fill" style="width:${conf}%"></div></div>
+      <div class="conf-pct">${conf}%</div>
+    </div>`;
+}
+
+function renderPrompt(d) {
+  const prompt = d.prompt || d.imagePrompt || d.render_prompt || JSON.stringify(d, null, 2);
+  const neg = d.negativePrompt || d.negative_prompt || '';
+  const variations = d.variations || [];
+  let conf = d.confidence || 91;
+  return `
+    <div class="result-section">
+      <div class="result-lbl">Midjourney / DALL·E Prompt</div>
+      <div class="prompt-box">${escHtml(prompt)}<button class="copy-btn" onclick="copyText('${escAttr(prompt)}')">Copy</button></div>
+    </div>
+    ${neg ? `<div class="result-section">
+      <div class="result-lbl">Negative Prompt</div>
+      <div class="prompt-box" style="font-size:10px;color:var(--muted)">${escHtml(neg)}</div>
+    </div>` : ''}
+    ${variations.length ? `<div class="result-section">
+      <div class="result-lbl">Variations (${variations.length})</div>
+      ${variations.map((v,i) => `<div class="prompt-box" style="margin-bottom:8px;font-size:10px">${escHtml(v)}<button class="copy-btn" onclick="copyText('${escAttr(v)}')">Copy</button></div>`).join('')}
+    </div>` : ''}
+    <div class="confidence-row">
+      <div class="conf-label">Prompt Quality</div>
+      <div class="conf-bar"><div class="conf-fill" style="width:${conf}%"></div></div>
+      <div class="conf-pct">${conf}%</div>
+    </div>`;
+}
+
+function renderBuild(d) {
+  const steps = d.steps || d.instructions || [];
+  const stepsHtml = (Array.isArray(steps) ? steps : Object.values(steps)).map((step, i) => {
+    const text = typeof step === 'string' ? step : (step.instruction || step.step || step.text || JSON.stringify(step));
+    const method = typeof step === 'object' ? (step.method || step.attachment || '') : '';
+    return `<div class="build-step">
+      <div class="build-step-n">${String(i+1).padStart(2,'0')}</div>
+      <div>
+        <div class="build-step-text">${text}</div>
+        ${method ? `<span class="build-step-method">${method}</span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  const materials = d.materials || d.checklist || [];
+  const mHtml = (Array.isArray(materials) ? materials : []).length > 0 ?
+    `<div class="result-section"><div class="result-lbl">Materials Checklist</div>
+    ${materials.map(m => `<div style="font-size:12px;font-weight:300;color:var(--ink2);padding:3px 0;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:8px">
+      <span style="color:var(--sage);font-size:10px">—</span>${typeof m === 'string' ? m : (m.name||m.item||JSON.stringify(m))}
+    </div>`).join('')}
+    </div>` : '';
+
+  let conf = d.confidence || 88;
+  return `
+    <div class="result-section">
+      <div class="result-lbl">Build Sequence (${steps.length} steps)</div>
+      <div class="build-steps">${stepsHtml||'<div style="color:var(--muted);font-size:12px">No steps generated.</div>'}</div>
+    </div>
+    ${mHtml}
+    <div class="confidence-row">
+      <div class="conf-label">Buildability</div>
+      <div class="conf-bar"><div class="conf-fill" style="width:${conf}%"></div></div>
+      <div class="conf-pct">${conf}%</div>
+    </div>`;
+}
+
+function renderListing(d) {
+  const tags = (d.tags||[]).map(t => `<span class="listing-tag">${t}</span>`).join('');
+  const bullets = (d.bullets||d.features||[]).map(b => `<li>${typeof b === 'string' ? b : JSON.stringify(b)}</li>`).join('');
+  let conf = d.confidence || 93;
+  return `
+    <div class="result-section">
+      <div class="result-lbl">SEO Title</div>
+      <div class="listing-title">${d.title||'Untitled Listing'}</div>
+    </div>
+    <div class="result-section">
+      <div class="result-lbl">Description</div>
+      <div class="listing-desc">${d.description||''}</div>
+    </div>
+    ${bullets ? `<div class="result-section">
+      <div class="result-lbl">Feature Bullets</div>
+      <ul class="listing-bullets">${bullets}</ul>
+    </div>` : ''}
+    ${tags ? `<div class="result-section">
+      <div class="result-lbl">Etsy Tags (${(d.tags||[]).length})</div>
+      <div class="tags-row">${tags}</div>
+    </div>` : ''}
+    ${d.price||d.suggestedPrice ? `<div class="result-section">
+      <div class="result-lbl">Suggested Price</div>
+      <div class="listing-price">$${d.price||d.suggestedPrice}<small>digital download</small></div>
+    </div>` : ''}
+    <div class="confidence-row">
+      <div class="conf-label">Listing Quality</div>
+      <div class="conf-bar"><div class="conf-fill" style="width:${conf}%"></div></div>
+      <div class="conf-pct">${conf}%</div>
+    </div>`;
+}
+
+// ─── COLOR HELPERS ───────────────────────────────────────────────
+const COLOR_MAP = {
+  'ivory':'#F5F0E8','cream':'#F0EBE0','white':'#F8F8F5','blush':'#ECC6B8',
+  'dusty rose':'#D4978A','sage':'#7A9E7E','eucalyptus':'#8AAF8E','forest':'#4A6741',
+  'terracotta':'#C4784A','amber':'#C9A64E','gold':'#C9A96E','rust':'#A85A38',
+  'navy':'#3A4A6A','steel':'#6A7A8A','burgundy':'#7A3A4A','plum':'#6A4A7A',
+  'mauve':'#A07888','taupe':'#8A7A6A','charcoal':'#3A3530','warm white':'#F5EFE3',
+  'dusty pink':'#DBA8A0','olive':'#7A8A5A','moss':'#6A7A5A','bark':'#8A6E52',
+  'cinnamon':'#A06842','warm brown':'#8A6040','soft green':'#8AB08A',
+  'dried orange':'#C07840','warm beige':'#D4C4A8','soft grey':'#B0AAA0',
+  'wheat':'#D4B87A','lavender':'#A090C0','ochre':'#C4A038','stone':'#A09888'
+};
+function colorToHex(name) {
+  const n = (name||'').toLowerCase().trim();
+  if (n.startsWith('#')) return n;
+  for (const [k, v] of Object.entries(COLOR_MAP)) {
+    if (n.includes(k)) return v;
+  }
+  // Generate a reasonable warm muted color from the string
+  let hash = 0;
+  for (let c of n) hash = ((hash << 5) - hash) + c.charCodeAt(0);
+  const h = Math.abs(hash) % 60 + 20;
+  return `hsl(${h}, 30%, 68%)`;
+}
+
+// ─── POST-GENERATION HOOKS ────────────────────────────────────────
+// Called after successful engine run to trigger all new features
+function runPostGeneration(pkg) {
+  renderVisualizer(pkg.blueprint);
+  renderGenome(pkg);
+  runValidator(pkg);
+  showExportBar();
+}
+
+// ─── WREATH VISUALIZER ───────────────────────────────────────────
+const VIZ_COLORS = {
+  greenery: '#7A9E7E', focal: '#C4947A', filler: '#B4AFA8',
+  accent: '#C4A96E', ribbon: '#9E8AB4', base: '#A89070',
+  secondary: '#8AAEAE', texture: '#B49E8E'
+};
+const VIZ_RADII = { inner: 0.35, mid: 0.55, outer: 0.72 };
+let vizState = { color: true, labels: false, grid: false };
+let lastBlueprint = null;
+
+function vizToggle(key, btn) {
+  vizState[key] = !vizState[key];
+  btn.classList.toggle('on', vizState[key]);
+  if (lastBlueprint) renderVisualizer(lastBlueprint);
+}
+
+function renderVisualizer(blueprint) {
+  if (!blueprint || !blueprint.elements || blueprint.elements.length === 0) return;
+  lastBlueprint = blueprint;
+
+  const wrap = document.getElementById('viz-canvas-wrap');
+  const empty = document.getElementById('viz-empty');
+  if (empty) empty.style.display = 'none';
+
+  const elements = blueprint.elements || [];
+  const cx = 140, cy = 140, baseR = 115;
+
+  // Build SVG content
+  let svgContent = '';
+
+  // Grid overlay
+  if (vizState.grid) {
+    // Clock hour lines
+    for (let h = 0; h < 12; h++) {
+      const a = (h / 12) * Math.PI * 2 - Math.PI / 2;
+      const x2 = cx + Math.cos(a) * (baseR + 10);
+      const y2 = cy + Math.sin(a) * (baseR + 10);
+      svgContent += `<line x1="${cx}" y1="${cy}" x2="${x2}" y2="${y2}" stroke="rgba(80,99,71,.08)" stroke-width="1" stroke-dasharray="3 4"/>`;
+    }
+    // Radius rings
+    [VIZ_RADII.inner, VIZ_RADII.mid, VIZ_RADII.outer].forEach(r => {
+      svgContent += `<circle cx="${cx}" cy="${cy}" r="${r * baseR}" fill="none" stroke="rgba(80,99,71,.08)" stroke-width="1" stroke-dasharray="4 4"/>`;
+    });
+    // Clock numbers
+    for (let h = 1; h <= 12; h++) {
+      const a = (h / 12) * Math.PI * 2 - Math.PI / 2;
+      const r2 = baseR + 20;
+      const lx = cx + Math.cos(a) * r2;
+      const ly = cy + Math.sin(a) * r2;
+      svgContent += `<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="7" fill="rgba(80,99,71,.35)" font-family="DM Mono,monospace">${h}</text>`;
+    }
+  }
+
+  // Grapevine base ring
+  svgContent += `<circle cx="${cx}" cy="${cy}" r="${baseR}" fill="none" stroke="#C2A98E" stroke-width="14" opacity="0.35"/>`;
+  svgContent += `<circle cx="${cx}" cy="${cy}" r="${baseR}" fill="none" stroke="#8A6E52" stroke-width="1.5" opacity="0.25" stroke-dasharray="8 6"/>`;
+  // Inner hole
+  svgContent += `<circle cx="${cx}" cy="${cy}" r="${VIZ_RADII.inner * baseR - 4}" fill="var(--white)" opacity="0.9"/>`;
+
+  // Build element lookup for legend
+  const legendItems = {};
+
+  elements.forEach(el => {
+    const category = (el.category || el.type || 'filler').toLowerCase();
+    const angleDeg = parseFloat(el.angle_deg) || clockToAngle(el.clock_position || el.clock || '12:00');
+    const angleRad = (angleDeg - 90) * Math.PI / 180;
+    const rKey = (el.radius || el.r || 'mid').toLowerCase();
+    const r = (VIZ_RADII[rKey] || 0.55) * baseR;
+    const count = parseInt(el.stem_count || el.count || 1);
+    const spread = Math.min(18, 8 + count * 2); // cluster spread in degrees
+    const color = vizState.color ? (VIZ_COLORS[category] || '#A8A8A8') : '#C2A98E';
+    const name = el.name || el.element || category;
+
+    if (!legendItems[category]) legendItems[category] = { color, name: category, items: [] };
+    legendItems[category].items.push(name);
+
+    // Draw cluster of dots
+    const dotCount = Math.min(count, 7);
+    for (let i = 0; i < dotCount; i++) {
+      const spreadAngle = dotCount > 1 ? ((i / (dotCount - 1)) - 0.5) * (spread * Math.PI / 180) : 0;
+      const finalAngle = angleRad + spreadAngle;
+      const rVariance = r + (Math.sin(i * 2.3) * 5);
+      const px = cx + Math.cos(finalAngle) * rVariance;
+      const py = cy + Math.sin(finalAngle) * rVariance;
+
+      let size, shape;
+      if (category === 'focal') { size = 9; shape = 'circle'; }
+      else if (category === 'greenery') { size = 6; shape = 'ellipse'; }
+      else if (category === 'filler') { size = 5; shape = 'circle'; }
+      else if (category === 'accent') { size = 4; shape = 'diamond'; }
+      else { size = 5; shape = 'circle'; }
+
+      if (shape === 'circle' || category === 'filler' || category === 'accent') {
+        svgContent += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${size}" fill="${color}" opacity="${i===0?'0.9':'0.7'}" />`;
+        if (category === 'focal') {
+          // Petal ring
+          svgContent += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${size + 3}" fill="none" stroke="${color}" stroke-width="1" opacity="0.3"/>`;
+        }
+      } else if (shape === 'ellipse') {
+        svgContent += `<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${size + 2}" ry="${size - 1}" fill="${color}" opacity="0.65" transform="rotate(${(angleDeg).toFixed(0)},${px.toFixed(1)},${py.toFixed(1)})"/>`;
+      } else {
+        svgContent += `<rect x="${(px-size/1.5).toFixed(1)}" y="${(py-size/1.5).toFixed(1)}" width="${(size*1.3).toFixed(1)}" height="${(size*1.3).toFixed(1)}" fill="${color}" opacity="0.8" transform="rotate(45,${px.toFixed(1)},${py.toFixed(1)})"/>`;
+      }
+
+      // Label on first dot if labels on
+      if (vizState.labels && i === 0) {
+        const lx = cx + Math.cos(finalAngle) * (rVariance + 14);
+        const ly = cy + Math.sin(finalAngle) * (rVariance + 14);
+        svgContent += `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" font-size="7" fill="var(--ink2)" font-family="DM Sans,sans-serif" font-weight="500">${name.length > 12 ? name.slice(0,10)+'…' : name}</text>`;
+      }
+    }
+  });
+
+  const totalStems = elements.reduce((s, e) => s + parseInt(e.stem_count || e.count || 1), 0);
+  const focalCount = elements.filter(e => (e.category||e.type||'').toLowerCase() === 'focal').length;
+
+  // Build legend HTML
+  const legendHtml = Object.entries(legendItems).map(([cat, d]) =>
+    `<div class="viz-legend-item">
+      <div class="viz-legend-dot" style="background:${d.color}"></div>
+      <span>${cat} <span style="color:var(--muted2)">(${d.items.length})</span></span>
+    </div>`
+  ).join('');
+
+  wrap.innerHTML = `
+    <div class="viz-canvas">
+      <svg id="wreath-svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+        ${svgContent}
+      </svg>
+    </div>
+    <div class="viz-legend">
+      <div class="viz-legend-title">Elements</div>
+      ${legendHtml}
+      <div style="margin-top:auto;padding-top:10px;border-top:1px solid var(--rule)">
+        <div style="font-size:10px;color:var(--muted2);font-family:'DM Mono',monospace">${totalStems} stems · ${focalCount} focals</div>
+        <div style="font-size:9px;color:var(--muted2);margin-top:3px">${blueprint.size || '24'}in · ${blueprint.title || 'Design'}</div>
+      </div>
+    </div>`;
+}
+
+function clockToAngle(clock) {
+  if (!clock || clock === '—') return 0;
+  const parts = String(clock).split(':');
+  const h = parseInt(parts[0]) || 0;
+  const m = parseInt(parts[1]) || 0;
+  return (h + m / 60) * 30; // degrees: 12h = 0°, 3h = 90°, etc.
+}
+
+// ─── WGS GENOME ENCODER ──────────────────────────────────────────
+function encodeGenome(pkg) {
+  const bp = pkg.blueprint || {};
+  const em = pkg.emotion || {};
+  const elements = bp.elements || [];
+
+  const size = (bp.size || '24').replace(/[^0-9]/g, '') || '24';
+
+  // Determine form from asymmetry + distribution
+  const angles = elements.map(e => parseFloat(e.angle_deg) || 0);
+  const spread = angles.length > 1 ? Math.max(...angles) - Math.min(...angles) : 360;
+  const form = spread < 150 ? 'crescent' : elements.some(e => (e.radius||'mid') === 'inner') ? 'wreath-on-wreath' : 'round';
+
+  // Density from blueprint or emotion
+  const densityMap = { airy: 'light', balanced: 'medium', full: 'lush' };
+  const density = densityMap[em.density] || 'medium';
+
+  // Palette from emotion colors (max 4, slugified)
+  const palette = (em.colors || []).slice(0,4).map(c => c.toLowerCase().replace(/\s+/g,'-')).join('+') || 'natural+cream';
+
+  // Pull elements by category
+  const byCategory = {};
+  elements.forEach(e => {
+    const cat = (e.category || e.type || 'filler').toLowerCase();
+    if (!byCategory[cat]) byCategory[cat] = [];
+    byCategory[cat].push(e.name || e.element || cat);
+  });
+  const slug = (arr, tier = 'A') => arr && arr.length ? arr[0].toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9-]/g,'') + ':' + tier : 'unknown:A';
+  const focal = slug(byCategory.focal, 'A');
+  const secondary = slug(byCategory.secondary || byCategory.focal?.slice(1), 'B');
+  const filler = slug(byCategory.filler, 'A');
+  const greenery = slug(byCategory.greenery, 'A');
+  const accent = slug(byCategory.accent, 'C');
+
+  // Emotion tags
+  const emotion = [(em.intent || 'grounded'), (em.textures || 'soft')].join('+');
+
+  // Season detection from emotion colors / intent
+  const intentLower = (em.intent || '').toLowerCase() + (em.designIntent || '').toLowerCase();
+  let season = 'evergreen';
+  if (intentLower.match(/spring|floral|bloom|fresh/)) season = 'spring';
+  else if (intentLower.match(/summer|bright|tropical|vibrant/)) season = 'summer';
+  else if (intentLower.match(/fall|autumn|harvest|warm|pumpkin|cinnamon|oak/)) season = 'fall';
+  else if (intentLower.match(/winter|christmas|holiday|snow|pine|evergreen/)) season = 'winter';
+
+  // Style
+  const styleMap = { calm:'minimal', dramatic:'modern', nostalgic:'rustic', grounded:'woodland', elevated:'romantic' };
+  const style = styleMap[em.intent] || 'romantic';
+
+  // Hash: 5-char from size + focal + emotion
+  const hashBase = size + focal + emotion;
+  let hash = 0;
+  for (let c of hashBase) hash = ((hash << 5) - hash) + c.charCodeAt(0);
+  const hashStr = Math.abs(hash).toString(36).toUpperCase().slice(0,5).padEnd(5,'0');
+
+  return `WGS1|${size}|${form}|${density}|${palette}|${focal}|${secondary}|${filler}|${greenery}|${accent}|${emotion}|${season}|${style}|asymmetric|${hashStr}`;
+}
+
+function renderGenome(pkg) {
+  const genome = encodeGenome(pkg);
+  const genomeEl = document.getElementById('genome-string');
+  const section = document.getElementById('genome-section');
+
+  // Highlight each segment
+  const parts = genome.split('|');
+  const labels = ['ver','size','form','density','palette','focal','secondary','filler','greenery','accent','emotion','season','style','symmetry','hash'];
+  const colors = ['var(--muted2)','var(--ink)','var(--ink)','var(--ink)','var(--bark-d)','var(--sage-d)','var(--sage)','var(--muted)','var(--sage)','var(--bark)','var(--muted)','var(--muted)','var(--muted)','var(--muted2)','var(--sage-d)'];
+
+  genomeEl.innerHTML = parts.map((p, i) =>
+    `<span class="genome-segment" title="${labels[i]||''}" style="color:${colors[i]||'var(--ink2)'};${i===parts.length-1?'font-weight:500':''}">${escHtml(p)}${i < parts.length-1 ? '<span style="color:var(--rule2)">|</span>' : ''}</span>`
+  ).join('');
+
+  // Store for copy
+  genomeEl.dataset.raw = genome;
+  section.style.display = 'block';
+}
+
+function copyGenome() {
+  const raw = document.getElementById('genome-string').dataset.raw;
+  if (raw) navigator.clipboard.writeText(raw).then(() => toast('Genome copied ✦', '🧬'));
+}
+
+// ─── EC_WR_V2 VALIDATOR ──────────────────────────────────────────
+function runValidator(pkg) {
+  const bp = pkg.blueprint || {};
+  const em = pkg.emotion || {};
+  const elements = bp.elements || [];
+  const inventory = getSelectedInventory().map(s => s.toLowerCase());
+
+  const layers = [];
+
+  // Layer 1: Structure
+  const hasRequired = !!(bp.title && bp.elements && bp.size);
+  layers.push({
+    name: 'L1 — Structure',
+    score: hasRequired ? 100 : 60,
+    status: hasRequired ? 'pass' : 'warn',
+    notes: hasRequired ? 'All required fields present: title, elements, size.' : 'Missing one or more required fields (title, elements, size).'
+  });
+
+  // Layer 2: Cluster Count
+  const focals = elements.filter(e => (e.category||e.type||'').toLowerCase() === 'focal');
+  const focalCount = focals.length;
+  const oddOk = focalCount % 2 !== 0;
+  const rangeOk = focalCount >= 3 && focalCount <= 5;
+  layers.push({
+    name: 'L2 — Focal Clusters',
+    score: (oddOk && rangeOk) ? 100 : oddOk ? 70 : 40,
+    status: (oddOk && rangeOk) ? 'pass' : (oddOk) ? 'warn' : 'fail',
+    notes: `${focalCount} focal cluster(s) detected. ${!oddOk ? '⚠ Must be odd (3, 5, or 7).' : ''} ${!rangeOk ? '⚠ Must be between 3–5.' : 'Odd count: ✓'}`
+  });
+
+  // Layer 3: Positions
+  const validClock = /^([1-9]|1[0-2]):[0-5][05]$/;
+  const badPositions = elements.filter(e => {
+    const pos = e.clock_position || e.clock || '';
+    return pos && !validClock.test(pos);
+  });
+  const angleBad = elements.filter(e => {
+    const a = parseFloat(e.angle_deg);
+    return !isNaN(a) && (a < 0 || a > 359);
+  });
+  layers.push({
+    name: 'L3 — Positions',
+    score: badPositions.length === 0 && angleBad.length === 0 ? 100 : 75,
+    status: badPositions.length === 0 ? 'pass' : 'warn',
+    notes: badPositions.length === 0 ? `All ${elements.length} positions valid. Angles in range.` : `${badPositions.length} clock positions may not match expected format (H:MM).`
+  });
+
+  // Layer 4: Inventory
+  const usedNames = elements.map(e => (e.name||e.element||'').toLowerCase());
+  let invScore = 100, invNotes = '';
+  if (inventory.length > 0) {
+    const uninventoried = usedNames.filter(n => n && !inventory.some(inv => inv.includes(n) || n.includes(inv.split(' ')[0])));
+    invScore = uninventoried.length === 0 ? 100 : Math.max(40, 100 - uninventoried.length * 15);
+    invNotes = uninventoried.length === 0 ? 'All elements match provided inventory.' : `${uninventoried.length} uninventoried element(s): ${uninventoried.slice(0,3).join(', ')}`;
+  } else {
+    invNotes = 'No inventory provided — substitution check skipped.';
+    invScore = 80;
+  }
+  layers.push({
+    name: 'L4 — Inventory',
+    score: invScore,
+    status: invScore >= 90 ? 'pass' : invScore >= 60 ? 'warn' : 'fail',
+    notes: invNotes
+  });
+
+  // Layer 5: Style Rules
+  const forbidden = ['cherry blossom','twig blossom','cherry bloom'];
+  const hasForbidden = usedNames.some(n => forbidden.some(f => n.includes(f)));
+  const allPositions = elements.map(e => parseFloat(e.angle_deg) || 0);
+  const hasSymmetry = allPositions.length >= 2 && allPositions.some((a, i) =>
+    allPositions.some((b, j) => i !== j && Math.abs(Math.abs(a - b) - 180) < 5)
+  );
+  layers.push({
+    name: 'L5 — Style DNA',
+    score: hasForbidden ? 0 : hasSymmetry ? 65 : 100,
+    status: hasForbidden ? 'fail' : hasSymmetry ? 'warn' : 'pass',
+    notes: hasForbidden ? '⛔ Forbidden floral detected (cherry/twig blossom). Remove before build.' : hasSymmetry ? '⚠ Possible bilateral symmetry detected — adjust placement for asymmetry.' : 'Asymmetric composition ✓ · No forbidden florals ✓'
+  });
+
+  // Layer 6: Layer Order
+  const categories = elements.map(e => (e.category||e.type||'filler').toLowerCase());
+  const hasBase = categories.includes('base') || categories.includes('greenery');
+  const hasFocal2 = categories.includes('focal');
+  layers.push({
+    name: 'L6 — Layer Order',
+    score: hasBase && hasFocal2 ? 100 : hasBase ? 80 : 60,
+    status: hasBase && hasFocal2 ? 'pass' : 'warn',
+    notes: hasBase && hasFocal2 ? 'Greenery base layer ✓ · Focal layer ✓ · Layer hierarchy intact.' : 'Missing greenery or focal layer — check blueprint completeness.'
+  });
+
+  // Overall score
+  const overall = Math.round(layers.reduce((s, l) => s + l.score, 0) / layers.length);
+  const overallStatus = overall >= 90 ? 'pass' : overall >= 70 ? 'warn' : 'fail';
+
+  // Render
+  document.getElementById('val-score-big').textContent = overall + '%';
+  const badge = document.getElementById('val-badge');
+  badge.textContent = overallStatus === 'pass' ? 'VALID' : overallStatus === 'warn' ? 'WARNINGS' : 'INVALID';
+  badge.className = 'val-badge ' + overallStatus;
+  document.getElementById('val-empty').style.display = 'none';
+  const layersEl = document.getElementById('val-layers');
+  layersEl.style.display = 'flex';
+  layersEl.innerHTML = layers.map(l => `
+    <div class="val-layer ${l.status}">
+      <div class="val-layer-top">
+        <div class="val-layer-name">${l.name}</div>
+        <div class="val-layer-score">${l.score}%</div>
+        <div class="val-layer-status">${l.status}</div>
+      </div>
+      <div class="val-layer-bar"><div class="val-layer-fill" style="width:${l.score}%"></div></div>
+      <div class="val-layer-notes">${l.notes}</div>
+    </div>`).join('');
+
+  document.getElementById('validator-section').style.display = 'block';
+  document.getElementById('val-header').classList.add('open');
+  document.getElementById('val-body').style.display = 'block';
+}
+
+function toggleValidator() {
+  const h = document.getElementById('val-header');
+  const b = document.getElementById('val-body');
+  h.classList.toggle('open');
+  b.style.display = h.classList.contains('open') ? 'block' : 'none';
+}
+
+// ─── EXPORT ───────────────────────────────────────────────────────
+function showExportBar() {
+  document.getElementById('export-bar').style.display = 'flex';
+}
+
+function exportJSON() {
+  const pkg = {
+    generatedAt: new Date().toISOString(),
+    genome: document.getElementById('genome-string').dataset.raw || '',
+    ...currentResults
+  };
+  const blob = new Blob([JSON.stringify(pkg, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'evercrafted-design-package.json';
+  a.click(); URL.revokeObjectURL(url);
+  toast('JSON package downloaded', '📦');
+}
+
+function exportPDF() {
+  // Build a clean print document
+  const bp = currentResults.blueprint || {};
+  const em = currentResults.emotion || {};
+  const prompt = currentResults.prompt || {};
+  const build = currentResults.build || {};
+  const listing = currentResults.listing || {};
+  const genome = document.getElementById('genome-string').dataset.raw || '—';
+  const elements = bp.elements || [];
+  const steps = build.steps || build.instructions || [];
+  const materials = build.materials || [];
+
+  const printWin = window.open('', '_blank');
+  printWin.document.write(`<!DOCTYPE html><html><head>
+  <meta charset="UTF-8">
+  <title>Evercrafted Design Package — ${bp.title || 'Design'}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;color:#1B1916;font-size:12px;line-height:1.6;background:white;padding:20mm 16mm}
+    @page{margin:16mm 14mm;size:A4}
+    .pkg-header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid #1B1916;padding-bottom:16px;margin-bottom:28px}
+    .pkg-logo{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:500;letter-spacing:.06em;color:#1B1916}
+    .pkg-meta{text-align:right;font-size:10px;color:#8A8278;line-height:1.8}
+    .section{margin-bottom:28px;page-break-inside:avoid}
+    .section-title{font-size:8px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#8A8278;margin-bottom:10px;padding-bottom:5px;border-bottom:1px solid rgba(27,25,22,.1);display:flex;align-items:center;gap:8px}
+    .section-title::after{content:'';flex:1;height:1px;background:rgba(27,25,22,.06)}
+    h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:#1B1916;line-height:1.1;letter-spacing:-.02em;margin-bottom:6px}
+    h2 em{font-style:italic;color:#8A6E52}
+    .intent{font-size:13px;color:#8A8278;font-weight:300;line-height:1.7;max-width:500px;margin-bottom:14px}
+    .chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+    .chip{font-size:10px;padding:2px 10px;border-radius:99px;border:1px solid rgba(27,25,22,.12);color:#4A4A4A}
+    .chip.primary{background:#EBF1E8;border-color:rgba(80,99,71,.2);color:#324030}
+    .swatches{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+    .swatch-wrap{display:flex;flex-direction:column;align-items:center;gap:3px}
+    .swatch{width:28px;height:28px;border-radius:3px;border:1px solid rgba(0,0,0,.06)}
+    .swatch-lbl{font-size:9px;color:#8A8278;max-width:56px;text-align:center}
+    .bp-table{width:100%;border-collapse:collapse;margin-top:8px;font-size:11px}
+    .bp-table th{text-align:left;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#B4AFA8;font-weight:500;padding:4px 8px;border-bottom:1px solid rgba(27,25,22,.1)}
+    .bp-table td{padding:6px 8px;border-bottom:1px solid rgba(27,25,22,.04);color:#332F28}
+    .bp-table tr:last-child td{border-bottom:none}
+    .cat-pill{font-size:9px;padding:1px 6px;border-radius:2px;font-weight:500}
+    .cat-greenery{background:#EBF1E8;color:#324030}
+    .cat-focal{background:#EDE5D8;color:#5A4535}
+    .cat-filler{background:#F5F5F5;color:#4A4A4A}
+    .cat-accent{background:#F5EEF4;color:#7A4A85}
+    .prompt-box{font-family:'DM Mono',monospace;font-size:10px;background:#F8F5EF;border:1px solid rgba(27,25,22,.1);border-radius:4px;padding:12px 14px;line-height:1.7;color:#332F28;word-break:break-word;white-space:pre-wrap}
+    .steps{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+    .step{display:flex;gap:12px;align-items:flex-start}
+    .step-n{width:22px;height:22px;border-radius:50%;background:#EBF1E8;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#324030;flex-shrink:0;font-family:'DM Mono',monospace}
+    .step-text{font-size:11px;color:#332F28;font-weight:300;line-height:1.6;padding-top:2px}
+    .step-method{font-size:9px;font-weight:500;color:#5A4535;background:#EDE5D8;padding:1px 5px;border-radius:2px;display:inline-block;margin-top:2px}
+    .mat-list{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+    .mat-item{font-size:11px;color:#332F28;font-weight:300;display:flex;align-items:center;gap:8px;padding:3px 0;border-bottom:1px solid rgba(27,25,22,.04)}
+    .mat-dash{color:#506347;font-size:10px}
+    .genome-box{font-family:'DM Mono',monospace;font-size:10px;background:#F8F5EF;border:1px solid rgba(27,25,22,.1);border-radius:4px;padding:10px 14px;color:#332F28;word-break:break-all;line-height:1.7}
+    .listing-title{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:#1B1916;margin-bottom:6px;letter-spacing:-.01em}
+    .listing-desc{font-size:12px;font-weight:300;color:#332F28;line-height:1.8;margin-bottom:10px}
+    .listing-bullets{list-style:none;margin-bottom:10px}
+    .listing-bullets li{font-size:11px;color:#332F28;padding:2px 0;display:flex;gap:8px;line-height:1.5}
+    .listing-bullets li::before{content:'✦';color:#506347;font-size:8px;flex-shrink:0;margin-top:4px}
+    .tag-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+    .ltag{font-size:9px;color:#8A8278;border:1px solid rgba(27,25,22,.12);border-radius:2px;padding:2px 7px}
+    .price{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:#1B1916}
+    .footer-rule{margin-top:32px;padding-top:12px;border-top:1px solid rgba(27,25,22,.1);display:flex;justify-content:space-between;font-size:9px;color:#B4AFA8}
+  </style>
+  </head><body>
+  <div class="pkg-header">
+    <div>
+      <div class="pkg-logo">Evercrafted</div>
+      <div style="font-size:11px;color:#8A8278;margin-top:2px">Design Package</div>
+    </div>
+    <div class="pkg-meta">
+      <div>${bp.title || 'Untitled Design'}</div>
+      <div>${bp.size || '24'}in wreath</div>
+      <div>${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Design</div>
+    <h2>${bp.title || 'Untitled'} <em>${bp.size || '24'}in</em></h2>
+    <div class="intent">${em.designIntent || bp.designNotes || ''}</div>
+    <div class="chips">
+      ${[em.intent, em.density, em.textures, em.contrast ? em.contrast+' contrast' : ''].filter(Boolean).map((t,i) =>
+        `<span class="chip ${i===0?'primary':''}">${t}</span>`).join('')}
+    </div>
+    <div class="swatches">
+      ${(em.colors||[]).map(c => {
+        const colorMap = {'ivory':'#F5F0E8','cream':'#F0EBE0','white':'#F8F8F5','sage':'#7A9E7E','terracotta':'#C4784A','amber':'#C9A64E','rust':'#A85A38','dusty rose':'#D4978A','eucalyptus':'#8AAF8E','warm beige':'#D4C4A8','wheat':'#D4B87A','bark':'#8A6E52','cinnamon':'#A06842','mauve':'#A07888','taupe':'#8A7A6A'};
+        const h = (c||'').toLowerCase();
+        let hex = '#C2A98E';
+        for(const [k,v] of Object.entries(colorMap)) if(h.includes(k)) {hex=v;break;}
+        return `<div class="swatch-wrap"><div class="swatch" style="background:${hex}"></div><div class="swatch-lbl">${c}</div></div>`;
+      }).join('')}
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Blueprint — ${elements.length} elements · ${elements.reduce((s,e)=>s+parseInt(e.stem_count||e.count||1),0)} total stems</div>
+    <table class="bp-table">
+      <thead><tr><th>Element</th><th>Category</th><th>Position</th><th>Radius</th><th>Stems</th></tr></thead>
+      <tbody>
+        ${elements.map(e => `<tr>
+          <td><strong>${e.name||e.element||'—'}</strong></td>
+          <td><span class="cat-pill cat-${(e.category||e.type||'filler').toLowerCase()}">${e.category||e.type||'filler'}</span></td>
+          <td style="font-family:'DM Mono',monospace">${e.clock_position||e.clock||'—'}</td>
+          <td>${e.radius||e.r||'mid'}</td>
+          <td style="font-family:'DM Mono',monospace;font-weight:500">${e.stem_count||e.count||'—'}</td>
+        </tr>`).join('')}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section" style="page-break-before:always">
+    <div class="section-title">Render Prompt</div>
+    <div class="prompt-box">${(prompt.prompt || '—').replace(/</g,'&lt;')}</div>
+    ${prompt.negativePrompt ? `<div style="margin-top:8px;font-size:10px;color:#8A8278"><strong>Negative:</strong> ${prompt.negativePrompt}</div>` : ''}
+  </div>
+
+  <div class="section">
+    <div class="section-title">Build Guide — ${Array.isArray(steps)?steps.length:0} steps</div>
+    <div class="steps">
+      ${(Array.isArray(steps)?steps:[]).map((s,i) => {
+        const text = typeof s === 'string' ? s : (s.instruction||s.step||s.text||JSON.stringify(s));
+        const method = typeof s === 'object' ? (s.method||s.attachment||'') : '';
+        return `<div class="step">
+          <div class="step-n">${String(i+1).padStart(2,'0')}</div>
+          <div><div class="step-text">${text}</div>${method?`<span class="step-method">${method}</span>`:''}</div>
+        </div>`;
+      }).join('')}
+    </div>
+    ${materials.length ? `<div style="margin-top:14px">
+      <div style="font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:#B4AFA8;margin-bottom:6px">Materials</div>
+      <div class="mat-list">
+        ${materials.map(m => `<div class="mat-item"><span class="mat-dash">—</span>${typeof m==='string'?m:(m.name||m.item||JSON.stringify(m))}</div>`).join('')}
+      </div>
+    </div>` : ''}
+  </div>
+
+  <div class="section" style="page-break-before:always">
+    <div class="section-title">Etsy Listing</div>
+    <div class="listing-title">${listing.title || '—'}</div>
+    <div class="listing-desc">${listing.description || ''}</div>
+    ${(listing.bullets||[]).length ? `<ul class="listing-bullets">${(listing.bullets||[]).map(b=>`<li>${b}</li>`).join('')}</ul>` : ''}
+    <div class="tag-row">${(listing.tags||[]).map(t=>`<span class="ltag">${t}</span>`).join('')}</div>
+    ${listing.price ? `<div class="price" style="margin-top:12px">$${listing.price} <span style="font-size:11px;font-family:'DM Sans',sans-serif;color:#8A8278">digital download</span></div>` : ''}
+  </div>
+
+  <div class="section">
+    <div class="section-title">WGS Genome String</div>
+    <div class="genome-box">${genome}</div>
+  </div>
+
+  <div class="footer-rule">
+    <span>Evercrafted Design Package · evercrafted.com</span>
+    <span>Generated ${new Date().toISOString().slice(0,10)}</span>
+  </div>
+  </body></html>`);
+  printWin.document.close();
+  printWin.onload = () => { printWin.focus(); printWin.print(); };
+  toast('PDF package opening…', '📄');
+}
+
+
+</script>
+
+<script>
+// Patch runEngine to call post-gen hooks after results are mapped
+const __origRunEngine = runEngine;
+async function runEngine() {
+  if (!apiKey) {
+    toast('Add your API key to activate the engine', '🔑');
+    document.getElementById('api-key-input').focus();
+    return;
+  }
+  const input = document.getElementById('engine-input').value.trim();
+  if (!input) {
+    toast('Add a design intent to generate a design', '⚠️');
+    return;
+  }
+
+  const inv = getSelectedInventory();
+  const size = document.getElementById('opt-size').value;
+  const outputMode = document.getElementById('opt-output').value;
+
+  const btn = document.getElementById('run-btn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  document.getElementById('run-btn-label').textContent = 'Generating…';
+
+  const empty = document.getElementById('output-empty');
+  const loading = document.getElementById('output-loading');
+  const results = document.getElementById('output-results');
+  empty.style.display = 'none';
+  loading.style.display = 'flex';
+  results.style.display = 'none';
+
+  currentResults = {};
+
+  const steps = ['Parsing emotion profile…','Structuring inventory…','Generating blueprint…','Validating style DNA…','Compiling render prompt…','Writing build guide…','Generating listing…'];
+  let stepIdx = 0;
+  const stepTimer = setInterval(() => {
+    stepIdx = (stepIdx + 1) % steps.length;
+    setLoadingStep(steps[stepIdx]);
+  }, 1400);
+
+  try {
+    const userMessage = `Design intent: "${input}"
+Wreath size: ${size}
+Available inventory: ${inv.length > 0 ? inv.join(', ') : 'General luxury faux botanicals — suggest appropriate stems'}
+Output mode: ${outputMode}`;
+
+    const raw = await callClaude([{ role: 'user', content: userMessage }], ORCHESTRATOR_PROMPT);
+    clearInterval(stepTimer);
+
+    let pkg;
+    try {
+      const clean = raw.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+      pkg = JSON.parse(clean);
+    } catch(e) {
+      const match = raw.match(/\{[\s\S]+\}/);
+      if (match) pkg = JSON.parse(match[0]);
+      else throw new Error('Could not parse engine response as JSON.');
+    }
+
+    currentResults.emotion = pkg.emotion || pkg.emotionProfile || {};
+    currentResults.blueprint = pkg.blueprint || pkg.design || {};
+    currentResults.prompt = pkg.renderPrompt || pkg.prompt || {};
+    currentResults.build = pkg.buildGuide || pkg.builderInstructions || {};
+    currentResults.listing = pkg.listing || pkg.etsyListing || {};
+
+    loading.style.display = 'none';
+    results.style.display = 'block';
+    renderActiveTab();
+
+    // ── NEW: post-generation hooks ──
+    runPostGeneration(pkg);
+
+    toast('Design package complete ✦', '✦');
+
+  } catch(err) {
+    clearInterval(stepTimer);
+    loading.style.display = 'none';
+    results.style.display = 'block';
+    results.innerHTML = `<div class="output-empty" style="height:360px">
+      <div class="output-empty-icon">🌿</div>
+      <div class="output-empty-t">Engine error</div>
+      <div class="output-empty-s" style="max-width:300px">${err.message}</div>
+    </div>`;
+    toast('Engine error — check API key and try again', '⚠️');
+  }
+
+  btn.disabled = false;
+  btn.classList.remove('loading');
+  document.getElementById('run-btn-label').textContent = 'Generate Full Design Package';
+}
+</body>
+</html>

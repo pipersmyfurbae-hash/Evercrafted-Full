@@ -1,0 +1,928 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --sage: #5A7A5E;
+    --sage-light: #8FAF8F;
+    --sage-pale: #EBF0EB;
+    --cream: #F7F3ED;
+    --bark: #6B4F35;
+    --bark-light: #C4A882;
+    --bark-pale: #F5EDE1;
+    --text-dark: #1C1C1A;
+    --text-mid: #4A4A46;
+    --text-muted: #8A8A84;
+    --white: #FEFEFE;
+    --border: rgba(90,122,94,0.18);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 3rem;
+    background: var(--white);
+    border-bottom: 0.5px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--sage);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo-ring {
+    width: 28px; height: 28px;
+    border: 2.5px solid var(--sage);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 13.5px;
+    font-weight: 400;
+    color: var(--text-mid);
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--sage); }
+  .nav-cta {
+    background: var(--sage);
+    color: var(--white) !important;
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.02em;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: #4A6A4E !important; color: var(--white) !important; }
+
+  /* HERO */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 82vh;
+    align-items: center;
+  }
+  .hero-left {
+    padding: 5rem 3rem 5rem 4rem;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bark);
+    background: var(--bark-pale);
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 1.5rem;
+  }
+  .hero-eyebrow-dot {
+    width: 5px; height: 5px;
+    background: var(--bark);
+    border-radius: 50%;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 62px;
+    font-weight: 300;
+    line-height: 1.08;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--sage);
+  }
+  .hero-sub {
+    font-size: 16px;
+    font-weight: 300;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 420px;
+    margin-bottom: 2.5rem;
+  }
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+  .btn-primary {
+    background: var(--sage);
+    color: var(--white);
+    padding: 13px 28px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, transform 0.15s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary:hover { background: #4A6A4E; transform: translateY(-1px); }
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-mid);
+    padding: 13px 22px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 400;
+    border: 0.5px solid var(--border);
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 6px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .hero-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 0.5px solid var(--border);
+  }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 3px;
+    font-weight: 400;
+  }
+
+  /* Hero Visual */
+  .hero-right {
+    background: var(--sage-pale);
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .wreath-canvas {
+    width: 340px;
+    height: 340px;
+    position: relative;
+  }
+  .wreath-svg-container {
+    width: 100%; height: 100%;
+  }
+  .ai-badge {
+    position: absolute;
+    bottom: -10px;
+    right: 20px;
+    background: var(--white);
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-mid);
+    box-shadow: 0 4px 20px rgba(90,122,94,0.12);
+  }
+  .ai-pulse {
+    width: 8px; height: 8px;
+    background: var(--sage);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+  }
+
+  /* FEATURE SECTION */
+  .section {
+    padding: 5rem 4rem;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--bark);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px;
+    font-weight: 300;
+    line-height: 1.15;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+  }
+  .section-sub {
+    font-size: 15px;
+    color: var(--text-mid);
+    max-width: 540px;
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* JOURNEY */
+  .journey-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    margin-top: 3rem;
+    background: var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .journey-step {
+    background: var(--white);
+    padding: 2rem 1.5rem;
+    position: relative;
+  }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--sage-pale);
+    line-height: 1;
+    position: absolute;
+    top: 1.25rem; right: 1.25rem;
+  }
+  .step-icon {
+    width: 40px; height: 40px;
+    background: var(--sage-pale);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.25rem;
+    font-size: 18px;
+  }
+  .step-title {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+  }
+  .step-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  /* DESIGN TYPES */
+  .designs-section {
+    background: var(--text-dark);
+    color: var(--white);
+    padding: 5rem 4rem;
+  }
+  .designs-section .section-label { color: var(--bark-light); }
+  .designs-section .section-title { color: var(--white); }
+  .designs-section .section-sub { color: rgba(255,255,255,0.55); }
+  .designs-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+  .design-card {
+    background: rgba(255,255,255,0.05);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: background 0.2s;
+    cursor: default;
+  }
+  .design-card:hover { background: rgba(255,255,255,0.08); }
+  .design-card-icon {
+    font-size: 32px;
+    margin-bottom: 1.25rem;
+    display: block;
+  }
+  .design-card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 400;
+    margin-bottom: 0.75rem;
+    color: var(--white);
+  }
+  .design-card-desc {
+    font-size: 13px;
+    line-height: 1.65;
+    color: rgba(255,255,255,0.5);
+  }
+  .design-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 1.25rem;
+  }
+  .tag {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.07);
+    color: rgba(255,255,255,0.6);
+    font-weight: 400;
+  }
+
+  /* BENEFITS + MARKET */
+  .split-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .split-left {
+    padding: 5rem 3rem 5rem 4rem;
+    background: var(--white);
+  }
+  .split-right {
+    padding: 5rem 4rem 5rem 3rem;
+    background: var(--bark-pale);
+  }
+  .benefits-list {
+    list-style: none;
+    margin-top: 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+  .benefit-dot {
+    width: 8px; height: 8px;
+    min-width: 8px;
+    background: var(--sage);
+    border-radius: 50%;
+    margin-top: 7px;
+  }
+  .benefit-text strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-dark);
+    margin-bottom: 3px;
+  }
+  .benefit-text span {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .market-stat-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+  }
+  .market-stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 0.75rem;
+  }
+  .market-stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .market-stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--bark);
+  }
+  .progress-bar {
+    height: 4px;
+    background: var(--sage-pale);
+    border-radius: 100px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--sage);
+    border-radius: 100px;
+  }
+  .market-insight {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.65;
+    padding-left: 0.75rem;
+    border-left: 2px solid var(--bark-light);
+    margin-top: 1.5rem;
+    font-style: italic;
+  }
+
+  /* PRICING */
+  .pricing-section {
+    padding: 5rem 4rem;
+    background: var(--cream);
+  }
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 3rem;
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .pricing-card {
+    background: var(--white);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem 1.75rem;
+  }
+  .pricing-card.featured {
+    background: var(--sage);
+    border-color: var(--sage);
+    color: var(--white);
+  }
+  .pricing-name {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+  }
+  .pricing-card.featured .pricing-name { color: rgba(255,255,255,0.65); }
+  .pricing-price {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 44px;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--text-dark);
+    margin-bottom: 0.25rem;
+  }
+  .pricing-card.featured .pricing-price { color: var(--white); }
+  .pricing-period {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 1.75rem;
+  }
+  .pricing-card.featured .pricing-period { color: rgba(255,255,255,0.55); }
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 2rem;
+  }
+  .pricing-features li {
+    font-size: 13px;
+    color: var(--text-mid);
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .pricing-card.featured .pricing-features li { color: rgba(255,255,255,0.8); }
+  .check {
+    color: var(--sage);
+    font-weight: 500;
+    font-size: 13px;
+  }
+  .pricing-card.featured .check { color: rgba(255,255,255,0.9); }
+  .pricing-btn {
+    width: 100%;
+    padding: 11px;
+    border-radius: 100px;
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    border: 1px solid var(--sage);
+    background: transparent;
+    color: var(--sage);
+  }
+  .pricing-card.featured .pricing-btn {
+    background: var(--white);
+    border-color: var(--white);
+    color: var(--sage);
+  }
+  .pricing-btn:hover { background: var(--sage); color: var(--white); }
+  .pricing-card.featured .pricing-btn:hover { background: rgba(255,255,255,0.85); }
+
+  /* FOOTER */
+  footer {
+    background: var(--text-dark);
+    color: rgba(255,255,255,0.5);
+    padding: 3rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer .logo { color: rgba(255,255,255,0.8); }
+
+  /* CTA BANNER */
+  .cta-banner {
+    background: var(--sage);
+    color: var(--white);
+    text-align: center;
+    padding: 4rem 4rem;
+  }
+  .cta-banner h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 300;
+    margin-bottom: 1rem;
+  }
+  .cta-banner p {
+    font-size: 15px;
+    opacity: 0.75;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+
+  /* Scroll animations */
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-ring">✦</div>
+    WreathAI
+  </div>
+  <ul class="nav-links">
+    <li><a href="#">Features</a></li>
+    <li><a href="#">Design Types</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#" class="nav-cta">Start Free →</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-dot"></div>
+      AI-Powered Wreath Design
+    </div>
+    <h1 class="hero-title">Design wreaths<br>that <em>feel alive</em></h1>
+    <p class="hero-sub">The first AI design studio built exclusively for wreath makers — from hobbyists to professional florists. Describe your vision, and watch it bloom.</p>
+    <div class="hero-actions">
+      <button class="btn-primary" onclick="sendPrompt('Show me the full feature proposal for WreathAI — user journey, integrations, design types, market analysis, and user benefits in detail')">Explore the Feature ↗</button>
+      <button class="btn-secondary">▶ Watch Demo</button>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="stat-num">12+</div>
+        <div class="stat-label">Design styles</div>
+      </div>
+      <div>
+        <div class="stat-num">3.2s</div>
+        <div class="stat-label">Avg generation time</div>
+      </div>
+      <div>
+        <div class="stat-num">94%</div>
+        <div class="stat-label">User satisfaction</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="wreath-canvas">
+      <svg viewBox="0 0 340 340" xmlns="http://www.w3.org/2000/svg" class="wreath-svg-container">
+        <defs>
+          <radialGradient id="bg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#EBF0EB"/>
+            <stop offset="100%" stop-color="#D6E4D6"/>
+          </radialGradient>
+        </defs>
+        <circle cx="170" cy="170" r="170" fill="url(#bg)"/>
+        <!-- Outer ring of leaves -->
+        <g opacity="0.85">
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#5A7A5E" transform="rotate(0,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#6B9070" transform="rotate(30,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#4A6A4E" transform="rotate(60,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#5A7A5E" transform="rotate(90,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#6B9070" transform="rotate(120,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#4A6A4E" transform="rotate(150,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#5A7A5E" transform="rotate(180,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#6B9070" transform="rotate(210,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#4A6A4E" transform="rotate(240,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#5A7A5E" transform="rotate(270,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#6B9070" transform="rotate(300,170,170)"/>
+          <ellipse cx="170" cy="54" rx="11" ry="20" fill="#4A6A4E" transform="rotate(330,170,170)"/>
+        </g>
+        <!-- Inner ring of leaves -->
+        <g opacity="0.7">
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#8FAF8F" transform="rotate(15,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#7A9F7A" transform="rotate(45,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#8FAF8F" transform="rotate(75,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#7A9F7A" transform="rotate(105,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#8FAF8F" transform="rotate(135,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#7A9F7A" transform="rotate(165,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#8FAF8F" transform="rotate(195,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#7A9F7A" transform="rotate(225,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#8FAF8F" transform="rotate(255,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#7A9F7A" transform="rotate(285,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#8FAF8F" transform="rotate(315,170,170)"/>
+          <ellipse cx="170" cy="74" rx="8" ry="15" fill="#7A9F7A" transform="rotate(345,170,170)"/>
+        </g>
+        <!-- Flower accents -->
+        <circle cx="170" cy="52" r="7" fill="#E8C5A0" transform="rotate(0,170,170)"/>
+        <circle cx="170" cy="52" r="7" fill="#D4A882" transform="rotate(72,170,170)"/>
+        <circle cx="170" cy="52" r="7" fill="#E8C5A0" transform="rotate(144,170,170)"/>
+        <circle cx="170" cy="52" r="7" fill="#C4957A" transform="rotate(216,170,170)"/>
+        <circle cx="170" cy="52" r="7" fill="#D4A882" transform="rotate(288,170,170)"/>
+        <!-- Berry clusters -->
+        <circle cx="170" cy="58" r="4" fill="#8B2635" transform="rotate(36,170,170)"/>
+        <circle cx="170" cy="58" r="4" fill="#A03040" transform="rotate(108,170,170)"/>
+        <circle cx="170" cy="58" r="4" fill="#8B2635" transform="rotate(180,170,170)"/>
+        <circle cx="170" cy="58" r="4" fill="#A03040" transform="rotate(252,170,170)"/>
+        <circle cx="170" cy="58" r="4" fill="#8B2635" transform="rotate(324,170,170)"/>
+        <!-- Center circle -->
+        <circle cx="170" cy="170" r="75" fill="rgba(235,240,235,0.7)"/>
+        <circle cx="170" cy="170" r="70" fill="none" stroke="#5A7A5E" stroke-width="0.5" stroke-dasharray="4,4"/>
+        <!-- Center text -->
+        <text x="170" y="163" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="13" fill="#5A7A5E" font-style="italic">designed by</text>
+        <text x="170" y="183" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="18" fill="#4A4A46" font-weight="600">WreathAI</text>
+      </svg>
+      <div class="ai-badge">
+        <div class="ai-pulse"></div>
+        AI generating in real time
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USER JOURNEY -->
+<section class="section" style="background: var(--white);">
+  <div class="section-label">01 — User Experience</div>
+  <h2 class="section-title">The ideal design journey</h2>
+  <p class="section-sub">From inspiration to finished design in under five minutes — with AI guiding every step of the creative process.</p>
+  <div class="journey-grid">
+    <div class="journey-step">
+      <div class="step-num">1</div>
+      <div class="step-icon">💬</div>
+      <div class="step-title">Describe your vision</div>
+      <div class="step-desc">Type a prompt — "autumn wreath with dried oranges and eucalyptus" — or choose from seasonal mood boards.</div>
+    </div>
+    <div class="journey-step">
+      <div class="step-num">2</div>
+      <div class="step-icon">✦</div>
+      <div class="step-title">AI generates options</div>
+      <div class="step-desc">Three wreath variations appear instantly, each with material lists, color palettes, and estimated build time.</div>
+    </div>
+    <div class="journey-step">
+      <div class="step-num">3</div>
+      <div class="step-icon">✏️</div>
+      <div class="step-title">Refine and customize</div>
+      <div class="step-desc">Swap materials, adjust scale, change color scheme — the design updates live as you tweak parameters.</div>
+    </div>
+    <div class="journey-step">
+      <div class="step-num">4</div>
+      <div class="step-icon">📦</div>
+      <div class="step-title">Export and order</div>
+      <div class="step-desc">Download the design guide, share with clients, or connect to a supplier catalog to order materials directly.</div>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN TYPES -->
+<section class="designs-section">
+  <div class="section-label">02 — Supported Design Types</div>
+  <h2 class="section-title" style="max-width: 480px;">Every wreath style,<br>beautifully supported</h2>
+  <p class="section-sub">From classic holiday to avant-garde sculptural — WreathAI understands the vocabulary of every wreath tradition.</p>
+  <div class="designs-grid">
+    <div class="design-card">
+      <span class="design-card-icon">🍂</span>
+      <div class="design-card-title">Seasonal</div>
+      <div class="design-card-desc">Autumn harvest, winter frost, spring bloom, and summer garden styles with seasonally-appropriate materials.</div>
+      <div class="design-tags">
+        <span class="tag">Autumn</span>
+        <span class="tag">Winter</span>
+        <span class="tag">Spring</span>
+        <span class="tag">Summer</span>
+      </div>
+    </div>
+    <div class="design-card">
+      <span class="design-card-icon">🌸</span>
+      <div class="design-card-title">Floral</div>
+      <div class="design-card-desc">Fresh, dried, and preserved flower arrangements in English garden, wildflower, and structured formal styles.</div>
+      <div class="design-tags">
+        <span class="tag">Fresh cut</span>
+        <span class="tag">Dried</span>
+        <span class="tag">Preserved</span>
+        <span class="tag">Silk</span>
+      </div>
+    </div>
+    <div class="design-card">
+      <span class="design-card-icon">🎄</span>
+      <div class="design-card-title">Thematic</div>
+      <div class="design-card-desc">Holiday, wedding, memorial, housewarming, and celebration themes with culturally-specific motifs and palettes.</div>
+      <div class="design-tags">
+        <span class="tag">Holiday</span>
+        <span class="tag">Wedding</span>
+        <span class="tag">Memorial</span>
+        <span class="tag">Celebration</span>
+      </div>
+    </div>
+    <div class="design-card">
+      <span class="design-card-icon">🪨</span>
+      <div class="design-card-title">Foliage & Botanical</div>
+      <div class="design-card-desc">Eucalyptus, olive branch, succulent, and fern-forward designs for biophilic and natural interior aesthetics.</div>
+      <div class="design-tags">
+        <span class="tag">Eucalyptus</span>
+        <span class="tag">Succulent</span>
+        <span class="tag">Tropical</span>
+      </div>
+    </div>
+    <div class="design-card">
+      <span class="design-card-icon">🎨</span>
+      <div class="design-card-title">Sculptural & Modern</div>
+      <div class="design-card-desc">Geometric frames, asymmetric designs, and mixed-media wreaths for contemporary interiors and editorial looks.</div>
+      <div class="design-tags">
+        <span class="tag">Geometric</span>
+        <span class="tag">Asymmetric</span>
+        <span class="tag">Mixed media</span>
+      </div>
+    </div>
+    <div class="design-card">
+      <span class="design-card-icon">🏪</span>
+      <div class="design-card-title">Commercial & Event</div>
+      <div class="design-card-desc">Large-format and branded wreaths for storefronts, events, and corporate installations with repeat-order templates.</div>
+      <div class="design-tags">
+        <span class="tag">Storefront</span>
+        <span class="tag">Events</span>
+        <span class="tag">Branded</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS + MARKET SPLIT -->
+<div class="split-section">
+  <div class="split-left">
+    <div class="section-label">03 — User Benefits</div>
+    <h2 class="section-title" style="font-size: 36px;">Built for every<br>kind of maker</h2>
+    <ul class="benefits-list">
+      <li class="benefit-item">
+        <div class="benefit-dot"></div>
+        <div class="benefit-text">
+          <strong>Unlimited creative exploration</strong>
+          <span>Generate dozens of variations instantly without committing to expensive materials. Prototype freely before buying.</span>
+        </div>
+      </li>
+      <li class="benefit-item">
+        <div class="benefit-dot"></div>
+        <div class="benefit-text">
+          <strong>Material intelligence</strong>
+          <span>Every design includes an itemized materials list with quantities, substitution suggestions, and seasonal availability flags.</span>
+        </div>
+      </li>
+      <li class="benefit-item">
+        <div class="benefit-dot"></div>
+        <div class="benefit-text">
+          <strong>Client presentation mode</strong>
+          <span>Share beautiful mockup PDFs with clients showing the finished wreath before a single branch is cut.</span>
+        </div>
+      </li>
+      <li class="benefit-item">
+        <div class="benefit-dot"></div>
+        <div class="benefit-text">
+          <strong>Step-by-step build guides</strong>
+          <span>AI-generated assembly instructions adapted to your skill level — beginner through master florist.</span>
+        </div>
+      </li>
+      <li class="benefit-item">
+        <div class="benefit-dot"></div>
+        <div class="benefit-text">
+          <strong>Design library and versioning</strong>
+          <span>Save, tag, and remix past designs. Build a reusable catalog of bestsellers for your shop.</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="split-right">
+    <div class="section-label" style="color: var(--bark);">04 — Market Necessity</div>
+    <h2 class="section-title" style="font-size: 36px;">A $4.8B market<br>with no design tool</h2>
+    <p class="section-sub" style="font-size: 13.5px; margin-bottom: 0;">The floral décor industry is large, seasonal, and deeply underserved by software. Current tools — Canva, Pinterest, generic CAD — were never built for wreath makers.</p>
+    <div class="market-stat-card">
+      <div class="market-stat-row">
+        <span class="market-stat-label">Global floral décor market (2024)</span>
+        <span class="market-stat-value">$4.8B</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 82%"></div></div>
+      <div class="market-stat-row">
+        <span class="market-stat-label">Wreath-specific segment share</span>
+        <span class="market-stat-value">18%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 18%"></div></div>
+      <div class="market-stat-row">
+        <span class="market-stat-label">Etsy wreath sellers without design tools</span>
+        <span class="market-stat-value">73%</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 73%"></div></div>
+    </div>
+    <div class="market-insight">
+      No existing AI tool — not Canva AI, Adobe Firefly, or Midjourney — produces actionable wreath designs with material specifications. WreathAI fills a genuine white-space gap.
+    </div>
+  </div>
+</div>
+
+<!-- PRICING -->
+<section class="pricing-section" style="text-align: center;">
+  <div class="section-label">05 — SaaS Pricing</div>
+  <h2 class="section-title">Simple, transparent pricing</h2>
+  <p class="section-sub" style="margin: 0 auto 0; max-width: 420px; font-size: 14px;">Start free. Scale as your wreath business grows.</p>
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-name">Hobby</div>
+      <div class="pricing-price">$0</div>
+      <div class="pricing-period">forever free</div>
+      <ul class="pricing-features">
+        <li><span class="check">✓</span> 10 designs/month</li>
+        <li><span class="check">✓</span> 3 design styles</li>
+        <li><span class="check">✓</span> Basic material list</li>
+        <li><span class="check">✓</span> PNG export</li>
+      </ul>
+      <button class="pricing-btn">Get started</button>
+    </div>
+    <div class="pricing-card featured">
+      <div class="pricing-name">Studio</div>
+      <div class="pricing-price">$29</div>
+      <div class="pricing-period">per month</div>
+      <ul class="pricing-features">
+        <li><span class="check">✓</span> Unlimited designs</li>
+        <li><span class="check">✓</span> All 12 design styles</li>
+        <li><span class="check">✓</span> Client presentation mode</li>
+        <li><span class="check">✓</span> Supplier integration</li>
+        <li><span class="check">✓</span> Step-by-step build guides</li>
+      </ul>
+      <button class="pricing-btn">Start free trial</button>
+    </div>
+    <div class="pricing-card">
+      <div class="pricing-name">Commercial</div>
+      <div class="pricing-price">$89</div>
+      <div class="pricing-period">per month</div>
+      <ul class="pricing-features">
+        <li><span class="check">✓</span> Everything in Studio</li>
+        <li><span class="check">✓</span> Team seats (5 users)</li>
+        <li><span class="check">✓</span> White-label exports</li>
+        <li><span class="check">✓</span> API access</li>
+        <li><span class="check">✓</span> Priority support</li>
+      </ul>
+      <button class="pricing-btn">Contact sales</button>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <h2>Your next wreath starts with a sentence.</h2>
+  <p>Join 2,400 makers and florists already designing with AI.</p>
+  <button class="btn-primary" style="background: var(--white); color: var(--sage); font-size: 15px; padding: 14px 32px;" onclick="sendPrompt('I want to try designing a wreath with WreathAI — what should I type as my first prompt?')">Design your first wreath ↗</button>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="font-family: 'Cormorant Garamond', serif; font-size: 20px; color: rgba(255,255,255,0.7);">✦ WreathAI</div>
+  <span style="font-size: 12px;">© 2026 WreathAI · Crafted with care</span>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.journey-step, .design-card, .benefit-item, .pricing-card').forEach(el => {
+    el.classList.add('fade-in');
+    observer.observe(el);
+  });
+</script>

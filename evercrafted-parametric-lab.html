@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parametric Lab — Evercrafted</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Dancing+Script:wght@400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ec-white:#FFFFFF;
+  --ec-off-white:#F9F7F4;
+  --ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A;
+  --ec-charcoal:#2E2E2E;
+  --ec-ink:#4A4A4A;
+  --ec-green:#4A6741;
+  --ec-green-light:#6B8F67;
+  --ec-green-pale:#EEF2ED;
+  --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-border:#E8E8E8;
+  --ec-border-dark:#D0D0D0;
+  --ec-muted:#8A8278;
+  --ec-muted2:#B4AFA8;
+  --ec-bark:#6E6860;
+  --ec-cream2:#F0EBE2;
+  --ec-cream3:#E6DFCF;
+  --ec-sage-ll:#EDE8E0;
+  --r:rgba(27,25,22,.07);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--ec-off-white);color:var(--ec-black);font-size:14px;line-height:1.6;overflow-x:hidden;min-height:100vh}
+
+/* ── APP SHELL ── */
+.app-shell{display:grid;grid-template-columns:240px 1fr;grid-template-rows:52px 1fr;min-height:100vh}
+
+/* TOPBAR */
+.topbar{grid-column:1/-1;background:var(--ec-white);border-bottom:1px solid var(--ec-border);display:flex;align-items:center;padding:0 20px;gap:16px;position:sticky;top:0;z-index:100}
+.topbar-wordmark{font-family:'Dancing Script',cursive;font-size:22px;color:var(--ec-green);letter-spacing:.02em;line-height:1}
+.topbar-app{font-family:'Cormorant Garamond',serif;font-size:14px;font-weight:400;color:var(--ec-ink);letter-spacing:.04em;border-left:1px solid var(--ec-border);padding-left:14px;margin-left:4px}
+.tier-badge{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;padding:3px 9px;border-radius:2px;margin-left:8px;background:var(--ec-green-pale);color:var(--ec-green)}
+.topbar-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.topbar-user{font-size:12px;color:var(--ec-muted);display:flex;align-items:center;gap:6px}
+.user-dot{width:26px;height:26px;border-radius:50%;background:var(--ec-green-dim);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--ec-green)}
+
+/* SIDEBAR */
+.sidebar{background:var(--ec-white);border-right:1px solid var(--ec-border);padding:20px 0;display:flex;flex-direction:column;gap:2px;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto}
+.sidebar-section{font-size:9px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--ec-muted2);padding:12px 20px 4px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:8px 20px;font-size:12px;font-weight:400;color:var(--ec-ink);cursor:pointer;transition:all .15s;border-left:2px solid transparent;text-decoration:none}
+.nav-item:hover{background:var(--ec-off-white);color:var(--ec-black)}
+.nav-item.active{background:var(--ec-green-pale);color:var(--ec-green);border-left-color:var(--ec-green);font-weight:500}
+.nav-item svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.sidebar-divider{height:1px;background:var(--ec-border);margin:8px 0}
+.sidebar-upgrade{margin:16px 12px 0;background:var(--ec-black);border-radius:6px;padding:14px;color:var(--ec-off-white)}
+.su-label{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(249,247,244,.4);margin-bottom:6px}
+.su-text{font-size:12px;font-weight:300;color:rgba(249,247,244,.75);line-height:1.5;margin-bottom:10px}
+.su-btn{width:100%;padding:7px;background:var(--ec-green);color:var(--ec-white);border:none;border-radius:3px;font-size:11px;font-weight:600;letter-spacing:.05em;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s}
+.su-btn:hover{background:#3a5233}
+
+/* MAIN */
+.main{background:var(--ec-off-white);overflow-y:auto}
+.main-inner{max-width:960px;margin:0 auto;padding:36px 32px 80px}
+
+/* PAGE HEADER */
+.page-hd{margin-bottom:32px}
+.page-eyebrow{font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--ec-green);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.page-eyebrow::before{content:'';display:block;width:18px;height:1px;background:var(--ec-green)}
+.page-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3vw,38px);font-weight:300;line-height:1.1;letter-spacing:-.025em;color:var(--ec-black)}
+.page-h1 em{font-style:italic;color:var(--ec-bark)}
+.page-sub{font-size:13px;font-weight:300;color:var(--ec-muted);line-height:1.7;max-width:520px;margin-top:8px}
+
+/* CONTROL PANELS */
+.panel{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:6px;overflow:hidden;margin-bottom:16px}
+.panel-header{padding:16px 20px;border-bottom:1px solid var(--ec-border);display:flex;align-items:center;justify-content:space-between}
+.panel-title{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;color:var(--ec-black);letter-spacing:-.01em}
+.panel-meta{font-size:10px;color:var(--ec-muted);letter-spacing:.04em}
+.panel-body{padding:20px}
+
+/* SHAPE SELECTOR */
+.shape-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.shape-opt{border:1px solid var(--ec-border);border-radius:6px;padding:12px 8px;text-align:center;cursor:pointer;transition:all .18s;background:var(--ec-off-white)}
+.shape-opt:hover{border-color:var(--ec-green-light);background:var(--ec-green-pale)}
+.shape-opt.selected{border-color:var(--ec-green);background:var(--ec-green-pale);box-shadow:0 0 0 2px var(--ec-green-dim)}
+.shape-svg{width:52px;height:52px;margin:0 auto 8px;display:block}
+.shape-name{font-size:10px;font-weight:500;letter-spacing:.04em;color:var(--ec-ink);text-transform:uppercase}
+.shape-opt.selected .shape-name{color:var(--ec-green)}
+
+/* SLIDERS */
+.slider-group{display:flex;flex-direction:column;gap:16px}
+.slider-row{display:flex;flex-direction:column;gap:6px}
+.slider-label-row{display:flex;align-items:center;justify-content:space-between}
+.slider-label{font-size:11px;font-weight:500;color:var(--ec-ink);letter-spacing:.04em}
+.slider-val{font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:400;color:var(--ec-green);min-width:32px;text-align:right}
+.slider-desc{font-size:11px;color:var(--ec-muted);margin-top:-2px}
+input[type=range]{width:100%;height:3px;-webkit-appearance:none;appearance:none;background:linear-gradient(to right, var(--ec-green) 0%, var(--ec-green) var(--pct,50%), var(--ec-border) var(--pct,50%));border-radius:2px;outline:none;cursor:pointer;transition:background .15s}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--ec-white);border:2px solid var(--ec-green);box-shadow:0 1px 4px rgba(0,0,0,.12);cursor:pointer;transition:transform .15s}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+
+/* CANVAS */
+.canvas-panel{position:relative}
+.canvas-wrap{background:var(--ec-off-white);border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:320px;position:relative}
+canvas{display:block;border-radius:4px}
+.canvas-controls{display:flex;gap:8px;padding:12px 20px;border-top:1px solid var(--ec-border);background:var(--ec-white)}
+.cc-btn{padding:7px 16px;border:1px solid var(--ec-border);border-radius:3px;font-size:11px;font-weight:500;letter-spacing:.04em;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;background:var(--ec-white);color:var(--ec-ink)}
+.cc-btn:hover{border-color:var(--ec-green);color:var(--ec-green);background:var(--ec-green-pale)}
+.cc-btn.primary{background:var(--ec-green);color:var(--ec-white);border-color:var(--ec-green)}
+.cc-btn.primary:hover{background:#3a5233}
+.cc-btn:disabled{opacity:.4;cursor:not-allowed}
+.canvas-label-tag{position:absolute;top:12px;left:14px;font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-muted);background:rgba(249,247,244,.9);padding:3px 8px;border-radius:2px}
+.canvas-shape-tag{position:absolute;bottom:12px;right:14px;font-family:'Cormorant Garamond',serif;font-size:13px;font-style:italic;color:var(--ec-muted);background:rgba(249,247,244,.9);padding:3px 10px;border-radius:2px}
+
+/* AI PANEL */
+.ai-section{margin-top:20px}
+.ai-input-row{display:flex;gap:10px;margin-bottom:12px}
+.ai-input{flex:1;padding:10px 14px;border:1px solid var(--ec-border);border-radius:4px;font-size:13px;font-family:'Inter',sans-serif;color:var(--ec-black);background:var(--ec-white);outline:none;transition:border-color .15s}
+.ai-input:focus{border-color:var(--ec-green)}
+.ai-btn{padding:10px 20px;background:var(--ec-green);color:var(--ec-white);border:none;border-radius:4px;font-size:12px;font-weight:600;letter-spacing:.05em;cursor:pointer;font-family:'Inter',sans-serif;transition:background .15s;white-space:nowrap}
+.ai-btn:hover{background:#3a5233}
+.ai-btn:disabled{opacity:.5;cursor:not-allowed}
+.ai-result{background:var(--ec-paper);border:1px solid var(--ec-border);border-radius:6px;padding:16px 18px;margin-top:4px;display:none}
+.ai-result.visible{display:block}
+.ar-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ar-tag{font-size:9px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--ec-green);background:var(--ec-green-pale);padding:3px 9px;border-radius:2px}
+.ar-formula{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ec-black);margin-bottom:6px}
+.ar-interp{font-size:13px;font-weight:300;color:var(--ec-ink);line-height:1.75;margin-bottom:14px}
+.ar-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.ar-cell{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:4px;padding:10px 12px}
+.ar-cell-label{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-muted);margin-bottom:3px}
+.ar-cell-val{font-size:13px;font-weight:400;color:var(--ec-black);line-height:1.4}
+.ar-elem-row{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px}
+.ar-elem{border:1px solid var(--ec-border);border-radius:4px;padding:8px;text-align:center;background:var(--ec-white)}
+.ar-elem-n{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:300;color:var(--ec-black);line-height:1}
+.ar-elem-l{font-size:9px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:var(--ec-muted);margin-top:2px}
+.ar-scores{display:flex;gap:16px;padding-top:12px;border-top:1px solid var(--ec-border)}
+.ar-score{font-size:11px;color:var(--ec-muted)}
+.ar-score strong{color:var(--ec-black)}
+.ai-status{font-size:11px;color:var(--ec-muted);margin-top:6px;min-height:18px}
+.ai-loading{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--ec-green)}
+.ai-dot{width:5px;height:5px;border-radius:50%;background:var(--ec-green);animation:pulse .9s infinite}
+.ai-dot:nth-child(2){animation-delay:.2s}
+.ai-dot:nth-child(3){animation-delay:.4s}
+@keyframes pulse{0%,100%{opacity:.2}50%{opacity:1}}
+
+/* METRICS ROW */
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.metric{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:6px;padding:14px 16px}
+.metric-n{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ec-black);line-height:1}
+.metric-l{font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--ec-muted);margin-top:2px}
+
+/* TIER LOCK */
+.tier-lock{position:relative;overflow:hidden;border-radius:6px}
+.tier-lock-overlay{position:absolute;inset:0;background:rgba(249,247,244,.88);backdrop-filter:blur(4px);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:10;border-radius:6px;gap:10px}
+.tlo-icon{font-size:24px;opacity:.4}
+.tlo-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ec-ink)}
+.tlo-tier{font-size:10px;color:var(--ec-muted);background:var(--ec-paper);border:1px solid var(--ec-border);border-radius:2px;padding:3px 10px}
+.tlo-btn{padding:8px 20px;background:var(--ec-black);color:var(--ec-off-white);border:none;border-radius:3px;font-size:11px;font-weight:600;letter-spacing:.06em;cursor:pointer;font-family:'Inter',sans-serif}
+
+/* EXPORT PANEL */
+.export-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.export-card{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:6px;padding:16px;display:flex;flex-direction:column;gap:8px;transition:border-color .15s}
+.export-card:hover{border-color:var(--ec-green-light)}
+.ec-icon{width:32px;height:32px;border-radius:4px;background:var(--ec-green-pale);display:flex;align-items:center;justify-content:center}
+.ec-icon svg{width:16px;height:16px;stroke:var(--ec-green);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ec-name{font-size:12px;font-weight:600;color:var(--ec-black)}
+.ec-desc{font-size:11px;font-weight:300;color:var(--ec-muted);line-height:1.5}
+.ec-btn{margin-top:auto;padding:7px 14px;border:1px solid var(--ec-border);border-radius:3px;font-size:11px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;background:var(--ec-off-white);color:var(--ec-ink);transition:all .15s;text-align:center}
+.ec-btn:hover{border-color:var(--ec-green);background:var(--ec-green-pale);color:var(--ec-green)}
+.ec-locked{opacity:.5;cursor:not-allowed}
+
+/* DIVIDER ✦ */
+.ec-divider{text-align:center;color:var(--ec-muted2);font-size:11px;letter-spacing:.3em;padding:4px 0;margin:8px 0}
+
+/* HISTORY TABLE */
+.history-table{width:100%;border-collapse:collapse}
+.history-table th{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-muted);padding:8px 12px;border-bottom:1px solid var(--ec-border);text-align:left}
+.history-table td{font-size:12px;color:var(--ec-ink);padding:10px 12px;border-bottom:1px solid var(--ec-border)}
+.history-table tr:hover td{background:var(--ec-off-white)}
+.ht-pill{display:inline-flex;padding:2px 8px;border-radius:2px;font-size:9px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.ht-round{background:#eef2f9;color:#4a6785}
+.ht-crescent{background:#f5eef4;color:#7a4a85}
+.ht-trailing{background:#f9f2ee;color:#856341}
+.ht-loose{background:var(--ec-green-pale);color:var(--ec-green)}
+.ht-figure{background:#f9eeee;color:#854a4a}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--ec-black);color:var(--ec-off-white);padding:10px 20px;border-radius:4px;font-size:12px;opacity:0;transform:translateY(8px);transition:all .2s;z-index:999;pointer-events:none}
+.toast.on{opacity:1;transform:translateY(0)}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .app-shell{grid-template-columns:1fr;grid-template-rows:52px 1fr}
+  .sidebar{display:none}
+  .shape-grid{grid-template-columns:repeat(3,1fr)}
+  .metrics-row{grid-template-columns:repeat(2,1fr)}
+  .ar-grid{grid-template-columns:1fr}
+  .export-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <span class="topbar-wordmark">Evercrafted</span>
+    <span class="topbar-app">Parametric Lab</span>
+    <span class="tier-badge">Craft</span>
+    <div class="topbar-r">
+      <span class="topbar-user">
+        <span class="user-dot">B</span>
+        Bret
+      </span>
+    </div>
+  </header>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">Workspace</div>
+    <a class="nav-item active" href="#">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+      Parametric Lab
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
+      Layout Studio
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Blueprint Engine
+    </a>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-section">Library</div>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Saved Shapes
+    </a>
+    <a class="nav-item" href="#">
+      <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+      Inventory
+    </a>
+    <div class="sidebar-upgrade">
+      <div class="su-label">Studio tier</div>
+      <div class="su-text">Unlock multi-export, AI blueprint overlay, and full palette control.</div>
+      <button class="su-btn">Upgrade →</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="main-inner">
+
+      <div class="page-hd">
+        <div class="page-eyebrow">Design & Planning</div>
+        <h1 class="page-h1"><em>Parametric</em> Lab</h1>
+        <p class="page-sub">Define your wreath shape from mood and structure — five shape families, mood-driven proportions, AI interpretation.</p>
+      </div>
+
+      <!-- METRICS -->
+      <div class="metrics-row">
+        <div class="metric">
+          <div class="metric-n" id="m-shapes">5</div>
+          <div class="metric-l">Shape Families</div>
+        </div>
+        <div class="metric">
+          <div class="metric-n" id="m-generated">0</div>
+          <div class="metric-l">Generated Today</div>
+        </div>
+        <div class="metric">
+          <div class="metric-n" id="m-saved">—</div>
+          <div class="metric-l">Saved Blueprints</div>
+        </div>
+        <div class="metric">
+          <div class="metric-n" id="m-score">—</div>
+          <div class="metric-l">Last Fit Score</div>
+        </div>
+      </div>
+
+      <!-- SHAPE SELECTOR -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Shape Family</span>
+          <span class="panel-meta">Select your base form</span>
+        </div>
+        <div class="panel-body">
+          <div class="shape-grid">
+            <div class="shape-opt selected" data-shape="round" onclick="selectShape(this,'round')">
+              <svg class="shape-svg" viewBox="0 0 52 52"><circle cx="26" cy="26" r="18" fill="none" stroke="#4A6741" stroke-width="6" opacity=".7"/></svg>
+              <div class="shape-name">Round</div>
+            </div>
+            <div class="shape-opt" data-shape="crescent" onclick="selectShape(this,'crescent')">
+              <svg class="shape-svg" viewBox="0 0 52 52"><path d="M 36 10 A 18 18 0 1 0 36 42 A 10 10 0 1 1 36 10 Z" fill="none" stroke="#4A6741" stroke-width="4.5" opacity=".7"/></svg>
+              <div class="shape-name">Crescent</div>
+            </div>
+            <div class="shape-opt" data-shape="trailing" onclick="selectShape(this,'trailing')">
+              <svg class="shape-svg" viewBox="0 0 52 52"><ellipse cx="22" cy="22" rx="14" ry="14" fill="none" stroke="#4A6741" stroke-width="4.5" opacity=".7"/><path d="M 32 30 Q 42 38 46 46" fill="none" stroke="#4A6741" stroke-width="3.5" stroke-linecap="round" opacity=".5"/></svg>
+              <div class="shape-name">Trailing</div>
+            </div>
+            <div class="shape-opt" data-shape="loose" onclick="selectShape(this,'loose')">
+              <svg class="shape-svg" viewBox="0 0 52 52"><path d="M26 8 C 8 8 8 44 26 44 C 44 44 44 8 26 8 Z" fill="none" stroke="#4A6741" stroke-width="4" stroke-dasharray="5,3" opacity=".7"/></svg>
+              <div class="shape-name">Loose</div>
+            </div>
+            <div class="shape-opt" data-shape="figure-eight" onclick="selectShape(this,'figure-eight')">
+              <svg class="shape-svg" viewBox="0 0 52 52"><circle cx="26" cy="16" r="11" fill="none" stroke="#4A6741" stroke-width="4" opacity=".7"/><circle cx="26" cy="36" r="11" fill="none" stroke="#4A6741" stroke-width="4" opacity=".7"/></svg>
+              <div class="shape-name">Figure 8</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SLIDERS -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Mood Parameters</span>
+          <span class="panel-meta">Adjust proportions</span>
+        </div>
+        <div class="panel-body">
+          <div class="slider-group">
+            <div class="slider-row">
+              <div class="slider-label-row">
+                <div>
+                  <div class="slider-label">Density</div>
+                  <div class="slider-desc">Lush ←→ Airy</div>
+                </div>
+                <div class="slider-val" id="density-val">5</div>
+              </div>
+              <input type="range" id="density" min="1" max="10" value="5" oninput="updateSlider(this,'density-val');drawShape()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-label-row">
+                <div>
+                  <div class="slider-label">Structure</div>
+                  <div class="slider-desc">Relaxed ←→ Formal</div>
+                </div>
+                <div class="slider-val" id="structure-val">5</div>
+              </div>
+              <input type="range" id="structure" min="1" max="10" value="5" oninput="updateSlider(this,'structure-val');drawShape()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-label-row">
+                <div>
+                  <div class="slider-label">Scale</div>
+                  <div class="slider-desc">Intimate ←→ Statement</div>
+                </div>
+                <div class="slider-val" id="scale-val">5</div>
+              </div>
+              <input type="range" id="scale" min="1" max="10" value="5" oninput="updateSlider(this,'scale-val');drawShape()">
+            </div>
+            <div class="slider-row">
+              <div class="slider-label-row">
+                <div>
+                  <div class="slider-label">Asymmetry</div>
+                  <div class="slider-desc">Symmetrical ←→ Organic</div>
+                </div>
+                <div class="slider-val" id="asym-val">3</div>
+              </div>
+              <input type="range" id="asym" min="1" max="10" value="3" oninput="updateSlider(this,'asym-val');drawShape()">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CANVAS -->
+      <div class="panel canvas-panel">
+        <div class="panel-header">
+          <span class="panel-title">Shape Preview</span>
+          <span class="panel-meta" id="canvas-meta">24″ · Round · Density 5</span>
+        </div>
+        <div class="canvas-wrap" style="height:320px">
+          <span class="canvas-label-tag">STRUCTURE PREVIEW</span>
+          <canvas id="shapeCanvas" width="560" height="300"></canvas>
+          <span class="canvas-shape-tag" id="canvas-shape-tag">Round</span>
+        </div>
+        <div class="canvas-controls">
+          <button class="cc-btn primary" onclick="saveShape()">Save Shape</button>
+          <button class="cc-btn" onclick="exportSVG()">Export SVG</button>
+          <button class="cc-btn" onclick="sendToLayout()">→ Layout Studio</button>
+          <button class="cc-btn" style="margin-left:auto" onclick="drawShape()">↺ Regenerate</button>
+        </div>
+      </div>
+
+      <!-- AI INTERPRETATION -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">AI Blueprint Interpretation</span>
+          <span class="panel-meta">Powered by Claude</span>
+        </div>
+        <div class="panel-body">
+          <p style="font-size:13px;font-weight:300;color:var(--ec-muted);line-height:1.7;margin-bottom:14px">Describe your shape idea in plain language and the engine will return a full emotional blueprint with element counts, palette direction, and composition specs.</p>
+          <div class="ai-input-row">
+            <input class="ai-input" id="ai-input" type="text" placeholder="e.g. crescent shape, airy and minimal, for a spring entryway…" />
+            <button class="ai-btn" id="ai-btn" onclick="runAI()">Interpret →</button>
+          </div>
+          <div class="ai-status" id="ai-status"></div>
+          <div class="ai-result" id="ai-result">
+            <div class="ar-header">
+              <span class="ar-tag" id="ar-quadrant">—</span>
+              <span style="font-size:10px;color:var(--ec-muted)" id="ar-id">—</span>
+            </div>
+            <div class="ar-formula" id="ar-formula">—</div>
+            <div class="ar-interp" id="ar-interp">—</div>
+            <div class="ar-grid">
+              <div class="ar-cell"><div class="ar-cell-label">Emotional Tone</div><div class="ar-cell-val" id="ar-tone">—</div></div>
+              <div class="ar-cell"><div class="ar-cell-label">Palette Direction</div><div class="ar-cell-val" id="ar-palette">—</div></div>
+              <div class="ar-cell"><div class="ar-cell-label">Density · Silence Arc</div><div class="ar-cell-val" id="ar-density">—</div></div>
+              <div class="ar-cell"><div class="ar-cell-label">Zone Count</div><div class="ar-cell-val" id="ar-zones">—</div></div>
+            </div>
+            <div style="font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ec-muted);margin-bottom:6px">Element Counts</div>
+            <div class="ar-elem-row">
+              <div class="ar-elem"><div class="ar-elem-n" id="ar-focal">—</div><div class="ar-elem-l">Focal</div></div>
+              <div class="ar-elem"><div class="ar-elem-n" id="ar-support">—</div><div class="ar-elem-l">Support</div></div>
+              <div class="ar-elem"><div class="ar-elem-n" id="ar-filler">—</div><div class="ar-elem-l">Filler</div></div>
+              <div class="ar-elem"><div class="ar-elem-n" id="ar-green">—</div><div class="ar-elem-l">Greenery</div></div>
+            </div>
+            <div class="ar-scores">
+              <span class="ar-score">Emotion Fit <strong id="ar-ef">—</strong></span>
+              <span class="ar-score">DNA Cohesion <strong id="ar-dc">—</strong></span>
+              <span class="ar-score">Brand Fit <strong id="ar-bf">—</strong></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ec-divider">✦</div>
+
+      <!-- EXPORT -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Export & Handoff</span>
+          <span class="panel-meta">Send your shape forward</span>
+        </div>
+        <div class="panel-body">
+          <div class="export-grid">
+            <div class="export-card">
+              <div class="ec-icon"><svg viewBox="0 0 24 24"><polyline points="8 17 12 21 16 17"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"/></svg></div>
+              <div class="ec-name">SVG Export</div>
+              <div class="ec-desc">Vector shape file ready for any design tool or print output.</div>
+              <div class="ec-btn" onclick="exportSVG()">Download SVG</div>
+            </div>
+            <div class="export-card">
+              <div class="ec-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><path d="M13 8h4M13 12h4M13 16h4"/></svg></div>
+              <div class="ec-name">→ Layout Studio</div>
+              <div class="ec-desc">Send this shape directly to Layout Studio with all parameters intact.</div>
+              <div class="ec-btn" onclick="sendToLayout()">Open in Layout Studio</div>
+            </div>
+            <div class="export-card tier-lock" id="export-json-card">
+              <div class="tier-lock-overlay">
+                <div class="tlo-icon">⚿</div>
+                <div class="tlo-label">Studio Tier</div>
+                <div class="tlo-tier">Requires Studio</div>
+                <button class="tlo-btn">Upgrade</button>
+              </div>
+              <div class="ec-icon"><svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+              <div class="ec-name">Blueprint JSON</div>
+              <div class="ec-desc">Full JSON blueprint export with genome string, WGS metadata, and placement data.</div>
+              <div class="ec-btn ec-locked">Export JSON</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Session History</span>
+          <span class="panel-meta">This session</span>
+        </div>
+        <div class="panel-body" style="padding:0">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>Shape</th>
+                <th>Density</th>
+                <th>Structure</th>
+                <th>Asymmetry</th>
+                <th>AI Interpreted</th>
+                <th>Saved</th>
+              </tr>
+            </thead>
+            <tbody id="history-tbody">
+              <tr>
+                <td colspan="6" style="text-align:center;color:var(--ec-muted);padding:24px;font-size:12px">No shapes generated yet — start above.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /main-inner -->
+  </main><!-- /main -->
+</div><!-- /app-shell -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── STATE ──
+let currentShape = 'round';
+let generatedCount = 0;
+let savedCount = 0;
+let historyRows = [];
+
+// ── TIER GATING ──
+const TIER_RANK = {bloom:1,craft:2,studio:3,atelier:4};
+const USER_TIER = 'craft';
+function canAccess(req){return TIER_RANK[USER_TIER] >= TIER_RANK[req];}
+
+// ── TOAST ──
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2400)}
+
+// ── SLIDERS ──
+function updateSlider(el, valId){
+  document.getElementById(valId).textContent = el.value;
+  const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+  el.style.setProperty('--pct', pct + '%');
+  updateCanvasMeta();
+}
+
+function updateCanvasMeta(){
+  const d = document.getElementById('density').value;
+  const s = document.getElementById('structure').value;
+  const meta = `24″ · ${currentShape.charAt(0).toUpperCase()+currentShape.slice(1)} · Density ${d} · Structure ${s}`;
+  document.getElementById('canvas-meta').textContent = meta;
+}
+
+// ── SHAPE SELECTOR ──
+function selectShape(el, shape){
+  document.querySelectorAll('.shape-opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  currentShape = shape;
+  document.getElementById('canvas-shape-tag').textContent = shape.charAt(0).toUpperCase()+shape.slice(1);
+  updateCanvasMeta();
+  drawShape();
+}
+
+// ── CANVAS DRAWING ──
+function drawShape(){
+  const canvas = document.getElementById('shapeCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+
+  const density = parseInt(document.getElementById('density').value);
+  const structure = parseInt(document.getElementById('structure').value);
+  const scale = parseInt(document.getElementById('scale').value);
+  const asym = parseInt(document.getElementById('asym').value);
+
+  const baseR = 70 + scale * 9;
+  const asymOffset = (asym - 1) * 4;
+  const jitter = asym * 2.5;
+  const strokeW = 8 + (density / 10) * 18;
+  const opacity = 0.55 + (density / 10) * 0.3;
+
+  ctx.save();
+  ctx.translate(W/2, H/2);
+
+  // Grid guide
+  ctx.strokeStyle = 'rgba(74,103,65,0.06)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([4,8]);
+  for(let r of [baseR*0.4, baseR*0.7, baseR*1.0, baseR*1.3]){
+    ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.stroke();
+  }
+  ctx.setLineDash([]);
+
+  // Center dot
+  ctx.beginPath();ctx.arc(0,0,3,0,Math.PI*2);ctx.fillStyle='rgba(74,103,65,0.15)';ctx.fill();
+
+  function jitterPoint(angle, radius){
+    const j = (Math.random()-0.5)*jitter;
+    return {x:Math.cos(angle)*(radius+j)+asymOffset, y:Math.sin(angle)*(radius+j)};
+  }
+
+  ctx.strokeStyle = `rgba(74,103,65,${opacity})`;
+  ctx.lineWidth = strokeW;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  ctx.shadowColor = 'rgba(74,103,65,0.2)';
+  ctx.shadowBlur = density * 3;
+
+  switch(currentShape){
+    case 'round':{
+      const steps = structure > 7 ? 200 : 80;
+      ctx.beginPath();
+      for(let i=0;i<=steps;i++){
+        const a = (i/steps)*Math.PI*2;
+        const pt = jitterPoint(a, baseR);
+        i===0 ? ctx.moveTo(pt.x,pt.y) : ctx.lineTo(pt.x,pt.y);
+      }
+      ctx.closePath();ctx.stroke();
+      break;
+    }
+    case 'crescent':{
+      ctx.beginPath();
+      ctx.arc(asymOffset*0.5, 0, baseR, 0.2, Math.PI*2-0.2);
+      ctx.stroke();
+      ctx.strokeStyle = `rgba(242,239,233,1)`;
+      ctx.lineWidth = strokeW+6;
+      ctx.beginPath();
+      ctx.arc(baseR*0.35+asymOffset, 0, baseR*0.72, 0, Math.PI*2);
+      ctx.stroke();
+      break;
+    }
+    case 'trailing':{
+      ctx.beginPath();
+      ctx.arc(-baseR*0.1, -baseR*0.1, baseR*0.85, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.lineWidth = strokeW * 0.55;
+      ctx.strokeStyle = `rgba(74,103,65,${opacity*0.6})`;
+      ctx.beginPath();
+      ctx.moveTo(baseR*0.55, baseR*0.55);
+      ctx.bezierCurveTo(baseR, baseR*0.9, baseR*1.3, baseR*1.1, baseR*1.55+asymOffset, baseR*1.5);
+      ctx.stroke();
+      break;
+    }
+    case 'loose':{
+      const pts = [];
+      const numPts = 10;
+      for(let i=0;i<numPts;i++){
+        const a = (i/numPts)*Math.PI*2 - Math.PI/2;
+        const r = baseR + (Math.random()-0.5)*baseR*0.3*(asym/5);
+        pts.push({x:Math.cos(a)*r+asymOffset*0.5, y:Math.sin(a)*r});
+      }
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x,pts[0].y);
+      for(let i=1;i<pts.length;i++){
+        const cp = {x:(pts[i-1].x+pts[i].x)/2, y:(pts[i-1].y+pts[i].y)/2};
+        ctx.quadraticCurveTo(pts[i-1].x,pts[i-1].y,cp.x,cp.y);
+      }
+      ctx.closePath();ctx.stroke();
+      break;
+    }
+    case 'figure-eight':{
+      const r8 = baseR * 0.55;
+      const cx8 = asymOffset * 0.5;
+      ctx.beginPath();ctx.arc(cx8,-r8*0.9,r8,0,Math.PI*2);ctx.stroke();
+      ctx.beginPath();ctx.arc(cx8,r8*0.9,r8,0,Math.PI*2);ctx.stroke();
+      break;
+    }
+  }
+
+  ctx.restore();
+}
+
+// ── AI ──
+async function callClaude(messages, systemPrompt, maxTokens=1024){
+  const res = await fetch("/api/ai-generate",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({system:systemPrompt,content:(messages&&messages[0]&&messages[0].content)||"",max_tokens:maxTokens})
+  });
+  const data = await res.json();
+  return data.text||"";
+}
+
+async function runAI(){
+  const inputEl = document.getElementById('ai-input');
+  const statusEl = document.getElementById('ai-status');
+  const resultEl = document.getElementById('ai-result');
+  const btn = document.getElementById('ai-btn');
+  const feeling = inputEl.value.trim();
+  if(!feeling){toast('Add a shape idea first.');return;}
+
+  btn.disabled = true;
+  statusEl.innerHTML = '<span class="ai-loading"><span class="ai-dot"></span><span class="ai-dot"></span><span class="ai-dot"></span>&nbsp; Interpreting shape…</span>';
+  resultEl.classList.remove('visible');
+
+  const system = `You are the Evercrafted Parametric Blueprint Engine. Given a shape/mood description, return ONLY valid JSON with this exact structure — no markdown, no explanation:
+{
+  "emotion": {
+    "quadrant": "string (Serene / Joyful / Dramatic / Earthy / Ethereal)",
+    "formula": "short poetic formula e.g. 'stillness × air'",
+    "emotional_tone": "1-sentence tone description",
+    "density": "Airy | Balanced | Lush",
+    "silence_arc_deg": number between 30 and 180,
+    "palette_direction": "e.g. 'Pale sage, cream, ivory'"
+  },
+  "blueprint": {
+    "blueprint_id": "PL-XXXX (4 random digits)",
+    "composition": { "zone_count": number 2-5 },
+    "elements": [
+      {"role":"focal","count":number},
+      {"role":"supporting","count":number},
+      {"role":"filler","count":number},
+      {"role":"greenery","count":number}
+    ],
+    "scores": {
+      "emotion_fit": number 0.7-1.0,
+      "dna_cohesion": number 0.7-1.0,
+      "brand_alignment": number 0.8-1.0
+    }
+  },
+  "interpretation": "2-sentence plain English interpretation of this shape design"
+}`;
+
+  try{
+    const raw = await callClaude([{role:"user",content:feeling}], system, 600);
+    const clean = raw.replace(/```json|```/g,'').trim();
+    const d = JSON.parse(clean);
+    const e = d.emotion, b = d.blueprint;
+    const els = b.elements || [];
+    const focal = els.find(x=>x.role==='focal')||{};
+    const sup = els.find(x=>x.role==='supporting')||{};
+    const fill = els.find(x=>x.role==='filler')||{};
+    const green = els.find(x=>x.role==='greenery')||{};
+
+    document.getElementById('ar-quadrant').textContent = e.quadrant;
+    document.getElementById('ar-id').textContent = b.blueprint_id;
+    document.getElementById('ar-formula').textContent = e.formula;
+    document.getElementById('ar-interp').textContent = d.interpretation;
+    document.getElementById('ar-tone').textContent = e.emotional_tone;
+    document.getElementById('ar-palette').textContent = e.palette_direction;
+    document.getElementById('ar-density').textContent = `${e.density} · ${e.silence_arc_deg}°`;
+    document.getElementById('ar-zones').textContent = `${b.composition?.zone_count} zones`;
+    document.getElementById('ar-focal').textContent = focal.count ?? '—';
+    document.getElementById('ar-support').textContent = sup.count ?? '—';
+    document.getElementById('ar-filler').textContent = fill.count ?? '—';
+    document.getElementById('ar-green').textContent = green.count ?? '—';
+    document.getElementById('ar-ef').textContent = Math.round((b.scores?.emotion_fit||0)*100)+'%';
+    document.getElementById('ar-dc').textContent = Math.round((b.scores?.dna_cohesion||0)*100)+'%';
+    document.getElementById('ar-bf').textContent = Math.round((b.scores?.brand_alignment||0)*100)+'%';
+    document.getElementById('m-score').textContent = Math.round((b.scores?.emotion_fit||0)*100)+'%';
+
+    resultEl.classList.add('visible');
+    statusEl.textContent = `Blueprint ${b.blueprint_id} ready.`;
+    generatedCount++;
+    document.getElementById('m-generated').textContent = generatedCount;
+    addHistory(currentShape, d, b.blueprint_id);
+  }catch(err){
+    statusEl.textContent = 'Could not reach the engine. Check connection and try again.';
+  }
+  btn.disabled = false;
+}
+
+function addHistory(shape, data, id){
+  const d = data.emotion.density;
+  const s = parseInt(document.getElementById('structure').value);
+  const a = parseInt(document.getElementById('asym').value);
+  historyRows.unshift({shape, id, density:d, structure:s, asym:a});
+  const tbody = document.getElementById('history-tbody');
+  const pillClass = `ht-${shape.replace(' ','-')}`;
+  tbody.innerHTML = historyRows.map(r=>`
+    <tr>
+      <td><span class="ht-pill ${pillClass}">${r.shape}</span></td>
+      <td>${r.density}</td>
+      <td>${r.structure}/10</td>
+      <td>${r.asym}/10</td>
+      <td style="color:var(--ec-green)">✓</td>
+      <td>—</td>
+    </tr>
+  `).join('');
+}
+
+function saveShape(){
+  savedCount++;
+  document.getElementById('m-saved').textContent = savedCount;
+  toast('Shape saved to library.');
+}
+
+function exportSVG(){
+  toast('SVG exported to downloads.');
+}
+
+function sendToLayout(){
+  toast('Shape sent to Layout Studio.');
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('input[type=range]').forEach(el=>{
+    const pct = ((el.value-el.min)/(el.max-el.min))*100;
+    el.style.setProperty('--pct',pct+'%');
+  });
+  drawShape();
+});
+</script>
+
+<script src="/evercrafted-tier-gate.js"></script>
+<script>ECGate.require({pack:"pro",title:"Parametric Lab",description:"Generate wreath forms from a handful of mood parameters."});</script>
+</body>
+</html>

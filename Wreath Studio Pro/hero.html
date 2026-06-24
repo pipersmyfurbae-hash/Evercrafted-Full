@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Hero</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Dancing+Script:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   RESET & TOKENS
+───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white:       #FFFFFF;
+  --off-white:   #F9F7F4;
+  --paper:       #F2EFE9;
+  --parchment:   #EAE4DA;
+  --black:       #1A1A1A;
+  --charcoal:    #2E2E2E;
+  --ink:         #4A4A4A;
+  --green:       #4A6741;
+  --green-mid:   #5C7E54;
+  --green-light: #6B8F67;
+  --green-pale:  #EEF2ED;
+  --green-dim:   rgba(74,103,65,0.10);
+  --gray-200:    #E8E8E8;
+  --gray-300:    #D0D0D0;
+  --gray-400:    #A8A8A8;
+  --gray-500:    #787878;
+  --serif:       'Cormorant Garamond', Georgia, serif;
+  --sans:        'Inter', system-ui, sans-serif;
+  --script:      'Dancing Script', cursive;
+  --ease:        cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:     cubic-bezier(0.4, 0, 1, 1);
+}
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+  background: var(--off-white);
+  color: var(--black);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─────────────────────────────────────────────
+   NAV
+───────────────────────────────────────────── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 56px;
+  height: 68px;
+  background: rgba(249,247,244,0.82);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.4s, background 0.4s;
+}
+.nav.pinned { border-color: var(--gray-200); }
+
+.nav-logo {
+  font-family: var(--script);
+  font-size: 1.55rem;
+  font-weight: 600;
+  color: var(--green);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
+
+.nav-links {
+  display: flex;
+  gap: 36px;
+  list-style: none;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.nav-links a {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0; right: 0;
+  height: 1px;
+  background: var(--green);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--ease);
+}
+.nav-links a:hover { color: var(--green); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.nav-signin {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-signin:hover { color: var(--black); }
+.nav-btn {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--black);
+  padding: 9px 22px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background 0.22s, transform 0.22s, box-shadow 0.22s;
+}
+.nav-btn:hover {
+  background: var(--green);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(74,103,65,0.28);
+}
+
+/* ─────────────────────────────────────────────
+   HERO LAYOUT
+───────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 55% 45%;
+  padding-top: 68px;
+}
+
+/* ── LEFT PANEL ── */
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 72px 64px 72px 56px;
+  position: relative;
+}
+
+/* Vertical rule */
+.hero-left::after {
+  content: '';
+  position: absolute;
+  right: 0; top: 15%; bottom: 15%;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--gray-200) 30%, var(--gray-200) 70%, transparent);
+}
+
+/* Eyebrow */
+.hero-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 36px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: up 0.7s var(--ease) 0.15s forwards;
+}
+.eyebrow-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--green-pale);
+  border: 1px solid rgba(74,103,65,0.18);
+  border-radius: 100px;
+  padding: 5px 14px 5px 8px;
+}
+.eyebrow-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+.eyebrow-text {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.eyebrow-divider {
+  width: 1px; height: 14px;
+  background: var(--gray-300);
+}
+.eyebrow-year {
+  font-size: 0.65rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+
+/* Hero headline */
+.hero-headline {
+  font-family: var(--serif);
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--black);
+  margin-bottom: 6px;
+}
+.headline-line-1 {
+  font-size: clamp(3.4rem, 5.5vw, 6rem);
+  display: block;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: up 0.85s var(--ease) 0.28s forwards;
+}
+.headline-line-2 {
+  font-size: clamp(3.4rem, 5.5vw, 6rem);
+  display: block;
+  font-style: italic;
+  color: var(--green);
+  opacity: 0;
+  transform: translateY(24px);
+  animation: up 0.85s var(--ease) 0.40s forwards;
+}
+.headline-script {
+  font-family: var(--script);
+  font-size: clamp(2.8rem, 4.5vw, 5rem);
+  font-weight: 600;
+  color: var(--charcoal);
+  display: block;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  margin-top: 2px;
+  opacity: 0;
+  transform: translateY(24px);
+  animation: up 0.85s var(--ease) 0.52s forwards;
+}
+
+/* Separator */
+.hero-rule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 36px 0;
+  opacity: 0;
+  animation: fadeIn 0.6s ease 0.7s forwards;
+}
+.hero-rule-line {
+  height: 1px;
+  width: 48px;
+  background: var(--gray-300);
+}
+.hero-rule-leaf {
+  color: var(--green);
+  opacity: 0.6;
+}
+
+/* Body copy */
+.hero-body {
+  font-size: 1.05rem;
+  line-height: 1.82;
+  color: var(--ink);
+  font-weight: 300;
+  max-width: 460px;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: up 0.75s var(--ease) 0.78s forwards;
+}
+
+/* CTAs */
+.hero-ctas {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 44px;
+  opacity: 0;
+  transform: translateY(14px);
+  animation: up 0.75s var(--ease) 0.9s forwards;
+}
+.cta-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--black);
+  color: var(--white);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 15px 36px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+}
+.cta-primary:hover {
+  background: var(--green);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(74,103,65,0.28);
+}
+.cta-primary svg { transition: transform 0.25s; }
+.cta-primary:hover svg { transform: translateX(4px); }
+
+.cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.2s, gap 0.3s var(--ease);
+}
+.cta-ghost:hover { color: var(--green); gap: 16px; }
+.cta-ghost .arrow { font-size: 0.9rem; transition: transform 0.3s var(--ease); }
+.cta-ghost:hover .arrow { transform: translateX(4px); }
+
+/* Social proof */
+.hero-proof {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid var(--gray-200);
+  opacity: 0;
+  animation: fadeIn 0.6s ease 1.1s forwards;
+}
+.proof-avatars {
+  display: flex;
+}
+.proof-avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--off-white);
+  margin-right: -10px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+}
+.proof-avatar:nth-child(1) { background: #7B9E76; }
+.proof-avatar:nth-child(2) { background: #9E7B7B; }
+.proof-avatar:nth-child(3) { background: #7B8C9E; }
+.proof-avatar:nth-child(4) { background: #9E9A7B; }
+.proof-text { margin-left: 18px; }
+.proof-stars {
+  font-size: 0.7rem;
+  color: #C4922A;
+  letter-spacing: 0.05em;
+  margin-bottom: 3px;
+}
+.proof-copy {
+  font-size: 0.72rem;
+  color: var(--gray-500);
+  line-height: 1.4;
+  font-weight: 300;
+}
+.proof-copy strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ── RIGHT PANEL ── */
+.hero-right {
+  position: relative;
+  background: var(--paper);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: fadeIn 1.1s var(--ease) 0.3s forwards;
+}
+
+/* Texture grain overlay */
+.hero-right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Concentric rings */
+.rings {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid var(--parchment);
+}
+.ring-1 { width: 520px; height: 520px; animation: spinSlow 80s linear infinite; }
+.ring-2 { width: 380px; height: 380px; border-style: dashed; border-color: var(--gray-300); animation: spinSlow 55s linear infinite reverse; }
+.ring-3 { width: 220px; height: 220px; animation: spinSlow 35s linear infinite; }
+
+/* Floating botanical accents */
+.floater {
+  position: absolute;
+  opacity: 0;
+  animation: floatIn 0.9s var(--ease) forwards;
+}
+.floater-1 { top: 18%; left: 12%; animation-delay: 0.6s; }
+.floater-2 { bottom: 22%; right: 14%; animation-delay: 0.8s; }
+.floater-3 { top: 62%; left: 8%;  animation-delay: 1.0s; }
+.floater-4 { top: 14%; right: 10%; animation-delay: 0.7s; }
+
+/* Main visual card */
+.hero-card {
+  position: relative;
+  z-index: 10;
+  background: var(--white);
+  border-radius: 3px;
+  box-shadow: 0 4px 40px rgba(0,0,0,0.09), 0 1px 0 var(--gray-200);
+  width: 288px;
+  overflow: hidden;
+  transform: translateY(20px);
+  animation: cardRise 1.1s var(--ease) 0.55s forwards;
+}
+
+/* Card top image area */
+.card-visual {
+  height: 176px;
+  background: var(--green-pale);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.card-visual-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 60% 40%, rgba(74,103,65,0.08) 0%, transparent 70%);
+}
+.card-wreath-svg {
+  position: relative;
+  z-index: 2;
+}
+
+/* Animated wreath SVG */
+.wreath-path {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: drawPath 2.4s var(--ease) 0.9s forwards;
+}
+.wreath-center-path {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: drawPath 1.8s var(--ease) 1.6s forwards;
+}
+
+/* Card body */
+.card-body {
+  padding: 24px 24px 20px;
+}
+.card-tier {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--green);
+  background: var(--green-pale);
+  border: 1px solid rgba(74,103,65,0.15);
+  padding: 3px 10px;
+  border-radius: 100px;
+  margin-bottom: 14px;
+}
+.card-title {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--black);
+  line-height: 1.25;
+  margin-bottom: 10px;
+}
+.card-desc {
+  font-size: 0.8rem;
+  line-height: 1.65;
+  color: var(--gray-500);
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+
+/* Progress bar */
+.card-progress-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.card-progress-label span {
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+.card-progress-label strong {
+  font-size: 0.7rem;
+  color: var(--green);
+  font-weight: 500;
+}
+.progress-track {
+  height: 3px;
+  background: var(--gray-200);
+  border-radius: 100px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--green);
+  border-radius: 100px;
+  animation: fillBar 1.4s var(--ease) 1.4s forwards;
+}
+
+/* Card footer */
+.card-footer {
+  padding: 14px 24px;
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.card-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--green-pale);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--green);
+}
+.card-avatar-name {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--ink);
+}
+.card-avatar-role {
+  font-size: 0.62rem;
+  color: var(--gray-400);
+}
+.card-action {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.card-action:hover { background: var(--green-pale); border-color: var(--green); }
+.card-action:hover svg path { stroke: var(--green); }
+
+/* Floating stat chips */
+.stat-chip {
+  position: absolute;
+  z-index: 20;
+  background: var(--white);
+  border-radius: 3px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.10);
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: chipFloat 0.8s var(--ease) forwards;
+}
+.chip-1 { top: 20%; left: -10px; animation-delay: 1.3s; }
+.chip-2 { bottom: 22%; right: -16px; animation-delay: 1.5s; }
+.chip-icon {
+  width: 32px; height: 32px;
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.chip-icon.green { background: var(--green-pale); }
+.chip-icon.warm  { background: #FEF3E2; }
+.chip-val {
+  font-family: var(--serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--black);
+  line-height: 1;
+  margin-bottom: 2px;
+}
+.chip-lbl {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+}
+
+/* ─────────────────────────────────────────────
+   TICKER STRIP
+───────────────────────────────────────────── */
+.ticker {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 42px;
+  background: var(--black);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  z-index: 100;
+}
+.ticker-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+  animation: ticker 30s linear infinite;
+  width: max-content;
+}
+.ticker-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 32px;
+}
+.ticker-dot {
+  width: 4px; height: 4px;
+  border-radius: 50%;
+  background: var(--green-light);
+  flex-shrink: 0;
+}
+.ticker-text {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+.ticker-accent {
+  font-family: var(--script);
+  font-size: 0.9rem;
+  color: var(--green-light);
+  font-weight: 600;
+}
+
+/* ─────────────────────────────────────────────
+   KEYFRAMES
+───────────────────────────────────────────── */
+@keyframes up {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+@keyframes cardRise {
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero-card { opacity: 0; }
+
+@keyframes floatIn {
+  to { opacity: 1; }
+}
+@keyframes chipFloat {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes spinSlow {
+  to { transform: rotate(360deg); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.7); }
+}
+@keyframes drawPath {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes fillBar {
+  to { width: 73%; }
+}
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-right { display: none; }
+  .hero-left { padding: 96px 32px 80px; }
+  .hero-left::after { display: none; }
+  .nav { padding: 0 32px; }
+  .nav-links { display: none; }
+}
+
+@media (max-width: 480px) {
+  .hero-left { padding: 88px 24px 72px; }
+  .hero-ctas { flex-direction: column; align-items: flex-start; }
+  .hero-proof { flex-direction: column; align-items: flex-start; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav class="nav" id="nav">
+  <a href="#" class="nav-logo">Evercrafted</a>
+  <ul class="nav-links">
+    <li><a href="#">About</a></li>
+    <li><a href="#">Platform</a></li>
+    <li><a href="#">Pricing</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <a href="#" class="nav-signin">Sign in</a>
+    <a href="#" class="nav-btn">Join Waitlist</a>
+  </div>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+
+  <!-- LEFT: Copy -->
+  <div class="hero-left">
+
+    <div class="hero-eyebrow">
+      <div class="eyebrow-pill">
+        <div class="eyebrow-dot"></div>
+        <span class="eyebrow-text">Now accepting applications</span>
+      </div>
+      <div class="eyebrow-divider"></div>
+      <span class="eyebrow-year">Early Access · 2025</span>
+    </div>
+
+    <h1 class="hero-headline">
+      <span class="headline-line-1">The studio for</span>
+      <span class="headline-line-2">serious makers</span>
+    </h1>
+    <span class="headline-script">& their craft.</span>
+
+    <div class="hero-rule">
+      <div class="hero-rule-line"></div>
+      <div class="hero-rule-leaf">
+        <svg width="14" height="14" viewBox="0 0 32 32" fill="none">
+          <path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M16 28L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+        </svg>
+      </div>
+    </div>
+
+    <p class="hero-body">Evercrafted is the all-in-one workspace for professional wreath makers and interior designers — design, track, sell, and grow from one beautifully crafted platform.</p>
+
+    <div class="hero-ctas">
+      <a href="#" class="cta-primary">
+        Request Early Access
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <a href="#" class="cta-ghost">
+        See the platform
+        <span class="arrow">→</span>
+      </a>
+    </div>
+
+    <div class="hero-proof">
+      <div class="proof-avatars">
+        <div class="proof-avatar">SM</div>
+        <div class="proof-avatar">DK</div>
+        <div class="proof-avatar">JR</div>
+        <div class="proof-avatar">AT</div>
+      </div>
+      <div class="proof-text">
+        <div class="proof-stars">★★★★★</div>
+        <p class="proof-copy"><strong>240+ makers</strong> already on the waitlist</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT: Visual -->
+  <div class="hero-right">
+
+    <!-- Rings -->
+    <div class="rings">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <div class="ring ring-3"></div>
+    </div>
+
+    <!-- Botanical floaters -->
+    <div class="floater floater-1">
+      <svg width="44" height="44" viewBox="0 0 32 32" fill="none" style="color:var(--green);opacity:0.35">
+        <path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M16 28L16 10" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 2"/>
+        <path d="M16 18C16 18 12 16 10 13" stroke="currentColor" stroke-width="0.8"/>
+        <path d="M16 14C16 14 20 12 22 9" stroke="currentColor" stroke-width="0.8"/>
+      </svg>
+    </div>
+    <div class="floater floater-2" style="transform:rotate(-30deg)">
+      <svg width="36" height="36" viewBox="0 0 32 32" fill="none" style="color:var(--green);opacity:0.28">
+        <path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M16 28L16 10" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 2"/>
+      </svg>
+    </div>
+    <div class="floater floater-3" style="transform:rotate(60deg)">
+      <svg width="28" height="28" viewBox="0 0 32 32" fill="none" style="color:var(--green);opacity:0.22">
+        <path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M16 28L16 10" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 2"/>
+      </svg>
+    </div>
+    <div class="floater floater-4" style="transform:rotate(-55deg)">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style="color:var(--green);opacity:0.25">
+        <path d="M16 28C16 28 8 20 8 12C8 7.6 11.6 4 16 4C20.4 4 24 7.6 24 12C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M16 28L16 10" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 2"/>
+        <path d="M16 18C16 18 12 16 10 13" stroke="currentColor" stroke-width="0.8"/>
+      </svg>
+    </div>
+
+    <!-- Floating stat chips -->
+    <div class="stat-chip chip-1">
+      <div class="chip-icon green">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <div>
+        <div class="chip-val">+34%</div>
+        <div class="chip-lbl">Sales this season</div>
+      </div>
+    </div>
+
+    <div class="stat-chip chip-2">
+      <div class="chip-icon warm">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4922A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+      <div>
+        <div class="chip-val">4.9</div>
+        <div class="chip-lbl">Avg. client rating</div>
+      </div>
+    </div>
+
+    <!-- Main card -->
+    <div class="hero-card">
+
+      <!-- Card visual: animated wreath -->
+      <div class="card-visual">
+        <div class="card-visual-bg"></div>
+        <svg class="card-wreath-svg" width="148" height="148" viewBox="0 0 148 148" fill="none">
+          <!-- Outer wreath ring (animates in) -->
+          <circle cx="74" cy="74" r="60" stroke="#D4DDD2" stroke-width="1" stroke-dasharray="4 3"/>
+          <circle cx="74" cy="74" r="50" stroke="#BFD0BC" stroke-width="0.5"/>
+
+          <!-- Animated leaf cluster paths -->
+          <g class="wreath-path" stroke="#4A6741" stroke-width="1.2" stroke-linecap="round" fill="none">
+            <!-- top cluster -->
+            <path d="M74 24 C74 24 68 16 62 18 C56 20 58 28 64 28 C68 28 74 24 74 24Z" fill="rgba(74,103,65,0.12)"/>
+            <path d="M74 24 C74 24 80 16 86 18 C92 20 90 28 84 28 C80 28 74 24 74 24Z" fill="rgba(74,103,65,0.12)"/>
+            <path d="M74 20 L74 28"/>
+            <!-- right cluster -->
+            <path d="M124 74 C124 74 132 68 130 62 C128 56 120 58 120 64 C120 68 124 74 124 74Z" fill="rgba(74,103,65,0.12)"/>
+            <path d="M124 74 C124 74 132 80 130 86 C128 92 120 90 120 84 C120 80 124 74 124 74Z" fill="rgba(74,103,65,0.12)"/>
+            <path d="M128 74 L120 74"/>
+            <!-- bottom cluster -->
+            <path d="M74 124 C74 124 68 132 62 130 C56 128 58 120 64 120 C68 120 74 124 74 124Z" fill="rgba(74,103,65,0.12)"/>
+            <path d="M74 124 C74 124 80 132 86 130 C92 128 90 120 84 120 C80 120 74 124 74 124Z" fill="rgba(74,103,65,0.12)"/>
+            <path d="M74 128 L74 120"/>
+            <!-- left cluster -->
+            <path d="M24 74 C24 74 16 68 18 62 C20 56 28 58 28 64 C28 68 24 74 24 74Z" fill="rgba(74,103,65,0.12)"/>
+            <path d="M24 74 C24 74 16 80 18 86 C20 92 28 90 28 84 C28 80 24 74 24 74Z" fill="rgba(74,103,65,0.12)"/>
+            <path d="M20 74 L28 74"/>
+          </g>
+
+          <!-- Diagonal sprigs -->
+          <g class="wreath-path" stroke="#6B8F67" stroke-width="0.8" stroke-linecap="round" fill="none">
+            <path d="M104 44 C104 44 100 36 94 36 C88 36 88 44 94 46 C98 47 104 44 104 44Z" fill="rgba(107,143,103,0.10)"/>
+            <path d="M44 44 C44 44 40 36 46 34 C52 32 54 40 50 44 C47 47 44 44 44 44Z" fill="rgba(107,143,103,0.10)"/>
+            <path d="M104 104 C104 104 112 100 112 94 C112 88 104 88 102 94 C101 98 104 104 104 104Z" fill="rgba(107,143,103,0.10)"/>
+            <path d="M44 104 C44 104 36 100 36 94 C36 88 44 88 46 94 C47 98 44 104 44 104Z" fill="rgba(107,143,103,0.10)"/>
+          </g>
+
+          <!-- Center focal ring -->
+          <g class="wreath-center-path" stroke="#4A6741" stroke-linecap="round" fill="none">
+            <circle cx="74" cy="74" r="20" stroke-width="0.8" stroke-dasharray="3 2"/>
+            <circle cx="74" cy="74" r="5" stroke-width="1.5" fill="rgba(74,103,65,0.15)"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- Card body -->
+      <div class="card-body">
+        <div class="card-tier">
+          <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="3" fill="var(--green)"/></svg>
+          Studio Blueprint
+        </div>
+        <div class="card-title">Autumn Harvest Wreath</div>
+        <p class="card-desc">24″ grapevine · dried naturals · focal cluster at 12 o'clock</p>
+        <div class="card-progress-label">
+          <span>Materials sourced</span>
+          <strong>73%</strong>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
+
+      <!-- Card footer -->
+      <div class="card-footer">
+        <div class="card-avatar-row">
+          <div class="card-avatar">SR</div>
+          <div>
+            <div class="card-avatar-name">Sarah R.</div>
+            <div class="card-avatar-role">Atelier member</div>
+          </div>
+        </div>
+        <div class="card-action">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="var(--gray-400)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+
+    </div>
+    <!-- /hero-card -->
+
+  </div>
+  <!-- /hero-right -->
+
+</section>
+
+<!-- ── TICKER ── -->
+<div class="ticker">
+  <div class="ticker-track" id="ticker">
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Wreath Blueprint Generator</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">AI Stylist &amp; Trend Engine</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Supply &amp; Inventory Tracker</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Client Portal</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Room Visualizer</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Storefront &amp; Marketplace</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Etsy &amp; Instagram Sync</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <!-- duplicate for seamless loop -->
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Wreath Blueprint Generator</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">AI Stylist &amp; Trend Engine</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Supply &amp; Inventory Tracker</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Client Portal</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Room Visualizer</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Storefront &amp; Marketplace</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+    <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Etsy &amp; Instagram Sync</span></div>
+    <div class="ticker-item"><span class="ticker-accent">✦</span></div>
+  </div>
+</div>
+
+<script>
+// Sticky nav border
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('pinned', window.scrollY > 10);
+}, { passive: true });
+
+// Subtle parallax on right panel rings
+const rings = document.querySelectorAll('.ring');
+window.addEventListener('mousemove', e => {
+  const x = (e.clientX / window.innerWidth - 0.5) * 14;
+  const y = (e.clientY / window.innerHeight - 0.5) * 14;
+  rings.forEach((r, i) => {
+    const depth = (i + 1) * 0.4;
+    r.style.transform = `translate(${x * depth}px, ${y * depth}px) rotate(${i % 2 === 0 ? x * 0.3 : -x * 0.3}deg)`;
+  });
+}, { passive: true });
+</script>
+</body>
+</html>

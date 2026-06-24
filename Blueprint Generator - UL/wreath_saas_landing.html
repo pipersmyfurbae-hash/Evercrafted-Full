@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WreathBlueprint - AI-Powered Wreath Design Platform</title>
+    <meta name="description" content="Transform wreath images into precise blueprints with AI-powered coordinate generation. Professional tools for florists, crafters, and wreath makers.">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            /* Evercrafted Brand Tokens */
+            --ec-cream: #F9F7F4;
+            --ec-green: #4A6741;
+            --ec-black: #1A1A1A;
+            --ec-gold: #c9a96e;
+            --ec-bark: #3d2e1e;
+            --ec-sage: #7a9e7e;
+            
+            /* Tier Colors */
+            --bloom: #c8968f;
+            --craft: #7a9e7e;
+            --studio: #c9a96e;
+            --atelier: #8b7b6f;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--ec-cream);
+            color: var(--ec-black);
+            line-height: 1.6;
+        }
+        
+        .serif {
+            font-family: 'Cormorant Garamond', serif;
+        }
+        
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(249, 247, 244, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+            z-index: 1000;
+        }
+        
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--ec-green);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo::before {
+            content: '🌿';
+            font-size: 32px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--ec-black);
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: var(--ec-green);
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 15px;
+        }
+        
+        .btn-primary {
+            background: var(--ec-green);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #3d5434;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(74, 103, 65, 0.3);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--ec-black);
+            color: var(--ec-black);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--ec-black);
+            color: var(--ec-cream);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 140px 30px 100px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 64px;
+            font-weight: 700;
+            color: var(--ec-black);
+            margin-bottom: 24px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            color: #4a4a4a;
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .hero-demo {
+            margin-top: 80px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            border: 1px solid rgba(26, 26, 26, 0.1);
+        }
+        
+        .hero-demo img {
+            width: 100%;
+            display: block;
+        }
+        
+        /* Features Section */
+        .features {
+            padding: 100px 30px;
+            background: white;
+        }
+        
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+        
+        .section-eyebrow {
+            font-size: 14px;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--ec-green);
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--ec-black);
+            margin-bottom: 16px;
+        }
+        
+        .section-subtitle {
+            font-size: 18px;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+        }
+        
+        .feature-card {
+            text-align: center;
+            padding: 40px 30px;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        
+        .feature-card:hover {
+            background: var(--ec-cream);
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 48px;
+            margin-bottom: 24px;
+        }
+        
+        .feature-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--ec-black);
+        }
+        
+        .feature-card p {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.7;
+        }
+        
+        /* Pricing Section */
+        .pricing {
+            padding: 100px 30px;
+            background: var(--ec-cream);
+        }
+        
+        .pricing-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 60px;
+        }
+        
+        .pricing-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .pricing-card.featured {
+            border-color: var(--ec-green);
+            transform: scale(1.05);
+        }
+        
+        .pricing-badge {
+            position: absolute;
+            top: -12px;
+            right: 30px;
+            background: var(--ec-green);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+        
+        .pricing-tier {
+            font-size: 14px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .bloom-tier { color: var(--bloom); }
+        .craft-tier { color: var(--craft); }
+        .studio-tier { color: var(--studio); }
+        .atelier-tier { color: var(--atelier); }
+        
+        .pricing-amount {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .pricing-period {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+        
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+        
+        .pricing-features li {
+            padding: 12px 0;
+            font-size: 14px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--ec-green);
+            font-weight: 700;
+        }
+        
+        .pricing-features li.disabled {
+            color: #ccc;
+        }
+        
+        .pricing-features li.disabled::before {
+            content: '—';
+            color: #ccc;
+        }
+        
+        .pricing-cta {
+            width: 100%;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 30px;
+            background: var(--ec-green);
+            text-align: center;
+        }
+        
+        .cta-section h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 48px;
+            color: white;
+            margin-bottom: 24px;
+        }
+        
+        .cta-section p {
+            font-size: 18px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 40px;
+        }
+        
+        .btn-white {
+            background: white;
+            color: var(--ec-green);
+        }
+        
+        .btn-white:hover {
+            background: var(--ec-cream);
+        }
+        
+        /* Footer */
+        footer {
+            background: white;
+            padding: 60px 30px 30px;
+            border-top: 1px solid rgba(26, 26, 26, 0.1);
+        }
+        
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-brand h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        
+        .footer-brand p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        
+        .footer-links h4 {
+            font-weight: 600;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .footer-links ul {
+            list-style: none;
+        }
+        
+        .footer-links ul li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links ul li a {
+            color: #666;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+        
+        .footer-links ul li a:hover {
+            color: var(--ec-green);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(26, 26, 26, 0.1);
+            color: #666;
+            font-size: 13px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .pricing-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 42px;
+            }
+            
+            .pricing-grid,
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">WreathBlueprint</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#docs">Docs</a>
+                <a href="/login" class="btn btn-secondary">Log In</a>
+                <a href="/signup" class="btn btn-primary">Start Free</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1 class="serif">Transform Wreaths into<br>Precise Blueprints</h1>
+        <p>AI-powered wreath analysis with exact coordinate generation. Upload an image, get professional blueprints in seconds. Perfect for florists, crafters, and wreath makers.</p>
+        <div class="hero-cta">
+            <a href="/signup" class="btn btn-primary" style="padding: 16px 40px; font-size: 16px;">Start Creating Free</a>
+            <a href="#demo" class="btn btn-secondary" style="padding: 16px 40px; font-size: 16px;">Watch Demo</a>
+        </div>
+        <div class="hero-demo">
+            <svg viewBox="0 0 1000 600" style="background: #f8fafc;">
+                <!-- Placeholder for demo screenshot -->
+                <rect width="1000" height="600" fill="#f8fafc"/>
+                <circle cx="500" cy="300" r="150" fill="none" stroke="#4A6741" stroke-width="3"/>
+                <circle cx="500" cy="300" r="100" fill="none" stroke="#4A6741" stroke-width="2" stroke-dasharray="5,5"/>
+                <circle cx="500" cy="300" r="3" fill="#e53e3e"/>
+                <text x="500" y="500" text-anchor="middle" font-family="Cormorant Garamond" font-size="20" fill="#666">Live Blueprint Generation Demo</text>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-header">
+                <div class="section-eyebrow">Powerful Features</div>
+                <h2 class="section-title serif">Everything You Need to Design Better</h2>
+                <p class="section-subtitle">Professional-grade tools for precise wreath design and manufacturing</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>AI Auto-Detection</h3>
+                    <p>Upload any wreath image and our AI automatically detects boundaries, elements, and dimensions with 94%+ accuracy.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📐</div>
+                    <h3>Precise Coordinates</h3>
+                    <p>Generate exact X,Y coordinates with customizable precision from 8 to 36 points around your wreath perimeter.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Element Recognition</h3>
+                    <p>Identify florals, greenery, berries, and decorations with confidence scores and exact placement data.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Multiple Export Formats</h3>
+                    <p>Download blueprints as PDF, SVG, JSON, or CSV. Perfect for manufacturing, CAD systems, or laser cutting.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Real-Time Scaling</h3>
+                    <p>Convert pixel coordinates to real-world measurements with automatic scaling from reference objects.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Batch Processing</h3>
+                    <p>Process multiple wreaths simultaneously with our Studio and Atelier tiers for production workflows.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="pricing-container">
+            <div class="section-header">
+                <div class="section-eyebrow">Simple Pricing</div>
+                <h2 class="section-title serif">Choose Your Perfect Plan</h2>
+                <p class="section-subtitle">Start free, upgrade as you grow. No hidden fees, cancel anytime.</p>
+            </div>
+            
+            <div class="pricing-grid">
+                <!-- Bloom (Free) -->
+                <div class="pricing-card">
+                    <div class="pricing-tier bloom-tier">Bloom</div>
+                    <div class="pricing-amount">$0</div>
+                    <div class="pricing-period">Forever free</div>
+                    <ul class="pricing-features">
+                        <li>3 blueprints/month</li>
+                        <li>PNG export only</li>
+                        <li>Basic coordinates</li>
+                        <li>Community support</li>
+                        <li class="disabled">API access</li>
+                        <li class="disabled">Batch processing</li>
+                    </ul>
+                    <a href="/signup?tier=bloom" class="btn btn-secondary pricing-cta">Start Free</a>
+                </div>
+                
+                <!-- Craft (Pro) -->
+                <div class="pricing-card featured">
+                    <div class="pricing-badge">Most Popular</div>
+                    <div class="pricing-tier craft-tier">Craft</div>
+                    <div class="pricing-amount">$9.99</div>
+                    <div class="pricing-period">per month</div>
+                    <ul class="pricing-features">
+                        <li>50 blueprints/month</li>
+                        <li>All export formats</li>
+                        <li>Advanced coordinates</li>
+                        <li>Email support</li>
+                        <li>API access</li>
+                        <li class="disabled">Batch processing</li>
+                    </ul>
+                    <a href="/signup?tier=craft" class="btn btn-primary pricing-cta">Start 14-Day Trial</a>
+                </div>
+                
+                <!-- Studio (Business) -->
+                <div class="pricing-card">
+                    <div class="pricing-tier studio-tier">Studio</div>
+                    <div class="pricing-amount">$29.99</div>
+                    <div class="pricing-period">per month</div>
+                    <ul class="pricing-features">
+                        <li>Unlimited blueprints</li>
+                        <li>All formats + White-label</li>
+                        <li>Premium coordinates</li>
+                        <li>Priority support</li>
+                        <li>Full API access</li>
+                        <li>Batch processing</li>
+                    </ul>
+                    <a href="/signup?tier=studio" class="btn btn-primary pricing-cta">Start 14-Day Trial</a>
+                </div>
+                
+                <!-- Atelier (Enterprise) -->
+                <div class="pricing-card">
+                    <div class="pricing-tier atelier-tier">Atelier</div>
+                    <div class="pricing-amount">$99.99</div>
+                    <div class="pricing-period">per month</div>
+                    <ul class="pricing-features">
+                        <li>Unlimited everything</li>
+                        <li>Custom integrations</li>
+                        <li>Team collaboration</li>
+                        <li>Dedicated support</li>
+                        <li>Custom API limits</li>
+                        <li>Advanced analytics</li>
+                    </ul>
+                    <a href="/contact" class="btn btn-primary pricing-cta">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <h2 class="serif">Ready to Transform Your Workflow?</h2>
+        <p>Join hundreds of florists and wreath makers using AI-powered blueprints</p>
+        <a href="/signup" class="btn btn-white" style="padding: 16px 40px; font-size: 16px;">Start Free Today</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3 class="serif">WreathBlueprint</h3>
+                <p>AI-powered wreath design platform for professionals. Transform images into precise blueprints with coordinate-level accuracy.</p>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="/api">API</a></li>
+                    <li><a href="/changelog">Changelog</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="/docs">Documentation</a></li>
+                    <li><a href="/tutorials">Tutorials</a></li>
+                    <li><a href="/blog">Blog</a></li>
+                    <li><a href="/support">Support</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-links">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/privacy">Privacy</a></li>
+                    <li><a href="/terms">Terms</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 WreathBlueprint. All rights reserved. Part of the Evercrafted design platform.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html><html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Your account — Evercrafted</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Italiana&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FDFCFA;--soft:#F6F1E8;--ink:#2B2A24;--ink2:#4A4639;--mut:#6E6755;--faint:#9b917c;--gold:#A98249;--gold-d:#8C6A38;--green:#46663E;--green-d:#3A5532;--cream:#F7F2E8;
+--serif:'Italiana',Georgia,serif;--sans:'Inter',system-ui,sans-serif;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);font-weight:300;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}.serif{font-family:var(--serif)}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:18px clamp(20px,5vw,64px);border-bottom:1px solid #ece3d2;position:sticky;top:0;background:rgba(253,252,250,.92);backdrop-filter:blur(10px);z-index:50}
+.logo{font-family:var(--serif);font-size:1.5rem;letter-spacing:.04em}.logo span{color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:clamp(1rem,2.5vw,1.8rem)}
+.nav-links a{font-size:13px;color:var(--mut)}
+.signout{background:none;border:none;font-family:var(--sans);font-size:13px;color:var(--mut);cursor:pointer}
+.wrap{max-width:1080px;margin:0 auto;padding:clamp(2rem,5vw,3.4rem) clamp(20px,5vw,64px) 4rem}
+.banner{background:#eef3ea;border:1px solid #d6e3cd;color:var(--green-d);border-radius:14px;padding:1rem 1.3rem;font-size:.95rem;margin-bottom:2rem;display:none}
+.banner.show{display:block}
+.head{margin-bottom:2.4rem}
+.ov{font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-d);margin-bottom:.7rem}
+.head h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,4vw,2.8rem);letter-spacing:.01em}
+.head .email{color:var(--mut);margin-top:.5rem;font-size:1rem}
+.tierline{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;background:#fff;border:1px solid #ece3d2;border-radius:100px;padding:7px 16px;font-size:13px;color:var(--ink2)}
+.tierline b{color:var(--green)}
+.sec-title{font-family:var(--serif);font-weight:400;font-size:1.5rem;margin:2.4rem 0 1.2rem}
+.packs{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.3rem}
+.pack{background:#fff;border:1px solid #ece3d2;border-radius:18px;padding:1.6rem;display:flex;flex-direction:column}
+.pack.owned{border-color:var(--green);box-shadow:0 12px 34px rgba(70,102,62,.12)}
+.pack-tag{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-d);margin-bottom:.5rem}
+.pack h3{font-family:var(--serif);font-weight:400;font-size:1.5rem;letter-spacing:.01em}
+.pack .who{font-size:.9rem;color:var(--mut);font-style:italic;margin:.3rem 0 1rem}
+.pack-foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;border-top:1px solid #f0e9d9;padding-top:1.1rem}
+.price{font-family:var(--serif);font-size:1.4rem}.price small{font-family:var(--sans);font-size:.82rem;color:var(--mut)}
+.buy{padding:9px 18px;border-radius:100px;border:1.5px solid var(--green);background:var(--green);color:#fff;font-family:var(--sans);font-size:13px;font-weight:500;cursor:pointer;transition:all .18s}
+.buy:hover{background:var(--green-d);border-color:var(--green-d)}
+.buy:disabled{opacity:.6;cursor:default}
+.owned-pill{font-size:12px;font-weight:600;color:var(--green);display:inline-flex;align-items:center;gap:.4rem}
+.empty{color:var(--mut);font-size:.95rem;font-style:italic}
+.note{margin-top:1.2rem;font-size:12px;color:var(--faint)}
+.loading{text-align:center;color:var(--mut);padding:4rem 0}
+#app{display:none}
+</style></head><body>
+<nav class="nav">
+  <a class="logo" href="/evercrafted-marketing-site.html">Ever<span>crafted</span></a>
+  <div class="nav-links">
+    <a href="/evercrafted-marketplace.html">Marketplace</a>
+    <a href="/evercrafted-how-it-works.html">How it works</a>
+    <button class="signout" id="signout">Sign out</button>
+  </div>
+</nav>
+
+<div class="loading" id="loading">Loading your account…</div>
+
+<div class="wrap" id="app">
+  <div class="banner" id="banner"></div>
+  <div class="head">
+    <div class="ov">Your studio</div>
+    <h1>Your tools &amp; packs</h1>
+    <div class="email" id="email"></div>
+    <div class="tierline">Plan tier · <b id="tier">Bloom</b></div>
+  </div>
+
+  <div class="sec-title">Your packs</div>
+  <div id="owned-list"></div>
+
+  <div class="sec-title">Add a pack</div>
+  <div class="packs" id="store"></div>
+  <div class="note" id="billnote">Packs are monthly subscriptions, billed securely through Stripe. Cancel anytime.</div>
+</div>
+
+<script src="/assets/supabase.js"></script>
+<script src="/evercrafted-auth.js"></script>
+<script>
+(function () {
+  var CATALOG = [
+    { id:'ops',  tag:'Studio & Ops',  name:'Run your studio',   who:'For the maker keeping it all straight.', price:12 },
+    { id:'sell', tag:'Sell & Market', name:'Sell your work',    who:'For turning designs into orders.',        price:15 },
+    { id:'grow', tag:'Grow & Teach',  name:'Sell your knowledge',who:'For teaching the craft.',                price:19 },
+    { id:'pro',  tag:'Pro tools',     name:'Pro toolkit',       who:'Prompt Studio + Parametric Lab.',         price:8  },
+  ];
+  var loading = document.getElementById('loading'), app = document.getElementById('app'),
+      banner = document.getElementById('banner');
+
+  // Purchase-success banner from Stripe redirect.
+  var purchased = new URLSearchParams(location.search).get('purchased');
+  if (purchased) { banner.textContent = '✦ The ' + purchased + ' pack is now active on your account.'; banner.classList.add('show'); }
+
+  if (!window.ECAuth) { loading.textContent = 'Auth is unavailable right now — refresh shortly.'; return; }
+
+  document.getElementById('signout').addEventListener('click', function () {
+    ECAuth.signOut().then(function () { location.href = '/evercrafted-login.html'; });
+  });
+
+  ECAuth.user().then(function (user) {
+    if (!user) { location.href = '/evercrafted-login.html'; return; }
+    document.getElementById('email').textContent = user.email || '';
+    return ECAuth.token().then(function (token) { return render(token, user); });
+  });
+
+  function render(token, user) {
+    return fetch('/api/entitlements', { headers: token ? { Authorization: 'Bearer ' + token } : {} })
+      .then(function (r) { return r.json(); })
+      .then(function (ent) {
+        var owned = ent.packs || [];
+        document.getElementById('tier').textContent = (ent.tier || 'bloom').replace(/^./, function (c) { return c.toUpperCase(); });
+
+        // Owned list
+        var ownedWrap = document.getElementById('owned-list');
+        var mine = CATALOG.filter(function (p) { return owned.indexOf(p.id) >= 0; });
+        if (!mine.length) {
+          ownedWrap.innerHTML = '<p class="empty">No packs yet — add one below to unlock its tools.</p>';
+        } else {
+          ownedWrap.className = 'packs';
+          ownedWrap.innerHTML = mine.map(function (p) {
+            return '<div class="pack owned"><div class="pack-tag">' + p.tag + '</div>' +
+              '<h3>' + p.name + '</h3><div class="who">' + p.who + '</div>' +
+              '<div class="pack-foot"><span class="owned-pill">✦ Active</span>' +
+              '<a class="buy" href="/evercrafted-marketplace.html" style="text-decoration:none;display:inline-block">Open tools</a></div></div>';
+          }).join('');
+        }
+
+        // Store (packs not owned)
+        var store = document.getElementById('store');
+        var avail = CATALOG.filter(function (p) { return owned.indexOf(p.id) < 0; });
+        if (!avail.length) { store.innerHTML = '<p class="empty">You own every pack — you have the full Evercrafted suite. ✦</p>'; }
+        else {
+          store.innerHTML = avail.map(function (p) {
+            return '<div class="pack"><div class="pack-tag">' + p.tag + '</div>' +
+              '<h3>' + p.name + '</h3><div class="who">' + p.who + '</div>' +
+              '<div class="pack-foot"><div class="price">$' + p.price + '<small>/mo</small></div>' +
+              '<button class="buy" data-pack="' + p.id + '">Add pack</button></div></div>';
+          }).join('');
+          [].forEach.call(store.querySelectorAll('.buy'), function (btn) {
+            btn.addEventListener('click', function () { checkout(btn.getAttribute('data-pack'), btn, token); });
+          });
+        }
+
+        loading.style.display = 'none'; app.style.display = 'block';
+      })
+      .catch(function () { loading.textContent = 'Could not load your account — refresh to retry.'; });
+  }
+
+  function checkout(pack, btn, token) {
+    btn.disabled = true; btn.textContent = 'Opening checkout…';
+    fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ pack: pack }),
+    }).then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+      .then(function (res) {
+        if (res.ok && res.j.url) { location.href = res.j.url; return; }
+        btn.disabled = false; btn.textContent = 'Add pack';
+        var note = document.getElementById('billnote');
+        note.style.color = '#a8434a';
+        note.textContent = res.j.error === 'billing not configured'
+          ? 'Billing isn’t switched on yet — add the Stripe keys to go live.'
+          : (res.j.error || 'Could not start checkout. Try again.');
+      })
+      .catch(function () { btn.disabled = false; btn.textContent = 'Add pack'; });
+  }
+})();
+</script>
+</body></html>

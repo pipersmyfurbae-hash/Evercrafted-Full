@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — About</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Dancing+Script:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   RESET & TOKENS
+───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --white:       #FFFFFF;
+  --off-white:   #F9F7F4;
+  --paper:       #F2EFE9;
+  --parchment:   #EAE4DA;
+  --black:       #1A1A1A;
+  --charcoal:    #2E2E2E;
+  --ink:         #4A4A4A;
+  --green:       #4A6741;
+  --green-mid:   #5C7E54;
+  --green-light: #6B8F67;
+  --green-pale:  #EEF2ED;
+  --green-dim:   rgba(74,103,65,0.10);
+  --gray-200:    #E8E8E8;
+  --gray-300:    #D0D0D0;
+  --gray-400:    #A8A8A8;
+  --gray-500:    #787878;
+  --serif:       'Cormorant Garamond', Georgia, serif;
+  --sans:        'Inter', system-ui, sans-serif;
+  --script:      'Dancing Script', cursive;
+  --ease:        cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html, body {
+  background: var(--off-white);
+  color: var(--black);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ─────────────────────────────────────────────
+   SCROLL REVEAL
+───────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.85s var(--ease), transform 0.85s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.85s var(--ease), transform 0.85s var(--ease);
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+.reveal-right {
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.85s var(--ease), transform 0.85s var(--ease);
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+.d1 { transition-delay: 0.08s; }
+.d2 { transition-delay: 0.18s; }
+.d3 { transition-delay: 0.28s; }
+.d4 { transition-delay: 0.38s; }
+
+/* ─────────────────────────────────────────────
+   SECTION LABEL (reused)
+───────────────────────────────────────────── */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.section-label::before {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 1px;
+  background: var(--green);
+  flex-shrink: 0;
+}
+.section-label span {
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+
+/* ─────────────────────────────────────────────
+   1. OPENER — FULL-WIDTH EDITORIAL BAND
+───────────────────────────────────────────── */
+.about-opener {
+  background: var(--black);
+  padding: 96px 64px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Faint botanical watermark */
+.opener-watermark {
+  position: absolute;
+  right: -40px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.04;
+  pointer-events: none;
+}
+
+.opener-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: end;
+}
+
+.opener-left .section-label::before { background: var(--green-light); }
+.opener-left .section-label span { color: var(--green-light); }
+
+.opener-kicker {
+  font-family: var(--script);
+  font-size: 1.4rem;
+  color: var(--green-light);
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.opener-headline {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 4.5vw, 5rem);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+.opener-headline em {
+  font-style: italic;
+  color: var(--green-light);
+}
+
+.opener-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 32px;
+}
+
+.opener-pull {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-style: italic;
+  line-height: 1.65;
+  color: rgba(255,255,255,0.65);
+  border-left: 1px solid var(--green);
+  padding-left: 24px;
+}
+
+.opener-body {
+  font-size: 0.9rem;
+  line-height: 1.85;
+  color: rgba(255,255,255,0.4);
+  font-weight: 300;
+  max-width: 440px;
+}
+
+/* ─────────────────────────────────────────────
+   2. FOUNDER STRIP — ASYMMETRIC
+───────────────────────────────────────────── */
+.founder-strip {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 100px 64px;
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+/* Left: founder portrait placeholder + signature */
+.founder-portrait-col {
+  position: sticky;
+  top: 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.portrait-frame {
+  position: relative;
+  background: var(--paper);
+  border-radius: 3px;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Illustrated placeholder instead of a photo */
+.portrait-illustration {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.portrait-bg-circles {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portrait-tag {
+  position: absolute;
+  bottom: 0;
+  left: 0; right: 0;
+  padding: 20px 24px;
+  background: linear-gradient(to top, rgba(26,26,26,0.85), transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.portrait-name {
+  font-family: var(--serif);
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--white);
+}
+.portrait-role {
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+}
+
+.founder-signature {
+  margin-top: 24px;
+  padding: 20px 24px;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.sig-text {
+  font-family: var(--script);
+  font-size: 2rem;
+  color: var(--green);
+  font-weight: 600;
+  line-height: 1;
+}
+.sig-divider {
+  width: 1px;
+  height: 32px;
+  background: var(--gray-200);
+  flex-shrink: 0;
+}
+.sig-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.sig-title {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--black);
+}
+.sig-sub {
+  font-size: 0.65rem;
+  color: var(--gray-400);
+  letter-spacing: 0.06em;
+}
+
+/* Right: story content */
+.founder-story {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding-top: 8px;
+}
+
+.story-chapter {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.chapter-num {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gray-400);
+  margin-bottom: 4px;
+}
+.chapter-heading {
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  font-weight: 400;
+  line-height: 1.25;
+  color: var(--black);
+}
+.chapter-body {
+  font-size: 0.95rem;
+  line-height: 1.85;
+  color: var(--ink);
+  font-weight: 300;
+}
+.chapter-body + .chapter-body { margin-top: -4px; }
+
+/* Pull quote within story */
+.story-pullquote {
+  border-left: 2px solid var(--green);
+  padding: 4px 0 4px 24px;
+  margin: 8px 0;
+}
+.story-pullquote p {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-style: italic;
+  line-height: 1.6;
+  color: var(--charcoal);
+}
+
+/* Inline value pills */
+.value-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.value-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--green-pale);
+  border: 1px solid rgba(74,103,65,0.15);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--green);
+  letter-spacing: 0.04em;
+}
+.value-pill svg { flex-shrink: 0; }
+
+/* ─────────────────────────────────────────────
+   3. STATS BAR — FULL-WIDTH
+───────────────────────────────────────────── */
+.stats-bar {
+  border-top: 1px solid var(--gray-200);
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--white);
+  overflow: hidden;
+}
+.stats-bar-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 64px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.stat-cell {
+  padding: 56px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  border-right: 1px solid var(--gray-200);
+  padding-right: 40px;
+  padding-left: 40px;
+  cursor: default;
+  transition: background 0.25s;
+}
+.stat-cell:first-child { padding-left: 0; }
+.stat-cell:last-child  { border-right: none; padding-right: 0; }
+.stat-cell:hover { background: var(--green-pale); }
+
+.stat-number {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 4vw, 4rem);
+  font-weight: 300;
+  line-height: 1;
+  color: var(--black);
+  letter-spacing: -0.02em;
+}
+.stat-number .stat-accent { color: var(--green); }
+.stat-label {
+  font-size: 0.7rem;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  line-height: 1.5;
+}
+.stat-sub {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  font-style: italic;
+  font-family: var(--serif);
+  margin-top: 2px;
+}
+
+/* ─────────────────────────────────────────────
+   4. VALUES GRID
+───────────────────────────────────────────── */
+.values-section {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 100px 64px;
+}
+
+.values-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: end;
+  margin-bottom: 64px;
+}
+.values-header h2 {
+  font-family: var(--serif);
+  font-size: clamp(2rem, 3vw, 3rem);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--black);
+}
+.values-header-right p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--ink);
+  font-weight: 300;
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+
+.value-card {
+  background: var(--white);
+  padding: 44px 36px;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+}
+.value-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--green);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease);
+}
+.value-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.08); z-index: 2; }
+.value-card:hover::after { transform: scaleX(1); }
+
+.value-card-num {
+  font-family: var(--serif);
+  font-size: 3.5rem;
+  font-weight: 300;
+  color: var(--gray-200);
+  line-height: 1;
+  margin-bottom: 20px;
+  display: block;
+  transition: color 0.3s;
+}
+.value-card:hover .value-card-num { color: var(--green-pale); }
+
+.value-card-icon {
+  width: 40px; height: 40px;
+  background: var(--green-pale);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.value-card-title {
+  font-family: var(--serif);
+  font-size: 1.35rem;
+  font-weight: 400;
+  color: var(--black);
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+.value-card-body {
+  font-size: 0.85rem;
+  line-height: 1.78;
+  color: var(--gray-500);
+  font-weight: 300;
+}
+
+/* Dark feature card */
+.value-card--dark {
+  background: var(--black);
+}
+.value-card--dark .value-card-num { color: rgba(255,255,255,0.06); }
+.value-card--dark:hover .value-card-num { color: rgba(255,255,255,0.08); }
+.value-card--dark .value-card-icon { background: rgba(255,255,255,0.06); }
+.value-card--dark .value-card-title { color: var(--white); }
+.value-card--dark .value-card-body { color: rgba(255,255,255,0.45); }
+
+/* Green feature card */
+.value-card--green {
+  background: var(--green);
+}
+.value-card--green .value-card-num { color: rgba(255,255,255,0.12); }
+.value-card--green:hover .value-card-num { color: rgba(255,255,255,0.18); }
+.value-card--green .value-card-icon { background: rgba(255,255,255,0.12); }
+.value-card--green .value-card-title { color: var(--white); }
+.value-card--green .value-card-body { color: rgba(255,255,255,0.65); }
+.value-card--green::after { background: rgba(255,255,255,0.3); }
+
+/* ─────────────────────────────────────────────
+   5. CLOSING CTA BAND
+───────────────────────────────────────────── */
+.about-cta-band {
+  background: var(--paper);
+  border-top: 1px solid var(--gray-200);
+  padding: 80px 64px;
+}
+.about-cta-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+.cta-band-text h3 {
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  font-weight: 300;
+  color: var(--black);
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+.cta-band-text p {
+  font-size: 0.9rem;
+  color: var(--ink);
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 420px;
+}
+.cta-band-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.btn-dark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--black);
+  color: var(--white);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 15px 36px;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+  white-space: nowrap;
+}
+.btn-dark:hover {
+  background: var(--green);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(74,103,65,0.25);
+}
+.btn-dark svg { transition: transform 0.25s; }
+.btn-dark:hover svg { transform: translateX(4px); }
+.cta-band-note {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+  text-align: right;
+}
+
+/* ─────────────────────────────────────────────
+   KEYFRAMES
+───────────────────────────────────────────── */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .opener-inner       { grid-template-columns: 1fr; gap: 40px; }
+  .founder-strip      { grid-template-columns: 1fr; gap: 48px; padding: 72px 40px; }
+  .founder-portrait-col { position: static; }
+  .portrait-frame     { aspect-ratio: 3/2; }
+  .stats-bar-inner    { grid-template-columns: repeat(2, 1fr); padding: 0 40px; }
+  .stat-cell:nth-child(2) { border-right: none; padding-right: 0; }
+  .stat-cell:nth-child(3) { border-top: 1px solid var(--gray-200); padding-left: 0; }
+  .values-header      { grid-template-columns: 1fr; }
+  .values-section     { padding: 72px 40px; }
+  .values-grid        { grid-template-columns: 1fr 1fr; }
+  .about-cta-band     { padding: 64px 40px; }
+  .about-cta-inner    { flex-direction: column; align-items: flex-start; }
+  .cta-band-actions   { align-items: flex-start; }
+  .cta-band-note      { text-align: left; }
+  .opener-inner, .about-opener { padding: 72px 40px; }
+}
+
+@media (max-width: 640px) {
+  .about-opener       { padding: 64px 24px; }
+  .values-grid        { grid-template-columns: 1fr; }
+  .stats-bar-inner    { grid-template-columns: 1fr 1fr; padding: 0 24px; }
+  .stat-cell          { padding: 40px 20px; }
+  .stat-cell:first-child { padding-left: 0; }
+  .stat-cell:last-child  { padding-right: 0; }
+  .values-section, .about-cta-band, .founder-strip { padding-left: 24px; padding-right: 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+  1. OPENER BAND
+══════════════════════════════════════ -->
+<section class="about-opener">
+
+  <!-- Watermark botanical -->
+  <div class="opener-watermark">
+    <svg width="600" height="600" viewBox="0 0 200 200" fill="none">
+      <circle cx="100" cy="100" r="90" stroke="white" stroke-width="0.5"/>
+      <circle cx="100" cy="100" r="65" stroke="white" stroke-width="0.5" stroke-dasharray="4 3"/>
+      <circle cx="100" cy="100" r="40" stroke="white" stroke-width="0.5"/>
+      <path d="M100 10C100 10 85 40 85 60C85 78 95 88 100 90C105 88 115 78 115 60C115 40 100 10 100 10Z" stroke="white" stroke-width="0.5" fill="none"/>
+      <path d="M100 190C100 190 85 160 85 140C85 122 95 112 100 110C105 112 115 122 115 140C115 160 100 190 100 190Z" stroke="white" stroke-width="0.5" fill="none"/>
+      <path d="M10 100C10 100 40 85 60 85C78 85 88 95 90 100C88 105 78 115 60 115C40 115 10 100 10 100Z" stroke="white" stroke-width="0.5" fill="none"/>
+      <path d="M190 100C190 100 160 85 140 85C122 85 112 95 110 100C112 105 122 115 140 115C160 115 190 100 190 100Z" stroke="white" stroke-width="0.5" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="opener-inner">
+    <div class="opener-left reveal-left">
+      <div class="section-label"><span>Our Story</span></div>
+      <span class="opener-kicker">Rooted in craft.</span>
+      <h1 class="opener-headline">
+        Built by makers,<br>for the art of<br><em>making.</em>
+      </h1>
+    </div>
+    <div class="opener-right reveal-right d2">
+      <p class="opener-pull">"Every talented wreath artist we knew was spending more time in spreadsheets than in their studio. We believed there had to be a better way."</p>
+      <p class="opener-body">Evercrafted started as a simple frustration and grew into a full platform — one designed from the ground up for the craft maker and the design professional who refuses to choose between beauty and business.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  2. FOUNDER STRIP
+══════════════════════════════════════ -->
+<div class="founder-strip">
+
+  <!-- Left: portrait + signature -->
+  <div class="founder-portrait-col reveal-left">
+    <div class="portrait-frame">
+      <div class="portrait-illustration">
+        <!-- Decorative botanical illustration as portrait stand-in -->
+        <svg width="100%" height="100%" viewBox="0 0 380 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background wash -->
+          <rect width="380" height="500" fill="#EAE4DA"/>
+          <!-- Large organic wreath illustration -->
+          <circle cx="190" cy="230" r="140" stroke="#C8BFB0" stroke-width="1" stroke-dasharray="6 4"/>
+          <circle cx="190" cy="230" r="105" stroke="#BFB5A5" stroke-width="0.5"/>
+          <!-- Leaf clusters at cardinal points -->
+          <g stroke="#7A9676" stroke-width="1.2" fill="none" stroke-linecap="round">
+            <!-- top -->
+            <path d="M190 90C190 90 178 68 164 70C150 72 153 88 166 90C174 91 190 90 190 90Z" fill="rgba(122,150,118,0.18)"/>
+            <path d="M190 90C190 90 202 68 216 70C230 72 227 88 214 90C206 91 190 90 190 90Z" fill="rgba(122,150,118,0.18)"/>
+            <path d="M190 86L190 100"/>
+            <!-- bottom -->
+            <path d="M190 370C190 370 178 392 164 390C150 388 153 372 166 370C174 369 190 370 190 370Z" fill="rgba(122,150,118,0.18)"/>
+            <path d="M190 370C190 370 202 392 216 390C230 388 227 372 214 370C206 369 190 370 190 370Z" fill="rgba(122,150,118,0.18)"/>
+            <path d="M190 374L190 360"/>
+            <!-- right -->
+            <path d="M330 230C330 230 352 218 350 204C348 190 332 193 330 206C329 214 330 230 330 230Z" fill="rgba(122,150,118,0.18)"/>
+            <path d="M330 230C330 230 352 242 350 256C348 270 332 267 330 254C329 246 330 230 330 230Z" fill="rgba(122,150,118,0.18)"/>
+            <path d="M334 230L320 230"/>
+            <!-- left -->
+            <path d="M50 230C50 230 28 218 30 204C32 190 48 193 50 206C51 214 50 230 50 230Z" fill="rgba(122,150,118,0.18)"/>
+            <path d="M50 230C50 230 28 242 30 256C32 270 48 267 50 254C51 246 50 230 50 230Z" fill="rgba(122,150,118,0.18)"/>
+            <path d="M46 230L60 230"/>
+          </g>
+          <!-- Diagonal accent sprigs -->
+          <g stroke="#9DB599" stroke-width="0.8" fill="none" stroke-linecap="round">
+            <path d="M280 130C280 130 292 116 300 120C308 124 304 136 296 136C290 136 280 130 280 130Z" fill="rgba(157,181,153,0.15)"/>
+            <path d="M100 130C100 130 88 116 80 120C72 124 76 136 84 136C90 136 100 130 100 130Z" fill="rgba(157,181,153,0.15)"/>
+            <path d="M280 330C280 330 292 344 300 340C308 336 304 324 296 324C290 324 280 330 280 330Z" fill="rgba(157,181,153,0.15)"/>
+            <path d="M100 330C100 330 88 344 80 340C72 336 76 324 84 324C90 324 100 330 100 330Z" fill="rgba(157,181,153,0.15)"/>
+          </g>
+          <!-- Center monogram -->
+          <circle cx="190" cy="230" r="36" fill="white" opacity="0.85"/>
+          <circle cx="190" cy="230" r="36" stroke="#BFB5A5" stroke-width="0.5"/>
+          <text x="190" y="238" text-anchor="middle" font-family="'Cormorant Garamond', Georgia, serif" font-size="24" font-weight="400" fill="#4A6741" letter-spacing="-0.02em">EC</text>
+          <!-- subtle texture lines -->
+          <line x1="0" y1="460" x2="380" y2="460" stroke="#C8BFB0" stroke-width="0.5"/>
+          <line x1="0" y1="470" x2="380" y2="470" stroke="#C8BFB0" stroke-width="0.3"/>
+        </svg>
+      </div>
+      <div class="portrait-tag">
+        <div class="portrait-name">Bret</div>
+        <div class="portrait-role">Founder & Designer, Evercrafted</div>
+      </div>
+    </div>
+
+    <div class="founder-signature reveal d2">
+      <div class="sig-text">Bret</div>
+      <div class="sig-divider"></div>
+      <div class="sig-meta">
+        <div class="sig-title">Founder & Designer</div>
+        <div class="sig-sub">Evercrafted Studio · Cincinnati, OH</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: story chapters -->
+  <div class="founder-story">
+
+    <div class="story-chapter reveal d1">
+      <div class="chapter-num">Chapter 01</div>
+      <h2 class="chapter-heading">A frustration that became a platform</h2>
+      <p class="chapter-body">It started with watching incredibly talented wreath makers and decor artists spend half their week doing things that had nothing to do with creating. Pricing in spreadsheets. Managing supply lists in notes apps. Sending invoices through PayPal. Uploading photos to four different platforms.</p>
+      <p class="chapter-body">The tools existed — they just weren't built for this world. Every option was either too generic, too expensive, or designed for a completely different kind of business. Something had to change.</p>
+    </div>
+
+    <div class="story-chapter reveal d1">
+      <div class="story-pullquote">
+        <p>The best wreath makers we knew weren't struggling with craft. They were struggling with the business of craft. That's the problem Evercrafted was built to solve.</p>
+      </div>
+    </div>
+
+    <div class="story-chapter reveal d1">
+      <div class="chapter-num">Chapter 02</div>
+      <h2 class="chapter-heading">Design as a first principle</h2>
+      <p class="chapter-body">From day one, the platform was designed to feel like it belonged in a high-end florist's studio — not a generic SaaS dashboard. Every interaction, every color choice, every typographic decision was made with one question in mind: does this feel worthy of the craft it serves?</p>
+      <p class="chapter-body">The wreath-making world has its own vocabulary, its own rhythms — polar coordinates, focal flowers, seasonal windows, grapevine versus pine. Evercrafted speaks that language natively, built in from the ground up, not bolted on as an afterthought.</p>
+      <div class="value-pills">
+        <div class="value-pill">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z"/></svg>
+          Craft-first design
+        </div>
+        <div class="value-pill">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          Built for your workflow
+        </div>
+        <div class="value-pill">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/></svg>
+          Maker community
+        </div>
+      </div>
+    </div>
+
+    <div class="story-chapter reveal d1">
+      <div class="chapter-num">Chapter 03</div>
+      <h2 class="chapter-heading">What comes next</h2>
+      <p class="chapter-body">Evercrafted is opening early access to a small, curated group of professional makers and interior designers in 2025. The goal isn't scale for scale's sake — it's building the right platform with the right people, getting the details right before opening the doors wide.</p>
+      <p class="chapter-body">If you're serious about your craft and tired of the tool chaos, this is built for you.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  3. STATS BAR
+══════════════════════════════════════ -->
+<div class="stats-bar">
+  <div class="stats-bar-inner">
+
+    <div class="stat-cell reveal d1">
+      <div class="stat-number">500<span class="stat-accent">K+</span></div>
+      <div class="stat-label">Wreath sellers<br>in the US alone</div>
+      <div class="stat-sub">And most use spreadsheets.</div>
+    </div>
+
+    <div class="stat-cell reveal d2">
+      <div class="stat-number"><span class="stat-accent">6</span>+</div>
+      <div class="stat-label">Tools replaced<br>by one platform</div>
+      <div class="stat-sub">Etsy, Canva, PayPal, Notion…</div>
+    </div>
+
+    <div class="stat-cell reveal d3">
+      <div class="stat-number">19</div>
+      <div class="stat-label">Modular apps<br>at launch</div>
+      <div class="stat-sub">Mix, match, and upgrade.</div>
+    </div>
+
+    <div class="stat-cell reveal d4">
+      <div class="stat-number"><span class="stat-accent">4</span></div>
+      <div class="stat-label">Subscription tiers<br>for every stage</div>
+      <div class="stat-sub">Bloom → Craft → Studio → Atelier</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+  4. VALUES GRID
+══════════════════════════════════════ -->
+<section class="values-section">
+  <div class="values-header">
+    <div>
+      <div class="section-label reveal"><span>What we believe</span></div>
+      <h2 class="reveal d1">The principles<br>behind the platform</h2>
+    </div>
+    <div class="values-header-right reveal d2">
+      <p>Evercrafted isn't just a set of tools — it's a point of view about what professional craft software should look, feel, and work like. These are the principles we refuse to compromise on.</p>
+    </div>
+  </div>
+
+  <div class="values-grid">
+
+    <div class="value-card reveal d1">
+      <span class="value-card-num">01</span>
+      <div class="value-card-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+      <div class="value-card-title">Craft over complexity</div>
+      <p class="value-card-body">Software should reduce friction, not add it. Every feature in Evercrafted earns its place by making the creative process faster, clearer, or more profitable.</p>
+    </div>
+
+    <div class="value-card value-card--dark reveal d2">
+      <span class="value-card-num">02</span>
+      <div class="value-card-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+        </svg>
+      </div>
+      <div class="value-card-title">Domain fluency</div>
+      <p class="value-card-body">We speak wreath. Polar coordinates, FFLGA classification, golden angle distribution, grapevine versus pine — it's all built in, not translated from generic SaaS logic.</p>
+    </div>
+
+    <div class="value-card reveal d3">
+      <span class="value-card-num">03</span>
+      <div class="value-card-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+        </svg>
+      </div>
+      <div class="value-card-title">Modular by design</div>
+      <p class="value-card-body">You shouldn't pay for features you don't use. Every app in the platform is purchasable individually or bundled — built to grow with you, not lock you in.</p>
+    </div>
+
+    <div class="value-card value-card--green reveal d1">
+      <span class="value-card-num">04</span>
+      <div class="value-card-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="value-card-title">Privacy-first</div>
+      <p class="value-card-body">Your designs, your client lists, your inventory — they're yours. We don't sell your data, train models on your work, or monetize your creative output.</p>
+    </div>
+
+    <div class="value-card reveal d2">
+      <span class="value-card-num">05</span>
+      <div class="value-card-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <div class="value-card-title">Business-grade analytics</div>
+      <p class="value-card-body">Real margin data, seasonal performance, sell-through rates. The numbers you need to make better decisions — presented beautifully, not buried in a dashboard.</p>
+    </div>
+
+    <div class="value-card reveal d3">
+      <span class="value-card-num">06</span>
+      <div class="value-card-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
+      </div>
+      <div class="value-card-title">Built with makers</div>
+      <p class="value-card-body">Every feature has been shaped by conversations with real wreath artists, interior designers, and Etsy sellers. We ship what the craft community actually needs.</p>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════
+  5. CLOSING CTA BAND
+══════════════════════════════════════ -->
+<div class="about-cta-band">
+  <div class="about-cta-inner">
+    <div class="cta-band-text reveal">
+      <h3>Ready to simplify your<br>craft business?</h3>
+      <p>Join the waitlist for early access. We're opening to a small group first — no rush, no pressure. Just a platform we think you'll love.</p>
+    </div>
+    <div class="cta-band-actions reveal d2">
+      <a href="#" class="btn-dark">
+        Apply for Early Access
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <span class="cta-band-note">240+ makers already on the waitlist · No credit card required</span>
+    </div>
+  </div>
+</div>
+
+<script>
+// Scroll reveal observer
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -48px 0px' });
+
+document.querySelectorAll('.reveal, .reveal-left, .reveal-right').forEach(el => observer.observe(el));
+
+// Stat counter animation
+const statNumbers = document.querySelectorAll('.stat-number');
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.animation = 'countUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards';
+      statsObserver.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.4 });
+
+statNumbers.forEach(el => {
+  el.style.opacity = '0';
+  statsObserver.observe(el);
+});
+</script>
+</body>
+</html>

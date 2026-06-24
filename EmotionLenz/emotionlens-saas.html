@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EmotionLens — AI Prompt Composer for Wreath Designers</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sage: #8B9E7A;
+  --sage-light: #C8D5BE;
+  --sage-pale: #EEF2EA;
+  --cream: #F7F4EE;
+  --cream-dark: #EDE8DF;
+  --bark: #5C4A32;
+  --bark-light: #8C7055;
+  --bark-pale: #D4C4AC;
+  --charcoal: #2C2820;
+  --charcoal-mid: #4A4238;
+  --charcoal-light: #7A7268;
+  --gold: #B8952A;
+  --gold-light: #E8C84A;
+  --white: #FDFCFA;
+  --radius: 4px;
+  --radius-lg: 8px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Jost', sans-serif;
+  background: var(--cream);
+  color: var(--charcoal);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* ─── NAV ─────────────────────────────────────────────────────── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  background: rgba(247,244,238,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--bark-pale);
+  padding: 0 2rem;
+  height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600;
+  color: var(--charcoal); letter-spacing: .02em;
+  cursor: pointer;
+}
+.nav-logo span { color: var(--sage); }
+.nav-links { display: flex; gap: 2rem; align-items: center; }
+.nav-links a {
+  font-size: 13px; font-weight: 400; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--charcoal-light);
+  text-decoration: none; cursor: pointer;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--charcoal); }
+.nav-cta {
+  background: var(--charcoal); color: var(--cream) !important;
+  padding: 8px 20px; border-radius: var(--radius);
+  font-size: 12px !important; letter-spacing: .12em !important;
+}
+.nav-cta:hover { background: var(--bark) !important; color: var(--cream) !important; }
+
+/* ─── PAGES ───────────────────────────────────────────────────── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ─── HERO ────────────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  padding-top: 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+.hero-left {
+  padding: 8rem 4rem 4rem 6rem;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.hero-eyebrow {
+  font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--sage); font-weight: 500; margin-bottom: 1.5rem;
+  display: flex; align-items: center; gap: 10px;
+}
+.hero-eyebrow::before {
+  content: ''; display: block; width: 32px; height: 1px; background: var(--sage);
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(42px, 5vw, 68px);
+  font-weight: 300; line-height: 1.1;
+  color: var(--charcoal); margin-bottom: 1.5rem;
+  letter-spacing: -.01em;
+}
+.hero-title em { font-style: italic; color: var(--bark-light); }
+.hero-subtitle {
+  font-size: 16px; font-weight: 300; line-height: 1.8;
+  color: var(--charcoal-light); max-width: 420px; margin-bottom: 2.5rem;
+}
+.hero-actions { display: flex; gap: 12px; align-items: center; }
+.btn-primary {
+  background: var(--charcoal); color: var(--cream);
+  padding: 14px 32px; border: none; border-radius: var(--radius);
+  font-family: 'Jost', sans-serif; font-size: 13px;
+  font-weight: 500; letter-spacing: .1em; text-transform: uppercase;
+  cursor: pointer; transition: all .2s;
+}
+.btn-primary:hover { background: var(--bark); transform: translateY(-1px); }
+.btn-ghost {
+  background: transparent; color: var(--charcoal-light);
+  padding: 14px 24px; border: 1px solid var(--bark-pale);
+  border-radius: var(--radius);
+  font-family: 'Jost', sans-serif; font-size: 13px;
+  letter-spacing: .06em; cursor: pointer; transition: all .2s;
+}
+.btn-ghost:hover { border-color: var(--bark-light); color: var(--charcoal); }
+.hero-social {
+  margin-top: 3rem; display: flex; gap: 2rem;
+}
+.hero-stat { text-align: left; }
+.hero-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px; font-weight: 300; color: var(--charcoal);
+}
+.hero-stat-label {
+  font-size: 11px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--charcoal-light);
+}
+.hero-right {
+  background: var(--charcoal);
+  position: relative; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.hero-visual {
+  position: relative; z-index: 2;
+  padding: 3rem;
+}
+.wreath-svg { width: 320px; height: 320px; }
+/* Animated botanical ring */
+@keyframes slowRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.rotating-ring { transform-origin: 160px 160px; animation: slowRotate 60s linear infinite; }
+.hero-card {
+  position: absolute; bottom: 2.5rem; left: 2.5rem; right: 2.5rem;
+  background: rgba(247,244,238,0.08);
+  border: 1px solid rgba(247,244,238,0.15);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.25rem;
+  backdrop-filter: blur(8px);
+}
+.hero-card-label { font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: rgba(247,244,238,0.5); margin-bottom: 6px; }
+.hero-card-text { font-size: 12px; color: rgba(247,244,238,0.9); line-height: 1.6; font-family: 'Jost', sans-serif; }
+.hero-card-text strong { color: #C8D5BE; font-weight: 400; }
+
+/* ─── FEATURES ────────────────────────────────────────────────── */
+.features {
+  padding: 8rem 6rem;
+  background: var(--white);
+}
+.section-header { text-align: center; margin-bottom: 5rem; }
+.section-eyebrow {
+  font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--sage); font-weight: 500; margin-bottom: 1rem;
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 4vw, 48px); font-weight: 300;
+  line-height: 1.2; color: var(--charcoal);
+}
+.section-title em { font-style: italic; color: var(--bark-light); }
+.features-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
+  background: var(--bark-pale);
+  border: 2px solid var(--bark-pale);
+  border-radius: var(--radius-lg); overflow: hidden;
+}
+.feature-card {
+  background: var(--white); padding: 2.5rem;
+  transition: background .2s;
+}
+.feature-card:hover { background: var(--sage-pale); }
+.feature-icon {
+  width: 48px; height: 48px; margin-bottom: 1.5rem;
+  background: var(--sage-pale); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+}
+.feature-icon svg { width: 22px; height: 22px; stroke: var(--sage); fill: none; stroke-width: 1.5; }
+.feature-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 400; margin-bottom: .75rem;
+  color: var(--charcoal);
+}
+.feature-desc { font-size: 14px; color: var(--charcoal-light); line-height: 1.8; font-weight: 300; }
+
+/* ─── HOW IT WORKS ────────────────────────────────────────────── */
+.how-it-works { padding: 8rem 6rem; background: var(--cream); }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3rem; margin-top: 5rem; }
+.step { text-align: center; }
+.step-num {
+  font-family: 'Cormorant Garamond', serif; font-size: 64px;
+  font-weight: 300; color: var(--sage-light); line-height: 1;
+  margin-bottom: 1rem;
+}
+.step-name {
+  font-family: 'Cormorant Garamond', serif; font-size: 20px;
+  margin-bottom: .5rem; color: var(--charcoal);
+}
+.step-desc { font-size: 13px; color: var(--charcoal-light); line-height: 1.8; font-weight: 300; }
+
+/* ─── TESTIMONIALS ────────────────────────────────────────────── */
+.testimonials { padding: 8rem 6rem; background: var(--charcoal); }
+.testimonials .section-title { color: var(--cream); }
+.testimonials .section-eyebrow { color: var(--sage-light); }
+.testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 4rem; }
+.testi-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: var(--radius-lg); padding: 2rem;
+}
+.testi-stars { color: var(--gold-light); font-size: 14px; margin-bottom: 1rem; letter-spacing: 2px; }
+.testi-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; font-weight: 300; line-height: 1.6;
+  color: rgba(247,244,238,0.9); margin-bottom: 1.5rem; font-style: italic;
+}
+.testi-author { display: flex; align-items: center; gap: 10px; }
+.testi-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--sage); display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 500; color: var(--charcoal);
+}
+.testi-name { font-size: 13px; color: var(--cream); font-weight: 500; }
+.testi-handle { font-size: 12px; color: rgba(247,244,238,0.4); }
+
+/* ─── PRICING ─────────────────────────────────────────────────── */
+#page-pricing { padding-top: 60px; }
+.pricing-hero {
+  padding: 6rem 6rem 4rem;
+  text-align: center;
+  background: var(--white);
+}
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding: 0 6rem 6rem;
+  background: var(--white);
+}
+.plan-card {
+  border: 1px solid var(--bark-pale);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  background: var(--white);
+  position: relative;
+  transition: transform .2s, box-shadow .2s;
+}
+.plan-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(44,40,32,0.1); }
+.plan-card.featured {
+  border-color: var(--bark-light);
+  background: var(--charcoal);
+}
+.plan-badge {
+  position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+  background: var(--sage); color: var(--charcoal);
+  font-size: 11px; letter-spacing: .15em; text-transform: uppercase;
+  padding: 4px 16px; border-radius: 20px; font-weight: 500;
+}
+.plan-name {
+  font-family: 'Cormorant Garamond', serif; font-size: 26px;
+  font-weight: 300; margin-bottom: .5rem;
+}
+.plan-card.featured .plan-name { color: var(--cream); }
+.plan-price {
+  font-family: 'Cormorant Garamond', serif; font-size: 52px;
+  font-weight: 300; line-height: 1; margin: 1.5rem 0 .25rem;
+}
+.plan-card.featured .plan-price { color: var(--cream); }
+.plan-per { font-size: 13px; color: var(--charcoal-light); margin-bottom: 2rem; }
+.plan-card.featured .plan-per { color: rgba(247,244,238,0.5); }
+.plan-features { list-style: none; margin-bottom: 2rem; }
+.plan-features li {
+  font-size: 14px; color: var(--charcoal-light);
+  padding: 8px 0; border-bottom: 1px solid var(--cream-dark);
+  display: flex; align-items: center; gap: 10px; font-weight: 300;
+}
+.plan-card.featured .plan-features li {
+  color: rgba(247,244,238,0.7);
+  border-bottom-color: rgba(255,255,255,0.08);
+}
+.plan-features li::before { content: '—'; color: var(--sage); font-size: 12px; }
+.plan-cta {
+  width: 100%; padding: 13px;
+  font-family: 'Jost', sans-serif; font-size: 12px;
+  letter-spacing: .12em; text-transform: uppercase; font-weight: 500;
+  border-radius: var(--radius); cursor: pointer; transition: all .2s;
+  border: 1px solid var(--bark-pale);
+  background: transparent; color: var(--charcoal);
+}
+.plan-cta:hover { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+.plan-card.featured .plan-cta {
+  background: var(--sage); color: var(--charcoal); border-color: var(--sage);
+}
+.plan-card.featured .plan-cta:hover { background: var(--sage-light); }
+.pricing-faq { padding: 4rem 6rem 8rem; background: var(--white); }
+.faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 3rem; }
+.faq-item { border-top: 1px solid var(--bark-pale); padding-top: 1.5rem; }
+.faq-q { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; margin-bottom: .75rem; }
+.faq-a { font-size: 14px; color: var(--charcoal-light); line-height: 1.8; font-weight: 300; }
+
+/* ─── APP ─────────────────────────────────────────────────────── */
+#page-app { padding-top: 60px; min-height: 100vh; background: var(--cream); }
+.app-header {
+  background: var(--white); border-bottom: 1px solid var(--bark-pale);
+  padding: 1.5rem 3rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.app-header-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400; }
+.app-header-meta { font-size: 13px; color: var(--charcoal-light); }
+.upgrade-pill {
+  background: var(--sage-pale); color: var(--charcoal);
+  border: 1px solid var(--sage-light); border-radius: 20px;
+  padding: 6px 16px; font-size: 12px; cursor: pointer;
+  transition: all .2s; letter-spacing: .04em;
+}
+.upgrade-pill:hover { background: var(--sage-light); }
+.app-layout { display: grid; grid-template-columns: 300px 1fr; min-height: calc(100vh - 120px); }
+.app-sidebar {
+  background: var(--white); border-right: 1px solid var(--bark-pale);
+  padding: 1.5rem; overflow-y: auto;
+}
+.app-main { padding: 2rem; }
+.sidebar-section { margin-bottom: 1.5rem; }
+.sidebar-label {
+  font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--charcoal-light); font-weight: 500; margin-bottom: .75rem;
+  padding-bottom: .5rem; border-bottom: 1px solid var(--cream-dark);
+}
+.emo-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.emo-name { font-size: 13px; color: var(--charcoal); width: 80px; flex-shrink: 0; font-weight: 300; }
+.emo-row input[type=range] {
+  flex: 1; -webkit-appearance: none; height: 3px;
+  background: var(--cream-dark); border-radius: 2px; cursor: pointer;
+}
+.emo-row input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px;
+  border-radius: 50%; background: var(--bark-light); cursor: pointer;
+}
+.emo-val { font-size: 11px; color: var(--charcoal-light); width: 28px; text-align: right; }
+.chip-group { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip {
+  padding: 4px 10px; border-radius: 2px;
+  font-size: 12px; cursor: pointer; font-weight: 300;
+  border: 1px solid var(--bark-pale); color: var(--charcoal-light);
+  background: transparent; transition: all .15s; letter-spacing: .02em;
+}
+.chip:hover { border-color: var(--bark-light); color: var(--charcoal); }
+.chip.on { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+.chip.on.green { background: var(--sage); color: var(--charcoal); border-color: var(--sage); }
+.chip.on.warm { background: var(--bark-light); color: var(--cream); border-color: var(--bark-light); }
+
+/* output area */
+.output-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+.output-card {
+  background: var(--white); border: 1px solid var(--bark-pale);
+  border-radius: var(--radius-lg); padding: 1.5rem; overflow: hidden;
+}
+.output-card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1rem; padding-bottom: .75rem;
+  border-bottom: 1px solid var(--cream-dark);
+}
+.output-card-title { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--charcoal-light); }
+.output-actions { display: flex; gap: 6px; }
+.action-btn {
+  padding: 5px 12px; font-size: 11px; letter-spacing: .06em;
+  border: 1px solid var(--bark-pale); border-radius: var(--radius);
+  background: transparent; color: var(--charcoal-light); cursor: pointer; transition: all .15s;
+}
+.action-btn:hover { border-color: var(--bark-light); color: var(--charcoal); }
+.action-btn.accent { background: var(--charcoal); color: var(--cream); border-color: var(--charcoal); }
+.action-btn.accent:hover { background: var(--bark); }
+.natural-text {
+  font-family: 'Cormorant Garamond', serif; font-size: 20px;
+  font-weight: 300; line-height: 1.8; color: var(--charcoal);
+  font-style: italic; min-height: 80px;
+}
+.mj-text {
+  font-family: 'Courier New', monospace; font-size: 12px;
+  line-height: 1.8; color: var(--bark); word-break: break-all;
+  background: var(--cream); padding: 1rem; border-radius: var(--radius);
+  min-height: 72px;
+}
+.emotion-viz {
+  display: flex; gap: 6px; align-items: flex-end; height: 60px; margin: 1rem 0;
+}
+.emo-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; }
+.emo-bar { width: 100%; background: var(--sage); border-radius: 2px 2px 0 0; transition: height .4s ease; min-height: 2px; }
+.emo-bar-label { font-size: 10px; color: var(--charcoal-light); letter-spacing: .04em; }
+
+.params-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+.param-select {
+  padding: 6px 10px; font-size: 12px; font-family: 'Jost', sans-serif;
+  border: 1px solid var(--bark-pale); border-radius: var(--radius);
+  background: var(--white); color: var(--charcoal); cursor: pointer;
+}
+.generate-btn {
+  width: 100%; padding: 14px; margin-top: .5rem;
+  font-family: 'Jost', sans-serif; font-size: 12px;
+  letter-spacing: .18em; text-transform: uppercase; font-weight: 500;
+  background: var(--charcoal); color: var(--cream);
+  border: none; border-radius: var(--radius); cursor: pointer; transition: all .2s;
+}
+.generate-btn:hover { background: var(--bark); }
+.generate-btn:active { transform: scale(.99); }
+
+.history-list { display: flex; flex-direction: column; gap: 8px; margin-top: 1rem; }
+.history-item {
+  background: var(--white); border: 1px solid var(--bark-pale);
+  border-radius: var(--radius); padding: .75rem 1rem; cursor: pointer;
+  transition: border-color .15s;
+}
+.history-item:hover { border-color: var(--bark-light); }
+.history-item-time { font-size: 11px; color: var(--charcoal-light); margin-bottom: 3px; }
+.history-item-preview { font-size: 12px; color: var(--charcoal); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: 'Courier New', monospace; }
+
+.toast {
+  position: fixed; bottom: 2rem; right: 2rem;
+  background: var(--charcoal); color: var(--cream);
+  padding: 10px 20px; border-radius: var(--radius);
+  font-size: 13px; opacity: 0; transform: translateY(10px);
+  transition: all .3s; pointer-events: none; z-index: 999;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* account banner */
+.account-banner {
+  background: var(--sage-pale); border-bottom: 1px solid var(--sage-light);
+  padding: .6rem 3rem; display: flex; justify-content: space-between; align-items: center;
+}
+.account-banner-text { font-size: 13px; color: var(--charcoal-light); }
+.account-banner-text strong { color: var(--charcoal); }
+.usage-bar-wrap { display: flex; align-items: center; gap: 10px; }
+.usage-label { font-size: 12px; color: var(--charcoal-light); }
+.usage-bar { width: 120px; height: 4px; background: var(--cream-dark); border-radius: 2px; overflow: hidden; }
+.usage-fill { height: 100%; background: var(--sage); width: 60%; border-radius: 2px; }
+
+/* footer */
+footer {
+  background: var(--charcoal); color: rgba(247,244,238,0.5);
+  padding: 3rem 6rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+footer .logo { font-family: 'Cormorant Garamond', serif; font-size: 20px; color: var(--cream); }
+footer .links { display: flex; gap: 2rem; font-size: 13px; }
+footer .links a { color: rgba(247,244,238,0.5); text-decoration: none; cursor: pointer; }
+footer .links a:hover { color: var(--cream); }
+footer .copy { font-size: 12px; }
+
+/* animations */
+@keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+.animate-in { animation: slideUp .6s ease forwards; }
+.delay-1 { animation-delay: .1s; opacity: 0; }
+.delay-2 { animation-delay: .2s; opacity: 0; }
+.delay-3 { animation-delay: .3s; opacity: 0; }
+
+/* tabs in app */
+.app-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--bark-pale); margin-bottom: 1.5rem; }
+.app-tab {
+  padding: 10px 20px; font-size: 13px; cursor: pointer;
+  border-bottom: 2px solid transparent; margin-bottom: -1px;
+  color: var(--charcoal-light); transition: all .15s; font-weight: 300;
+}
+.app-tab.active { border-bottom-color: var(--charcoal); color: var(--charcoal); font-weight: 500; }
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────────────────────────────── -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">Emotion<span>Lens</span></div>
+  <div class="nav-links">
+    <a onclick="showPage('home')">Home</a>
+    <a onclick="document.getElementById('features-section').scrollIntoView({behavior:'smooth'})">Features</a>
+    <a onclick="showPage('pricing')">Pricing</a>
+    <a onclick="showPage('app')" class="nav-cta">Open App</a>
+  </div>
+</nav>
+
+<!-- ─── PAGE: HOME ───────────────────────────────────────────────────── -->
+<div id="page-home" class="page active">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow animate-in">AI-Powered Wreath Design</div>
+      <h1 class="hero-title animate-in delay-1">
+        Turn <em>emotions</em><br>into scroll-stopping<br>wreath visuals
+      </h1>
+      <p class="hero-subtitle animate-in delay-2">
+        EmotionLens converts your creative intent — a mood, a season, a feeling — into Midjourney-ready prompts that speak directly to your customers.
+      </p>
+      <div class="hero-actions animate-in delay-3">
+        <button class="btn-primary" onclick="showPage('app')">Start Composing Free</button>
+        <button class="btn-ghost" onclick="showPage('pricing')">See Plans</button>
+      </div>
+      <div class="hero-social animate-in delay-3">
+        <div class="hero-stat">
+          <div class="hero-stat-num">2,400+</div>
+          <div class="hero-stat-label">Designers</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">18,000</div>
+          <div class="hero-stat-label">Prompts generated</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">4.9★</div>
+          <div class="hero-stat-label">Average rating</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-visual">
+        <!-- Botanical SVG illustration -->
+        <svg class="wreath-svg" viewBox="0 0 320 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer ring -->
+          <circle cx="160" cy="160" r="130" stroke="rgba(139,158,122,0.3)" stroke-width="1"/>
+          <!-- Rotating botanical elements -->
+          <g class="rotating-ring">
+            <!-- Leaf cluster repeated around ring -->
+            <ellipse cx="160" cy="32" rx="8" ry="18" fill="rgba(139,158,122,0.7)" transform="rotate(0,160,160)"/>
+            <ellipse cx="160" cy="32" rx="5" ry="12" fill="rgba(200,213,190,0.5)" transform="rotate(0,160,160) translate(10,4)"/>
+            <ellipse cx="160" cy="32" rx="8" ry="18" fill="rgba(139,158,122,0.7)" transform="rotate(30,160,160)"/>
+            <ellipse cx="160" cy="32" rx="8" ry="18" fill="rgba(139,158,122,0.6)" transform="rotate(60,160,160)"/>
+            <ellipse cx="160" cy="32" rx="5" ry="14" fill="rgba(200,213,190,0.4)" transform="rotate(90,160,160)"/>
+            <ellipse cx="160" cy="32" rx="8" ry="18" fill="rgba(139,158,122,0.7)" transform="rotate(120,160,160)"/>
+            <ellipse cx="160" cy="32" rx="8" ry="18" fill="rgba(139,158,122,0.6)" transform="rotate(150,160,160)"/>
+            <ellipse cx="160" cy="32" rx="5" ry="12" fill="rgba(200,213,190,0.5)" transform="rotate(180,160,160)"/>
+            <ellipse cx="160" cy="32" rx="8" ry="18" fill="rgba(139,158,122,0.7)" transform="rotate(210,160,160)"/>
+            <ellipse cx="160" cy="32" rx="8" ry="18" fill="rgba(139,158,122,0.6)" transform="rotate(240,160,160)"/>
+            <ellipse cx="160" cy="32" rx="5" ry="14" fill="rgba(200,213,190,0.4)" transform="rotate(270,160,160)"/>
+            <ellipse cx="160" cy="32" rx="8" ry="18" fill="rgba(139,158,122,0.7)" transform="rotate(300,160,160)"/>
+            <ellipse cx="160" cy="32" rx="8" ry="18" fill="rgba(139,158,122,0.6)" transform="rotate(330,160,160)"/>
+            <!-- Small florals -->
+            <circle cx="160" cy="42" r="5" fill="rgba(184,149,42,0.6)" transform="rotate(45,160,160)"/>
+            <circle cx="160" cy="42" r="5" fill="rgba(184,149,42,0.5)" transform="rotate(135,160,160)"/>
+            <circle cx="160" cy="42" r="4" fill="rgba(184,149,42,0.6)" transform="rotate(225,160,160)"/>
+            <circle cx="160" cy="42" r="5" fill="rgba(184,149,42,0.5)" transform="rotate(315,160,160)"/>
+          </g>
+          <!-- Inner circle -->
+          <circle cx="160" cy="160" r="90" stroke="rgba(139,158,122,0.2)" stroke-width="1" stroke-dasharray="4 6"/>
+          <!-- Center text area -->
+          <circle cx="160" cy="160" r="72" fill="rgba(255,255,255,0.04)"/>
+          <text x="160" y="152" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="14" fill="rgba(247,244,238,0.6)" font-style="italic">gentle gratitude</text>
+          <text x="160" y="170" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="10" fill="rgba(139,158,122,0.8)" letter-spacing="3">::1.4</text>
+          <text x="160" y="188" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="12" fill="rgba(247,244,238,0.4)" font-style="italic">soothing calm ::1.1</text>
+        </svg>
+      </div>
+      <div class="hero-card">
+        <div class="hero-card-label">Live prompt output</div>
+        <div class="hero-card-text">handcrafted autumn eucalyptus wreath, <strong>muted amber and cream palette</strong>, soft linen ribbon ::1.6 <strong>gentle gratitude::1.4</strong> soothing calm::1.1 nostalgic warmth::0.9 --ar 1:1 --style raw</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features-section">
+    <div class="section-header">
+      <div class="section-eyebrow">Why EmotionLens</div>
+      <h2 class="section-title">Designed for the way <em>florists think</em></h2>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        </div>
+        <div class="feature-name">EmotionLens Mapping</div>
+        <div class="feature-desc">Map emotions like gratitude, calm, and joy to color palettes, textures, and foliage types using a hand-crafted floristry vocabulary.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="feature-name">Blueprint Sync</div>
+        <div class="feature-desc">Your design parameters — material ratios, foliage balance, size — are embedded directly into the prompt for production-accurate visuals.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="9 3 9 21"/><line x1="3" y1="9" x2="21" y2="9"/></svg>
+        </div>
+        <div class="feature-name">Midjourney Formatter</div>
+        <div class="feature-desc">Outputs structured ::weight syntax, aspect ratios, and style flags ready to paste — no manual tweaking required.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div class="feature-name">Brand Presets</div>
+        <div class="feature-desc">Save your signature emotion profiles, color palettes, and material mixes as named presets for instant one-click consistency.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div class="feature-name">Prompt History</div>
+        <div class="feature-desc">Every prompt is saved to your library with full parameters so you can revisit, iterate, and build on successful generations.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div class="feature-name">Florist Vocabulary</div>
+        <div class="feature-desc">Built specifically for wreath and faux floral designers — lamb's ear, cotton bolls, asymmetrical trailing, farmhouse luxe. No generic décor drift.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section class="how-it-works">
+    <div class="section-header">
+      <div class="section-eyebrow">The process</div>
+      <h2 class="section-title">From <em>feeling</em> to Midjourney in 60 seconds</h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-name">Set your emotion</div>
+        <div class="step-desc">Dial in gratitude, calm, joy or nostalgia using intuitive sliders that weight each feeling's influence.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-name">Choose materials</div>
+        <div class="step-desc">Select your foliage, season, shape, and style. EmotionLens maps these to florist-specific descriptors.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-name">Generate</div>
+        <div class="step-desc">Hit generate and get a natural-language description plus a fully weighted Midjourney prompt instantly.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-name">Paste & create</div>
+        <div class="step-desc">Copy the prompt straight to Midjourney or your AI tool of choice. No editing required.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <div class="section-header">
+      <div class="section-eyebrow">Loved by designers</div>
+      <h2 class="section-title">What wreath makers <em>are saying</em></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"I used to spend two hours tweaking prompts trying to capture 'cozy autumn gratitude.' EmotionLens nailed it in one click."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">SR</div>
+          <div>
+            <div class="testi-name">Sarah R.</div>
+            <div class="testi-handle">Etsy wreath seller, 4k+ sales</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"The florist vocabulary is what gets me. It doesn't drift into generic home decor — it knows lamb's ear from eucalyptus."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">MK</div>
+          <div>
+            <div class="testi-name">Melissa K.</div>
+            <div class="testi-handle">Faux floral educator</div>
+          </div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text">"My Pinterest saves tripled after I started using EmotionLens prompts for my product photography shoots. Complete game changer."</div>
+        <div class="testi-author">
+          <div class="testi-avatar">JT</div>
+          <div>
+            <div class="testi-name">Jamie T.</div>
+            <div class="testi-handle">Seasonal decor brand owner</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer CTA -->
+  <section style="padding: 6rem; text-align: center; background: var(--cream);">
+    <div class="section-eyebrow" style="margin-bottom: 1rem;">Ready to start?</div>
+    <h2 class="section-title" style="margin-bottom: 2rem;">Your first 5 prompts are <em>free</em></h2>
+    <button class="btn-primary" onclick="showPage('app')" style="font-size: 14px; padding: 16px 40px;">Open the Composer</button>
+  </section>
+
+  <footer>
+    <div class="logo">EmotionLens</div>
+    <div class="links">
+      <a onclick="showPage('pricing')">Pricing</a>
+      <a>Privacy</a>
+      <a>Terms</a>
+      <a>Contact</a>
+    </div>
+    <div class="copy">© 2025 EmotionLens. All rights reserved.</div>
+  </footer>
+</div>
+
+<!-- ─── PAGE: PRICING ────────────────────────────────────────────────── -->
+<div id="page-pricing" class="page">
+  <div class="pricing-hero">
+    <div class="section-eyebrow">Pricing</div>
+    <h1 class="section-title" style="margin-bottom: 1rem;">Simple, honest <em>pricing</em></h1>
+    <p style="font-size: 16px; color: var(--charcoal-light); max-width: 480px; margin: 0 auto; font-weight: 300;">Start free. Upgrade when it saves you time — which it will by the third prompt.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="plan-card">
+      <div class="plan-name">Sprout</div>
+      <div style="font-size: 13px; color: var(--charcoal-light); font-weight: 300; margin-bottom: 1rem;">For curious beginners</div>
+      <div class="plan-price">$0</div>
+      <div class="plan-per">forever free</div>
+      <ul class="plan-features">
+        <li>5 prompts per month</li>
+        <li>6 base emotions</li>
+        <li>Standard materials library</li>
+        <li>Midjourney export</li>
+        <li>7-day prompt history</li>
+      </ul>
+      <button class="plan-cta" onclick="showPage('app')">Get started free</button>
+    </div>
+    <div class="plan-card featured">
+      <div class="plan-badge">Most popular</div>
+      <div class="plan-name">Creator</div>
+      <div style="font-size: 13px; color: rgba(247,244,238,0.5); font-weight: 300; margin-bottom: 1rem;">For active designers</div>
+      <div class="plan-price" style="color: var(--cream);">$15</div>
+      <div class="plan-per">per month · or $12/mo billed annually</div>
+      <ul class="plan-features">
+        <li>Unlimited prompts</li>
+        <li>All 12 emotions + custom</li>
+        <li>Full materials library</li>
+        <li>Brand presets (3 saved)</li>
+        <li>Prompt history forever</li>
+        <li>Negative emotion weights</li>
+        <li>Bulk export (CSV)</li>
+      </ul>
+      <button class="plan-cta" onclick="showPage('app')">Start 14-day free trial</button>
+    </div>
+    <div class="plan-card">
+      <div class="plan-name">Studio</div>
+      <div style="font-size: 13px; color: var(--charcoal-light); font-weight: 300; margin-bottom: 1rem;">For teams & educators</div>
+      <div class="plan-price">$49</div>
+      <div class="plan-per">per month · up to 5 seats</div>
+      <ul class="plan-features">
+        <li>Everything in Creator</li>
+        <li>Unlimited brand presets</li>
+        <li>White-label export</li>
+        <li>5 team seats</li>
+        <li>Priority support</li>
+        <li>API access (beta)</li>
+        <li>Student seat discounts</li>
+      </ul>
+      <button class="plan-cta" onclick="showPage('app')">Start free trial</button>
+    </div>
+  </div>
+  <div class="pricing-faq">
+    <div class="section-header" style="text-align: left; margin-bottom: 0;">
+      <div class="section-eyebrow">FAQ</div>
+      <h2 class="section-title">Common questions</h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <div class="faq-q">Do I need a Midjourney subscription?</div>
+        <div class="faq-a">EmotionLens generates the prompts — you paste them into Midjourney or any compatible AI image tool. A Midjourney subscription is separate and not included.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I cancel anytime?</div>
+        <div class="faq-a">Yes. Cancel from your account settings with one click — no forms, no friction. Your access continues until the end of your billing period.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What is a "brand preset"?</div>
+        <div class="faq-a">A saved combination of your signature emotions, palette, materials, and style settings. Load it instantly instead of reconfiguring each session.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is there a founding member discount?</div>
+        <div class="faq-a">Yes! The first 200 Creator subscribers lock in $9/month for life. This offer ends when spots fill. Sign up now to claim yours.</div>
+      </div>
+    </div>
+  </div>
+  <footer>
+    <div class="logo">EmotionLens</div>
+    <div class="links">
+      <a onclick="showPage('home')">Home</a>
+      <a>Privacy</a>
+      <a>Terms</a>
+    </div>
+    <div class="copy">© 2025 EmotionLens. All rights reserved.</div>
+  </footer>
+</div>
+
+<!-- ─── PAGE: APP ─────────────────────────────────────────────────────── -->
+<div id="page-app" class="page">
+  <div class="account-banner">
+    <div class="account-banner-text">Free plan · <strong>3 of 5 prompts used this month</strong></div>
+    <div class="usage-bar-wrap">
+      <span class="usage-label">3/5</span>
+      <div class="usage-bar"><div class="usage-fill" style="width:60%"></div></div>
+      <button class="upgrade-pill" onclick="showPage('pricing')">Upgrade to Creator ↗</button>
+    </div>
+  </div>
+  <div class="app-header">
+    <div>
+      <div class="app-header-title">EmotionLens Composer</div>
+      <div class="app-header-meta">AI prompt generator for wreath designers</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="action-btn" id="save-preset-btn" onclick="savePreset()">Save preset</button>
+      <button class="action-btn accent" onclick="generatePrompt()">Generate</button>
+    </div>
+  </div>
+  <div class="app-layout">
+    <!-- Sidebar -->
+    <div class="app-sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Emotion weights</div>
+        <div id="emo-sliders"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Season</div>
+        <div class="chip-group" id="season-chips"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Design style</div>
+        <div class="chip-group" id="style-chips"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Shape</div>
+        <div class="chip-group" id="shape-chips"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Materials (multi-select)</div>
+        <div class="chip-group" id="material-chips"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Lighting</div>
+        <div class="chip-group" id="lighting-chips"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Prompt parameters</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <select class="param-select" id="ar-sel">
+            <option value="--ar 1:1">1:1</option>
+            <option value="--ar 4:5">4:5</option>
+            <option value="--ar 3:4">3:4</option>
+            <option value="--ar 3:2">3:2</option>
+            <option value="--ar 16:9">16:9</option>
+          </select>
+          <select class="param-select" id="style-sel">
+            <option value="--style raw">raw</option>
+            <option value="--style expressive">expressive</option>
+            <option value="">no style</option>
+          </select>
+          <select class="param-select" id="chaos-sel">
+            <option value="">no chaos</option>
+            <option value="--chaos 10">chaos 10</option>
+            <option value="--chaos 25">chaos 25</option>
+          </select>
+        </div>
+      </div>
+      <button class="generate-btn" onclick="generatePrompt()">Generate Prompt</button>
+    </div>
+
+    <!-- Main output -->
+    <div class="app-main">
+      <div class="app-tabs">
+        <div class="app-tab active" onclick="switchTab('composer')">Composer</div>
+        <div class="app-tab" onclick="switchTab('history')">History</div>
+        <div class="app-tab" onclick="switchTab('presets')">Presets</div>
+      </div>
+
+      <!-- Composer tab -->
+      <div class="tab-panel active" id="tab-composer">
+        <div class="output-grid">
+          <!-- Emotion visualizer -->
+          <div class="output-card">
+            <div class="output-card-header">
+              <span class="output-card-title">Emotion profile</span>
+            </div>
+            <div class="emotion-viz" id="emo-viz"></div>
+          </div>
+
+          <!-- Natural language -->
+          <div class="output-card">
+            <div class="output-card-header">
+              <span class="output-card-title">Natural language description</span>
+            </div>
+            <div class="natural-text" id="natural-out">Configure your emotions and materials, then click Generate.</div>
+          </div>
+
+          <!-- MJ Prompt -->
+          <div class="output-card">
+            <div class="output-card-header">
+              <span class="output-card-title">Midjourney prompt</span>
+              <div class="output-actions">
+                <button class="action-btn" onclick="copyPrompt()">Copy prompt</button>
+                <button class="action-btn accent" onclick="generatePrompt()">Regenerate</button>
+              </div>
+            </div>
+            <div class="mj-text" id="mj-out">–</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- History tab -->
+      <div class="tab-panel" id="tab-history">
+        <div id="history-list">
+          <p style="color: var(--charcoal-light); font-size: 14px; font-weight: 300;">Your generated prompts will appear here.</p>
+        </div>
+      </div>
+
+      <!-- Presets tab -->
+      <div class="tab-panel" id="tab-presets">
+        <div id="presets-list">
+          <p style="color: var(--charcoal-light); font-size: 14px; font-weight: 300;">Save your current settings as a named preset for one-click reuse. <span style="color:var(--charcoal-light);font-size:12px;">(Creator plan)</span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── DATA ──────────────────────────────────────────────────────
+const EMOTIONS = [
+  {id:'gratitude',label:'Gratitude',phrase:'gentle gratitude',colors:'muted amber and warm neutrals',accent:'soft cream',texture:'natural dried textures, aged ribbon, organic layering'},
+  {id:'calm',label:'Calm',phrase:'soothing calm',colors:'sage green and muted ivory',accent:'dusty blue',texture:'airy wispy sprigs, fine tendrils, delicate silhouette'},
+  {id:'joy',label:'Joy',phrase:'joyful celebration',colors:'warm coral and sunlit gold',accent:'fresh white',texture:'lush fullness, bold blooms, rich layering'},
+  {id:'nostalgia',label:'Nostalgia',phrase:'nostalgic warmth',colors:'faded rose and aged ivory',accent:'dusty mauve',texture:'slightly faded florals, aged greenery, worn ribbon'},
+  {id:'serenity',label:'Serenity',phrase:'serene calm',colors:'soft grey-green and white',accent:'pale sage',texture:'minimal botanical, quiet spacing, sparse elegance'},
+  {id:'hope',label:'Hope',phrase:'fragile hope',colors:'pale blush and soft gold',accent:'ivory white',texture:'gentle mixed blooms, light layering, soft openness'},
+];
+const SEASONS=['Spring','Summer','Autumn','Winter'];
+const STYLES=['Farmhouse','Luxe','Minimalist','Wild','Vintage','Organic'];
+const SHAPES=['Circular','Asymmetrical','Trailing','Loose'];
+const MATERIALS=['Eucalyptus','Dried florals','Pine','Lamb\'s ear','Berry clusters','Linen ribbon','Satin ribbon','Cotton bolls','Wildflowers','Dried oranges'];
+const LIGHTING=['Golden-hour','Soft natural','Editorial','Warm fireplace','Dramatic side'];
+
+let S = {
+  emotions:{gratitude:0.9,calm:0.6,joy:0,nostalgia:0,serenity:0,hope:0},
+  season:'Autumn', style:'Farmhouse', shape:'Circular',
+  materials:['Eucalyptus','Linen ribbon'], lighting:'Golden-hour',
+};
+let history = [];
+let presets = [];
+
+// ─── BUILD UI ──────────────────────────────────────────────────
+function buildSliders() {
+  document.getElementById('emo-sliders').innerHTML = EMOTIONS.map(e => `
+    <div class="emo-row">
+      <span class="emo-name">${e.label}</span>
+      <input type="range" min="0" max="10" step="1" value="${Math.round(S.emotions[e.id]*10)}"
+        oninput="S.emotions['${e.id}']=this.value/10;updateViz();document.getElementById('ev-${e.id}').textContent=(this.value/10).toFixed(1)">
+      <span class="emo-val" id="ev-${e.id}">${S.emotions[e.id].toFixed(1)}</span>
+    </div>`).join('');
+}
+function buildSingleChips(arr, containerId, stateKey, colorClass='') {
+  document.getElementById(containerId).innerHTML = arr.map(v =>
+    `<span class="chip ${S[stateKey]===v?'on '+(colorClass||''):''}"
+      onclick="S['${stateKey}']='${v}';buildSingleChips(${JSON.stringify(arr)},'${containerId}','${stateKey}','${colorClass}')">${v}</span>`
+  ).join('');
+}
+function buildMultiChips(arr, containerId, stateKey, colorClass='') {
+  document.getElementById(containerId).innerHTML = arr.map(v =>
+    `<span class="chip ${S[stateKey].includes(v)?'on '+(colorClass||''):''}"
+      onclick="toggleMulti('${stateKey}','${v}',${JSON.stringify(arr)},'${containerId}','${colorClass}')">${v}</span>`
+  ).join('');
+}
+function toggleMulti(key,val,arr,cid,cls){
+  const i=S[key].indexOf(val);
+  if(i>-1) S[key].splice(i,1); else S[key].push(val);
+  buildMultiChips(arr,cid,key,cls);
+}
+function buildSingleLighting(arr,cid,key){
+  document.getElementById(cid).innerHTML=arr.map(v=>
+    `<span class="chip ${S[key]===v?'on warm':''}" onclick="S['${key}']='${v}';buildSingleLighting(${JSON.stringify(arr)},'${cid}','${key}')">${v}</span>`
+  ).join('');
+}
+function updateViz() {
+  const viz = document.getElementById('emo-viz');
+  if(!viz) return;
+  viz.innerHTML = EMOTIONS.map(e => {
+    const h = Math.round(S.emotions[e.id]*60);
+    return `<div class="emo-bar-wrap">
+      <div class="emo-bar" style="height:${h}px;opacity:${0.4+S.emotions[e.id]*0.6}"></div>
+      <span class="emo-bar-label">${e.label.slice(0,4)}</span>
+    </div>`;
+  }).join('');
+}
+function initApp() {
+  buildSliders();
+  buildSingleChips(SEASONS,'season-chips','season','green');
+  buildSingleChips(STYLES,'style-chips','style');
+  buildSingleChips(SHAPES,'shape-chips','shape');
+  buildMultiChips(MATERIALS,'material-chips','materials');
+  buildSingleLighting(LIGHTING,'lighting-chips','lighting');
+  updateViz();
+}
+
+// ─── GENERATE ──────────────────────────────────────────────────
+function getTopEmotions(n=3){
+  return Object.entries(S.emotions).filter(([,v])=>v>0).sort(([,a],[,b])=>b-a).slice(0,n);
+}
+function mapW(v){ return (0.75+v*0.75).toFixed(1); }
+function generatePrompt() {
+  const top = getTopEmotions();
+  if(!top.length){ showToast('Set at least one emotion weight'); return; }
+  const [topId] = top[0];
+  const emo = EMOTIONS.find(e=>e.id===topId);
+  const mats = S.materials.length ? S.materials.join(', ').toLowerCase() : 'eucalyptus';
+  const season = S.season.toLowerCase();
+  const style = S.style.toLowerCase();
+  const shape = S.shape.toLowerCase();
+  const lighting = S.lighting.toLowerCase();
+  const emoPhrase = top.map(([id])=>EMOTIONS.find(e=>e.id===id)?.phrase).filter(Boolean).join(', ');
+  const natural = `A handcrafted ${season} wreath with ${mats}, ${emo.colors} palette, ${emo.accent} accents, ${emo.texture}. The ${shape} composition carries a ${style} sensibility, ${emoPhrase}, captured in ${lighting} light.`;
+  const subject = `handcrafted ${season} ${mats} wreath, ${emo.colors}, ${emo.accent} accents, ${emo.texture}, ${shape} form, ${style} setting`;
+  const emoChunks = top.map(([id,v])=>`${EMOTIONS.find(e=>e.id===id)?.phrase}::${mapW(v)}`).join(' ');
+  const ar = document.getElementById('ar-sel').value;
+  const mjStyle = document.getElementById('style-sel').value;
+  const chaos = document.getElementById('chaos-sel').value;
+  const params = [ar,mjStyle,chaos].filter(Boolean).join(' ');
+  const mj = `${subject}::1.6 ${emoChunks} ${lighting} lighting, editorial product photography::1.0 ${params}`.trim();
+  document.getElementById('natural-out').textContent = natural;
+  document.getElementById('mj-out').textContent = mj;
+  updateViz();
+  const entry = { time: new Date().toLocaleTimeString(), natural, mj };
+  history.unshift(entry);
+  renderHistory();
+  showToast('Prompt generated');
+}
+function copyPrompt() {
+  const txt = document.getElementById('mj-out').textContent;
+  if(txt==='–'){ showToast('Generate a prompt first'); return; }
+  navigator.clipboard.writeText(txt).then(()=>showToast('Copied to clipboard'));
+}
+function savePreset() {
+  const name = prompt('Name this preset:');
+  if(!name) return;
+  presets.push({ name, state: JSON.parse(JSON.stringify(S)) });
+  renderPresets();
+  showToast('Preset saved: '+name);
+}
+function renderHistory(){
+  const el = document.getElementById('history-list');
+  if(!history.length){ el.innerHTML='<p style="color:var(--charcoal-light);font-size:14px;font-weight:300;">No history yet.</p>'; return; }
+  el.innerHTML = '<div class="history-list">' + history.slice(0,20).map((h,i)=>`
+    <div class="history-item" onclick="loadHistory(${i})">
+      <div class="history-item-time">${h.time}</div>
+      <div class="history-item-preview">${h.mj}</div>
+    </div>`).join('') + '</div>';
+}
+function loadHistory(i){
+  document.getElementById('natural-out').textContent = history[i].natural;
+  document.getElementById('mj-out').textContent = history[i].mj;
+  switchTab('composer');
+  showToast('Prompt loaded');
+}
+function renderPresets(){
+  const el = document.getElementById('presets-list');
+  if(!presets.length){ el.innerHTML='<p style="color:var(--charcoal-light);font-size:14px;font-weight:300;">No saved presets. Configure your settings and click "Save preset" above.</p>'; return; }
+  el.innerHTML = '<div class="history-list">'+presets.map((p,i)=>`
+    <div class="history-item" onclick="loadPreset(${i})">
+      <div class="history-item-time">Preset</div>
+      <div class="history-item-preview" style="font-family:inherit;font-size:13px;">${p.name}</div>
+    </div>`).join('')+'</div>';
+}
+function loadPreset(i){
+  S = JSON.parse(JSON.stringify(presets[i].state));
+  initApp();
+  switchTab('composer');
+  showToast('Preset loaded: '+presets[i].name);
+}
+function switchTab(id){
+  document.querySelectorAll('.app-tab').forEach((t,i)=>{
+    const ids=['composer','history','presets'];
+    t.classList.toggle('active',ids[i]===id);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p=>{
+    p.classList.toggle('active',p.id==='tab-'+id);
+  });
+}
+
+// ─── PAGES ─────────────────────────────────────────────────────
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='app') initApp();
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+</script>
+</body>
+</html>

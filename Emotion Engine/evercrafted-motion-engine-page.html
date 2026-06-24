@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motion Engine — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+/* ────────────────────────────────────────────────
+   TOKENS
+──────────────────────────────────────────────── */
+:root {
+  --ec-white:        #FFFFFF;
+  --ec-off-white:    #F9F7F4;
+  --ec-paper:        #F2EFE9;
+  --ec-black:        #1A1A1A;
+  --ec-charcoal:     #2E2E2E;
+  --ec-ink:          #4A4A4A;
+  --ec-green:        #4A6741;
+  --ec-green-light:  #6B8F67;
+  --ec-green-pale:   #EEF2ED;
+  --ec-green-dim:    rgba(74,103,65,0.12);
+  --ec-gray-100:     #F5F5F5;
+  --ec-gray-200:     #E8E8E8;
+  --ec-gray-300:     #D0D0D0;
+  --ec-gray-400:     #A8A8A8;
+  --ec-gray-500:     #787878;
+  --ec-surface:      var(--ec-white);
+  --ec-surface-alt:  var(--ec-off-white);
+  --ec-surface-warm: var(--ec-paper);
+  --ec-border:       var(--ec-gray-200);
+  --ec-border-dark:  var(--ec-gray-300);
+  --ec-text:         var(--ec-black);
+  --ec-text-muted:   var(--ec-ink);
+  --ec-text-faint:   var(--ec-gray-500);
+  --ec-font-serif:   'Cormorant Garamond', Georgia, serif;
+  --ec-font-sans:    'Inter', system-ui, sans-serif;
+  --ec-font-script:  'Dancing Script', cursive;
+  --ec-font-mono:    'DM Mono', monospace;
+  --ec-space-1:  0.25rem;
+  --ec-space-2:  0.5rem;
+  --ec-space-3:  0.75rem;
+  --ec-space-4:  1rem;
+  --ec-space-5:  1.5rem;
+  --ec-space-6:  2rem;
+  --ec-space-8:  2.5rem;
+  --ec-space-10: 3rem;
+  --ec-space-12: 4rem;
+  --ec-radius-sm:   4px;
+  --ec-radius-md:   8px;
+  --ec-radius-lg:   14px;
+  --ec-radius-xl:   20px;
+  --ec-radius-full: 9999px;
+  --ec-shadow-sm:   0 1px 3px rgba(0,0,0,0.06);
+  --ec-shadow-md:   0 4px 16px rgba(0,0,0,0.08);
+  --ec-shadow-lg:   0 8px 32px rgba(0,0,0,0.10);
+  --ec-shadow-hero: 0 24px 64px rgba(0,0,0,0.10);
+  --ec-transition:  200ms ease;
+}
+
+/* ────────────────────────────────────────────────
+   RESET + BASE
+──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--ec-font-sans);
+  background: var(--ec-off-white);
+  color: var(--ec-text);
+  overflow-x: hidden;
+}
+img { display: block; max-width: 100%; }
+a { text-decoration: none; color: inherit; }
+
+/* ────────────────────────────────────────────────
+   NAV
+──────────────────────────────────────────────── */
+.ec-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  padding: 20px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+.ec-nav.scrolled {
+  background: rgba(249,247,244,0.92);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 var(--ec-border);
+}
+.ec-nav__brand {
+  display: flex; align-items: baseline; gap: 10px;
+}
+.ec-nav__logo {
+  font-family: var(--ec-font-script);
+  font-size: 1.5rem; color: var(--ec-green); font-weight: 600;
+}
+.ec-nav__product {
+  font-family: var(--ec-font-sans);
+  font-size: 0.75rem; color: var(--ec-text-faint);
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.ec-nav__links {
+  display: flex; align-items: center; gap: 32px;
+  list-style: none;
+}
+.ec-nav__links a {
+  font-size: 0.875rem; color: var(--ec-text-muted);
+  transition: color var(--ec-transition);
+}
+.ec-nav__links a:hover { color: var(--ec-text); }
+.ec-nav__cta {
+  display: flex; align-items: center; gap: 12px;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 20px; border-radius: var(--ec-radius-md);
+  font-family: var(--ec-font-sans); font-size: 0.875rem; font-weight: 500;
+  cursor: pointer; border: none; transition: all var(--ec-transition);
+  letter-spacing: 0.02em;
+}
+.btn-primary { background: var(--ec-black); color: var(--ec-white); }
+.btn-primary:hover { background: var(--ec-charcoal); transform: translateY(-1px); box-shadow: var(--ec-shadow-md); }
+.btn-ghost { background: transparent; color: var(--ec-text); border: 1.5px solid var(--ec-border-dark); }
+.btn-ghost:hover { border-color: var(--ec-black); background: var(--ec-gray-100); }
+.btn-green { background: var(--ec-green); color: var(--ec-white); }
+.btn-green:hover { background: var(--ec-green-light); transform: translateY(-1px); box-shadow: var(--ec-shadow-md); }
+.btn-lg { padding: 14px 32px; font-size: 1rem; border-radius: var(--ec-radius-lg); }
+
+@media(max-width:768px) {
+  .ec-nav { padding: 16px 20px; }
+  .ec-nav__links { display: none; }
+}
+
+/* ────────────────────────────────────────────────
+   HERO
+──────────────────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  display: grid; grid-template-columns: 1fr 1fr;
+  align-items: center;
+  padding: 120px 80px 80px;
+  position: relative; overflow: hidden;
+  background: var(--ec-off-white);
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 80% at 80% 50%, rgba(74,103,65,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+/* noise texture overlay */
+.hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none; opacity: 0.4;
+}
+
+.hero__left {
+  position: relative; z-index: 2;
+  padding-right: 60px;
+}
+.hero__eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--ec-font-sans); font-size: 0.75rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ec-green);
+  margin-bottom: 24px;
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.7s ease forwards 0.1s;
+}
+.hero__eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--ec-green);
+}
+.hero__headline {
+  font-family: var(--ec-font-serif);
+  font-size: clamp(3.5rem, 6vw, 6rem);
+  font-weight: 300;
+  line-height: 1.05; letter-spacing: -0.03em;
+  color: var(--ec-text); margin-bottom: 12px;
+  opacity: 0; transform: translateY(24px);
+  animation: fadeUp 0.8s ease forwards 0.2s;
+}
+.hero__headline em {
+  font-style: italic; color: var(--ec-green);
+  font-weight: 300;
+}
+.hero__script {
+  font-family: var(--ec-font-script);
+  font-size: clamp(2.5rem, 4vw, 4rem);
+  color: var(--ec-green); line-height: 1.1; display: block;
+  margin-bottom: 28px;
+  opacity: 0; transform: translateY(24px);
+  animation: fadeUp 0.8s ease forwards 0.35s;
+}
+.hero__body {
+  font-size: 1.125rem; color: var(--ec-text-muted); line-height: 1.7;
+  max-width: 480px; margin-bottom: 40px;
+  opacity: 0; transform: translateY(20px);
+  animation: fadeUp 0.7s ease forwards 0.5s;
+}
+.hero__actions {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  opacity: 0; transform: translateY(16px);
+  animation: fadeUp 0.7s ease forwards 0.65s;
+}
+.hero__tier {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 14px; border-radius: var(--ec-radius-full);
+  background: var(--ec-black); color: var(--ec-paper);
+  font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0; animation: fadeUp 0.6s ease forwards 0s;
+}
+
+/* ── HERO RIGHT: MOTION CANVAS DEMO ── */
+.hero__right {
+  position: relative; z-index: 2;
+  display: flex; justify-content: center; align-items: center;
+  opacity: 0; transform: translateX(32px);
+  animation: fadeRight 1s ease forwards 0.4s;
+}
+.hero__canvas-wrap {
+  position: relative; width: 100%; max-width: 480px;
+}
+.hero__canvas-frame {
+  background: var(--ec-paper);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: var(--ec-shadow-hero);
+  border: 1px solid var(--ec-border);
+  position: relative; overflow: hidden;
+}
+.hero__canvas-frame::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(74,103,65,0.04) 0%, transparent 60%);
+}
+#heroCanvas { display: block; width: 100%; border-radius: 16px; }
+
+.hero__canvas-label {
+  position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%);
+  background: var(--ec-white); border: 1px solid var(--ec-border);
+  border-radius: var(--ec-radius-full);
+  padding: 6px 16px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.75rem; color: var(--ec-text-muted); white-space: nowrap;
+  box-shadow: var(--ec-shadow-sm);
+}
+.hero__canvas-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--ec-green);
+  animation: pulse-dot 1.5s ease infinite;
+}
+@keyframes pulse-dot {
+  0%,100%{transform:scale(1);opacity:1;}
+  50%{transform:scale(1.4);opacity:.6;}
+}
+
+/* Floating profile pills */
+.hero__floating {
+  position: absolute;
+}
+.hero__pill {
+  background: var(--ec-white); border: 1.5px solid var(--ec-border);
+  border-radius: var(--ec-radius-full);
+  padding: 8px 16px; font-size: 0.8125rem; font-weight: 500;
+  box-shadow: var(--ec-shadow-md);
+  display: flex; align-items: center; gap: 8px;
+  white-space: nowrap; cursor: default;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.hero__pill:hover { transform: translateY(-2px); box-shadow: var(--ec-shadow-lg); }
+.pill--whisper { top: -20px; left: -30px; animation: floatA 4s ease-in-out infinite; }
+.pill--breeze  { bottom: 20px; left: -40px; animation: floatB 5s ease-in-out infinite 0.8s; }
+.pill--statement { top: 30px; right: -30px; animation: floatA 4.5s ease-in-out infinite 1.5s; }
+@keyframes floatA { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px);} }
+@keyframes floatB { 0%,100%{transform:translateY(0);} 50%{transform:translateY(6px);} }
+
+.pill-icon { font-size: 1rem; }
+.pill-label { color: var(--ec-text); }
+.pill-intensity {
+  font-family: var(--ec-font-mono); font-size: 0.6875rem;
+  color: var(--ec-green); background: var(--ec-green-pale);
+  padding: 2px 6px; border-radius: var(--ec-radius-full);
+}
+
+@media(max-width:900px) {
+  .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; min-height: auto; }
+  .hero__left { padding-right: 0; margin-bottom: 60px; }
+  .hero__canvas-wrap { max-width: 360px; margin: 0 auto; }
+  .pill--whisper,.pill--breeze,.pill--statement { display: none; }
+}
+
+/* ────────────────────────────────────────────────
+   MARQUEE
+──────────────────────────────────────────────── */
+.marquee-strip {
+  background: var(--ec-black); padding: 18px 0; overflow: hidden;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.marquee-track {
+  display: flex; gap: 60px; width: max-content;
+  animation: marquee 28s linear infinite;
+}
+.marquee-item {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--ec-font-sans); font-size: 0.8125rem;
+  color: rgba(242,239,233,0.55); letter-spacing: 0.06em; text-transform: uppercase;
+  white-space: nowrap; font-weight: 500;
+}
+.marquee-item span { color: rgba(242,239,233,0.25); font-size: 1rem; }
+@keyframes marquee { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+
+/* ────────────────────────────────────────────────
+   PIPELINE SECTION
+──────────────────────────────────────────────── */
+.section { padding: 120px 80px; }
+.section--alt { background: var(--ec-paper); }
+.section--dark { background: var(--ec-black); color: var(--ec-off-white); }
+.container { max-width: 1200px; margin: 0 auto; }
+
+@media(max-width:768px) { .section { padding: 64px 24px; } }
+
+.overline {
+  font-family: var(--ec-font-sans); font-size: 0.6875rem; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--ec-green);
+  margin-bottom: 16px; display: block;
+}
+.section--dark .overline { color: rgba(74,200,130,0.7); }
+
+.section-title {
+  font-family: var(--ec-font-serif);
+  font-size: clamp(2.25rem, 4vw, 3.5rem);
+  font-weight: 300; line-height: 1.15; letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+.section-body {
+  font-size: 1.0625rem; line-height: 1.75; color: var(--ec-text-muted); max-width: 560px;
+}
+.section--dark .section-body { color: rgba(242,239,233,0.65); }
+
+/* ── PIPELINE FLOW ── */
+.pipeline {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; flex-wrap: nowrap; overflow-x: auto;
+  padding: 48px 0 32px; margin-top: 48px;
+}
+.pipeline-step {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  flex-shrink: 0;
+}
+.pipeline-node {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--ec-white); border: 2px solid var(--ec-border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; box-shadow: var(--ec-shadow-md);
+  transition: all 0.3s ease; cursor: default;
+}
+.pipeline-node:hover { border-color: var(--ec-green); transform: scale(1.08); box-shadow: 0 0 0 6px var(--ec-green-dim); }
+.pipeline-node.highlight {
+  background: var(--ec-green); border-color: var(--ec-green);
+  box-shadow: 0 0 0 8px var(--ec-green-dim), var(--ec-shadow-lg);
+}
+.pipeline-label {
+  font-size: 0.75rem; font-weight: 500; color: var(--ec-text-faint);
+  text-align: center; white-space: nowrap; max-width: 80px; line-height: 1.3;
+}
+.pipeline-step.highlight .pipeline-label { color: var(--ec-green); font-weight: 600; }
+.pipeline-arrow {
+  font-size: 1.1rem; color: var(--ec-gray-300); margin: 0 4px; padding-bottom: 28px; flex-shrink: 0;
+}
+
+/* ────────────────────────────────────────────────
+   MOTION PROFILES (editorial 3-col)
+──────────────────────────────────────────────── */
+.profiles-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; margin-top: 56px;
+}
+@media(max-width:768px) { .profiles-grid { grid-template-columns: 1fr; } }
+
+.profile-card {
+  border-radius: 20px; padding: 40px 32px;
+  position: relative; overflow: hidden;
+  border: 1px solid var(--ec-border);
+  background: var(--ec-white);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.profile-card:hover { transform: translateY(-6px); box-shadow: var(--ec-shadow-hero); }
+.profile-card--whisper { background: var(--ec-off-white); }
+.profile-card--breeze  { background: var(--ec-green-pale); border-color: rgba(74,103,65,0.2); }
+.profile-card--statement { background: var(--ec-black); border-color: transparent; }
+
+.profile-card__intensity {
+  position: absolute; top: 24px; right: 24px;
+  font-family: var(--ec-font-mono); font-size: 2.5rem; font-weight: 500;
+  opacity: 0.08; line-height: 1;
+}
+.profile-card--statement .profile-card__intensity { color: var(--ec-white); }
+
+.profile-card__icon { font-size: 2.25rem; margin-bottom: 20px; }
+.profile-card__name {
+  font-family: var(--ec-font-serif); font-size: 1.75rem; font-weight: 400;
+  line-height: 1.2; margin-bottom: 8px;
+}
+.profile-card--statement .profile-card__name { color: var(--ec-white); }
+.profile-card__tag {
+  font-size: 0.75rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ec-green); margin-bottom: 16px; display: block;
+}
+.profile-card--statement .profile-card__tag { color: rgba(74,200,130,0.7); }
+.profile-card__desc { font-size: 0.9375rem; line-height: 1.7; color: var(--ec-text-muted); }
+.profile-card--statement .profile-card__desc { color: rgba(242,239,233,0.6); }
+.profile-card__specs {
+  margin-top: 24px; display: flex; flex-direction: column; gap: 8px;
+}
+.profile-spec {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 0.8125rem; color: var(--ec-text-faint);
+  padding: 6px 0; border-bottom: 1px solid var(--ec-border);
+}
+.profile-card--statement .profile-spec { border-color: rgba(255,255,255,0.08); color: rgba(242,239,233,0.4); }
+.profile-spec__val {
+  font-family: var(--ec-font-mono); color: var(--ec-green); font-weight: 500;
+}
+.profile-card--statement .profile-spec__val { color: rgba(74,200,130,0.8); }
+
+/* wave mini canvas */
+.profile-wave { width: 100%; height: 40px; border-radius: 8px; margin-top: 20px; display: block; }
+
+/* ────────────────────────────────────────────────
+   MOTION TYPES — EDITORIAL ALTERNATING
+──────────────────────────────────────────────── */
+.motion-type {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+  align-items: center; padding: 64px 0;
+  border-bottom: 1px solid var(--ec-border);
+}
+.motion-type:last-child { border-bottom: none; }
+.motion-type--reverse { direction: rtl; }
+.motion-type--reverse > * { direction: ltr; }
+@media(max-width:768px) {
+  .motion-type { grid-template-columns: 1fr; gap: 40px; }
+  .motion-type--reverse { direction: ltr; }
+}
+.motion-type__visual {
+  border-radius: 20px; overflow: hidden;
+  background: var(--ec-paper); border: 1px solid var(--ec-border);
+  aspect-ratio: 1; position: relative;
+  display: flex; align-items: center; justify-content: center;
+}
+.motion-type__canvas { display: block; }
+.motion-type__label-bar {
+  position: absolute; bottom: 16px; left: 16px;
+  background: rgba(255,255,255,0.9); backdrop-filter: blur(8px);
+  border-radius: var(--ec-radius-full); padding: 6px 14px;
+  font-size: 0.75rem; font-weight: 600; color: var(--ec-text); letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.motion-type__num {
+  font-family: var(--ec-font-mono); font-size: 4rem; font-weight: 400;
+  color: var(--ec-gray-200); line-height: 1; margin-bottom: 12px;
+}
+.motion-type__title {
+  font-family: var(--ec-font-serif); font-size: 2.25rem; font-weight: 400;
+  line-height: 1.2; margin-bottom: 16px;
+}
+.motion-type__body { font-size: 1rem; line-height: 1.75; color: var(--ec-text-muted); margin-bottom: 24px; }
+.motion-type__specs {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.mts {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.875rem; color: var(--ec-text-faint);
+}
+.mts::before {
+  content: '✦'; color: var(--ec-green); font-size: 0.5rem; flex-shrink: 0;
+}
+
+/* ────────────────────────────────────────────────
+   STATS BAR
+──────────────────────────────────────────────── */
+.stats-bar {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 0;
+  border: 1px solid var(--ec-border); border-radius: 20px; overflow: hidden;
+  margin-top: 80px;
+  background: var(--ec-white);
+}
+@media(max-width:768px) { .stats-bar { grid-template-columns: repeat(2,1fr); } }
+.stat {
+  padding: 40px 32px; text-align: center;
+  border-right: 1px solid var(--ec-border);
+}
+.stat:last-child { border-right: none; }
+.stat__num {
+  font-family: var(--ec-font-serif); font-size: 3rem; font-weight: 300;
+  color: var(--ec-text); line-height: 1; margin-bottom: 8px;
+}
+.stat__label { font-size: 0.8125rem; color: var(--ec-text-faint); letter-spacing: 0.04em; }
+.stat__sub { font-family: var(--ec-font-script); font-size: 0.9rem; color: var(--ec-green); margin-top: 4px; }
+
+/* ────────────────────────────────────────────────
+   INTEGRATION SECTION (dark)
+──────────────────────────────────────────────── */
+.integrations-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 56px;
+}
+@media(max-width:768px) { .integrations-grid { grid-template-columns: 1fr; } }
+
+.integration-card {
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px; padding: 32px 28px;
+  transition: all 0.3s ease;
+}
+.integration-card:hover {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(74,200,130,0.25);
+  transform: translateY(-4px);
+}
+.integration-card__icon { font-size: 1.75rem; margin-bottom: 16px; }
+.integration-card__title { font-family: var(--ec-font-serif); font-size: 1.375rem; font-weight: 400; color: var(--ec-off-white); margin-bottom: 8px; }
+.integration-card__body { font-size: 0.9rem; line-height: 1.7; color: rgba(242,239,233,0.5); margin-bottom: 16px; }
+.integration-card__badge {
+  display: inline-block; padding: 3px 10px; border-radius: var(--ec-radius-full);
+  font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.badge--active { background: rgba(74,103,65,0.3); color: rgba(74,200,130,0.9); }
+.badge--phase2 { background: rgba(255,255,255,0.06); color: rgba(242,239,233,0.35); }
+
+/* ────────────────────────────────────────────────
+   TECH STACK STRIP
+──────────────────────────────────────────────── */
+.tech-strip {
+  display: grid; grid-template-columns: repeat(4,1fr); gap: 0;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  margin-top: 80px;
+}
+@media(max-width:768px) { .tech-strip { grid-template-columns: repeat(2,1fr); } }
+.tech-item {
+  padding: 32px; border-right: 1px solid rgba(255,255,255,0.06);
+  text-align: center;
+}
+.tech-item:last-child { border-right: none; }
+.tech-item__name {
+  font-family: var(--ec-font-mono); font-size: 0.875rem; color: rgba(242,239,233,0.5); margin-bottom: 6px;
+}
+.tech-item__label { font-size: 0.75rem; color: rgba(242,239,233,0.25); letter-spacing: 0.04em; }
+
+/* ────────────────────────────────────────────────
+   TIER CARD (ATELIER)
+──────────────────────────────────────────────── */
+.tier-section {
+  padding: 120px 80px; background: var(--ec-off-white);
+}
+.tier-card-wrap {
+  display: flex; justify-content: center; margin-top: 56px;
+}
+.tier-card {
+  background: var(--ec-black); border-radius: 24px;
+  padding: 56px 64px; max-width: 640px; width: 100%;
+  position: relative; overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.2);
+}
+.tier-card::before {
+  content: '';
+  position: absolute; top: -60px; right: -60px;
+  width: 240px; height: 240px;
+  background: radial-gradient(circle, rgba(74,103,65,0.3) 0%, transparent 70%);
+  pointer-events: none;
+}
+.tier-card__badge {
+  display: inline-block; background: var(--ec-paper); color: var(--ec-black);
+  border-radius: var(--ec-radius-full); padding: 5px 16px;
+  font-size: 0.6875rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 28px;
+}
+.tier-card__title {
+  font-family: var(--ec-font-serif); font-size: 2.75rem; font-weight: 300;
+  color: var(--ec-white); line-height: 1.15; margin-bottom: 12px;
+}
+.tier-card__sub { font-family: var(--ec-font-script); font-size: 1.5rem; color: rgba(74,200,130,0.8); margin-bottom: 28px; display: block; }
+.tier-card__body { font-size: 1rem; line-height: 1.75; color: rgba(242,239,233,0.6); margin-bottom: 40px; }
+.tier-card__features {
+  display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px;
+}
+.tier-feat {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 0.9375rem; color: rgba(242,239,233,0.75);
+}
+.tier-feat__check {
+  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(74,103,65,0.3); display: flex; align-items: center; justify-content: center;
+  font-size: 0.625rem; color: rgba(74,200,130,0.9);
+}
+.tier-card__actions { display: flex; align-items: center; gap: 16px; }
+.tier-card__price {
+  font-family: var(--ec-font-serif); font-size: 1rem;
+  color: rgba(242,239,233,0.35); letter-spacing: 0.02em;
+}
+
+/* ────────────────────────────────────────────────
+   CTA
+──────────────────────────────────────────────── */
+.cta-section {
+  padding: 120px 80px; text-align: center;
+  background: linear-gradient(to bottom, var(--ec-paper), var(--ec-off-white));
+  position: relative; overflow: hidden;
+}
+.cta-section::before {
+  content: '';
+  position: absolute; top: -80px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(74,103,65,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-section .section-title { max-width: 600px; margin: 0 auto 20px; }
+.cta-section .section-body { margin: 0 auto 40px; text-align: center; }
+.cta-actions { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; }
+
+/* ────────────────────────────────────────────────
+   FOOTER
+──────────────────────────────────────────────── */
+footer {
+  background: var(--ec-black); padding: 64px 80px 40px;
+  color: rgba(242,239,233,0.4);
+}
+.footer-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 40px;
+}
+@media(max-width:768px) { footer { padding: 48px 24px; } .footer-top { flex-direction: column; gap: 32px; } }
+.footer-brand__logo { font-family: var(--ec-font-script); font-size: 1.75rem; color: rgba(242,239,233,0.85); }
+.footer-brand__tagline { font-size: 0.8125rem; color: rgba(242,239,233,0.3); margin-top: 6px; line-height: 1.5; }
+.footer-nav { display: flex; gap: 60px; }
+.footer-col__heading { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(242,239,233,0.35); margin-bottom: 16px; }
+.footer-col__links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col__links a { font-size: 0.875rem; color: rgba(242,239,233,0.45); transition: color var(--ec-transition); }
+.footer-col__links a:hover { color: rgba(242,239,233,0.8); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 0.8125rem; }
+.footer-copy { color: rgba(242,239,233,0.25); }
+
+/* ────────────────────────────────────────────────
+   SCROLL REVEAL
+──────────────────────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ────────────────────────────────────────────────
+   KEYFRAMES
+──────────────────────────────────────────────── */
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeRight {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* ────────────────────────────────────────────────
+   BOTANICAL SVG DIVIDER
+──────────────────────────────────────────────── */
+.botanical-divider {
+  display: flex; align-items: center; justify-content: center; gap: 20px;
+  padding: 0; margin: 0; color: var(--ec-gray-300);
+}
+.botanical-divider::before, .botanical-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--ec-border);
+}
+.section--dark .botanical-divider::before,
+.section--dark .botanical-divider::after { background: rgba(255,255,255,0.06); }
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ec-gray-300); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav class="ec-nav" id="nav">
+  <div class="ec-nav__brand">
+    <span class="ec-nav__logo">Evercrafted</span>
+    <span class="ec-nav__product">Motion Engine</span>
+  </div>
+  <ul class="ec-nav__links">
+    <li><a href="#profiles">Profiles</a></li>
+    <li><a href="#types">Motion Types</a></li>
+    <li><a href="#integrations">Integrations</a></li>
+    <li><a href="#tier">Atelier</a></li>
+  </ul>
+  <div class="ec-nav__cta">
+    <a href="#" class="btn btn-ghost">Sign in</a>
+    <a href="#tier" class="btn btn-primary">Get Access</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero__left">
+    <div class="hero__tier">
+      <svg width="8" height="8" viewBox="0 0 8 8"><circle cx="4" cy="4" r="4" fill="#F2EFE9"/></svg>
+      Atelier — Exclusive Feature
+    </div>
+    <div class="hero__eyebrow">
+      <span class="hero__eyebrow-dot"></span>
+      Blueprint → Render → Motion → Output
+    </div>
+    <h1 class="hero__headline">The visual<br><em>emotional</em> layer<br>of every design</h1>
+    <span class="hero__script">set it in motion</span>
+    <p class="hero__body">Transform static wreath renders into emotion-driven animated video outputs. Motion that feels weighted, physical, and unmistakably botanical — ready for Etsy listings, client previews, and social.</p>
+    <div class="hero__actions">
+      <a href="#tier" class="btn btn-green btn-lg">Unlock Motion Engine</a>
+      <a href="#profiles" class="btn btn-ghost btn-lg">See how it works ↓</a>
+    </div>
+  </div>
+
+  <div class="hero__right">
+    <div class="hero__canvas-wrap">
+      <!-- Floating pills -->
+      <div class="hero__floating" style="position:absolute;top:-20px;left:-30px;">
+        <div class="hero__pill pill--whisper">
+          <span class="pill-icon">🌾</span>
+          <span class="pill-label">Whisper</span>
+          <span class="pill-intensity">30</span>
+        </div>
+      </div>
+      <div class="hero__floating" style="position:absolute;bottom:20px;left:-40px;">
+        <div class="hero__pill pill--breeze">
+          <span class="pill-icon">🍃</span>
+          <span class="pill-label">Breeze</span>
+          <span class="pill-intensity">60</span>
+        </div>
+      </div>
+      <div class="hero__floating" style="position:absolute;top:30px;right:-30px;">
+        <div class="hero__pill pill--statement">
+          <span class="pill-icon">🌊</span>
+          <span class="pill-label">Statement</span>
+          <span class="pill-intensity">90</span>
+        </div>
+      </div>
+
+      <div class="hero__canvas-frame">
+        <canvas id="heroCanvas" width="360" height="360"></canvas>
+        <div class="hero__canvas-label">
+          <span class="hero__canvas-dot"></span>
+          Live sway preview — Breeze profile
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── MARQUEE ─── -->
+<div class="marquee-strip">
+  <div class="marquee-track" id="marqueeTrack">
+    <div class="marquee-item">Sway Motion <span>✦</span></div>
+    <div class="marquee-item">360° Rotation <span>✦</span></div>
+    <div class="marquee-item">Pulse Breathing <span>✦</span></div>
+    <div class="marquee-item">Emotion Mapping <span>✦</span></div>
+    <div class="marquee-item">FFmpeg Pipeline <span>✦</span></div>
+    <div class="marquee-item">Etsy Export <span>✦</span></div>
+    <div class="marquee-item">Client Portal <span>✦</span></div>
+    <div class="marquee-item">AI Motion Brief <span>✦</span></div>
+    <div class="marquee-item">MP4 · GIF · Frames <span>✦</span></div>
+    <div class="marquee-item">Sway Motion <span>✦</span></div>
+    <div class="marquee-item">360° Rotation <span>✦</span></div>
+    <div class="marquee-item">Pulse Breathing <span>✦</span></div>
+    <div class="marquee-item">Emotion Mapping <span>✦</span></div>
+    <div class="marquee-item">FFmpeg Pipeline <span>✦</span></div>
+    <div class="marquee-item">Etsy Export <span>✦</span></div>
+    <div class="marquee-item">Client Portal <span>✦</span></div>
+    <div class="marquee-item">AI Motion Brief <span>✦</span></div>
+    <div class="marquee-item">MP4 · GIF · Frames <span>✦</span></div>
+  </div>
+</div>
+
+<!-- ─── PIPELINE ─── -->
+<section class="section" id="pipeline">
+  <div class="container">
+    <div class="reveal">
+      <span class="overline">The system</span>
+      <h2 class="section-title">Where Motion<br>lives in the pipeline</h2>
+      <p class="section-body">Motion Engine is the final expressive layer — it takes your finished render and translates your design's emotional intent into physical, weighted movement.</p>
+    </div>
+
+    <div class="pipeline reveal reveal-delay-2">
+      <div class="pipeline-step">
+        <div class="pipeline-node">🧠</div>
+        <div class="pipeline-label">Emotion</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="pipeline-node">📐</div>
+        <div class="pipeline-label">Blueprint</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="pipeline-node">🖼</div>
+        <div class="pipeline-label">Render</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step highlight">
+        <div class="pipeline-node highlight" style="font-size:1.5rem;">🎬</div>
+        <div class="pipeline-label">Motion</div>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-step">
+        <div class="pipeline-node">📦</div>
+        <div class="pipeline-label">Output</div>
+      </div>
+    </div>
+
+    <div class="stats-bar reveal reveal-delay-3">
+      <div class="stat">
+        <div class="stat__num">3</div>
+        <div class="stat__label">Motion profiles</div>
+        <div class="stat__sub">whisper to statement</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">30</div>
+        <div class="stat__label">Frames per second</div>
+        <div class="stat__sub">silky smooth output</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">&lt;20s</div>
+        <div class="stat__label">Render time target</div>
+        <div class="stat__sub">frame to final</div>
+      </div>
+      <div class="stat">
+        <div class="stat__num">3</div>
+        <div class="stat__label">Export formats</div>
+        <div class="stat__sub">MP4 · GIF · Frames</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROFILES ─── -->
+<section class="section section--alt" id="profiles">
+  <div class="container">
+    <div class="reveal">
+      <span class="overline">Motion profiles</span>
+      <h2 class="section-title">Three intensities.<br>One emotional truth.</h2>
+      <p class="section-body">Every wreath design carries a feeling. Motion profiles map emotional intent to physical movement — so the animation always reflects the design, not just the settings.</p>
+    </div>
+
+    <div class="profiles-grid">
+
+      <div class="profile-card profile-card--whisper reveal reveal-delay-1">
+        <div class="profile-card__intensity">30</div>
+        <div class="profile-card__icon">🌾</div>
+        <h3 class="profile-card__name">Whisper</h3>
+        <span class="profile-card__tag">calm · minimal · soft</span>
+        <p class="profile-card__desc">A barely-there sway — like a wreath catching a breath of air. Ideal for minimalist designs, neutral palettes, and calm seasonal collections.</p>
+        <div class="profile-card__specs">
+          <div class="profile-spec"><span>Amplitude</span><span class="profile-spec__val">5px</span></div>
+          <div class="profile-spec"><span>Rotation</span><span class="profile-spec__val">1°</span></div>
+          <div class="profile-spec"><span>Emotion map</span><span class="profile-spec__val">calm</span></div>
+        </div>
+        <canvas class="profile-wave" id="wave-whisper"></canvas>
+      </div>
+
+      <div class="profile-card profile-card--breeze reveal reveal-delay-2">
+        <div class="profile-card__intensity">60</div>
+        <div class="profile-card__icon">🍃</div>
+        <h3 class="profile-card__name">Breeze</h3>
+        <span class="profile-card__tag">balanced · natural · default</span>
+        <p class="profile-card__desc">The default profile for most Evercrafted designs. Fluid, organic movement that showcases the sculptural depth of the arrangement without overpowering it.</p>
+        <div class="profile-card__specs">
+          <div class="profile-spec"><span>Amplitude</span><span class="profile-spec__val">12px</span></div>
+          <div class="profile-spec"><span>Rotation</span><span class="profile-spec__val">3°</span></div>
+          <div class="profile-spec"><span>Emotion map</span><span class="profile-spec__val">balanced</span></div>
+        </div>
+        <canvas class="profile-wave" id="wave-breeze"></canvas>
+      </div>
+
+      <div class="profile-card profile-card--statement reveal reveal-delay-3">
+        <div class="profile-card__intensity">90</div>
+        <div class="profile-card__icon">🌊</div>
+        <h3 class="profile-card__name">Statement</h3>
+        <span class="profile-card__tag">dramatic · bold · editorial</span>
+        <p class="profile-card__desc">Maximum physical presence. For statement wreaths that command the room — grand seasonal centerpieces, dark romantic designs, Atelier originals.</p>
+        <div class="profile-card__specs">
+          <div class="profile-spec"><span>Amplitude</span><span class="profile-spec__val">25px</span></div>
+          <div class="profile-spec"><span>Rotation</span><span class="profile-spec__val">6°</span></div>
+          <div class="profile-spec"><span>Emotion map</span><span class="profile-spec__val">dramatic</span></div>
+        </div>
+        <canvas class="profile-wave" id="wave-statement"></canvas>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── MOTION TYPES ─── -->
+<section class="section" id="types">
+  <div class="container">
+    <div class="reveal">
+      <span class="overline">Motion types</span>
+      <h2 class="section-title">Three modes of<br>physical expression</h2>
+    </div>
+
+    <!-- SWAY -->
+    <div class="motion-type reveal">
+      <div class="motion-type__visual">
+        <canvas class="motion-type__canvas" id="canvas-sway" width="320" height="320"></canvas>
+        <div class="motion-type__label-bar">↔ Sway</div>
+      </div>
+      <div class="motion-type__content">
+        <div class="motion-type__num">01</div>
+        <h3 class="motion-type__title">Sway</h3>
+        <p class="motion-type__body">The primary motion type. Simulates natural lateral movement with a subtle rotation component — the way a wreath responds to a gentle current of air. Feels weighted, physical, and organic.</p>
+        <div class="motion-type__specs">
+          <div class="mts">Formula: x = sin(t) × amplitude</div>
+          <div class="mts">Rotation: sin(t) × rotation_factor</div>
+          <div class="mts">Best for: all seasonal designs, Etsy listings, social reels</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROTATION -->
+    <div class="motion-type motion-type--reverse reveal">
+      <div class="motion-type__visual">
+        <canvas class="motion-type__canvas" id="canvas-rotation" width="320" height="320"></canvas>
+        <div class="motion-type__label-bar">↻ Rotation</div>
+      </div>
+      <div class="motion-type__content">
+        <div class="motion-type__num">02</div>
+        <h3 class="motion-type__title">Rotation</h3>
+        <p class="motion-type__body">Simulated full 360° rotation with a depth-illusion shadow layer. Produces the most comprehensive view of the wreath design — every element visible from every angle.</p>
+        <div class="motion-type__specs">
+          <div class="mts">Formula: angle = frame × (360 / total_frames)</div>
+          <div class="mts">Shadow: dynamic based on rotation phase</div>
+          <div class="mts">Best for: product showcases, bold editorial statement pieces</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PULSE -->
+    <div class="motion-type reveal">
+      <div class="motion-type__visual">
+        <canvas class="motion-type__canvas" id="canvas-pulse" width="320" height="320"></canvas>
+        <div class="motion-type__label-bar">◎ Pulse</div>
+      </div>
+      <div class="motion-type__content">
+        <div class="motion-type__num">03</div>
+        <h3 class="motion-type__title">Pulse</h3>
+        <p class="motion-type__body">A scale-based breathing effect — subtle expansion and contraction that creates a living, breathing presence. Best for romantic, soft, or meditative design palettes.</p>
+        <div class="motion-type__specs">
+          <div class="mts">Formula: scale = 1 + sin(t) × intensity_factor</div>
+          <div class="mts">Opacity: coordinated with scale cycle</div>
+          <div class="mts">Best for: soft romantic designs, client portal previews</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── INTEGRATIONS ─── -->
+<section class="section section--dark" id="integrations">
+  <div class="container">
+    <div class="reveal">
+      <span class="overline">Integrations</span>
+      <h2 class="section-title" style="color:var(--ec-off-white);">Connected to<br>the full system</h2>
+      <p class="section-body">Motion Engine doesn't operate in isolation — it's wired into every downstream surface where your designs need to move.</p>
+    </div>
+
+    <div class="integrations-grid">
+      <div class="integration-card reveal reveal-delay-1">
+        <div class="integration-card__icon">🏪</div>
+        <h3 class="integration-card__title">Marketplace</h3>
+        <p class="integration-card__body">Generated animations auto-attach to product blueprints and ship inside every Etsy listing package. No manual upload.</p>
+        <span class="integration-card__badge badge--active">Active</span>
+      </div>
+      <div class="integration-card reveal reveal-delay-2">
+        <div class="integration-card__icon">👤</div>
+        <h3 class="integration-card__title">Client Portal</h3>
+        <p class="integration-card__body">Client portal pages display motion previews for approved designs. GIF embeds require no additional hosting infrastructure.</p>
+        <span class="integration-card__badge badge--active">Active</span>
+      </div>
+      <div class="integration-card reveal reveal-delay-3">
+        <div class="integration-card__icon">🧬</div>
+        <h3 class="integration-card__title">Blueprint Engine</h3>
+        <p class="integration-card__body">Blueprint cluster positions will drive organic per-zone sway — focal clusters move with greater amplitude than base greenery layers.</p>
+        <span class="integration-card__badge badge--phase2">Phase 2</span>
+      </div>
+      <div class="integration-card reveal reveal-delay-1">
+        <div class="integration-card__icon">🎨</div>
+        <h3 class="integration-card__title">Render Engine</h3>
+        <p class="integration-card__body">Accepts any render output directly — from Midjourney StyleSync, Prompt Compiler, or external image sources. Any square render qualifies.</p>
+        <span class="integration-card__badge badge--active">Active</span>
+      </div>
+      <div class="integration-card reveal reveal-delay-2">
+        <div class="integration-card__icon">🤖</div>
+        <h3 class="integration-card__title">AI Motion Brief</h3>
+        <p class="integration-card__body">Paste a genome string or design description. Claude maps the emotional profile to a full motion brief including shot list and export recommendations.</p>
+        <span class="integration-card__badge badge--active">Active</span>
+      </div>
+      <div class="integration-card reveal reveal-delay-3">
+        <div class="integration-card__icon">📱</div>
+        <h3 class="integration-card__title">Social Export</h3>
+        <p class="integration-card__body">Export as GIF for Etsy, or use the included FFmpeg command to compile a production MP4 for Instagram Reels and Shopify product video.</p>
+        <span class="integration-card__badge badge--active">Active</span>
+      </div>
+    </div>
+
+    <!-- TECH STACK -->
+    <div class="reveal reveal-delay-2">
+      <div class="botanical-divider" style="margin-top:80px;margin-bottom:0;">
+        <svg width="24" height="24" viewBox="0 0 32 32" fill="none" style="color:rgba(74,200,130,0.4)">
+          <path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+        </svg>
+      </div>
+      <div class="tech-strip">
+        <div class="tech-item"><div class="tech-item__name">Node.js</div><div class="tech-item__label">Backend runtime</div></div>
+        <div class="tech-item"><div class="tech-item__name">FFmpeg</div><div class="tech-item__label">Video compilation</div></div>
+        <div class="tech-item"><div class="tech-item__name">Canvas API</div><div class="tech-item__label">Frame generation</div></div>
+        <div class="tech-item"><div class="tech-item__name">Claude API</div><div class="tech-item__label">Motion intelligence</div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── TIER ─── -->
+<section class="tier-section" id="tier">
+  <div class="container">
+    <div style="text-align:center;" class="reveal">
+      <span class="overline" style="justify-content:center;display:flex;">Access</span>
+      <h2 class="section-title" style="text-align:center;">Exclusive to<br>Atelier tier</h2>
+      <p class="section-body" style="text-align:center;margin:0 auto 56px;">Motion Engine is a premium capability reserved for Atelier subscribers — Evercrafted's highest creative tier.</p>
+    </div>
+
+    <div class="tier-card-wrap reveal reveal-delay-2">
+      <div class="tier-card">
+        <div class="tier-card__badge">Atelier — Tier 4</div>
+        <h3 class="tier-card__title">The full creative suite,<br>always moving forward</h3>
+        <span class="tier-card__sub">every tool. every update. always.</span>
+        <p class="tier-card__body">Atelier includes all apps, all motion profiles, AI Motion Brief generation, and every future feature as it ships. No add-ons, no per-feature unlocks.</p>
+        <div class="tier-card__features">
+          <div class="tier-feat"><div class="tier-feat__check">✓</div>Motion Engine — all 3 profiles + types</div>
+          <div class="tier-feat"><div class="tier-feat__check">✓</div>AI Emotion Auto-Detect + Motion Brief</div>
+          <div class="tier-feat"><div class="tier-feat__check">✓</div>Export: GIF, frame sequence, FFmpeg command</div>
+          <div class="tier-feat"><div class="tier-feat__check">✓</div>Marketplace + Client Portal integration</div>
+          <div class="tier-feat"><div class="tier-feat__check">✓</div>All Evercrafted apps — Blueprint, Genome, Prompt + more</div>
+          <div class="tier-feat"><div class="tier-feat__check">✓</div>Every future app at no additional cost</div>
+        </div>
+        <div class="tier-card__actions">
+          <a href="#" class="btn btn-green btn-lg">Upgrade to Atelier</a>
+          <span class="tier-card__price">Compare all tiers →</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA ─── -->
+<section class="cta-section">
+  <div class="container">
+    <div class="reveal">
+      <span class="overline" style="display:flex;justify-content:center;">Get started</span>
+      <h2 class="section-title">Your designs deserve<br>to move.</h2>
+      <p class="section-body">Blueprint → Render → Motion → Output. The bridge between design and desire.</p>
+    </div>
+    <div class="cta-actions reveal reveal-delay-2">
+      <a href="#" class="btn btn-primary btn-lg">Open Motion Engine</a>
+      <a href="#" class="btn btn-ghost btn-lg">View all apps</a>
+    </div>
+    <!-- Botanical accent -->
+    <div style="margin-top:60px;" class="reveal reveal-delay-3">
+      <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--ec-green);margin:0 auto;opacity:0.4;">
+        <path d="M16 28 C16 28 8 20 8 12 C8 7.6 11.6 4 16 4 C20.4 4 24 7.6 24 12 C24 20 16 28 16 28Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        <path d="M16 28 L16 10" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/>
+        <path d="M16 18 C16 18 12 16 10 13" stroke="currentColor" stroke-width="1" fill="none"/>
+        <path d="M16 14 C16 14 20 12 22 9" stroke="currentColor" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-brand__logo">Evercrafted</div>
+        <div class="footer-brand__tagline">A luxury AI-powered faux botanical<br>wreath design platform.</div>
+      </div>
+      <nav class="footer-nav">
+        <div class="footer-col">
+          <div class="footer-col__heading">Platform</div>
+          <ul class="footer-col__links">
+            <li><a href="#">Motion Engine</a></li>
+            <li><a href="#">Blueprint Generator</a></li>
+            <li><a href="#">Genome System</a></li>
+            <li><a href="#">Prompt Compiler</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <div class="footer-col__heading">Tiers</div>
+          <ul class="footer-col__links">
+            <li><a href="#">Bloom</a></li>
+            <li><a href="#">Craft</a></li>
+            <li><a href="#">Studio</a></li>
+            <li><a href="#">Atelier</a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2025 Evercrafted. All rights reserved.</span>
+      <span style="font-family:var(--ec-font-script);font-size:1rem;color:rgba(242,239,233,0.2);">crafted with intention</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─────────────────────────────────────────────────────
+// NAV SCROLL
+// ─────────────────────────────────────────────────────
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ─────────────────────────────────────────────────────
+// SCROLL REVEAL
+// ─────────────────────────────────────────────────────
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─────────────────────────────────────────────────────
+// HERO WREATH ANIMATION
+// ─────────────────────────────────────────────────────
+const heroCanvas = document.getElementById('heroCanvas');
+const hctx = heroCanvas.getContext('2d');
+let heroT = 0;
+
+function drawHeroWreath(t) {
+  const W = heroCanvas.width, H = heroCanvas.height;
+  hctx.clearRect(0,0,W,H);
+
+  // Wreath background
+  hctx.fillStyle = '#EEF2ED';
+  hctx.fillRect(0,0,W,H);
+
+  // Sway motion (Breeze profile — intensity 60)
+  const amp = 12, rot = 3 * Math.PI / 180;
+  const xOff = Math.sin(t) * amp;
+  const yOff = Math.sin(t * 0.6) * (amp * 0.3);
+  const rotation = Math.sin(t) * rot;
+
+  hctx.save();
+  hctx.translate(W/2 + xOff, H/2 + yOff);
+  hctx.rotate(rotation);
+
+  // Draw decorative wreath circle composition
+  const outerR = 130, innerR = 75;
+
+  // Outer ring — greenery layer
+  for (let i = 0; i < 36; i++) {
+    const angle = (i / 36) * Math.PI * 2;
+    const bx = Math.cos(angle) * outerR;
+    const by = Math.sin(angle) * outerR;
+
+    hctx.save();
+    hctx.translate(bx, by);
+    hctx.rotate(angle + Math.PI / 2);
+
+    // Leaf shape
+    const leafColors = ['#4A6741','#6B8F67','#5a7a51','#3d5735'];
+    hctx.fillStyle = leafColors[i % leafColors.length];
+    hctx.globalAlpha = 0.85;
+    hctx.beginPath();
+    hctx.ellipse(0, 0, 5 + (i%3)*2, 14 + (i%2)*3, 0, 0, Math.PI*2);
+    hctx.fill();
+    hctx.restore();
+  }
+
+  // Mid ring — filler
+  for (let i = 0; i < 18; i++) {
+    const angle = (i / 18) * Math.PI * 2 + 0.2;
+    const r = outerR - 20 + Math.sin(i * 1.3) * 12;
+    const bx = Math.cos(angle) * r;
+    const by = Math.sin(angle) * r;
+
+    hctx.save();
+    hctx.translate(bx, by);
+    hctx.fillStyle = i % 3 === 0 ? '#C4922A' : (i % 3 === 1 ? '#9b7ab8' : '#d4a5c8');
+    hctx.globalAlpha = 0.7;
+    hctx.beginPath();
+    hctx.arc(0, 0, 5 + (i%2)*3, 0, Math.PI*2);
+    hctx.fill();
+    hctx.restore();
+  }
+
+  // Focal clusters (3 — odd number rule)
+  const focalAngles = [Math.PI * 0.2, Math.PI * 1.0, Math.PI * 1.65];
+  focalAngles.forEach((fa, fi) => {
+    const fr = outerR - 10;
+    const fx = Math.cos(fa) * fr;
+    const fy = Math.sin(fa) * fr;
+
+    hctx.save();
+    hctx.translate(fx, fy);
+
+    // Bloom
+    const petalColors = [['#e8c4d4','#f0d0de'], ['#f5e6c0','#faf0d5'], ['#d4c4e8','#e4d8f4']];
+    const cols = petalColors[fi];
+    for (let p = 0; p < 6; p++) {
+      const pa = (p / 6) * Math.PI * 2;
+      hctx.fillStyle = cols[p%2];
+      hctx.globalAlpha = 0.9;
+      hctx.beginPath();
+      hctx.ellipse(Math.cos(pa)*9, Math.sin(pa)*9, 7, 10, pa, 0, Math.PI*2);
+      hctx.fill();
+    }
+    // Center
+    hctx.fillStyle = '#f8f0e8';
+    hctx.globalAlpha = 1;
+    hctx.beginPath();
+    hctx.arc(0, 0, 6, 0, Math.PI*2);
+    hctx.fill();
+
+    hctx.restore();
+  });
+
+  // Inner void
+  hctx.save();
+  hctx.globalAlpha = 1;
+  hctx.fillStyle = '#EEF2ED';
+  hctx.beginPath();
+  hctx.arc(0, 0, innerR, 0, Math.PI*2);
+  hctx.fill();
+  hctx.restore();
+
+  hctx.restore();
+}
+
+function heroLoop() {
+  heroT += 0.018;
+  drawHeroWreath(heroT);
+  requestAnimationFrame(heroLoop);
+}
+heroLoop();
+
+// ─────────────────────────────────────────────────────
+// PROFILE WAVE CANVASES
+// ─────────────────────────────────────────────────────
+function drawProfileWave(canvasId, intensity, color) {
+  const wc = document.getElementById(canvasId);
+  if (!wc) return;
+  wc.width = wc.offsetWidth * devicePixelRatio || 280;
+  wc.height = 40 * devicePixelRatio;
+  const ctx = wc.getContext('2d');
+  ctx.scale(devicePixelRatio, devicePixelRatio);
+  const W = wc.offsetWidth || 280, H = 40;
+  ctx.clearRect(0,0,W,H);
+
+  const amp = (H/2 - 6) * (intensity / 90);
+  ctx.beginPath();
+  ctx.strokeStyle = color || '#4A6741';
+  ctx.lineWidth = 1.5;
+  ctx.globalAlpha = 0.7;
+  for (let i = 0; i <= 200; i++) {
+    const t = (i/200) * Math.PI * 4;
+    const x = (i/200) * W;
+    const y = H/2 + Math.sin(t) * amp;
+    i === 0 ? ctx.moveTo(x,y) : ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+}
+
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    drawProfileWave('wave-whisper', 30, '#4A6741');
+    drawProfileWave('wave-breeze', 60, '#4A6741');
+    drawProfileWave('wave-statement', 90, '#6B8F67');
+    drawMotionTypeDemos();
+  }, 300);
+});
+
+// ─────────────────────────────────────────────────────
+// MOTION TYPE DEMO CANVASES
+// ─────────────────────────────────────────────────────
+function drawMotionTypeDemos() {
+  // These draw once as stills showing the path/arc of motion
+  drawSwayDemo();
+  drawRotationDemo();
+  drawPulseDemo();
+
+  // Animate them
+  let t = 0;
+  function demoLoop() {
+    t += 0.02;
+    animateSwayDemo(t);
+    animateRotationDemo(t);
+    animatePulseDemo(t);
+    requestAnimationFrame(demoLoop);
+  }
+  demoLoop();
+}
+
+function makeWreathOnCtx(ctx, cx, cy, r, alpha) {
+  ctx.save();
+  ctx.globalAlpha = alpha || 1;
+  // Outer greenery ring
+  for (let i = 0; i < 24; i++) {
+    const angle = (i / 24) * Math.PI * 2;
+    ctx.save();
+    ctx.translate(cx + Math.cos(angle)*r, cy + Math.sin(angle)*r);
+    ctx.rotate(angle + Math.PI/2);
+    ctx.fillStyle = i%2===0 ? '#4A6741' : '#6B8F67';
+    ctx.beginPath();
+    ctx.ellipse(0,0,4,10,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+  // 3 focals
+  [0.3, 1.1, 1.9].forEach(fa => {
+    ctx.save();
+    ctx.translate(cx + Math.cos(fa)*r*0.85, cy + Math.sin(fa)*r*0.85);
+    for (let p=0;p<5;p++){
+      const pa=(p/5)*Math.PI*2;
+      ctx.fillStyle='#e8c4d4';
+      ctx.beginPath();
+      ctx.ellipse(Math.cos(pa)*6,Math.sin(pa)*6,5,8,pa,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.fillStyle='#f8f0e8';
+    ctx.beginPath();ctx.arc(0,0,5,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+  });
+  // Inner void
+  ctx.fillStyle='#F2EFE9';
+  ctx.beginPath();ctx.arc(cx,cy,r*0.52,0,Math.PI*2);ctx.fill();
+  ctx.restore();
+}
+
+function animateSwayDemo(t) {
+  const c = document.getElementById('canvas-sway');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#F2EFE9';ctx.fillRect(0,0,W,H);
+
+  // Motion trail
+  ctx.save();
+  ctx.globalAlpha=0.06;
+  for(let i=0;i<5;i++){
+    const tt=t-i*0.3;
+    const xo=Math.sin(tt)*18;
+    ctx.translate(xo,0);
+    makeWreathOnCtx(ctx,W/2,H/2,95,0.3);
+    ctx.translate(-xo,0);
+  }
+  ctx.restore();
+
+  const xOff=Math.sin(t)*18, yOff=Math.sin(t*0.6)*5, rot=Math.sin(t)*(3*Math.PI/180);
+  ctx.save();
+  ctx.translate(W/2+xOff, H/2+yOff);
+  ctx.rotate(rot);
+  makeWreathOnCtx(ctx,0,0,95);
+  ctx.restore();
+
+  // Arc guide
+  ctx.save();
+  ctx.strokeStyle='rgba(74,103,65,0.15)';
+  ctx.lineWidth=1;
+  ctx.setLineDash([3,4]);
+  ctx.beginPath();
+  ctx.arc(W/2,H/2+5,18,0,Math.PI*2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function animateRotationDemo(t) {
+  const c = document.getElementById('canvas-rotation');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#F2EFE9';ctx.fillRect(0,0,W,H);
+
+  ctx.save();
+  ctx.translate(W/2,H/2);
+  ctx.rotate(t * 0.4);
+  const shadow=Math.abs(Math.sin(t*0.4));
+  ctx.shadowColor='rgba(0,0,0,0.12)';
+  ctx.shadowBlur=20*shadow;
+  ctx.shadowOffsetX=12*Math.sin(t*0.4);
+  makeWreathOnCtx(ctx,0,0,95);
+  ctx.restore();
+
+  // Rotation arc indicator
+  ctx.save();
+  ctx.strokeStyle='rgba(74,103,65,0.12)';
+  ctx.lineWidth=1;
+  ctx.setLineDash([2,4]);
+  ctx.beginPath();
+  ctx.arc(W/2,H/2,110,0,Math.PI*2);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function animatePulseDemo(t) {
+  const c = document.getElementById('canvas-pulse');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#F2EFE9';ctx.fillRect(0,0,W,H);
+
+  const sc=1+Math.sin(t)*0.05;
+  const alpha=0.9+0.1*Math.abs(Math.sin(t));
+
+  ctx.save();
+  ctx.translate(W/2,H/2);
+  ctx.scale(sc,sc);
+  ctx.globalAlpha=alpha;
+  makeWreathOnCtx(ctx,0,0,95);
+  ctx.restore();
+
+  // Pulse rings
+  for(let i=0;i<3;i++){
+    const phase=t+i*1.2;
+    const ringR=95+25*(phase%(Math.PI*2))/(Math.PI*2)*30;
+    const ringA=0.15*(1-((phase%(Math.PI*2))/(Math.PI*2)));
+    ctx.save();
+    ctx.strokeStyle=`rgba(74,103,65,${ringA})`;
+    ctx.lineWidth=1.5;
+    ctx.beginPath();
+    ctx.arc(W/2,H/2,ringR,0,Math.PI*2);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+</script>
+</body>
+</html>

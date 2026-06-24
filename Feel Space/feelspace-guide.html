@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FeelSpace — Complete Business Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Mulish:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1A1108;
+  --cream: #F6F0E4;
+  --warm: #FDFAF4;
+  --parchment: #EDE5D2;
+  --mist: #DDD5C2;
+  --stone: #877A6A;
+  --rust: #B84C2A;
+  --amber: #D4893A;
+  --sage: #4E7854;
+  --deep: #0F0A03;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Mulish', sans-serif; background: var(--cream); color: var(--ink); }
+
+/* ── TOP HEADER ── */
+.guide-header {
+  background: var(--deep); padding: 3.5rem;
+  position: relative; overflow: hidden;
+}
+.guide-header::before {
+  content: '';
+  position: absolute; right: -100px; top: -100px;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,137,58,0.12) 0%, transparent 65%);
+}
+.gh-back {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(246,240,228,0.4); text-decoration: none; margin-bottom: 2rem;
+  transition: color 0.2s;
+}
+.gh-back:hover { color: rgba(246,240,228,0.8); }
+.gh-label {
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 1rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.gh-label::after { content:''; flex: 1; max-width: 48px; height: 1px; background: var(--amber); }
+.guide-header h1 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 400; line-height: 1.1; letter-spacing: -0.02em;
+  color: var(--cream); margin-bottom: 1.25rem;
+}
+.guide-header h1 em { font-style: italic; color: #E8A855; }
+.guide-header .sub {
+  font-size: 1rem; font-weight: 300; line-height: 1.75;
+  color: rgba(246,240,228,0.55); max-width: 600px;
+}
+
+/* ── LAYOUT ── */
+.guide-body { display: grid; grid-template-columns: 240px 1fr; max-width: 1080px; margin: 0 auto; min-height: 100vh; }
+
+/* ── SIDEBAR NAV ── */
+.guide-nav {
+  padding: 2.5rem 1.5rem 2.5rem 0;
+  position: sticky; top: 0; height: 100vh;
+  overflow-y: auto; border-right: 1px solid var(--mist);
+}
+.guide-nav::-webkit-scrollbar { width: 3px; }
+.guide-nav::-webkit-scrollbar-thumb { background: var(--mist); }
+.nav-section-title {
+  font-size: 0.62rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--stone); padding: 0 0 0.5rem; margin-bottom: 0.25rem;
+  margin-top: 1.5rem;
+}
+.nav-section-title:first-child { margin-top: 0; }
+.nav-link {
+  display: block; padding: 0.4rem 0;
+  font-size: 0.8rem; font-weight: 400; color: var(--stone);
+  text-decoration: none; transition: color 0.15s;
+  border-left: 2px solid transparent; padding-left: 0.75rem; margin-left: -0.75rem;
+}
+.nav-link:hover { color: var(--ink); border-left-color: var(--mist); }
+.nav-link.active { color: var(--rust); border-left-color: var(--rust); font-weight: 500; }
+
+/* ── CONTENT ── */
+.guide-content { padding: 3rem 3rem 6rem; }
+
+/* Chapters */
+.chapter {
+  margin-bottom: 5rem; padding-bottom: 5rem;
+  border-bottom: 1px solid var(--mist);
+}
+.chapter:last-child { border-bottom: none; }
+
+.chapter-num {
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--rust); margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.chapter-num::after { content:''; width: 32px; height: 1px; background: var(--rust); }
+
+.chapter h2 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: clamp(1.6rem, 2.5vw, 2.1rem);
+  font-weight: 400; line-height: 1.15; letter-spacing: -0.02em;
+  color: var(--ink); margin-bottom: 1.25rem;
+}
+.chapter h2 em { font-style: italic; color: var(--rust); }
+
+.chapter h3 {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: var(--ink); margin-top: 2rem; margin-bottom: 0.75rem;
+}
+
+.chapter p {
+  font-size: 0.92rem; font-weight: 300; line-height: 1.8;
+  color: var(--stone); margin-bottom: 1.25rem; max-width: 660px;
+}
+.chapter p strong { font-weight: 600; color: var(--ink); }
+
+/* Pull quote */
+.pullquote {
+  border-left: 3px solid var(--amber); padding-left: 1.5rem; margin: 2rem 0;
+  font-family: 'Libre Baskerville', serif; font-style: italic;
+  font-size: 1.1rem; line-height: 1.6; color: var(--ink);
+}
+
+/* Info box */
+.infobox {
+  background: var(--warm); border: 1px solid var(--mist); border-radius: 3px;
+  padding: 1.5rem; margin: 1.75rem 0;
+  border-left: 3px solid var(--amber);
+}
+.infobox-label {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: 0.6rem;
+}
+.infobox p { font-size: 0.85rem; margin-bottom: 0; color: var(--stone); max-width: none; }
+.infobox p:not(:last-child) { margin-bottom: 0.5rem; }
+
+/* Warning box */
+.warnbox {
+  background: rgba(184,76,42,0.05); border: 1px solid rgba(184,76,42,0.2); border-radius: 3px;
+  padding: 1.25rem 1.5rem; margin: 1.75rem 0;
+}
+.warnbox-label {
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--rust); margin-bottom: 0.5rem;
+}
+.warnbox p { font-size: 0.85rem; margin-bottom: 0; color: var(--stone); max-width: none; }
+
+/* Steps */
+.steps-block { margin: 2rem 0; display: flex; flex-direction: column; gap: 1px; background: var(--mist); border: 1px solid var(--mist); border-radius: 3px; overflow: hidden; }
+.step-row {
+  background: var(--warm); padding: 1.25rem 1.5rem;
+  display: flex; gap: 1.25rem; align-items: flex-start;
+  transition: background 0.15s;
+}
+.step-row:hover { background: var(--cream); }
+.step-badge {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(184,76,42,0.1); color: var(--rust);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.72rem; font-weight: 600;
+}
+.step-row-title { font-size: 0.88rem; font-weight: 500; color: var(--ink); margin-bottom: 0.3rem; }
+.step-row-desc { font-size: 0.8rem; font-weight: 300; color: var(--stone); line-height: 1.6; }
+
+/* Comparison table */
+.comp-table { width: 100%; border-collapse: collapse; margin: 1.75rem 0; font-size: 0.83rem; }
+.comp-table th { text-align: left; padding: 0.75rem 1rem; background: var(--parchment); border: 1px solid var(--mist); font-weight: 600; color: var(--ink); font-size: 0.75rem; letter-spacing: 0.04em; }
+.comp-table td { padding: 0.75rem 1rem; border: 1px solid var(--mist); color: var(--stone); font-weight: 300; line-height: 1.5; }
+.comp-table tr:hover td { background: var(--warm); }
+.comp-table .good { color: var(--sage); font-weight: 500; }
+.comp-table .bad { color: var(--rust); }
+
+/* Checklist */
+.checklist { margin: 1.5rem 0; display: flex; flex-direction: column; gap: 8px; }
+.check-item {
+  display: flex; gap: 0.85rem; align-items: flex-start;
+  padding: 0.75rem 1rem; background: var(--warm); border: 1px solid var(--mist);
+  border-radius: 2px; font-size: 0.83rem; font-weight: 300; color: var(--stone);
+  cursor: pointer; transition: border-color 0.15s;
+}
+.check-item:hover { border-color: var(--amber); }
+.check-item.done { border-color: rgba(78,120,84,0.3); background: rgba(78,120,84,0.04); }
+.check-item.done .check-icon { color: var(--sage); }
+.check-icon { font-size: 14px; color: var(--mist); margin-top: 1px; flex-shrink: 0; transition: color 0.15s; }
+.check-text { line-height: 1.5; }
+.check-text strong { color: var(--ink); font-weight: 500; }
+
+/* Phase cards */
+.phase-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0; }
+.phase-card {
+  background: var(--warm); border: 1px solid var(--mist); border-radius: 3px;
+  padding: 1.5rem; transition: border-color 0.2s;
+}
+.phase-card:hover { border-color: var(--amber); }
+.phase-num { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.5rem; }
+.phase-title { font-family: 'Libre Baskerville', serif; font-size: 1rem; color: var(--ink); margin-bottom: 0.5rem; }
+.phase-desc { font-size: 0.8rem; font-weight: 300; line-height: 1.6; color: var(--stone); }
+
+/* Revenue table */
+.rev-table { margin: 2rem 0; }
+.rev-row { display: flex; align-items: center; gap: 1rem; padding: 0.85rem 0; border-bottom: 1px solid var(--mist); }
+.rev-row:last-child { border-bottom: none; }
+.rev-source { flex: 1; font-size: 0.85rem; font-weight: 500; color: var(--ink); }
+.rev-bar-wrap { flex: 2; }
+.rev-bar { height: 6px; border-radius: 2px; background: var(--amber); }
+.rev-val { font-size: 0.8rem; color: var(--stone); white-space: nowrap; min-width: 80px; text-align: right; }
+
+/* Code block (for API examples) */
+.code-block {
+  background: var(--deep); color: #E8D5B0; padding: 1.25rem 1.5rem;
+  border-radius: 3px; font-family: 'Courier New', monospace;
+  font-size: 0.8rem; line-height: 1.7; margin: 1.5rem 0; overflow-x: auto;
+}
+.code-comment { color: #6B5E4A; }
+.code-key { color: #D4893A; }
+.code-val { color: #8BAF7A; }
+.code-str { color: #C4A87A; }
+
+/* Progress tracker at top */
+.progress-tracker {
+  background: var(--warm); border-bottom: 1px solid var(--mist);
+  padding: 1rem 3rem; display: flex; gap: 0; overflow-x: auto;
+}
+.progress-tracker::-webkit-scrollbar { display: none; }
+.prog-step {
+  display: flex; align-items: center; gap: 0; flex-shrink: 0;
+}
+.prog-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--cream); border: 2px solid var(--mist);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 600; color: var(--stone);
+  cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+}
+.prog-dot.done { background: var(--sage); border-color: var(--sage); color: white; }
+.prog-dot.current { background: var(--rust); border-color: var(--rust); color: white; }
+.prog-label { font-size: 0.68rem; color: var(--stone); padding: 0 0.75rem; white-space: nowrap; }
+.prog-line { width: 32px; height: 2px; background: var(--mist); flex-shrink: 0; }
+
+@media (max-width: 860px) {
+  .guide-body { grid-template-columns: 1fr; }
+  .guide-nav { display: none; }
+  .guide-content { padding: 2rem 1.5rem 4rem; }
+  .phase-grid { grid-template-columns: 1fr; }
+  .guide-header { padding: 2.5rem 1.5rem; }
+  .progress-tracker { padding: 1rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="guide-header">
+  <a class="gh-back" href="feelspace-landing.html">← Back to FeelSpace</a>
+  <div class="gh-label">Complete Business Guide</div>
+  <h1>How to build &amp; grow<br>a <em>FeelSpace</em> business</h1>
+  <p class="sub">Everything you need to go from zero to your first $10k month — strategy, setup, catalog, drops, creators, and scaling playbook.</p>
+</div>
+
+<!-- PROGRESS TRACKER -->
+<div class="progress-tracker">
+  <div class="prog-step"><div class="prog-dot done" onclick="scrollTo('ch1')">✓</div><div class="prog-label">The concept</div><div class="prog-line"></div></div>
+  <div class="prog-step"><div class="prog-dot current" onclick="scrollTo('ch2')">2</div><div class="prog-label">Getting started</div><div class="prog-line"></div></div>
+  <div class="prog-step"><div class="prog-dot" onclick="scrollTo('ch3')">3</div><div class="prog-label">Your catalog</div><div class="prog-line"></div></div>
+  <div class="prog-step"><div class="prog-dot" onclick="scrollTo('ch4')">4</div><div class="prog-label">First scene</div><div class="prog-line"></div></div>
+  <div class="prog-step"><div class="prog-dot" onclick="scrollTo('ch5')">5</div><div class="prog-label">Seasonal drops</div><div class="prog-line"></div></div>
+  <div class="prog-step"><div class="prog-dot" onclick="scrollTo('ch6')">6</div><div class="prog-label">Creators</div><div class="prog-line"></div></div>
+  <div class="prog-step"><div class="prog-dot" onclick="scrollTo('ch7')">7</div><div class="prog-label">Revenue model</div><div class="prog-line"></div></div>
+  <div class="prog-step"><div class="prog-dot" onclick="scrollTo('ch8')">8</div><div class="prog-label">Scaling</div></div>
+</div>
+
+<div class="guide-body">
+
+  <!-- SIDEBAR -->
+  <div class="guide-nav">
+    <div class="nav-section-title">Foundations</div>
+    <a class="nav-link active" href="#ch1">The core concept</a>
+    <a class="nav-link" href="#ch2">Getting started</a>
+    <a class="nav-link" href="#ch3">Building your catalog</a>
+
+    <div class="nav-section-title">Running the platform</div>
+    <a class="nav-link" href="#ch4">Creating your first scene</a>
+    <a class="nav-link" href="#ch5">Seasonal drops strategy</a>
+    <a class="nav-link" href="#ch6">Creator economy layer</a>
+
+    <div class="nav-section-title">Growing the business</div>
+    <a class="nav-link" href="#ch7">Revenue model</a>
+    <a class="nav-link" href="#ch8">Scaling roadmap</a>
+    <a class="nav-link" href="#ch9">Technical stack</a>
+    <a class="nav-link" href="#ch10">Launch checklist</a>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="guide-content">
+
+    <!-- CHAPTER 1 -->
+    <div class="chapter" id="ch1">
+      <div class="chapter-num">Chapter 01</div>
+      <h2>The core concept — <em>why emotion sells</em></h2>
+
+      <p>Traditional e-commerce assumes customers know what they want. They land on a product grid, scan items, compare prices, and maybe buy one thing. The average order on a browse-first store is $31.</p>
+
+      <p>FeelSpace starts from a completely different premise: <strong>people don't buy decor. They buy how a space makes them feel.</strong> When someone thinks "I want to update my entryway for fall," they're not thinking "I need a 22-inch maple leaf wreath." They're thinking "I want warmth. I want it to feel welcoming. I want autumn to feel like home."</p>
+
+      <div class="pullquote">"The most powerful thing you can sell is a feeling — and the way you sell it is to show it first, then reveal the products that create it."</div>
+
+      <p>FeelSpace operationalizes this insight. A customer types a mood. The platform generates a complete, designed entryway scene with all the products placed contextually. The customer doesn't shop — they just say yes. Average basket: $127.</p>
+
+      <h3>Why entryways are the perfect starting point</h3>
+      <p>The entryway wedge is strategic, not accidental. Entryways are:</p>
+
+      <table class="comp-table">
+        <tr><th>Attribute</th><th>Entryway</th><th>Living room</th><th>Bedroom</th></tr>
+        <tr><td>SKU count to outfit</td><td class="good">5–8 items</td><td class="bad">20–40 items</td><td class="bad">15–30 items</td></tr>
+        <tr><td>Seasonal refresh rate</td><td class="good">4–6x / year</td><td>1–2x / year</td><td>1x / year</td></tr>
+        <tr><td>Social share motivation</td><td class="good">Very high</td><td>Medium</td><td>Low</td></tr>
+        <tr><td>Emotional stakes</td><td class="good">Very high — "first impression"</td><td>Medium</td><td>Personal only</td></tr>
+        <tr><td>Avg product price range</td><td class="good">$25–$130</td><td>$50–$2000</td><td>$40–$500</td></tr>
+      </table>
+
+      <div class="infobox">
+        <div class="infobox-label">The billion-dollar insight</div>
+        <p>The home decor market is $130B. Less than 3% of it is sold with context — meaning products shown as part of a designed environment. FeelSpace is building the infrastructure to make contextual, emotion-first commerce the default.</p>
+      </div>
+    </div>
+
+    <!-- CHAPTER 2 -->
+    <div class="chapter" id="ch2">
+      <div class="chapter-num">Chapter 02</div>
+      <h2>Getting started — <em>your first 72 hours</em></h2>
+
+      <p>The fastest path to revenue is a focused MVP: one season, one mood category, 30–50 carefully curated SKUs. Here's exactly how to spend your first three days.</p>
+
+      <h3>Day 1 — Account and catalog setup</h3>
+      <div class="steps-block">
+        <div class="step-row"><div class="step-badge">1</div><div><div class="step-row-title">Create your FeelSpace account</div><div class="step-row-desc">Start on the free Seed plan. You can upgrade to Grow ($149/mo) once your first drop is live and converting.</div></div></div>
+        <div class="step-row"><div class="step-badge">2</div><div><div class="step-row-title">Choose your launch season and mood</div><div class="step-row-desc">Don't try to launch all seasons at once. Pick the one that's coming next. Fall is historically the highest-converting season for entryways.</div></div></div>
+        <div class="step-row"><div class="step-badge">3</div><div><div class="step-row-title">Upload your catalog</div><div class="step-row-desc">Start with 30–50 products maximum. Each product needs: name, price, clear product photo, category (wreath / planter / lighting / mat / decor / furniture). That's it.</div></div></div>
+        <div class="step-row"><div class="step-badge">4</div><div><div class="step-row-title">Review AI emotion tags</div><div class="step-row-desc">After upload, the system auto-tags each product with emotional qualities (warm, cozy, festive, minimal, natural, etc.). Spot-check these — they determine which scenes your products appear in.</div></div></div>
+      </div>
+
+      <h3>Day 2 — Scene creation</h3>
+      <div class="steps-block">
+        <div class="step-row"><div class="step-badge">5</div><div><div class="step-row-title">Generate your first 5 scenes</div><div class="step-row-desc">Use the quick moods as starting points. Each scene should feel distinct — don't generate five versions of "warm autumn." Try "warm," "cozy," "festive," "minimal," and "vibrant."</div></div></div>
+        <div class="step-row"><div class="step-badge">6</div><div><div class="step-row-title">Tune each scene with the slider controls</div><div class="step-row-desc">The warmth, lushness, and natural sliders change which products appear. A high-lush scene will pull more plants; a minimal scene will surface simpler textures.</div></div></div>
+        <div class="step-row"><div class="step-badge">7</div><div><div class="step-row-title">Verify product placement makes sense</div><div class="step-row-desc">Manually review each scene. If a product feels wrong (a tropical planter in a winter scene, for example), override the tag in your catalog settings.</div></div></div>
+      </div>
+
+      <h3>Day 3 — Your first drop</h3>
+      <div class="steps-block">
+        <div class="step-row"><div class="step-badge">8</div><div><div class="step-row-title">Bundle 3–5 scenes into a named Drop</div><div class="step-row-desc">Give it a mood name: "The Autumn Calm Drop." Write a 2-sentence description focused entirely on feeling, not products.</div></div></div>
+        <div class="step-row"><div class="step-badge">9</div><div><div class="step-row-title">Set a drop window (5–7 days works best)</div><div class="step-row-desc">Scarcity drives decisions. "Available until Sunday" converts better than "always available."</div></div></div>
+        <div class="step-row"><div class="step-badge">10</div><div><div class="step-row-title">Share your drop launch post</div><div class="step-row-desc">Use the built-in share card generator. The card should lead with the scene visual, not the product list. Let the emotion sell first.</div></div></div>
+      </div>
+
+      <div class="warnbox">
+        <div class="warnbox-label">Common mistake to avoid</div>
+        <p>Don't launch with 200 products and 20 scenes hoping the AI figures it out. A tight, curated first drop with 5 scenes and 40 products will convert at 3× the rate of an overwhelming catalog. Quality of context beats quantity every time.</p>
+      </div>
+    </div>
+
+    <!-- CHAPTER 3 -->
+    <div class="chapter" id="ch3">
+      <div class="chapter-num">Chapter 03</div>
+      <h2>Building your catalog — <em>products that work in scenes</em></h2>
+
+      <p>Not all products translate equally well to scene-based selling. Here's how to structure your catalog for maximum scene coverage and conversion.</p>
+
+      <h3>The 5 product categories you need</h3>
+      <p>Every high-converting entryway scene contains at least one product from each of these five categories. If you're missing a category, your scenes will feel incomplete and customers will sense it.</p>
+
+      <div class="phase-grid">
+        <div class="phase-card"><div class="phase-num">Category 01</div><div class="phase-title">The focal point</div><div class="phase-desc">Wreaths, door signs, seasonal arrangements. This is the hero product — the item that defines the mood. Price: $35–$80. You need at least 3–4 options per season.</div></div>
+        <div class="phase-card"><div class="phase-num">Category 02</div><div class="phase-title">Living elements</div><div class="phase-desc">Planters, pots, florals, seasonal plants. These ground the scene and add organic warmth. Price: $25–$75. Seasonal variety matters here — mums for fall, tulips for spring.</div></div>
+        <div class="phase-card"><div class="phase-num">Category 03</div><div class="phase-title">Lighting</div><div class="phase-desc">Lanterns, candles, string lights. Lighting adds atmosphere and drives basket value. Price: $20–$65. Even minimal scenes benefit from a single lantern.</div></div>
+        <div class="phase-card"><div class="phase-num">Category 04</div><div class="phase-title">Ground layer</div><div class="phase-desc">Doormats, rugs, entry runners. The lowest price point but high attach rate — customers almost always add one. Price: $25–$55. Offer 2–3 texture options per mood.</div></div>
+        <div class="phase-card"><div class="phase-num">Category 05</div><div class="phase-title">Accent objects</div><div class="phase-desc">Vases, benches, baskets, decorative stakes. These fill in scenes and push basket size. Price: $20–$150. One or two per mood is enough — don't over-populate.</div></div>
+      </div>
+
+      <h3>Writing product descriptions that work with the AI</h3>
+      <p>The emotion engine reads your product descriptions to assign tags. Write descriptions that include feeling words, not just features. Compare:</p>
+
+      <div class="infobox">
+        <div class="infobox-label">Description that tags poorly</div>
+        <p>"Maple leaf wreath, 22 inches, wire frame, hand-dried leaves, natural colors."</p>
+      </div>
+      <div class="infobox" style="border-left-color:var(--sage);">
+        <div class="infobox-label" style="color:var(--sage);">Description that tags well</div>
+        <p>"Hand-dried maple leaf wreath — rich autumn tones of rust, amber, and burgundy. Warm, welcoming, and deeply seasonal. 22-inch diameter, natural wire frame. Perfect for creating that cozy fall first impression."</p>
+      </div>
+
+      <p>The second description gives the emotion engine warmth, autumn, cozy, welcoming, and seasonal. It will appear in 3× more scene types.</p>
+    </div>
+
+    <!-- CHAPTER 4 -->
+    <div class="chapter" id="ch4">
+      <div class="chapter-num">Chapter 04</div>
+      <h2>Creating your first scene — <em>the craft of emotional composition</em></h2>
+
+      <p>Generating a scene takes seconds. Making a scene that converts takes a bit more craft. Here's how to think about scene quality.</p>
+
+      <h3>The anatomy of a high-converting scene</h3>
+      <p>The best scenes share four qualities: <strong>emotional coherence</strong> (everything feels like it belongs together), <strong>seasonal specificity</strong> (nothing is generic), <strong>aspirational but achievable</strong> (customers can imagine their home looking like this), and <strong>visual balance</strong> (not too sparse, not too cluttered).</p>
+
+      <h3>Scene naming — this matters more than you think</h3>
+      <p>The scene name is the first thing customers see and share. Bad names describe products. Good names describe feelings.</p>
+
+      <table class="comp-table">
+        <tr><th>Bad scene name</th><th>Good scene name</th><th>Why it works</th></tr>
+        <tr><td class="bad">Fall Wreath Bundle</td><td class="good">Autumn Calm</td><td>Sells a state of being, not a set of objects</td></tr>
+        <tr><td class="bad">Winter Decor Set</td><td class="good">Frost &amp; Glow</td><td>Creates a sensory picture in two words</td></tr>
+        <tr><td class="bad">Spring Products</td><td class="good">First Light</td><td>Evokes a specific moment, not a season</td></tr>
+        <tr><td class="bad">Minimal Entry</td><td class="good">Sunday Quiet</td><td>Gives the customer a character to inhabit</td></tr>
+      </table>
+
+      <h3>Iterating with the scene composer</h3>
+      <p>Once your base scene is generated, use natural language to refine it. Effective prompts:</p>
+      <div class="code-block">
+<span class="code-comment">// These work well</span>
+<span class="code-key">"Make it warmer and more textured"</span>
+<span class="code-key">"Add more greenery, less hardscape"</span>
+<span class="code-key">"I want it to feel like a Sunday morning, not a holiday"</span>
+<span class="code-key">"More rustic, less polished"</span>
+<span class="code-key">"What would this look like in a coastal home?"</span>
+
+<span class="code-comment">// These don't work as well</span>
+<span class="code-key">"Add product SKU-4421"</span>  <span class="code-comment">// Too product-focused</span>
+<span class="code-key">"Make it cheaper"</span>  <span class="code-comment">// The engine doesn't optimize for price</span>
+      </div>
+    </div>
+
+    <!-- CHAPTER 5 -->
+    <div class="chapter" id="ch5">
+      <div class="chapter-num">Chapter 05</div>
+      <h2>Seasonal drops strategy — <em>scarcity + emotion = urgency</em></h2>
+
+      <p>Drops are the highest-leverage growth mechanism in FeelSpace. A well-executed drop creates urgency, generates social sharing, and drives repeat purchase behavior. Here's how to plan a full year of drops.</p>
+
+      <h3>Annual drop calendar</h3>
+      <div class="steps-block">
+        <div class="step-row"><div class="step-badge" style="background:rgba(184,76,42,0.15);color:var(--rust);">🍂</div><div><div class="step-row-title">Early September — The First Fall Drop</div><div class="step-row-desc">Launch 3–4 weeks before peak fall demand. Mood: warm, transitional, "summer ending." Lead with dried botanicals and muted terracottas. This drop educates your customer on the scene-buying experience.</div></div></div>
+        <div class="step-row"><div class="step-badge" style="background:rgba(184,76,42,0.15);color:var(--rust);">🎃</div><div><div class="step-row-title">Mid-October — Peak Autumn Drop</div><div class="step-row-desc">Your biggest volume drop of the year. More festive, deeper autumn palette. Introduce pumpkins and warmer lighting. Price this drop slightly higher — customers are in buying mode.</div></div></div>
+        <div class="step-row"><div class="step-badge" style="background:rgba(100,140,200,0.15);color:#3A5FA0;">❄️</div><div><div class="step-row-title">Late November — First Winter Drop</div><div class="step-row-desc">The transition drop. Mix late autumn with early winter — cedar, white pines, warm metallics. Mood: "cozy indoors" rather than "festive." Holds well through December 1st.</div></div></div>
+        <div class="step-row"><div class="step-badge" style="background:rgba(100,140,200,0.15);color:#3A5FA0;">🎄</div><div><div class="step-row-title">December — The Holiday Drop</div><div class="step-row-desc">Fully festive — reds, deep greens, frosted whites. This is a gifting drop. Your scene share cards become gift ideas. Highest average basket of the year (~$180+).</div></div></div>
+        <div class="step-row"><div class="step-badge" style="background:rgba(78,120,84,0.15);color:var(--sage);">🌿</div><div><div class="step-row-title">February — Winter Refresh Drop</div><div class="step-row-desc">The January lull is real. A February drop with "calm, minimal, natural" moods performs well — customers are tired of holiday and want quiet.</div></div></div>
+        <div class="step-row"><div class="step-badge" style="background:rgba(78,120,84,0.15);color:var(--sage);">🌸</div><div><div class="step-row-title">April — Spring Awakening Drop</div><div class="step-row-desc">Second biggest drop of the year. Wildflowers, pastels, fresh citrus. Mood: relief, brightness, newness. Customers are ready to spend after a long winter.</div></div></div>
+      </div>
+
+      <div class="infobox">
+        <div class="infobox-label">Drop copy formula that works</div>
+        <p><strong>Subject line:</strong> [Feeling] is here. [Drop name] — available for [X] days.</p>
+        <p><strong>Opening line:</strong> That feeling when [specific sensory moment]. That's what we built this drop around.</p>
+        <p><strong>Body:</strong> Describe the mood in 2–3 sentences. Name 2–3 products. End with the close window.</p>
+        <p><strong>Example:</strong> "That feeling when you open the front door on a cool October morning and everything smells like woodsmoke and dried leaves. That's the Autumn Calm Drop. Available for 6 days."</p>
+      </div>
+    </div>
+
+    <!-- CHAPTER 6 -->
+    <div class="chapter" id="ch6">
+      <div class="chapter-num">Chapter 06</div>
+      <h2>The creator economy layer — <em>distribution you don't have to pay for</em></h2>
+
+      <p>The creator layer is the highest-leverage growth mechanism after drops. A single mid-size creator (20k–100k followers) publishing a scene can generate $3k–$15k in attributed revenue — at zero acquisition cost to you.</p>
+
+      <h3>Who makes a good FeelSpace creator?</h3>
+      <p>You're not looking for influencers with the biggest audiences. You're looking for people whose aesthetic already aligns with your catalog. The right creator has:</p>
+
+      <div class="checklist" id="creatorChecklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>Genuine home content</strong> — they post about their own space, not just products</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>Seasonal awareness</strong> — they already decorate for seasons and share it</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>Engaged small audience</strong> — 5k engaged followers > 500k passive ones</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>They describe feelings, not specs</strong> — they say "cozy" and "welcoming" not "on-trend"</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>Their audience shops for their home</strong> — not just fashion, travel, or food</div></div>
+      </div>
+
+      <h3>Creator onboarding flow</h3>
+      <div class="steps-block">
+        <div class="step-row"><div class="step-badge">1</div><div><div class="step-row-title">Invite to platform</div><div class="step-row-desc">Give creators a free Grow-tier account. They need full scene generation to publish good content.</div></div></div>
+        <div class="step-row"><div class="step-badge">2</div><div><div class="step-row-title">They create named mood scenes</div><div class="step-row-desc">Creators publish scenes under their name: "Sunday Garden Welcome by @SageHomeStudio." Their scenes use your catalog products as the shoppable layer.</div></div></div>
+        <div class="step-row"><div class="step-badge">3</div><div><div class="step-row-title">Followers browse and buy</div><div class="step-row-desc">Followers click through to the creator's scene storefront. All purchases from that scene are attributed to the creator.</div></div></div>
+        <div class="step-row"><div class="step-badge">4</div><div><div class="step-row-title">Creator earns 15% revenue share</div><div class="step-row-desc">Paid monthly. No minimums. The more scenes they publish and share, the more they earn.</div></div></div>
+      </div>
+    </div>
+
+    <!-- CHAPTER 7 -->
+    <div class="chapter" id="ch7">
+      <div class="chapter-num">Chapter 07</div>
+      <h2>Revenue model — <em>four streams, one platform</em></h2>
+
+      <p>FeelSpace generates revenue across four distinct streams. Here's how each one works and what to expect at different stages of your growth.</p>
+
+      <div class="rev-table">
+        <div class="rev-row"><div class="rev-source">Product margin (direct)</div><div class="rev-bar-wrap"><div class="rev-bar" style="width:80%"></div></div><div class="rev-val">~45–55% margin</div></div>
+        <div class="rev-row"><div class="rev-source">Merchant SaaS subscriptions</div><div class="rev-bar-wrap"><div class="rev-bar" style="width:55%"></div></div><div class="rev-val">$149–$499/mo</div></div>
+        <div class="rev-row"><div class="rev-source">Creator commission share</div><div class="rev-bar-wrap"><div class="rev-bar" style="width:35%"></div></div><div class="rev-val">Platform takes 5%</div></div>
+        <div class="rev-row"><div class="rev-source">Premium drop placement</div><div class="rev-bar-wrap"><div class="rev-bar" style="width:25%"></div></div><div class="rev-val">$200–$800/drop</div></div>
+      </div>
+
+      <h3>Revenue milestones and what drives them</h3>
+      <table class="comp-table">
+        <tr><th>Milestone</th><th>What got you there</th><th>Timeline</th></tr>
+        <tr><td>First $1k month</td><td>First drop live, 30–50 SKUs, one well-timed social post</td><td>Week 2–3</td></tr>
+        <tr><td>$5k/month</td><td>3 drops live, email list of 500+, 2–3 active creators</td><td>Month 2–3</td></tr>
+        <tr><td>$10k/month</td><td>Full seasonal calendar, 5+ creators, merchant SaaS revenue starts</td><td>Month 4–6</td></tr>
+        <tr><td>$50k/month</td><td>Creator network of 20+, marketplace drop ads, 3–5 merchant partners</td><td>Month 9–12</td></tr>
+      </table>
+    </div>
+
+    <!-- CHAPTER 8 -->
+    <div class="chapter" id="ch8">
+      <div class="chapter-num">Chapter 08</div>
+      <h2>Scaling roadmap — <em>from entryway to entire home</em></h2>
+
+      <div class="phase-grid">
+        <div class="phase-card"><div class="phase-num">Phase 1 · Months 1–3</div><div class="phase-title">Entryway wedge</div><div class="phase-desc">Focus exclusively on entryways. Perfect your scene generation, nail 3–4 seasonal drops, recruit your first 5 creators. Prove the emotion-to-basket thesis before expanding.</div></div>
+        <div class="phase-card"><div class="phase-num">Phase 2 · Months 4–6</div><div class="phase-title">Merchant infrastructure</div><div class="phase-desc">Open the platform to other home & garden merchants. They pay $149–$499/mo to plug their catalogs into your scene engine. You become a platform, not just a retailer.</div></div>
+        <div class="phase-card"><div class="phase-num">Phase 3 · Months 7–12</div><div class="phase-title">Creator marketplace</div><div class="phase-desc">Build the creator storefront. Top creators get profile pages. Their followers can browse all their published scenes. This creates a discovery layer that drives organic traffic.</div></div>
+        <div class="phase-card"><div class="phase-num">Phase 4 · Year 2</div><div class="phase-title">Room expansion</div><div class="phase-desc">Expand from entryways to living rooms, then balconies, then bedrooms. Each new room category is a new market with the same emotion-first mechanic.</div></div>
+      </div>
+    </div>
+
+    <!-- CHAPTER 9 -->
+    <div class="chapter" id="ch9">
+      <div class="chapter-num">Chapter 09</div>
+      <h2>Technical stack — <em>what powers it all</em></h2>
+
+      <h3>Core components</h3>
+      <div class="code-block">
+<span class="code-comment">// Emotion engine</span>
+<span class="code-key">Input:</span>  <span class="code-str">"warm fall welcome"</span>
+<span class="code-key">Output:</span> {
+  <span class="code-key">palette:</span>  <span class="code-str">["#D4863A", "#7B4A2D", "#5A7A3A"]</span>,
+  <span class="code-key">textures:</span> <span class="code-str">["woven", "terracotta", "dried botanical"]</span>,
+  <span class="code-key">season:</span>   <span class="code-str">"fall"</span>,
+  <span class="code-key">intensity:</span> <span class="code-val">0.7</span>,
+  <span class="code-key">tags:</span>     <span class="code-str">["warm", "welcoming", "natural", "cozy"]</span>
+}
+
+<span class="code-comment">// Product matching</span>
+<span class="code-key">Query:</span> products WHERE emotion_tags OVERLAP scene.tags
+        AND season IN [scene.season, "evergreen"]
+        ORDER BY tag_overlap_score DESC
+        LIMIT 6
+
+<span class="code-comment">// Scene generation</span>
+<span class="code-key">1.</span> Select door style based on palette.dominant
+<span class="code-key">2.</span> Position focal point (wreath) at door center
+<span class="code-key">3.</span> Add flanking elements (planters) symmetrically
+<span class="code-key">4.</span> Insert ground layer (mat) at threshold
+<span class="code-key">5.</span> Place accent lighting at left flank
+<span class="code-key">6.</span> Apply palette to all scene elements
+<span class="code-key">7.</span> Overlay product hotspots at element positions
+      </div>
+
+      <h3>Integration points</h3>
+      <p>FeelSpace integrates with your existing e-commerce stack via standard APIs:</p>
+      <div class="steps-block">
+        <div class="step-row"><div class="step-badge">🛒</div><div><div class="step-row-title">Shopify / WooCommerce sync</div><div class="step-row-desc">Products import automatically. Inventory levels sync in real time. Orders flow back to your existing fulfillment.</div></div></div>
+        <div class="step-row"><div class="step-badge">📧</div><div><div class="step-row-title">Email platform (Klaviyo, Mailchimp)</div><div class="step-row-desc">Drop launch events trigger automated email flows. Scene share events trigger referral sequences.</div></div></div>
+        <div class="step-row"><div class="step-badge">📱</div><div><div class="step-row-title">Social sharing</div><div class="step-row-desc">Share cards auto-generate for Instagram, Pinterest, and Facebook. Each card contains a UTM-tracked link back to the live scene.</div></div></div>
+      </div>
+    </div>
+
+    <!-- CHAPTER 10 -->
+    <div class="chapter" id="ch10">
+      <div class="chapter-num">Chapter 10</div>
+      <h2>Launch checklist — <em>before you go live</em></h2>
+      <p>Work through this list before publishing your first drop. Click each item to mark it complete.</p>
+
+      <div class="checklist" id="launchChecklist">
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>Account created</strong> on Seed or Grow plan</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>30–50 products uploaded</strong> with emotion-rich descriptions</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>All 5 product categories represented</strong>: focal point, living elements, lighting, ground layer, accent</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>AI emotion tags reviewed</strong> and corrected where needed</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>5 scenes generated</strong> covering distinct moods within your launch season</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>Scene names written</strong> in feeling language, not product language</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>First Drop created</strong> with 3–5 scenes bundled under one mood name</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>Drop window set</strong> (5–7 days recommended for launch)</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>Share card generated</strong> and scheduled for launch day</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>Email or social announcement</strong> drafted using the drop copy formula</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>1–2 creator invitations</strong> sent for drop amplification</div></div>
+        <div class="check-item" onclick="toggleCheck(this)"><div class="check-icon">○</div><div class="check-text"><strong>Analytics baseline set</strong> — note your starting scene conversion rate</div></div>
+      </div>
+
+      <div class="infobox" style="margin-top:2rem;border-left-color:var(--sage);">
+        <div class="infobox-label" style="color:var(--sage);">You're ready to launch</div>
+        <p>Once you've checked all 12 items, you're in a better position for launch day than 90% of new FeelSpace merchants. The most important thing now is to ship your first drop and learn from it — not wait for perfection.</p>
+        <p style="margin-top:0.5rem;">The emotion-to-basket thesis is real. Your job in month one is just to prove it in your specific niche.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleCheck(el) {
+  el.classList.toggle('done');
+  const icon = el.querySelector('.check-icon');
+  icon.textContent = el.classList.contains('done') ? '✓' : '○';
+}
+
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Active nav link on scroll
+const chapters = document.querySelectorAll('.chapter');
+const navLinks = document.querySelectorAll('.nav-link');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const active = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { threshold: 0.3 });
+chapters.forEach(c => observer.observe(c));
+</script>
+</body>
+</html>

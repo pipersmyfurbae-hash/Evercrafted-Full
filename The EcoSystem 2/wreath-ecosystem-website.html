@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wreath Ecosystem Canon — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&family=DM+Mono&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ec-white:#FFFFFF;--ec-off-white:#F9F7F4;--ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A;--ec-charcoal:#2E2E2E;--ec-ink:#4A4A4A;
+  --ec-green:#4A6741;--ec-green-light:#6B8F67;--ec-green-pale:#EEF2ED;
+  --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-gray-200:#E8E8E8;--ec-gray-300:#D0D0D0;--ec-gray-400:#A8A8A8;--ec-gray-500:#787878;
+  --ec-border:var(--ec-gray-200);--ec-border-dark:var(--ec-gray-300);
+  --ec-font-serif:'Cormorant Garamond',Georgia,serif;
+  --ec-font-sans:'Inter',system-ui,sans-serif;
+  --ec-font-script:'Dancing Script',cursive;
+  --ec-font-mono:'DM Mono',monospace;
+  --ec-shadow-sm:0 1px 3px rgba(0,0,0,0.06);
+  --ec-shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --ec-shadow-lg:0 8px 32px rgba(0,0,0,0.10);
+  --ec-shadow-hero:0 24px 64px rgba(0,0,0,0.10);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--ec-font-sans);background:var(--ec-off-white);color:var(--ec-black);overflow-x:hidden}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:18px 48px;
+  background:rgba(249,247,244,0.92);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(74,103,65,0.1);
+  transition:padding 250ms ease;
+}
+.nav-logo{font-family:var(--ec-font-script);font-size:24px;color:var(--ec-green)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a{font-size:13px;color:var(--ec-ink);text-decoration:none;letter-spacing:0.02em;transition:color 150ms ease}
+.nav-links a:hover{color:var(--ec-green)}
+.nav-cta{
+  background:var(--ec-green);color:var(--ec-white);
+  padding:9px 22px;border-radius:30px;font-size:13px;font-weight:600;
+  text-decoration:none;border:none;cursor:pointer;
+  transition:all 200ms ease;
+}
+.nav-cta:hover{background:var(--ec-green-light);transform:translateY(-1px)}
+
+/* HERO */
+.hero{
+  min-height:100vh;display:flex;align-items:center;
+  padding:120px 48px 80px;position:relative;overflow:hidden;
+}
+.hero-bg{
+  position:absolute;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 70% at 70% 50%, rgba(74,103,65,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 50% at 20% 80%, rgba(74,103,65,0.04) 0%, transparent 60%);
+}
+.hero-noise{
+  position:absolute;inset:0;z-index:0;opacity:0.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+}
+.hero-inner{position:relative;z-index:1;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;width:100%}
+.hero-eyebrow{
+  font-size:11px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--ec-green);font-weight:600;margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;
+}
+.hero-eyebrow::before{content:'';width:32px;height:1px;background:var(--ec-green)}
+.hero-headline{
+  font-family:var(--ec-font-serif);font-size:clamp(48px,5vw,80px);
+  font-weight:300;line-height:1.08;letter-spacing:-0.03em;
+  color:var(--ec-charcoal);margin-bottom:24px;
+}
+.hero-headline em{font-style:italic;color:var(--ec-green)}
+.hero-sub{font-size:17px;color:var(--ec-gray-500);line-height:1.7;margin-bottom:40px;max-width:440px}
+.hero-actions{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.btn-hero-primary{
+  background:var(--ec-green);color:var(--ec-white);
+  padding:14px 32px;border-radius:30px;font-size:14px;font-weight:600;
+  text-decoration:none;transition:all 200ms ease;display:inline-block;
+}
+.btn-hero-primary:hover{background:var(--ec-green-light);transform:translateY(-2px);box-shadow:0 8px 24px rgba(74,103,65,0.3)}
+.btn-hero-ghost{
+  color:var(--ec-ink);font-size:14px;text-decoration:none;
+  display:flex;align-items:center;gap:8px;
+  transition:color 150ms ease;
+}
+.btn-hero-ghost:hover{color:var(--ec-green)}
+.btn-hero-ghost::after{content:'→';transition:transform 150ms ease}
+.btn-hero-ghost:hover::after{transform:translateX(4px)}
+
+/* HERO VISUAL */
+.hero-visual{
+  position:relative;display:flex;align-items:center;justify-content:center;
+  animation:floatIn 1s ease 0.3s both;
+}
+@keyframes floatIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.hero-canvas-wrap{
+  width:100%;max-width:440px;aspect-ratio:1;
+  border-radius:50%;
+  background:var(--ec-paper);
+  border:1px solid var(--ec-border);
+  box-shadow:var(--ec-shadow-hero);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;position:relative;
+}
+.hero-canvas-inner{
+  width:88%;height:88%;border-radius:50%;
+  background:var(--ec-off-white);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--ec-font-serif);font-style:italic;
+  font-size:18px;color:var(--ec-green);
+  border:1px solid rgba(74,103,65,0.15);
+  flex-direction:column;gap:8px;
+}
+.pipeline-badge{
+  position:absolute;bottom:-16px;right:20px;
+  background:var(--ec-white);border:1px solid var(--ec-border);
+  border-radius:10px;padding:10px 16px;
+  box-shadow:var(--ec-shadow-md);
+  font-size:12px;color:var(--ec-ink);
+}
+.pipeline-badge strong{font-weight:700;color:var(--ec-green);display:block;font-size:16px;font-family:var(--ec-font-serif)}
+
+/* MARQUEE */
+.marquee-wrap{
+  border-top:1px solid var(--ec-border);border-bottom:1px solid var(--ec-border);
+  padding:16px 0;overflow:hidden;background:var(--ec-white);
+}
+.marquee-track{
+  display:flex;gap:64px;width:max-content;
+  animation:marquee 30s linear infinite;
+}
+.marquee-item{
+  font-size:12px;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--ec-gray-400);white-space:nowrap;
+  display:flex;align-items:center;gap:12px;
+}
+.marquee-item::before{content:'✦';color:var(--ec-green);font-size:8px}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTIONS */
+section{padding:120px 48px}
+.section-inner{max-width:1200px;margin:0 auto}
+.section-eyebrow{
+  font-size:11px;letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--ec-green);font-weight:600;margin-bottom:16px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-eyebrow::before{content:'';width:24px;height:1px;background:var(--ec-green)}
+.section-title{
+  font-family:var(--ec-font-serif);font-size:clamp(36px,4vw,56px);
+  font-weight:300;line-height:1.1;letter-spacing:-0.02em;color:var(--ec-charcoal);
+  margin-bottom:16px;
+}
+.section-title em{font-style:italic;color:var(--ec-green)}
+.section-lead{font-size:16px;color:var(--ec-gray-500);line-height:1.8;max-width:560px}
+
+/* MODULES */
+.modules-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--ec-border);border:1px solid var(--ec-border);border-radius:16px;overflow:hidden;margin-top:60px}
+.module-tile{
+  background:var(--ec-white);padding:32px;
+  transition:background 200ms ease;
+}
+.module-tile:hover{background:var(--ec-green-pale)}
+.module-tile-num{font-family:var(--ec-font-mono);font-size:11px;color:var(--ec-gray-400);margin-bottom:12px}
+.module-tile-icon{font-size:26px;margin-bottom:12px}
+.module-tile-name{font-family:var(--ec-font-serif);font-size:22px;color:var(--ec-charcoal);margin-bottom:8px}
+.module-tile-desc{font-size:13px;color:var(--ec-gray-500);line-height:1.6}
+.module-tile-io{
+  margin-top:14px;font-family:var(--ec-font-mono);font-size:10px;
+  color:var(--ec-green);letter-spacing:0.04em;
+}
+
+/* PIPELINE VISUAL */
+.pipeline-section{background:var(--ec-charcoal);color:var(--ec-white)}
+.pipeline-section .section-title{color:var(--ec-white)}
+.pipeline-section .section-lead{color:var(--ec-gray-400)}
+.pipeline-flow{
+  display:flex;align-items:stretch;gap:0;
+  margin-top:60px;overflow-x:auto;padding-bottom:8px;
+}
+.pipeline-node{
+  flex-shrink:0;min-width:120px;
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px;padding:20px 16px;
+  text-align:center;margin-right:0;
+  background:rgba(255,255,255,0.04);
+  transition:background 200ms ease;
+  position:relative;
+}
+.pipeline-node:hover{background:rgba(74,103,65,0.3)}
+.pipeline-node::after{
+  content:'→';
+  position:absolute;right:-16px;top:50%;transform:translateY(-50%);
+  color:rgba(255,255,255,0.25);font-size:16px;z-index:1;
+}
+.pipeline-node:last-child::after{display:none}
+.pn-num{font-family:var(--ec-font-mono);font-size:9px;color:rgba(255,255,255,0.3);margin-bottom:6px}
+.pn-name{font-weight:600;font-size:11px;color:var(--ec-white);margin-bottom:4px}
+.pn-io{font-size:10px;color:rgba(74,163,65,0.8)}
+.pipeline-gap{width:32px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.2);font-size:18px}
+
+/* PRINCIPLES */
+.principles-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:60px}
+.principle-card{
+  border:1px solid var(--ec-border);border-radius:14px;padding:28px;
+  background:var(--ec-white);
+  transition:transform 200ms ease,box-shadow 200ms ease;
+}
+.principle-card:hover{transform:translateY(-4px);box-shadow:var(--ec-shadow-lg)}
+.principle-num{font-family:var(--ec-font-mono);font-size:10px;color:var(--ec-gray-400);margin-bottom:12px}
+.principle-title{font-family:var(--ec-font-serif);font-size:20px;color:var(--ec-charcoal);margin-bottom:8px}
+.principle-desc{font-size:13px;color:var(--ec-gray-500);line-height:1.6}
+
+/* TIER CARDS */
+.tiers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:60px}
+.tier-card{
+  border:1px solid var(--ec-border);border-radius:14px;padding:24px;
+  background:var(--ec-white);transition:transform 200ms ease;position:relative;
+}
+.tier-card:hover{transform:translateY(-3px);box-shadow:var(--ec-shadow-md)}
+.tier-card.featured{border-color:var(--ec-green);border-width:2px}
+.tier-badge-pill{
+  display:inline-block;font-size:10px;font-weight:700;
+  letter-spacing:0.08em;text-transform:uppercase;
+  padding:3px 10px;border-radius:20px;margin-bottom:16px;
+}
+.tb-bloom{background:#EEF2ED;color:#4A6741}
+.tb-craft{background:#EEF4F9;color:#4A6785}
+.tb-studio{background:#F5EEF4;color:#7A4A85}
+.tb-atelier{background:#1A1A1A;color:#F2EFE9}
+.tier-price{font-family:var(--ec-font-serif);font-size:32px;color:var(--ec-charcoal);margin-bottom:4px}
+.tier-price span{font-size:14px;color:var(--ec-gray-500);font-family:var(--ec-font-sans)}
+.tier-desc{font-size:12px;color:var(--ec-gray-500);line-height:1.5;margin-bottom:16px}
+.tier-features{list-style:none;font-size:12px;color:var(--ec-ink)}
+.tier-features li{padding:5px 0;border-bottom:1px solid var(--ec-border);display:flex;align-items:center;gap:8px}
+.tier-features li:last-child{border:none}
+.tier-features li::before{content:'✓';color:var(--ec-green);font-weight:700;flex-shrink:0}
+.tier-features li.locked::before{content:'🔒';filter:grayscale(1)}
+.tier-features li.locked{color:var(--ec-gray-400)}
+.tier-cta{
+  display:block;text-align:center;margin-top:20px;
+  background:var(--ec-off-white);color:var(--ec-ink);
+  padding:10px;border-radius:8px;font-size:13px;font-weight:600;
+  text-decoration:none;transition:all 150ms ease;border:1px solid var(--ec-border);
+}
+.tier-cta:hover{background:var(--ec-green);color:var(--ec-white);border-color:transparent}
+.tier-card.featured .tier-cta{background:var(--ec-green);color:var(--ec-white);border-color:transparent}
+.recommended-tag{
+  position:absolute;top:-1px;left:50%;transform:translateX(-50%);
+  background:var(--ec-green);color:var(--ec-white);
+  font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  padding:3px 12px;border-radius:0 0 8px 8px;
+}
+
+/* STATS */
+.stats-section{background:var(--ec-paper)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:48px;text-align:center}
+.stat-val{font-family:var(--ec-font-serif);font-size:52px;font-weight:300;color:var(--ec-green);line-height:1}
+.stat-label{font-size:12px;color:var(--ec-gray-500);letter-spacing:0.08em;text-transform:uppercase;margin-top:8px}
+.stat-desc{font-size:13px;color:var(--ec-ink);margin-top:4px;line-height:1.4}
+
+/* WAITLIST */
+.waitlist-section{background:var(--ec-green);text-align:center;padding:100px 48px}
+.waitlist-section .section-title{color:var(--ec-white)}
+.waitlist-section .section-lead{color:rgba(255,255,255,0.7);max-width:480px;margin:0 auto}
+.waitlist-form{display:flex;gap:10px;justify-content:center;margin-top:40px;flex-wrap:wrap}
+.waitlist-input{
+  background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);
+  color:var(--ec-white);padding:12px 20px;border-radius:30px;
+  font-size:14px;width:280px;outline:none;
+  transition:all 150ms ease;
+}
+.waitlist-input::placeholder{color:rgba(255,255,255,0.5)}
+.waitlist-input:focus{background:rgba(255,255,255,0.2);border-color:rgba(255,255,255,0.6)}
+.waitlist-btn{
+  background:var(--ec-white);color:var(--ec-green);
+  padding:12px 28px;border-radius:30px;border:none;
+  font-size:14px;font-weight:700;cursor:pointer;
+  transition:all 200ms ease;white-space:nowrap;
+}
+.waitlist-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.waitlist-note{color:rgba(255,255,255,0.5);font-size:12px;margin-top:16px}
+
+/* FOOTER */
+footer{background:var(--ec-charcoal);color:rgba(255,255,255,0.5);padding:48px;text-align:center}
+.footer-logo{font-family:var(--ec-font-script);font-size:28px;color:rgba(255,255,255,0.7);margin-bottom:12px}
+.footer-links{display:flex;gap:32px;justify-content:center;flex-wrap:wrap;font-size:12px;letter-spacing:0.05em;margin-bottom:24px}
+.footer-links a{color:rgba(255,255,255,0.4);text-decoration:none;transition:color 150ms ease}
+.footer-links a:hover{color:rgba(255,255,255,0.8)}
+.footer-copy{font-size:11px;color:rgba(255,255,255,0.25)}
+
+/* DIVIDER BOTANICAL */
+.botanical-divider{text-align:center;padding:24px 0;color:var(--ec-green);opacity:0.5}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 600ms ease,transform 600ms ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:100ms}
+.reveal-delay-2{transition-delay:200ms}
+.reveal-delay-3{transition-delay:300ms}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:16px 24px}
+  .hero{padding:100px 24px 60px}
+  .hero-inner{grid-template-columns:1fr;gap:40px}
+  .hero-visual{display:none}
+  section{padding:80px 24px}
+  .modules-grid,.principles-grid{grid-template-columns:1fr}
+  .tiers-grid{grid-template-columns:1fr 1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .pipeline-flow{padding-bottom:16px}
+}
+@media(max-width:600px){
+  .tiers-grid{grid-template-columns:1fr}
+  .stats-grid{grid-template-columns:1fr 1fr}
+  .nav-links{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Evercrafted</div>
+  <div class="nav-links">
+    <a href="#modules">Modules</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#principles">Design System</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div><div class="hero-noise"></div>
+  <div class="hero-inner">
+    <div>
+      <div class="hero-eyebrow">Wreath Ecosystem Canon</div>
+      <h1 class="hero-headline">Memory into<br><em>masterpiece</em>,<br>precisely.</h1>
+      <p class="hero-sub">A 10-module AI platform that transforms client memories into emotionally resonant, mathematically structured, manufacturable wreath blueprints.</p>
+      <div class="hero-actions">
+        <a href="#waitlist" class="btn-hero-primary">Get Early Access</a>
+        <a href="#modules" class="btn-hero-ghost">Explore the modules</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-canvas-wrap">
+        <canvas id="heroCanvas" width="380" height="380"></canvas>
+        <div class="pipeline-badge">
+          <strong>10 modules</strong>
+          Memory → Blueprint → PDF
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <div class="marquee-item">Polar Coordinate Placement</div>
+    <div class="marquee-item">FFLGA Classification</div>
+    <div class="marquee-item">BlueprintJSON Export</div>
+    <div class="marquee-item">Emotion → Palette Mapping</div>
+    <div class="marquee-item">Golden Angle Distribution</div>
+    <div class="marquee-item">WGS Genome Strings</div>
+    <div class="marquee-item">Optical Balance Engine</div>
+    <div class="marquee-item">AI Florist Assistant</div>
+    <div class="marquee-item">Build Guide PDF</div>
+    <div class="marquee-item">Plugin Architecture</div>
+    <!-- duplicate for seamless loop -->
+    <div class="marquee-item">Polar Coordinate Placement</div>
+    <div class="marquee-item">FFLGA Classification</div>
+    <div class="marquee-item">BlueprintJSON Export</div>
+    <div class="marquee-item">Emotion → Palette Mapping</div>
+    <div class="marquee-item">Golden Angle Distribution</div>
+    <div class="marquee-item">WGS Genome Strings</div>
+    <div class="marquee-item">Optical Balance Engine</div>
+    <div class="marquee-item">AI Florist Assistant</div>
+    <div class="marquee-item">Build Guide PDF</div>
+    <div class="marquee-item">Plugin Architecture</div>
+  </div>
+</div>
+
+<!-- STATS -->
+<section class="stats-section" id="stats">
+  <div class="section-inner">
+    <div class="stats-grid reveal">
+      <div>
+        <div class="stat-val">10</div>
+        <div class="stat-label">Pipeline Modules</div>
+        <div class="stat-desc">From memory intake to PDF delivery</div>
+      </div>
+      <div>
+        <div class="stat-val">5</div>
+        <div class="stat-label">FFLGA Roles</div>
+        <div class="stat-desc">Focal · Filler · Line · Greenery · Accent</div>
+      </div>
+      <div>
+        <div class="stat-val">50–65</div>
+        <div class="stat-label">Stems per Design</div>
+        <div class="stat-desc">Medium density 24" blueprint standard</div>
+      </div>
+      <div>
+        <div class="stat-val">15</div>
+        <div class="stat-label">Genome Fields</div>
+        <div class="stat-desc">Every wreath encoded as a portable string</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULES -->
+<section id="modules">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-eyebrow">The Platform</div>
+      <h2 class="section-title">One pipeline.<br><em>Ten modules.</em></h2>
+      <p class="section-lead">Every module reads and writes to a shared BlueprintJSON — the single source of truth. Nothing is isolated. Everything compounds.</p>
+    </div>
+
+    <div class="modules-grid reveal" style="transition-delay:200ms">
+      <div class="module-tile">
+        <div class="module-tile-num">MODULE 01</div>
+        <div class="module-tile-icon">✦</div>
+        <div class="module-tile-name">Memory-to-Masterpiece AI</div>
+        <div class="module-tile-desc">A client shares a memory. This module converts raw narrative into structured EmotionScore arrays, Fauxever Memories glyphs, and a fully resolved BlueprintIntent object ready for the pipeline.</div>
+        <div class="module-tile-io">Memory text → EmotionScore[] + BlueprintIntent</div>
+      </div>
+      <div class="module-tile">
+        <div class="module-tile-num">MODULE 02</div>
+        <div class="module-tile-icon">🎨</div>
+        <div class="module-tile-name">Emotional Floral Mapper</div>
+        <div class="module-tile-desc">Emotion chords and glyphs drive every floral selection. The mapper uses tier buckets, weighted randomness, and diversity constraints — never a scoring system that repeats the same flowers.</div>
+        <div class="module-tile-io">EmotionScore[] → FloralRecipeDraft + palette</div>
+      </div>
+      <div class="module-tile">
+        <div class="module-tile-num">MODULE 03</div>
+        <div class="module-tile-icon">📐</div>
+        <div class="module-tile-name">Anchor Point Visualizer</div>
+        <div class="module-tile-desc">600×600px canvas, 25px/inch scale. Every placement is a polar coordinate (rNorm, theta). Focal clusters at clock arcs. Greenery distributed by golden angle (137.5°). Stems rotate tangentially — always perpendicular to the wreath.</div>
+        <div class="module-tile-io">BlueprintIntent → visual canvas + coordinate JSON</div>
+      </div>
+      <div class="module-tile">
+        <div class="module-tile-num">MODULE 04</div>
+        <div class="module-tile-icon">💬</div>
+        <div class="module-tile-name">AI Florist Assistant</div>
+        <div class="module-tile-desc">The florist explains every placement decision in real time. Ask why eucalyptus anchors a grief design, what z-index a garden rose cluster should carry, or how golden angle prevents spacing repetition.</div>
+        <div class="module-tile-io">Any element → floriography + placement rationale</div>
+      </div>
+      <div class="module-tile">
+        <div class="module-tile-num">MODULE 05</div>
+        <div class="module-tile-icon">📄</div>
+        <div class="module-tile-name">Blueprint JSON Generator</div>
+        <div class="module-tile-desc">Export a manufacturing-ready JSON with full polar coordinates, stem counts, SKU references, z-index layers, and cluster metadata. The document any builder needs to construct the wreath precisely.</div>
+        <div class="module-tile-io">BlueprintLayout → manufacturing JSON</div>
+      </div>
+      <div class="module-tile">
+        <div class="module-tile-num">MODULE 06</div>
+        <div class="module-tile-icon">📸</div>
+        <div class="module-tile-name">Floral Photo Analyzer</div>
+        <div class="module-tile-desc">Upload a stock photo or catalog image of any floral element. The analyzer extracts FloralElement data — estimated head size, color family, texture category, and FFLGA role classification.</div>
+        <div class="module-tile-io">Photo → FloralElement (size, color, texture, role)</div>
+      </div>
+      <div class="module-tile">
+        <div class="module-tile-num">MODULE 07</div>
+        <div class="module-tile-icon">📖</div>
+        <div class="module-tile-name">Wreath Build Guide Creator</div>
+        <div class="module-tile-desc">Transforms a finalized blueprint into a beautiful PDF containing the client's story, the floral recipe with symbolism notes, the placement blueprint, and step-by-step construction instructions.</div>
+        <div class="module-tile-io">Blueprint + recipe → Story/Recipe/Blueprint PDF</div>
+      </div>
+      <div class="module-tile">
+        <div class="module-tile-num">MODULE 08</div>
+        <div class="module-tile-icon">🎭</div>
+        <div class="module-tile-name">Bloomy-Style Design Studio</div>
+        <div class="module-tile-desc">A React drag-drop editor that hosts all modules in a single workspace. The canvas is the center. Every plugin implements WreathElementPlugin — the canvas never knows specific SKUs, only the contract.</div>
+        <div class="module-tile-io">Full design workspace with plugin architecture</div>
+      </div>
+      <div class="module-tile">
+        <div class="module-tile-num">MODULE 09</div>
+        <div class="module-tile-icon">⚖️</div>
+        <div class="module-tile-name">Symmetry Engine</div>
+        <div class="module-tile-desc">Enforces bilateral or radial balance using visual weight calculation per quadrant (role × head size × saturation). Target: focal quadrant 1.2–1.4× average. All others within ±20%.</div>
+        <div class="module-tile-io">BlueprintLayout → balanced BlueprintLayout</div>
+      </div>
+      <div class="module-tile">
+        <div class="module-tile-num">MODULE 10</div>
+        <div class="module-tile-icon">⭐</div>
+        <div class="module-tile-name">Aesthetic Fitness Evaluator</div>
+        <div class="module-tile-desc">A GNN-based scoring system that evaluates every design against composition rules. Returns a fitness score, quadrant weight breakdown, and prioritized improvement suggestions before final export.</div>
+        <div class="module-tile-io">BlueprintLayout → score + improvement list</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE DARK -->
+<section class="pipeline-section" id="pipeline">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-eyebrow" style="color:rgba(74,163,65,0.8)">The Pipeline</div>
+      <h2 class="section-title">Memory <em style="color:rgba(74,163,65,0.8)">flows</em> to masterpiece.</h2>
+      <p class="section-lead">A single BlueprintJSON passes through every module — each one enriching it until a manufacturable, emotionally resonant design emerges.</p>
+    </div>
+    <div class="pipeline-flow reveal" style="transition-delay:200ms">
+      <div class="pipeline-node"><div class="pn-num">01</div><div class="pn-name">Memory</div><div class="pn-io">text in</div></div>
+      <div class="pipeline-gap">→</div>
+      <div class="pipeline-node"><div class="pn-num">02</div><div class="pn-name">Emotions</div><div class="pn-io">scores[]</div></div>
+      <div class="pipeline-gap">→</div>
+      <div class="pipeline-node"><div class="pn-num">03</div><div class="pn-name">Florals</div><div class="pn-io">recipe</div></div>
+      <div class="pipeline-gap">→</div>
+      <div class="pipeline-node"><div class="pn-num">04</div><div class="pn-name">Layout</div><div class="pn-io">polar coords</div></div>
+      <div class="pipeline-gap">→</div>
+      <div class="pipeline-node"><div class="pn-num">05</div><div class="pn-name">Symmetry</div><div class="pn-io">balanced</div></div>
+      <div class="pipeline-gap">→</div>
+      <div class="pipeline-node"><div class="pn-num">06</div><div class="pn-name">Score</div><div class="pn-io">fitness</div></div>
+      <div class="pipeline-gap">→</div>
+      <div class="pipeline-node"><div class="pn-num">07</div><div class="pn-name">JSON</div><div class="pn-io">export</div></div>
+      <div class="pipeline-gap">→</div>
+      <div class="pipeline-node"><div class="pn-num">08</div><div class="pn-name">PDF</div><div class="pn-io">delivered</div></div>
+    </div>
+    <div style="margin-top:40px;padding:24px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;font-family:var(--ec-font-mono);font-size:11px;color:rgba(74,163,65,0.7);line-height:2;reveal">
+      // Developer handoff mantra<br>
+      "Start with <span style="color:rgba(255,255,255,0.7)">generateBlueprint(intent, recipe)</span> and a canvas that loads it.<br>
+      &nbsp;Wire LLM and analytics only after the core loop works end-to-end."
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN PRINCIPLES -->
+<section id="principles">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-eyebrow">Design System</div>
+      <h2 class="section-title">Six principles<br><em>that don't bend.</em></h2>
+      <p class="section-lead">Every module decision traces back to these foundational rules. They are the constitution of the ecosystem.</p>
+    </div>
+    <div class="principles-grid">
+      <div class="principle-card reveal">
+        <div class="principle-num">PRINCIPLE 01</div>
+        <div class="principle-title">One source of truth</div>
+        <div class="principle-desc">All modules read and write BlueprintJSON. No ad-hoc state, no prop drilling, no fragmented data stores. The blueprint is the contract.</div>
+      </div>
+      <div class="principle-card reveal reveal-delay-1">
+        <div class="principle-num">PRINCIPLE 02</div>
+        <div class="principle-title">Emotion drives geometry</div>
+        <div class="principle-desc">Every placement decision traces back to the client's emotions and glyphs. The math is always in service of meaning — never the other way around.</div>
+      </div>
+      <div class="principle-card reveal reveal-delay-2">
+        <div class="principle-num">PRINCIPLE 03</div>
+        <div class="principle-title">Non-scoring selection</div>
+        <div class="principle-desc">Tier buckets and weighted randomness instead of numeric scoring. Scores cause repetition. Randomized diversity constraints produce living, unrepeatable designs.</div>
+      </div>
+      <div class="principle-card reveal">
+        <div class="principle-num">PRINCIPLE 04</div>
+        <div class="principle-title">Polar coordinates only</div>
+        <div class="principle-desc">All positions use (rNorm, theta). Canvas: 600×600px, 25px/in. Stems rotate at angleDeg + 90° — always tangential, always perpendicular to the wreath's curvature.</div>
+      </div>
+      <div class="principle-card reveal reveal-delay-1">
+        <div class="principle-num">PRINCIPLE 05</div>
+        <div class="principle-title">FFLGA roles always</div>
+        <div class="principle-desc">Every inventory item is classified as Focal, Filler, Line, Greenery, or Accent before it enters any algorithm. Classification is non-negotiable — it governs placement, z-index, and stem counts.</div>
+      </div>
+      <div class="principle-card reveal reveal-delay-2">
+        <div class="principle-num">PRINCIPLE 06</div>
+        <div class="principle-title">Plugin architecture</div>
+        <div class="principle-desc">Every element implements WreathElementPlugin. The canvas never knows about specific flower types — only the interface contract. New botanicals require zero core changes.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:var(--ec-paper)">
+  <div class="section-inner">
+    <div class="reveal">
+      <div class="section-eyebrow">Subscription Tiers</div>
+      <h2 class="section-title">Start blooming,<br><em>scale to atelier.</em></h2>
+      <p class="section-lead">Every tier is a gateway, not a wall. Your designs grow with your subscription.</p>
+    </div>
+    <div class="tiers-grid reveal" style="transition-delay:200ms">
+      <div class="tier-card">
+        <div class="tier-badge-pill tb-bloom">Bloom</div>
+        <div class="tier-price">$9<span>/mo</span></div>
+        <div class="tier-desc">Learn the ecosystem. Explore the pipeline. Begin your first designs.</div>
+        <ul class="tier-features">
+          <li>Module 01 — Memory intake</li>
+          <li>Basic emotion mapping</li>
+          <li>Stem count calculator</li>
+          <li>FFLGA classification guide</li>
+          <li class="locked">Blueprint generation</li>
+          <li class="locked">JSON export</li>
+        </ul>
+        <a href="#waitlist" class="tier-cta">Get Started</a>
+      </div>
+      <div class="tier-card">
+        <div class="tier-badge-pill tb-craft">Craft</div>
+        <div class="tier-price">$29<span>/mo</span></div>
+        <div class="tier-desc">Build full designs. Track your inventory. Generate recipes with confidence.</div>
+        <ul class="tier-features">
+          <li>Everything in Bloom</li>
+          <li>Modules 01–04</li>
+          <li>Floral recipe generation</li>
+          <li>Inventory tracker</li>
+          <li>Basic visualizer</li>
+          <li class="locked">PDF export</li>
+        </ul>
+        <a href="#waitlist" class="tier-cta">Get Started</a>
+      </div>
+      <div class="tier-card featured">
+        <div class="recommended-tag">Most Popular</div>
+        <div class="tier-badge-pill tb-studio">Studio</div>
+        <div class="tier-price">$69<span>/mo</span></div>
+        <div class="tier-desc">Full pipeline access. Export blueprints. Deliver build guides to clients.</div>
+        <ul class="tier-features">
+          <li>Everything in Craft</li>
+          <li>Modules 01–08</li>
+          <li>Full blueprint engine</li>
+          <li>Symmetry engine</li>
+          <li>Build Guide PDF export</li>
+          <li>Genome encode/decode</li>
+        </ul>
+        <a href="#waitlist" class="tier-cta">Get Started</a>
+      </div>
+      <div class="tier-card">
+        <div class="tier-badge-pill tb-atelier">Atelier</div>
+        <div class="tier-price">$149<span>/mo</span></div>
+        <div class="tier-desc">The complete platform. AI scoring, unlimited exports, API access.</div>
+        <ul class="tier-features">
+          <li>All 10 modules</li>
+          <li>Aesthetic scoring engine</li>
+          <li>Floral photo analyzer</li>
+          <li>Plugin registry access</li>
+          <li>API + webhook access</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="#waitlist" class="tier-cta">Get Started</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section class="waitlist-section" id="waitlist">
+  <div class="section-inner">
+    <div class="section-eyebrow" style="color:rgba(255,255,255,0.6);justify-content:center">
+      <span style="background:rgba(255,255,255,0.15)"></span>
+      Early Access
+    </div>
+    <h2 class="section-title" style="text-align:center">Be first inside<br><em style="color:rgba(255,255,255,0.7)">the ecosystem.</em></h2>
+    <p class="section-lead" style="text-align:center">Join the waitlist for early access, founder pricing, and a seat at the design table while we build the final modules.</p>
+    <div class="waitlist-form">
+      <input type="email" class="waitlist-input" placeholder="your@email.com" id="waitlist-email">
+      <button class="waitlist-btn" onclick="joinWaitlist()">Reserve My Spot</button>
+    </div>
+    <div class="waitlist-note" id="waitlist-msg">No spam. Early access only. Unsubscribe anytime.</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">Evercrafted</div>
+  <div class="footer-links">
+    <a href="#modules">Modules</a>
+    <a href="#pipeline">Pipeline</a>
+    <a href="#principles">Principles</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#waitlist">Waitlist</a>
+  </div>
+  <div class="footer-copy">© 2026 Evercrafted. All rights reserved. Wreath Ecosystem Canon is a trademark of Evercrafted.</div>
+</footer>
+
+<script>
+// Hero canvas
+function drawHeroWreath(){
+  const canvas=document.getElementById('heroCanvas');
+  if(!canvas)return;
+  const ctx=canvas.getContext('2d');
+  const W=380,H=380,cx=190,cy=190;
+  ctx.clearRect(0,0,W,H);
+
+  const outerR=145,innerR=85;
+  // bg
+  ctx.fillStyle='#F2EFE9';
+  ctx.beginPath();ctx.arc(cx,cy,outerR+10,0,Math.PI*2);ctx.fill();
+
+  // ring area fill
+  ctx.beginPath();ctx.arc(cx,cy,outerR,0,Math.PI*2);ctx.arc(cx,cy,innerR,0,Math.PI*2,true);
+  ctx.fillStyle='rgba(74,103,65,0.07)';ctx.fill();
+
+  const cols={focal:'#C0392B',secondary:'#E67E22',filler:'#F4D03F',greenery:'#27AE60',line:'#8E44AD'};
+
+  function placeEl(role,count,rMin,rMax,aStart,aSpan,color,size){
+    for(let i=0;i<count;i++){
+      let a,r;
+      if(role==='greenery'){a=((i*137.5)%360)*Math.PI/180;r=rMin+(Math.random()*(rMax-rMin));}
+      else{a=(aStart+(i/Math.max(1,count-1))*aSpan)*Math.PI/180+(Math.random()-0.5)*0.1;r=rMin+Math.random()*(rMax-rMin);}
+      const x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;
+      ctx.beginPath();ctx.arc(x,y,size+Math.random()*1.5,0,Math.PI*2);
+      ctx.fillStyle=color+'BB';ctx.fill();
+      ctx.strokeStyle=color+'88';ctx.lineWidth=0.5;ctx.stroke();
+    }
+  }
+
+  placeEl('greenery',28,innerR+3,outerR-3,0,360,cols.greenery,4.5);
+  placeEl('filler',14,innerR+10,outerR-10,190,120,cols.filler,5);
+  placeEl('secondary',12,innerR+12,outerR-6,210,100,cols.secondary,6);
+  placeEl('focal',9,innerR+15,outerR-2,220,90,cols.focal,8);
+  placeEl('line',3,innerR,outerR,230,60,cols.line,3);
+}
+
+// Scroll reveal
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// Waitlist
+function joinWaitlist(){
+  const email=document.getElementById('waitlist-email').value;
+  const msg=document.getElementById('waitlist-msg');
+  if(!email||!email.includes('@')){msg.textContent='Please enter a valid email.';msg.style.color='rgba(255,200,100,0.9)';return}
+  msg.textContent='✓ You\'re on the list. We\'ll be in touch.';
+  msg.style.color='rgba(255,255,255,0.9)';
+  document.getElementById('waitlist-email').value='';
+}
+
+window.addEventListener('load',drawHeroWreath);
+</script>
+</body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>WreathlyAI — Visual Aids & Wireframes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--forest:#1B4332;--ivory:#FAF3E0;--gold:#C9A84C;--dark:#0D2018;--muted:#6B7C6E;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#EDE7DA;font-family:'DM Sans',sans-serif;padding:40px 60px;color:#333;}
+h1{font-family:'Cormorant Garamond',serif;font-size:44px;color:var(--dark);margin-bottom:8px;}
+.intro{color:#888;margin-bottom:48px;}
+h2{font-family:'Cormorant Garamond',serif;font-size:28px;color:var(--forest);margin:48px 0 20px;}
+.wireframe-label{background:var(--dark);color:var(--gold);display:inline-block;padding:5px 16px;font-size:11px;letter-spacing:3px;text-transform:uppercase;margin-bottom:16px;}
+.frame{background:white;border:1px solid rgba(27,67,50,0.15);margin-bottom:48px;box-shadow:0 4px 20px rgba(0,0,0,0.08);}
+.frame-bar{background:#F0EBE0;border-bottom:1px solid rgba(27,67,50,0.1);padding:10px 16px;display:flex;align-items:center;gap:8px;}
+.dot{width:10px;height:10px;border-radius:50%;}
+.dot.r{background:#FF6B6B;} .dot.y{background:#FFD93D;} .dot.g{background:#6BCB77;}
+.frame-url{background:white;border:1px solid #ddd;padding:4px 16px;font-size:11px;color:#999;flex:1;margin-left:8px;border-radius:2px;}
+svg text{font-family:'DM Sans',sans-serif;}
+
+/* Color Palette Section */
+.palette{display:flex;gap:0;margin:20px 0;height:60px;}
+.swatch{flex:1;display:flex;align-items:flex-end;padding:8px;font-size:10px;font-weight:600;}
+.type-scale{margin:20px 0;}
+.type-row{display:flex;align-items:baseline;gap:20px;padding:12px 0;border-bottom:1px solid rgba(27,67,50,0.08);}
+.type-label{font-size:11px;color:#aaa;width:120px;flex-shrink:0;}
+.flow-diagram{display:flex;align-items:center;gap:0;margin:20px 0;overflow-x:auto;}
+.flow-step{background:white;border:1px solid rgba(27,67,50,0.15);padding:16px 20px;text-align:center;min-width:140px;}
+.flow-step .step-n{font-size:11px;color:var(--gold);letter-spacing:2px;margin-bottom:4px;}
+.flow-step .step-t{font-size:13px;font-weight:500;color:var(--dark);}
+.flow-arrow{padding:0 8px;color:var(--muted);font-size:20px;flex-shrink:0;}
+</style>
+</head>
+<body>
+
+<h1>Visual Aids & Wireframes</h1>
+<p class="intro">Annotated wireframes, user flow diagrams, design system elements, and structural layouts for WreathlyAI — WreathForge™.</p>
+
+<!-- WIREFRAME 1: MARKETING SITE HERO -->
+<h2>1. Marketing Site — Hero Section Wireframe</h2>
+<div class="wireframe-label">Wireframe / Low-Fidelity</div>
+<div class="frame">
+  <div class="frame-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><div class="frame-url">wreathlyai.com</div></div>
+  <svg width="100%" viewBox="0 0 900 480" xmlns="http://www.w3.org/2000/svg">
+    <!-- NAV -->
+    <rect width="900" height="52" fill="#F5F0E8"/>
+    <rect x="24" y="16" width="100" height="20" rx="2" fill="#1B4332" opacity="0.8"/>
+    <text x="24" y="30" font-size="11" fill="#FAF3E0" font-weight="600">WreathlyAI</text>
+    <rect x="320" y="20" width="50" height="12" rx="2" fill="#ddd"/>
+    <rect x="390" y="20" width="60" height="12" rx="2" fill="#ddd"/>
+    <rect x="470" y="20" width="40" height="12" rx="2" fill="#ddd"/>
+    <rect x="780" y="14" width="96" height="24" rx="0" fill="#1B4332"/>
+    <text x="828" y="30" font-size="10" fill="#FAF3E0" text-anchor="middle">Join Waitlist →</text>
+
+    <!-- HERO LEFT -->
+    <rect x="24" y="80" width="120" height="16" rx="2" fill="#C9A84C" opacity="0.4"/>
+    <text x="24" y="93" font-size="9" fill="#C9A84C">✦ INTRODUCING WREATHFORGE™</text>
+    <rect x="24" y="104" width="340" height="38" rx="2" fill="#1B4332" opacity="0.12"/>
+    <text x="24" y="126" font-size="22" font-weight="600" fill="#0D2018" font-family="Georgia,serif">Design stunning wreaths</text>
+    <rect x="24" y="148" width="260" height="38" rx="2" fill="#1B4332" opacity="0.08"/>
+    <text x="24" y="170" font-size="22" font-style="italic" fill="#1B4332" font-family="Georgia,serif">with AI. ✦</text>
+
+    <rect x="24" y="194" width="380" height="10" rx="2" fill="#ddd"/>
+    <rect x="24" y="210" width="340" height="10" rx="2" fill="#ddd"/>
+    <rect x="24" y="226" width="300" height="10" rx="2" fill="#ddd"/>
+
+    <rect x="24" y="258" width="140" height="36" rx="0" fill="#1B4332"/>
+    <text x="94" y="280" font-size="11" fill="#FAF3E0" text-anchor="middle">Get Early Access</text>
+    <rect x="176" y="264" width="120" height="24" rx="2" fill="none" stroke="#1B4332" stroke-width="1"/>
+    <text x="236" y="280" font-size="10" fill="#1B4332" text-anchor="middle">See how it works →</text>
+
+    <!-- STATS -->
+    <line x1="24" y1="322" x2="420" y2="322" stroke="#ddd" stroke-width="1"/>
+    <rect x="24" y="334" width="60" height="20" rx="2" fill="#1B4332" opacity="0.12"/>
+    <text x="54" y="348" font-size="12" fill="#1B4332" text-anchor="middle" font-family="Georgia">500+</text>
+    <text x="54" y="362" font-size="9" fill="#aaa" text-anchor="middle">Elements</text>
+    <rect x="120" y="334" width="60" height="20" rx="2" fill="#1B4332" opacity="0.12"/>
+    <text x="150" y="348" font-size="12" fill="#1B4332" text-anchor="middle" font-family="Georgia">&lt;3min</text>
+    <text x="150" y="362" font-size="9" fill="#aaa" text-anchor="middle">First Design</text>
+    <rect x="216" y="334" width="60" height="20" rx="2" fill="#1B4332" opacity="0.12"/>
+    <text x="246" y="348" font-size="12" fill="#1B4332" text-anchor="middle" font-family="Georgia">12</text>
+    <text x="246" y="362" font-size="9" fill="#aaa" text-anchor="middle">StyleMoods</text>
+
+    <!-- HERO RIGHT — Wreath Preview -->
+    <circle cx="680" cy="260" r="170" fill="none" stroke="rgba(27,67,50,0.08)" stroke-width="1"/>
+    <circle cx="680" cy="260" r="140" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="1" stroke-dasharray="4,4"/>
+    <!-- Simplified wreath leaves -->
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#2D6A4F" transform="rotate(0 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#1B4332" transform="rotate(20 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#40916C" transform="rotate(40 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#2D6A4F" transform="rotate(60 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#1B4332" transform="rotate(80 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#40916C" transform="rotate(100 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#2D6A4F" transform="rotate(120 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#1B4332" transform="rotate(140 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#40916C" transform="rotate(160 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#2D6A4F" transform="rotate(180 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#1B4332" transform="rotate(200 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#40916C" transform="rotate(220 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#2D6A4F" transform="rotate(240 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#1B4332" transform="rotate(260 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#40916C" transform="rotate(280 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#2D6A4F" transform="rotate(300 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#1B4332" transform="rotate(320 680 260)"/>
+    <ellipse cx="680" cy="125" rx="12" ry="22" fill="#40916C" transform="rotate(340 680 260)"/>
+    <!-- Flowers -->
+    <circle cx="680" cy="130" r="16" fill="#D4A5A5" transform="rotate(30 680 260)"/>
+    <circle cx="680" cy="130" r="9" fill="#EAC8C8" transform="rotate(30 680 260)"/>
+    <circle cx="680" cy="130" r="16" fill="#D4A5A5" transform="rotate(150 680 260)"/>
+    <circle cx="680" cy="130" r="9" fill="#EAC8C8" transform="rotate(150 680 260)"/>
+    <circle cx="680" cy="130" r="16" fill="#D4A5A5" transform="rotate(270 680 260)"/>
+    <circle cx="680" cy="130" r="9" fill="#EAC8C8" transform="rotate(270 680 260)"/>
+    <!-- Gold berries -->
+    <circle cx="680" cy="128" r="6" fill="#C9A84C" transform="rotate(60 680 260)"/>
+    <circle cx="680" cy="128" r="6" fill="#C9A84C" transform="rotate(120 680 260)"/>
+    <circle cx="680" cy="128" r="6" fill="#C9A84C" transform="rotate(180 680 260)"/>
+    <circle cx="680" cy="128" r="6" fill="#C9A84C" transform="rotate(240 680 260)"/>
+    <circle cx="680" cy="128" r="6" fill="#C9A84C" transform="rotate(300 680 260)"/>
+    <circle cx="680" cy="128" r="6" fill="#C9A84C" transform="rotate(0 680 260)"/>
+    <!-- Shadow -->
+    <ellipse cx="680" cy="420" rx="120" ry="10" fill="rgba(0,0,0,0.06)"/>
+
+    <!-- ANNOTATIONS -->
+    <line x1="24" y1="104" x2="8" y2="104" stroke="#C9A84C" stroke-width="1"/>
+    <text x="6" y="108" font-size="8" fill="#C9A84C" text-anchor="end">Eyebrow badge</text>
+    <line x1="540" y1="260" x2="520" y2="200" stroke="#C9A84C" stroke-width="1"/>
+    <text x="518" y="196" font-size="8" fill="#C9A84C" text-anchor="end">Animated wreath</text>
+    <text x="518" y="206" font-size="8" fill="#C9A84C" text-anchor="end">preview (float)</text>
+  </svg>
+</div>
+
+<!-- WIREFRAME 2: DASHBOARD -->
+<h2>2. Dashboard Layout Wireframe</h2>
+<div class="wireframe-label">Wireframe / Mid-Fidelity</div>
+<div class="frame">
+  <div class="frame-bar"><div class="dot r"></div><div class="dot y"></div><div class="dot g"></div><div class="frame-url">app.wreathlyai.com/dashboard</div></div>
+  <svg width="100%" viewBox="0 0 900 560" xmlns="http://www.w3.org/2000/svg">
+    <!-- Sidebar -->
+    <rect width="180" height="560" fill="#0D2018"/>
+    <text x="20" y="36" font-size="13" fill="#FAF3E0" font-family="Georgia">WreathlyAI</text>
+    <rect x="0" y="60" width="180" height="1" fill="rgba(255,255,255,0.08)"/>
+    <!-- Nav items -->
+    <rect x="0" y="72" width="180" height="30" fill="rgba(201,168,76,0.1)"/>
+    <rect x="0" y="72" width="3" height="30" fill="#C9A84C"/>
+    <text x="20" y="91" font-size="11" fill="#C9A84C">◎ Dashboard</text>
+    <text x="20" y="115" font-size="11" fill="rgba(250,243,224,0.4)">✦ WreathCanvas™</text>
+    <text x="20" y="137" font-size="11" fill="rgba(250,243,224,0.4)">❋ My Designs</text>
+    <text x="20" y="159" font-size="11" fill="rgba(250,243,224,0.4)">◈ Element Library</text>
+    <rect x="0" y="174" width="180" height="1" fill="rgba(255,255,255,0.05)"/>
+    <text x="12" y="194" font-size="8" fill="rgba(250,243,224,0.2)" letter-spacing="2">TOOLS</text>
+    <text x="20" y="212" font-size="11" fill="rgba(250,243,224,0.4)">$ Cost Estimator</text>
+    <text x="20" y="234" font-size="11" fill="rgba(250,243,224,0.4)">↗ Export Suite</text>
+    <!-- User -->
+    <rect x="0" y="520" width="180" height="40" fill="rgba(0,0,0,0.2)"/>
+    <circle cx="24" cy="540" r="12" fill="#2D6A4F"/>
+    <text x="24" y="544" font-size="8" fill="#FAF3E0" text-anchor="middle">MT</text>
+    <text x="44" y="537" font-size="10" fill="rgba(250,243,224,0.7)">Maya T.</text>
+    <text x="44" y="549" font-size="9" fill="#C9A84C">✦ Artisan</text>
+
+    <!-- Main area -->
+    <!-- Topbar -->
+    <rect x="180" y="0" width="720" height="52" fill="white"/>
+    <line x1="180" y1="52" x2="900" y2="52" stroke="rgba(27,67,50,0.1)" stroke-width="1"/>
+    <text x="200" y="22" font-size="14" fill="#0D2018" font-family="Georgia">Good morning, Maya ✦</text>
+    <text x="200" y="38" font-size="10" fill="#aaa">You have 3 designs ready to export</text>
+    <rect x="640" y="14" width="140" height="24" rx="0" fill="#F5F0E8"/>
+    <text x="710" y="30" font-size="10" fill="#bbb" text-anchor="middle">Search designs…</text>
+    <rect x="800" y="14" width="80" height="24" rx="0" fill="#1B4332"/>
+    <text x="840" y="30" font-size="10" fill="#FAF3E0" text-anchor="middle">+ New Design</text>
+
+    <!-- AI Bar -->
+    <rect x="180" y="60" width="720" height="44" fill="#0D2018"/>
+    <rect x="196" y="72" width="24" height="24" fill="rgba(201,168,76,0.2)"/>
+    <text x="208" y="88" font-size="12" fill="#C9A84C" text-anchor="middle">✦</text>
+    <rect x="230" y="72" width="500" height="24" fill="transparent"/>
+    <text x="236" y="88" font-size="10" fill="rgba(250,243,224,0.3)">Describe your wreath… e.g. "Rustic fall wreath with dried orange slices…"</text>
+    <rect x="756" y="70" width="128" height="28" fill="#C9A84C"/>
+    <text x="820" y="88" font-size="10" fill="#0D2018" text-anchor="middle" font-weight="600">Generate →</text>
+
+    <!-- Stat Cards -->
+    <rect x="188" y="116" width="164" height="72" fill="white" stroke="rgba(27,67,50,0.1)" stroke-width="1"/>
+    <text x="200" y="134" font-size="8" fill="#aaa" letter-spacing="1">DESIGNS THIS MONTH</text>
+    <text x="200" y="162" font-size="28" fill="#0D2018" font-family="Georgia">28</text>
+    <text x="200" y="177" font-size="9" fill="#40916C">↑ 12 vs last month</text>
+
+    <rect x="360" y="116" width="164" height="72" fill="white" stroke="rgba(27,67,50,0.1)" stroke-width="1"/>
+    <text x="372" y="134" font-size="8" fill="#aaa" letter-spacing="1">AVG DESIGN TIME</text>
+    <text x="372" y="162" font-size="28" fill="#2D6A4F" font-family="Georgia">2.4m</text>
+    <text x="372" y="177" font-size="9" fill="#40916C">↓ 18% faster</text>
+
+    <rect x="532" y="116" width="164" height="72" fill="white" stroke="rgba(27,67,50,0.1)" stroke-width="1"/>
+    <text x="544" y="134" font-size="8" fill="#aaa" letter-spacing="1">EXPORTS COMPLETED</text>
+    <text x="544" y="162" font-size="28" fill="#0D2018" font-family="Georgia">14</text>
+    <text x="544" y="177" font-size="9" fill="#40916C">↑ 6 this week</text>
+
+    <rect x="704" y="116" width="184" height="72" fill="white" stroke="rgba(27,67,50,0.1)" stroke-width="1"/>
+    <text x="716" y="134" font-size="8" fill="#aaa" letter-spacing="1">EST. REVENUE</text>
+    <text x="716" y="162" font-size="28" fill="#C9A84C" font-family="Georgia">$847</text>
+    <text x="716" y="177" font-size="9" fill="#aaa">From listed designs</text>
+
+    <!-- Design Grid Panel -->
+    <rect x="188" y="200" width="356" height="340" fill="white" stroke="rgba(27,67,50,0.1)" stroke-width="1"/>
+    <text x="204" y="224" font-size="14" fill="#0D2018" font-family="Georgia">Recent Designs</text>
+    <!-- Design thumbs grid -->
+    <rect x="204" y="236" width="100" height="100" fill="#F5F0E8"/>
+    <circle cx="254" cy="286" r="36" fill="none" stroke="rgba(27,67,50,0.2)" stroke-width="1"/>
+    <ellipse cx="254" cy="253" rx="8" ry="14" fill="#2D6A4F" transform="rotate(0 254 286)"/>
+    <ellipse cx="254" cy="253" rx="8" ry="14" fill="#1B4332" transform="rotate(45 254 286)"/>
+    <ellipse cx="254" cy="253" rx="8" ry="14" fill="#40916C" transform="rotate(90 254 286)"/>
+    <ellipse cx="254" cy="253" rx="8" ry="14" fill="#2D6A4F" transform="rotate(135 254 286)"/>
+    <ellipse cx="254" cy="253" rx="8" ry="14" fill="#1B4332" transform="rotate(180 254 286)"/>
+    <ellipse cx="254" cy="253" rx="8" ry="14" fill="#40916C" transform="rotate(225 254 286)"/>
+    <ellipse cx="254" cy="253" rx="8" ry="14" fill="#2D6A4F" transform="rotate(270 254 286)"/>
+    <ellipse cx="254" cy="253" rx="8" ry="14" fill="#1B4332" transform="rotate(315 254 286)"/>
+    <circle cx="254" cy="254" r="10" fill="#D4A5A5" transform="rotate(22 254 286)"/>
+    <circle cx="254" cy="254" r="10" fill="#D4A5A5" transform="rotate(202 254 286)"/>
+    <circle cx="254" cy="254" r="5" fill="#C9A84C" transform="rotate(112 254 286)"/>
+
+    <rect x="312" y="236" width="100" height="100" fill="#1B4332" opacity="0.05"/>
+    <circle cx="362" cy="286" r="36" fill="none" stroke="rgba(27,67,50,0.15)" stroke-width="1" stroke-dasharray="3,3"/>
+    <text x="362" y="282" font-size="18" fill="#C9A84C" text-anchor="middle">+</text>
+    <text x="362" y="296" font-size="9" fill="#aaa" text-anchor="middle">New Design</text>
+
+    <rect x="420" y="236" width="100" height="100" fill="#F5F0E8"/>
+    <circle cx="470" cy="286" r="36" fill="none" stroke="rgba(27,67,50,0.2)" stroke-width="1"/>
+    <ellipse cx="470" cy="253" rx="8" ry="14" fill="#40916C" transform="rotate(0 470 286)"/>
+    <ellipse cx="470" cy="253" rx="8" ry="14" fill="#2D6A4F" transform="rotate(60 470 286)"/>
+    <ellipse cx="470" cy="253" rx="8" ry="14" fill="#1B4332" transform="rotate(120 470 286)"/>
+    <ellipse cx="470" cy="253" rx="8" ry="14" fill="#40916C" transform="rotate(180 470 286)"/>
+    <ellipse cx="470" cy="253" rx="8" ry="14" fill="#2D6A4F" transform="rotate(240 470 286)"/>
+    <ellipse cx="470" cy="253" rx="8" ry="14" fill="#1B4332" transform="rotate(300 470 286)"/>
+    <circle cx="470" cy="254" r="10" fill="#C9A84C" transform="rotate(30 470 286)"/>
+    <circle cx="470" cy="254" r="10" fill="#C9A84C" transform="rotate(150 470 286)"/>
+    <circle cx="470" cy="254" r="10" fill="#C9A84C" transform="rotate(270 470 286)"/>
+
+    <!-- Activity Panel -->
+    <rect x="552" y="200" width="336" height="340" fill="white" stroke="rgba(27,67,50,0.1)" stroke-width="1"/>
+    <text x="568" y="224" font-size="14" fill="#0D2018" font-family="Georgia">Recent Activity</text>
+    <!-- Activity rows -->
+    <rect x="568" y="238" width="1" height="1"/>
+    <circle cx="582" cy="258" r="12" fill="#F5F0E8"/>
+    <text x="582" y="262" font-size="10" fill="#C9A84C" text-anchor="middle">✦</text>
+    <rect x="602" y="249" width="160" height="10" rx="2" fill="#ddd"/>
+    <rect x="602" y="263" width="120" height="8" rx="2" fill="#eee"/>
+    <line x1="568" y1="284" x2="872" y2="284" stroke="rgba(27,67,50,0.06)" stroke-width="1"/>
+
+    <circle cx="582" cy="304" r="12" fill="#F5F0E8"/>
+    <text x="582" y="308" font-size="10" fill="#1B4332" text-anchor="middle">↗</text>
+    <rect x="602" y="295" width="150" height="10" rx="2" fill="#ddd"/>
+    <rect x="602" y="309" width="110" height="8" rx="2" fill="#eee"/>
+    <line x1="568" y1="330" x2="872" y2="330" stroke="rgba(27,67,50,0.06)" stroke-width="1"/>
+
+    <circle cx="582" cy="350" r="12" fill="#F5F0E8"/>
+    <text x="582" y="354" font-size="10" fill="#1B4332" text-anchor="middle">◈</text>
+    <rect x="602" y="341" width="170" height="10" rx="2" fill="#ddd"/>
+    <rect x="602" y="355" width="130" height="8" rx="2" fill="#eee"/>
+    <line x1="568" y1="376" x2="872" y2="376" stroke="rgba(27,67,50,0.06)" stroke-width="1"/>
+
+    <circle cx="582" cy="396" r="12" fill="#F5F0E8"/>
+    <text x="582" y="400" font-size="10" fill="#1B4332" text-anchor="middle">$</text>
+    <rect x="602" y="387" width="155" height="10" rx="2" fill="#ddd"/>
+    <rect x="602" y="401" width="115" height="8" rx="2" fill="#eee"/>
+
+    <!-- Annotation arrows -->
+    <line x1="188" y1="200" x2="170" y2="180" stroke="#C9A84C" stroke-width="1"/>
+    <text x="168" y="176" font-size="8" fill="#C9A84C" text-anchor="end">Design grid</text>
+    <text x="168" y="186" font-size="8" fill="#C9A84C" text-anchor="end">(3×2 thumbs)</text>
+
+    <line x1="888" y1="200" x2="900" y2="180" stroke="#C9A84C" stroke-width="1"/>
+    <text x="902" y="176" font-size="8" fill="#C9A84C">Activity feed</text>
+  </svg>
+</div>
+
+<!-- USER FLOW -->
+<h2>3. Core User Flow — First Design</h2>
+<div class="wireframe-label">Flow Diagram</div>
+<div class="flow-diagram" style="padding:20px;background:white;border:1px solid rgba(27,67,50,0.1);">
+  <div class="flow-step"><div class="step-n">START</div><div class="step-t">Land on Homepage</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><div class="step-n">01</div><div class="step-t">Join Waitlist / Sign Up</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step" style="background:#1B4332;color:#FAF3E0;"><div class="step-n" style="color:#C9A84C;">02</div><div class="step-t" style="color:#FAF3E0;">Style Quiz (5 Qs)</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><div class="step-n">03</div><div class="step-t">AI Generates Starter Design</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><div class="step-n">04</div><div class="step-t">Customize on Canvas</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step"><div class="step-n">05</div><div class="step-t">Cost Estimate + Export</div></div>
+  <div class="flow-arrow">→</div>
+  <div class="flow-step" style="background:#C9A84C;color:#0D2018;"><div class="step-n">END</div><div class="step-t">Listed on Etsy</div></div>
+</div>
+
+<!-- DESIGN SYSTEM -->
+<h2>4. Design System — Colors & Typography</h2>
+<div class="wireframe-label">Design Tokens</div>
+<div style="background:white;padding:32px;border:1px solid rgba(27,67,50,0.1);margin-bottom:24px;">
+  <p style="font-size:12px;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;">Color Palette</p>
+  <div class="palette">
+    <div class="swatch" style="background:#0D2018;"><span style="color:#FAF3E0;font-size:9px;">#0D2018<br>Dark</span></div>
+    <div class="swatch" style="background:#1B4332;"><span style="color:#FAF3E0;font-size:9px;">#1B4332<br>Forest</span></div>
+    <div class="swatch" style="background:#2D6A4F;"><span style="color:#FAF3E0;font-size:9px;">#2D6A4F<br>Forest Mid</span></div>
+    <div class="swatch" style="background:#40916C;"><span style="color:#FAF3E0;font-size:9px;">#40916C<br>Forest Light</span></div>
+    <div class="swatch" style="background:#C9A84C;"><span style="color:#0D2018;font-size:9px;">#C9A84C<br>Gold</span></div>
+    <div class="swatch" style="background:#D4A5A5;"><span style="color:#0D2018;font-size:9px;">#D4A5A5<br>Rose</span></div>
+    <div class="swatch" style="background:#FAF3E0;border:1px solid #ddd;"><span style="color:#555;font-size:9px;">#FAF3E0<br>Ivory</span></div>
+    <div class="swatch" style="background:#F0E6C8;border:1px solid #ddd;"><span style="color:#555;font-size:9px;">#F0E6C8<br>Ivory Dark</span></div>
+  </div>
+
+  <p style="font-size:12px;color:#aaa;letter-spacing:2px;text-transform:uppercase;margin:28px 0 16px;">Type Scale</p>
+  <div class="type-scale">
+    <div class="type-row"><span class="type-label">Display / H1</span><span style="font-family:'Cormorant Garamond',serif;font-size:48px;color:#0D2018;line-height:1;">Cormorant 48px</span></div>
+    <div class="type-row"><span class="type-label">H2</span><span style="font-family:'Cormorant Garamond',serif;font-size:36px;color:#0D2018;">Cormorant 36px</span></div>
+    <div class="type-row"><span class="type-label">H3</span><span style="font-family:'Cormorant Garamond',serif;font-size:24px;color:#1B4332;">Cormorant 24px</span></div>
+    <div class="type-row"><span class="type-label">Body</span><span style="font-family:'DM Sans',sans-serif;font-size:16px;color:#2C3E2D;">DM Sans 16px — for all body and UI text</span></div>
+    <div class="type-row"><span class="type-label">Small / Label</span><span style="font-family:'DM Sans',sans-serif;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#888;">DM SANS 12PX UPPERCASE LABELS</span></div>
+  </div>
+</div>
+
+<!-- COMPONENT WIREFRAME -->
+<h2>5. Key Component — WreathCanvas™ Ring System</h2>
+<div class="wireframe-label">Component Diagram</div>
+<div style="background:white;padding:32px;border:1px solid rgba(27,67,50,0.1);">
+  <svg width="100%" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="300" cy="200" r="180" fill="none" stroke="rgba(27,67,50,0.08)" stroke-width="1" stroke-dasharray="4,4"/>
+    <circle cx="300" cy="200" r="150" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="2" stroke-dasharray="4,4"/>
+    <circle cx="300" cy="200" r="115" fill="none" stroke="rgba(27,67,50,0.15)" stroke-width="2" stroke-dasharray="4,4"/>
+    <circle cx="300" cy="200" r="80" fill="none" stroke="rgba(212,165,165,0.4)" stroke-width="2" stroke-dasharray="4,4"/>
+    <circle cx="300" cy="200" r="40" fill="none" stroke="rgba(27,67,50,0.08)" stroke-width="1"/>
+
+    <!-- Ring labels -->
+    <line x1="300" y1="20" x2="480" y2="20" stroke="#ddd" stroke-width="1"/>
+    <text x="485" y="24" font-size="10" fill="#C9A84C">Outer accent ring — r180</text>
+    <line x1="300" y1="50" x2="480" y2="50" stroke="#ddd" stroke-width="1"/>
+    <text x="485" y="54" font-size="10" fill="#1B4332">Greenery base ring — r150</text>
+    <line x1="300" y1="85" x2="480" y2="85" stroke="#ddd" stroke-width="1"/>
+    <text x="485" y="89" font-size="10" fill="#666">Focal element ring — r115</text>
+    <line x1="300" y1="120" x2="480" y2="120" stroke="#ddd" stroke-width="1"/>
+    <text x="485" y="124" font-size="10" fill="#D4A5A5">Accent detail ring — r80</text>
+
+    <!-- Sample elements on rings -->
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#2D6A4F" opacity="0.7" transform="rotate(0 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#1B4332" opacity="0.7" transform="rotate(30 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#40916C" opacity="0.7" transform="rotate(60 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#2D6A4F" opacity="0.7" transform="rotate(90 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#1B4332" opacity="0.7" transform="rotate(120 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#40916C" opacity="0.7" transform="rotate(150 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#2D6A4F" opacity="0.7" transform="rotate(180 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#1B4332" opacity="0.7" transform="rotate(210 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#40916C" opacity="0.7" transform="rotate(240 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#2D6A4F" opacity="0.7" transform="rotate(270 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#1B4332" opacity="0.7" transform="rotate(300 300 200)"/>
+    <ellipse cx="300" cy="53" rx="10" ry="17" fill="#40916C" opacity="0.7" transform="rotate(330 300 200)"/>
+    <circle cx="300" cy="88" r="14" fill="#D4A5A5" transform="rotate(45 300 200)"/>
+    <circle cx="300" cy="88" r="14" fill="#D4A5A5" transform="rotate(165 300 200)"/>
+    <circle cx="300" cy="88" r="14" fill="#D4A5A5" transform="rotate(285 300 200)"/>
+    <circle cx="300" cy="122" r="7" fill="#C9A84C" transform="rotate(15 300 200)"/>
+    <circle cx="300" cy="122" r="7" fill="#C9A84C" transform="rotate(75 300 200)"/>
+    <circle cx="300" cy="122" r="7" fill="#C9A84C" transform="rotate(135 300 200)"/>
+    <circle cx="300" cy="122" r="7" fill="#C9A84C" transform="rotate(195 300 200)"/>
+    <circle cx="300" cy="122" r="7" fill="#C9A84C" transform="rotate(255 300 200)"/>
+    <circle cx="300" cy="122" r="7" fill="#C9A84C" transform="rotate(315 300 200)"/>
+    <circle cx="300" cy="200" r="24" fill="none" stroke="rgba(27,67,50,0.15)" stroke-width="1" stroke-dasharray="2,2"/>
+    <text x="300" y="204" font-size="8" fill="rgba(27,67,50,0.3)" text-anchor="middle">center</text>
+
+    <!-- snap indicator -->
+    <circle cx="300" cy="53" r="4" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+    <text x="270" y="40" font-size="9" fill="#C9A84C">snap point</text>
+    <line x1="290" y1="46" x2="296" y2="53" stroke="#C9A84C" stroke-width="1"/>
+  </svg>
+  <p style="font-size:12px;color:#aaa;text-align:center;margin-top:8px;">Ring snap system — elements auto-align to polar coordinate grid based on selected ring</p>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — Prompt Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ec-white:#FFFFFF; --ec-off-white:#F9F7F4; --ec-paper:#F2EFE9;
+  --ec-black:#1A1A1A; --ec-charcoal:#2E2E2E; --ec-ink:#4A4A4A;
+  --ec-green:#4A6741; --ec-green-light:#6B8F67; --ec-green-pale:#EEF2ED;
+  --ec-green-dim:rgba(74,103,65,0.12);
+  --ec-gray-100:#F5F5F5; --ec-gray-200:#E8E8E8; --ec-gray-300:#D0D0D0;
+  --ec-gray-400:#A8A8A8; --ec-gray-500:#787878;
+  --ec-surface:var(--ec-white); --ec-surface-alt:var(--ec-off-white);
+  --ec-surface-warm:var(--ec-paper);
+  --ec-border:var(--ec-gray-200); --ec-border-dark:var(--ec-gray-300);
+  --ec-text:var(--ec-black); --ec-text-muted:var(--ec-ink); --ec-text-faint:var(--ec-gray-500);
+  --ec-error:#B94040; --ec-warning:#C4922A;
+  --ec-font-serif:'Cormorant Garamond','Garamond','Georgia',serif;
+  --ec-font-sans:'Inter','DM Sans',system-ui,sans-serif;
+  --ec-font-script:'Dancing Script','Pacifico',cursive;
+  --ec-font-mono:'DM Mono','Fira Code',monospace;
+  --ec-text-xs:0.6875rem; --ec-text-sm:0.8125rem; --ec-text-base:1rem;
+  --ec-text-lg:1.125rem; --ec-text-xl:1.375rem; --ec-text-2xl:1.75rem;
+  --ec-text-3xl:2.25rem; --ec-text-4xl:3rem;
+  --ec-space-1:0.25rem; --ec-space-2:0.5rem; --ec-space-3:0.75rem;
+  --ec-space-4:1rem; --ec-space-5:1.5rem; --ec-space-6:2rem;
+  --ec-space-8:2.5rem; --ec-space-10:3rem; --ec-space-12:4rem;
+  --ec-radius-sm:4px; --ec-radius-md:8px; --ec-radius-lg:14px;
+  --ec-radius-xl:20px; --ec-radius-full:9999px;
+  --ec-shadow-sm:0 1px 3px rgba(0,0,0,0.06);
+  --ec-shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --ec-shadow-lg:0 8px 32px rgba(0,0,0,0.10);
+  --ec-shadow-card:0 2px 8px rgba(0,0,0,0.06),0 0 0 1px var(--ec-border);
+  --ec-transition:200ms ease;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--ec-font-sans);background:var(--ec-off-white);color:var(--ec-text);min-height:100vh;}
+.ec-app{max-width:980px;margin:0 auto;padding:var(--ec-space-8) var(--ec-space-5);}
+
+/* HEADER */
+.ec-app-header{display:flex;align-items:center;justify-content:space-between;padding-bottom:var(--ec-space-5);border-bottom:1px solid var(--ec-border);margin-bottom:var(--ec-space-8);}
+.ec-app-header__brand{display:flex;align-items:baseline;gap:var(--ec-space-3);}
+.ec-script{font-family:var(--ec-font-script);font-size:var(--ec-text-xl);color:var(--ec-green);font-weight:600;}
+.ec-app-header__app-name{font-family:var(--ec-font-sans);font-size:var(--ec-text-sm);color:var(--ec-text-faint);letter-spacing:0.05em;}
+.ec-tier-badge{font-family:var(--ec-font-sans);font-size:var(--ec-text-xs);font-weight:600;letter-spacing:0.1em;text-transform:uppercase;padding:3px 10px;border-radius:var(--ec-radius-full);}
+.ec-tier-atelier{background:#1A1A1A;color:#F2EFE9;}
+
+/* HERO */
+.ec-hero{text-align:center;margin-bottom:var(--ec-space-10);}
+.ec-hero__eyebrow{font-family:var(--ec-font-script);font-size:var(--ec-text-xl);color:var(--ec-green);margin-bottom:var(--ec-space-3);}
+.ec-hero__title{font-family:var(--ec-font-serif);font-size:var(--ec-text-4xl);font-weight:600;line-height:1.1;letter-spacing:-0.02em;color:var(--ec-text);margin-bottom:var(--ec-space-4);}
+.ec-hero__sub{font-family:var(--ec-font-sans);font-size:var(--ec-text-lg);color:var(--ec-text-faint);max-width:560px;margin:0 auto;line-height:1.6;}
+
+/* DIVIDER */
+.ec-divider{display:flex;align-items:center;gap:var(--ec-space-4);margin:var(--ec-space-8) 0;color:var(--ec-gray-300);font-size:var(--ec-text-lg);}
+.ec-divider::before,.ec-divider::after{content:'';flex:1;height:1px;background:var(--ec-border);}
+
+/* CARDS */
+.ec-card{background:var(--ec-surface);border-radius:var(--ec-radius-lg);box-shadow:var(--ec-shadow-card);padding:var(--ec-space-6);}
+.ec-card--warm{background:var(--ec-surface-warm);}
+.ec-card--green{background:var(--ec-green-pale);border:1px solid var(--ec-green-dim);}
+.ec-label{font-family:var(--ec-font-sans);font-size:var(--ec-text-xs);font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--ec-text-faint);margin-bottom:var(--ec-space-2);display:block;}
+.ec-input{width:100%;padding:10px var(--ec-space-4);background:var(--ec-white);border:1.5px solid var(--ec-border);border-radius:var(--ec-radius-md);font-family:var(--ec-font-sans);font-size:var(--ec-text-base);color:var(--ec-text);outline:none;transition:border-color var(--ec-transition);}
+.ec-input:focus{border-color:var(--ec-green);box-shadow:0 0 0 3px var(--ec-green-dim);}
+.ec-input::placeholder{color:var(--ec-gray-400);}
+select.ec-input{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23A8A8A8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;}
+
+/* GRID */
+.ec-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:var(--ec-space-5);}
+.ec-grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--ec-space-4);}
+@media(max-width:640px){.ec-grid-2,.ec-grid-3{grid-template-columns:1fr;}}
+
+/* TOGGLES */
+.ec-toggle-group{display:flex;flex-wrap:wrap;gap:var(--ec-space-3);margin-top:var(--ec-space-2);}
+.ec-toggle{display:flex;align-items:center;gap:var(--ec-space-2);padding:8px 14px;border-radius:var(--ec-radius-full);border:1.5px solid var(--ec-border);cursor:pointer;font-size:var(--ec-text-sm);font-family:var(--ec-font-sans);color:var(--ec-text-muted);background:var(--ec-white);transition:all var(--ec-transition);user-select:none;}
+.ec-toggle.active{border-color:var(--ec-green);background:var(--ec-green-pale);color:var(--ec-green);}
+.ec-toggle input{display:none;}
+
+/* BUTTONS */
+.ec-btn{display:inline-flex;align-items:center;gap:var(--ec-space-2);padding:10px var(--ec-space-5);border-radius:var(--ec-radius-md);font-family:var(--ec-font-sans);font-size:var(--ec-text-sm);font-weight:500;cursor:pointer;border:none;transition:all var(--ec-transition);letter-spacing:0.02em;}
+.ec-btn-primary{background:var(--ec-black);color:var(--ec-white);}
+.ec-btn-primary:hover{background:var(--ec-charcoal);transform:translateY(-1px);box-shadow:var(--ec-shadow-md);}
+.ec-btn-green{background:var(--ec-green);color:var(--ec-white);font-size:var(--ec-text-base);padding:14px 32px;}
+.ec-btn-green:hover{background:var(--ec-green-light);transform:translateY(-1px);}
+.ec-btn-outline{background:transparent;color:var(--ec-text);border:1.5px solid var(--ec-border-dark);font-size:var(--ec-text-sm);}
+.ec-btn-outline:hover{border-color:var(--ec-black);background:var(--ec-gray-100);}
+.ec-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none !important;box-shadow:none !important;}
+.ec-btn-row{display:flex;gap:var(--ec-space-3);align-items:center;flex-wrap:wrap;}
+
+/* LOADING */
+.ec-loading{display:flex;flex-direction:column;align-items:center;gap:var(--ec-space-4);padding:var(--ec-space-10);color:var(--ec-text-faint);font-family:var(--ec-font-sans);font-size:var(--ec-text-sm);}
+.ec-spinner{width:28px;height:28px;border:2px solid var(--ec-border);border-top-color:var(--ec-green);border-radius:50%;animation:ec-spin 0.7s linear infinite;}
+.ec-loading-msg{font-size:var(--ec-text-sm);color:var(--ec-text-faint);font-style:italic;}
+@keyframes ec-spin{to{transform:rotate(360deg);}}
+
+/* OUTPUT AREA */
+#output-area{display:none;}
+.ec-collection-header{margin-bottom:var(--ec-space-8);}
+.ec-collection-title{font-family:var(--ec-font-serif);font-size:var(--ec-text-3xl);font-weight:600;letter-spacing:-0.02em;line-height:1.2;margin-bottom:var(--ec-space-3);}
+.ec-collection-headline{font-family:var(--ec-font-sans);font-size:var(--ec-text-lg);color:var(--ec-text-muted);margin-bottom:var(--ec-space-2);}
+.ec-collection-sub{font-family:var(--ec-font-sans);font-size:var(--ec-text-base);color:var(--ec-text-faint);margin-bottom:var(--ec-space-4);}
+.ec-cta-pill{display:inline-block;padding:8px 20px;background:var(--ec-black);color:var(--ec-white);border-radius:var(--ec-radius-full);font-size:var(--ec-text-sm);font-family:var(--ec-font-sans);font-weight:500;letter-spacing:0.04em;}
+
+/* PROMPT CARDS */
+.ec-prompt-card{background:var(--ec-paper);border-radius:var(--ec-radius-lg);padding:var(--ec-space-5);border:1px solid var(--ec-border);position:relative;}
+.ec-prompt-card__type{font-family:var(--ec-font-sans);font-size:var(--ec-text-xs);font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-green);margin-bottom:var(--ec-space-3);}
+.ec-prompt-card__text{font-family:var(--ec-font-mono);font-size:0.75rem;line-height:1.7;color:var(--ec-text-muted);white-space:pre-wrap;word-break:break-word;}
+.ec-copy-btn{position:absolute;top:var(--ec-space-4);right:var(--ec-space-4);padding:5px 12px;font-size:var(--ec-text-xs);background:var(--ec-white);border:1px solid var(--ec-border-dark);border-radius:var(--ec-radius-sm);cursor:pointer;font-family:var(--ec-font-sans);color:var(--ec-text-muted);transition:all var(--ec-transition);}
+.ec-copy-btn:hover{background:var(--ec-green-pale);color:var(--ec-green);border-color:var(--ec-green);}
+.ec-copy-btn.copied{background:var(--ec-green-pale);color:var(--ec-green);}
+
+/* ELEMENT CHIPS */
+.ec-element-chip{background:var(--ec-white);border:1px solid var(--ec-border);border-radius:var(--ec-radius-md);padding:var(--ec-space-4);transition:box-shadow var(--ec-transition);}
+.ec-element-chip:hover{box-shadow:var(--ec-shadow-md);}
+.ec-element-chip__tag{font-size:var(--ec-text-xs);font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--ec-text-faint);margin-bottom:var(--ec-space-2);}
+.ec-element-chip__text{font-size:var(--ec-text-sm);color:var(--ec-text-muted);line-height:1.6;}
+
+/* SECTION HEADING */
+.ec-section-head{display:flex;align-items:baseline;gap:var(--ec-space-3);margin-bottom:var(--ec-space-5);}
+.ec-section-head h2{font-family:var(--ec-font-serif);font-size:var(--ec-text-2xl);font-weight:400;}
+.ec-section-head span{font-size:var(--ec-text-xs);color:var(--ec-text-faint);letter-spacing:0.08em;text-transform:uppercase;}
+
+/* LOCKED */
+.ec-locked-wrap{position:relative;}
+.ec-locked-wrap .ec-locked-overlay{position:absolute;inset:0;background:rgba(249,247,244,0.88);border-radius:var(--ec-radius-lg);backdrop-filter:blur(3px);z-index:2;display:flex;align-items:center;justify-content:center;}
+.ec-lock-badge{background:var(--ec-white);border:1.5px solid var(--ec-border-dark);border-radius:var(--ec-radius-lg);padding:var(--ec-space-4) var(--ec-space-6);text-align:center;box-shadow:var(--ec-shadow-md);}
+.ec-lock-badge h4{font-family:var(--ec-font-serif);font-size:var(--ec-text-xl);margin-bottom:6px;}
+.ec-lock-badge p{font-size:var(--ec-text-sm);color:var(--ec-text-faint);margin-bottom:var(--ec-space-3);}
+
+/* EXPORT BAR */
+.ec-export-bar{background:var(--ec-paper);border:1px solid var(--ec-border);border-radius:var(--ec-radius-lg);padding:var(--ec-space-5) var(--ec-space-6);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--ec-space-4);}
+.ec-export-bar__label{font-family:var(--ec-font-serif);font-size:var(--ec-text-xl);font-weight:400;color:var(--ec-text);}
+
+/* BOTANICAL ACCENT */
+.ec-botanical-accent{display:flex;justify-content:center;margin:var(--ec-space-4) 0;opacity:0.35;}
+.form-field{margin-bottom:var(--ec-space-5);}
+.error-msg{color:var(--ec-error);font-size:var(--ec-text-sm);margin-top:6px;display:none;}
+</style>
+</head>
+<body>
+<div class="ec-app">
+
+  <!-- HEADER -->
+  <header class="ec-app-header">
+    <div class="ec-app-header__brand">
+      <span class="ec-script">Evercrafted</span>
+      <span class="ec-app-header__app-name">Prompt Engine</span>
+    </div>
+    <div class="ec-tier-badge ec-tier-atelier">Atelier</div>
+  </header>
+
+  <!-- HERO -->
+  <div class="ec-hero">
+    <div class="ec-hero__eyebrow">from emotion to image</div>
+    <h1 class="ec-hero__title">One input.<br>An entire creative drop.</h1>
+    <p class="ec-hero__sub">Generate wreath prompts, environment scenes, element breakdowns, and collection copy — all in a single run.</p>
+  </div>
+
+  <!-- BOTANICAL -->
+  <div class="ec-botanical-accent">
+    <svg width="120" height="36" viewBox="0 0 120 36" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--ec-green)">
+      <path d="M60 32 C60 32 40 22 36 12 C34 6 38 2 44 4 C50 6 52 14 52 14 C52 14 54 4 60 4 C66 4 68 14 68 14 C68 14 70 6 76 4 C82 2 86 6 84 12 C80 22 60 32 60 32Z" stroke="currentColor" stroke-width="1.2" fill="none"/>
+      <path d="M60 32 L60 8" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 2"/>
+      <path d="M20 18 C20 18 30 12 38 8" stroke="currentColor" stroke-width="1" fill="none" opacity="0.5"/>
+      <path d="M100 18 C100 18 90 12 82 8" stroke="currentColor" stroke-width="1" fill="none" opacity="0.5"/>
+    </svg>
+  </div>
+
+  <!-- INPUT FORM -->
+  <div class="ec-card" id="input-panel">
+    <div class="ec-grid-2" style="gap:var(--ec-space-6)">
+      <div>
+        <div class="form-field">
+          <label class="ec-label" for="emotion-input">Emotion or Mood</label>
+          <input class="ec-input" id="emotion-input" type="text" placeholder="e.g. calm and peaceful, joyful, moody earth…">
+          <div class="error-msg" id="emotion-error">Please enter an emotion or mood.</div>
+        </div>
+        <div class="form-field">
+          <label class="ec-label" for="style-select">Style Direction</label>
+          <select class="ec-input" id="style-select">
+            <option value="luxury">Luxury Editorial</option>
+            <option value="organic">Organic & Earthy</option>
+            <option value="minimal">Minimal & Refined</option>
+            <option value="romantic">Romantic Botanical</option>
+            <option value="dramatic">Dramatic & Moody</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label class="ec-label" for="season-select">Season (optional)</label>
+          <select class="ec-input" id="season-select">
+            <option value="">No season specified</option>
+            <option value="spring">Spring</option>
+            <option value="summer">Summer</option>
+            <option value="autumn">Autumn</option>
+            <option value="winter">Winter</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <div class="form-field">
+          <label class="ec-label">Include in Collection</label>
+          <div class="ec-toggle-group">
+            <label class="ec-toggle active" id="toggle-environment">
+              <input type="checkbox" id="inc-environment" checked>
+              <span>✦ Environment Scene</span>
+            </label>
+            <label class="ec-toggle active" id="toggle-elements">
+              <input type="checkbox" id="inc-elements" checked>
+              <span>✦ Element Breakdown</span>
+            </label>
+            <label class="ec-toggle active" id="toggle-variations">
+              <input type="checkbox" id="inc-variations" checked>
+              <span>✦ Alt Variations</span>
+            </label>
+            <label class="ec-toggle active" id="toggle-copy">
+              <input type="checkbox" id="inc-copy" checked>
+              <span>✦ Marketing Copy</span>
+            </label>
+          </div>
+        </div>
+        <div class="form-field" style="margin-top:var(--ec-space-5);">
+          <label class="ec-label" for="inventory-input">Inventory Notes (optional)</label>
+          <input class="ec-input" id="inventory-input" type="text" placeholder="e.g. silk ranunculus, dried pampas, olive eucalyptus…">
+        </div>
+      </div>
+    </div>
+
+    <div class="ec-divider" style="margin:var(--ec-space-5) 0;">✦</div>
+
+    <div style="text-align:center;">
+      <button class="ec-btn ec-btn-green" id="generate-btn" onclick="generateCollection()">
+        Generate Collection
+      </button>
+      <p style="font-size:var(--ec-text-xs);color:var(--ec-text-faint);margin-top:var(--ec-space-3);">Prompts generated via Claude AI · No image API connected in prototype</p>
+    </div>
+  </div>
+
+  <!-- LOADING STATE -->
+  <div id="loading-panel" style="display:none;">
+    <div class="ec-loading">
+      <div class="ec-spinner"></div>
+      <div class="ec-loading-msg" id="loading-msg">Mapping emotion…</div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div id="output-area">
+
+    <div class="ec-divider">✦</div>
+
+    <!-- COLLECTION HEADER -->
+    <div class="ec-collection-header">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:var(--ec-space-4);">
+        <div>
+          <div class="ec-script" style="font-size:var(--ec-text-lg);margin-bottom:var(--ec-space-2);">collection output</div>
+          <div class="ec-collection-title" id="out-title">—</div>
+          <div class="ec-collection-headline" id="out-headline">—</div>
+          <div class="ec-collection-sub" id="out-subheadline">—</div>
+          <span class="ec-cta-pill" id="out-cta">—</span>
+        </div>
+        <button class="ec-btn ec-btn-outline" onclick="resetForm()">← New Collection</button>
+      </div>
+    </div>
+
+    <!-- WREATH PROMPT -->
+    <div class="ec-section-head">
+      <h2>Wreath Prompt</h2>
+      <span>Primary render prompt</span>
+    </div>
+    <div class="ec-prompt-card" style="margin-bottom:var(--ec-space-5);">
+      <div class="ec-prompt-card__type">Wreath · 24" Asymmetrical</div>
+      <button class="ec-copy-btn" onclick="copyPrompt(this)">Copy</button>
+      <div class="ec-prompt-card__text" id="out-wreath-prompt">—</div>
+    </div>
+
+    <!-- ENVIRONMENT PROMPT -->
+    <div id="env-section">
+      <div class="ec-section-head">
+        <h2>Environment Prompt</h2>
+        <span>Scene & placement</span>
+      </div>
+      <div class="ec-prompt-card" style="margin-bottom:var(--ec-space-5);">
+        <div class="ec-prompt-card__type">Interior Scene</div>
+        <button class="ec-copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <div class="ec-prompt-card__text" id="out-env-prompt">—</div>
+      </div>
+    </div>
+
+    <!-- ELEMENT BREAKDOWN -->
+    <div id="elements-section">
+      <div class="ec-section-head">
+        <h2>Element Breakdown</h2>
+        <span>Per-component prompts</span>
+      </div>
+      <div class="ec-grid-3" id="out-elements" style="margin-bottom:var(--ec-space-5);">
+        <!-- dynamically populated -->
+      </div>
+    </div>
+
+    <!-- ALT VARIATIONS -->
+    <div id="variations-section">
+      <div class="ec-section-head">
+        <h2>Alternate Variations</h2>
+        <span>Palette & structural shifts</span>
+      </div>
+      <div class="ec-grid-2" id="out-variations" style="margin-bottom:var(--ec-space-5);">
+        <!-- dynamically populated -->
+      </div>
+    </div>
+
+    <!-- EXPORT BAR -->
+    <div class="ec-divider">✦</div>
+    <div class="ec-export-bar">
+      <div class="ec-export-bar__label">Export this collection</div>
+      <div class="ec-btn-row">
+        <button class="ec-btn ec-btn-outline" onclick="copyAllPrompts()">Copy All Prompts</button>
+        <button class="ec-btn ec-btn-outline" onclick="exportJSON()">Export JSON</button>
+        <div class="ec-locked-wrap">
+          <button class="ec-btn ec-btn-primary" disabled>Download ZIP</button>
+          <div class="ec-locked-overlay">
+            <div class="ec-lock-badge">
+              <h4>Atelier Feature</h4>
+              <p>ZIP export with images available on full platform.</p>
+              <a href="#" style="font-size:var(--ec-text-sm);color:var(--ec-green);font-weight:600;">Upgrade →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /output-area -->
+
+</div><!-- /ec-app -->
+
+<script>
+// ─── TIER ─────────────────────────────────────────────────────────────────────
+const TIER_RANK = { bloom:1, craft:2, studio:3, atelier:4 };
+const USER_TIER = "atelier";
+function canAccess(required){ return TIER_RANK[USER_TIER] >= TIER_RANK[required]; }
+
+// ─── TOGGLE BEHAVIOUR ─────────────────────────────────────────────────────────
+document.querySelectorAll('.ec-toggle').forEach(label => {
+  label.addEventListener('click', function(){
+    const cb = this.querySelector('input[type=checkbox]');
+    cb.checked = !cb.checked;
+    this.classList.toggle('active', cb.checked);
+  });
+});
+
+// ─── LOADING MESSAGES ─────────────────────────────────────────────────────────
+const LOADING_MSGS = [
+  "Mapping emotion…",
+  "Building structural intent…",
+  "Composing wreath prompt…",
+  "Layering environment…",
+  "Generating element breakdown…",
+  "Writing collection copy…",
+  "Assembling your drop…"
+];
+let loadingInterval;
+function startLoadingCycle(){
+  let i = 0;
+  document.getElementById('loading-msg').textContent = LOADING_MSGS[0];
+  loadingInterval = setInterval(() => {
+    i = (i + 1) % LOADING_MSGS.length;
+    document.getElementById('loading-msg').textContent = LOADING_MSGS[i];
+  }, 1600);
+}
+function stopLoadingCycle(){ clearInterval(loadingInterval); }
+
+// ─── CLAUDE API ───────────────────────────────────────────────────────────────
+async function callClaude(messages, systemPrompt, maxTokens=1500){
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514",
+      max_tokens:maxTokens,
+      system:systemPrompt,
+      messages
+    })
+  });
+  const data = await res.json();
+  if(data.error) throw new Error(data.error.message);
+  return data.content.filter(b=>b.type==="text").map(b=>b.text).join("\n");
+}
+
+// ─── STORED COLLECTION DATA ───────────────────────────────────────────────────
+let currentCollection = null;
+
+// ─── MAIN GENERATE ────────────────────────────────────────────────────────────
+async function generateCollection(){
+  const emotion = document.getElementById('emotion-input').value.trim();
+  const errEl = document.getElementById('emotion-error');
+
+  if(!emotion){
+    errEl.style.display = 'block';
+    document.getElementById('emotion-input').focus();
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const style    = document.getElementById('style-select').value;
+  const season   = document.getElementById('season-select').value;
+  const inventory= document.getElementById('inventory-input').value.trim();
+  const incEnv   = document.getElementById('inc-environment').checked;
+  const incEl    = document.getElementById('inc-elements').checked;
+  const incVar   = document.getElementById('inc-variations').checked;
+  const incCopy  = document.getElementById('inc-copy').checked;
+
+  // Show loading
+  document.getElementById('input-panel').style.display = 'none';
+  document.getElementById('output-area').style.display = 'none';
+  document.getElementById('loading-panel').style.display = 'block';
+  startLoadingCycle();
+
+  const systemPrompt = `You are the Evercrafted Prompt Engine — an AI specializing in generating cinematic, 
+emotionally resonant Midjourney prompt sets for luxury faux botanical wreath designs.
+
+WREATH_STYLE_DNA (LOCKED — inject verbatim language into every wreath prompt, no exceptions):
+
+IDENTITY: Every wreath must be described as "luxury faux botanical wreath" — NEVER "floral wreath", "flower wreath", "fresh wreath", or just "wreath".
+
+MATERIALS (mandatory phrases):
+- "high-end faux silk botanicals, indistinguishable from real blooms"
+- "soft matte petals, natural texture, complete absence of plastic sheen"
+- "semi-gloss fabric leaves with visible vein structure"
+- "stems inserted into grapevine base, intentional styled composition"
+
+PHOTOGRAPHY (mandatory phrases):
+- "photorealistic professional product photograph" — not "render", not "photo", not "photography"
+- "85mm lens, shallow controlled depth of field, minimal lens distortion"
+- "soft neutral studio illumination, gentle grounded shadows, no hotspots"
+- "controlled studio environment, cool gray plaster background or paneled luxury entry"
+- "entire wreath visible in frame, true-to-life scale accuracy"
+
+INTENT (mandatory — this is the most critical phrase):
+- "gallery-quality product documentation, not creative art, not illustration, not romanticized, not decorative photography"
+
+COMPOSITION:
+- 24-inch asymmetrical form
+- 3–5 distinct clusters with deliberate negative space
+- "editorial and breathing, significant negative space, visible intervals between elements"
+
+NEGATIVE RULES (append as prose to every wreath prompt):
+"No fresh flowers. No dew. No water droplets. No wild garden look. No overly organic irregularity. No outdoor floral field styling. No ribbon. Not creative art. Not illustration. Not romanticized."
+
+TECHNICAL PARAMS (always end every wreath prompt with):
+--ar 5:4 --style raw --s 150 --q 2 --v 6.1
+
+FORBIDDEN BOTANICALS: NO cherry blossoms, NO pussy willow, NO twig-based blossom florals.
+
+PROMPT STACKING SYSTEM:
+Each prompt = BASE STYLE LOCK + EMOTION LAYER + STRUCTURE LAYER + SCENE LAYER + STYLE DNA + NEGATIVE RULES + PARAMS
+
+WREATH PROMPT ANATOMY (follow this sentence order in every wreath prompt):
+1. Open: "Photorealistic professional product photograph of a luxury 24-inch faux botanical wreath..."
+2. Character sentence: aesthetic register (e.g. "designed with quiet modern restraint")
+3. Composition: clock-position mass (e.g. "concentrated along left vertical arc, approximately 8-11 o'clock")
+4. Quantified negative space: "revealing [X]% of the bleached grapevine structure"
+5. Mood: "feels [adjective], never busy or ornate"
+6. Floral list: species (quantity, quality, placement)
+7. Material: "high-end faux silk botanicals, indistinguishable from real blooms, soft matte petals, complete absence of plastic sheen, semi-gloss fabric leaves with visible vein structure"
+8. "editorial and breathing, visible intervals between elements"
+9. Negative prose: "No fresh flowers. No dew. No water droplets. No wild garden look. No outdoor styling. Not creative art. Not illustration. Not romanticized."
+10. Photography: "85mm lens, shallow controlled depth of field, soft neutral studio illumination, gentle grounded shadows, no hotspots, controlled studio environment, cool gray plaster background"
+11. Close: "gallery-quality product documentation, not creative art, not illustration, not romanticized, not decorative photography"
+12. Params: --ar 5:4 --style raw --s 150 --q 2 --v 6.1
+
+Return ONLY a valid JSON object with this exact structure:
+{
+  "title": "2-3 word evocative collection name",
+  "headline": "bold brand statement, 8-12 words",
+  "subheadline": "one sentence that evokes the feeling of the collection",
+  "cta": "3-6 word action CTA",
+  "prompts": {
+    "wreath": "full Midjourney-ready wreath prompt following anatomy above — must end with: --ar 5:4 --style raw --s 150 --q 2 --v 6.1",
+    "environment": "full interior scene prompt, 60-80 words, faux wreath styled in luxury space, no fresh flower language",
+    "detail_elements": [
+      {"type": "focal", "prompt": "30-50 word faux close-up — include silk/matte surface language"},
+      {"type": "greenery", "prompt": "30-50 word faux close-up element prompt"},
+      {"type": "texture", "prompt": "30-50 word faux close-up element prompt"},
+      {"type": "accent", "prompt": "30-50 word faux close-up element prompt"}
+    ],
+    "alt_variations": [
+      {"label": "Variation name", "shift": "what changes", "prompt": "50-70 word variant — include faux material language and params"},
+      {"label": "Variation name", "shift": "what changes", "prompt": "50-70 word variant — include faux material language and params"}
+    ]
+  }
+}
+
+No markdown, no preamble, no explanation — pure JSON only.`;
+
+  const userMsg = `Generate a complete Evercrafted prompt collection for:
+
+Emotion/Mood: ${emotion}
+Style: ${style}
+${season ? `Season: ${season}` : ''}
+${inventory ? `Available inventory notes: ${inventory}` : ''}
+
+Include: 
+- environment: ${incEnv}
+- element breakdown: ${incEl}
+- alt variations: ${incVar}
+- marketing copy: ${incCopy}
+
+If any section is not included, still return that key but with empty string or empty array.`;
+
+  try {
+    const raw = await callClaude([{ role:"user", content:userMsg }], systemPrompt, 2000);
+    const cleaned = raw.replace(/```json|```/g,'').trim();
+    const data = JSON.parse(cleaned);
+    currentCollection = { emotion, style, season, ...data };
+    renderOutput(data, { incEnv, incEl, incVar, incCopy });
+  } catch(err){
+    stopLoadingCycle();
+    document.getElementById('loading-panel').style.display = 'none';
+    document.getElementById('input-panel').style.display = 'block';
+    alert("Generation failed: " + err.message + "\n\nMake sure the Anthropic API key is configured.");
+  }
+}
+
+// ─── RENDER OUTPUT ────────────────────────────────────────────────────────────
+function renderOutput(data, opts){
+  stopLoadingCycle();
+
+  // Collection header
+  document.getElementById('out-title').textContent = data.title || "—";
+  document.getElementById('out-headline').textContent = data.headline || "—";
+  document.getElementById('out-subheadline').textContent = data.subheadline || "—";
+  document.getElementById('out-cta').textContent = data.cta || "—";
+
+  // Wreath prompt
+  document.getElementById('out-wreath-prompt').textContent = data.prompts?.wreath || "—";
+
+  // Environment
+  const envSection = document.getElementById('env-section');
+  if(opts.incEnv && data.prompts?.environment){
+    envSection.style.display = '';
+    document.getElementById('out-env-prompt').textContent = data.prompts.environment;
+  } else {
+    envSection.style.display = 'none';
+  }
+
+  // Elements
+  const elSection = document.getElementById('elements-section');
+  const elGrid = document.getElementById('out-elements');
+  elGrid.innerHTML = '';
+  if(opts.incEl && data.prompts?.detail_elements?.length){
+    elSection.style.display = '';
+    data.prompts.detail_elements.forEach(el => {
+      const chip = document.createElement('div');
+      chip.className = 'ec-element-chip';
+      chip.innerHTML = `<div class="ec-element-chip__tag">${el.type}</div><div class="ec-element-chip__text">${el.prompt}</div>`;
+      elGrid.appendChild(chip);
+    });
+  } else {
+    elSection.style.display = 'none';
+  }
+
+  // Variations
+  const varSection = document.getElementById('variations-section');
+  const varGrid = document.getElementById('out-variations');
+  varGrid.innerHTML = '';
+  if(opts.incVar && data.prompts?.alt_variations?.length){
+    varSection.style.display = '';
+    data.prompts.alt_variations.forEach(v => {
+      const card = document.createElement('div');
+      card.className = 'ec-prompt-card';
+      card.innerHTML = `
+        <div class="ec-prompt-card__type">${v.label}</div>
+        <button class="ec-copy-btn" onclick="copyPrompt(this)">Copy</button>
+        <div style="font-size:var(--ec-text-xs);color:var(--ec-text-faint);margin-bottom:var(--ec-space-3);font-style:italic;">Shift: ${v.shift}</div>
+        <div class="ec-prompt-card__text">${v.prompt}</div>`;
+      varGrid.appendChild(card);
+    });
+  } else {
+    varSection.style.display = 'none';
+  }
+
+  // Show output
+  document.getElementById('loading-panel').style.display = 'none';
+  document.getElementById('output-area').style.display = 'block';
+  window.scrollTo({ top: 0, behavior:'smooth' });
+}
+
+// ─── COPY ─────────────────────────────────────────────────────────────────────
+function copyPrompt(btn){
+  const text = btn.parentElement.querySelector('.ec-prompt-card__text')?.textContent;
+  if(!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ Copied';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+  });
+}
+
+function copyAllPrompts(){
+  if(!currentCollection) return;
+  const parts = [];
+  parts.push(`COLLECTION: ${currentCollection.title}`);
+  parts.push(`HEADLINE: ${currentCollection.headline}`);
+  parts.push(`\n--- WREATH PROMPT ---`);
+  parts.push(currentCollection.prompts?.wreath || '');
+  if(currentCollection.prompts?.environment){
+    parts.push(`\n--- ENVIRONMENT PROMPT ---`);
+    parts.push(currentCollection.prompts.environment);
+  }
+  if(currentCollection.prompts?.alt_variations?.length){
+    parts.push(`\n--- VARIATIONS ---`);
+    currentCollection.prompts.alt_variations.forEach(v => {
+      parts.push(`${v.label}: ${v.prompt}`);
+    });
+  }
+  navigator.clipboard.writeText(parts.join('\n')).then(() => alert('All prompts copied to clipboard.'));
+}
+
+function exportJSON(){
+  if(!currentCollection) return;
+  const blob = new Blob([JSON.stringify(currentCollection, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `evercrafted-${(currentCollection.title||'collection').replace(/\s+/g,'-').toLowerCase()}.json`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+function resetForm(){
+  document.getElementById('output-area').style.display = 'none';
+  document.getElementById('input-panel').style.display = 'block';
+  currentCollection = null;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>

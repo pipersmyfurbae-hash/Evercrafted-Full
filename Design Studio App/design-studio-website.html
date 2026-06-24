@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design Studio — Evercrafted</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&family=Dancing+Script:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#F8F5EF;--cream2:#F0EBE2;--cream3:#E6DFCF;--white:#FDFCF9;
+  --ink:#1B1916;--ink2:#332F28;--muted:#8A8278;--muted2:#B4AFA8;
+  --sage:#4A6741;--sage-l:#7A9971;--sage-ll:#CEC8BC;--sage-bg:#EDE8E0;--sage-d:#3A5231;
+  --bark:#6E6860;--bark-l:#AEA89E;--bark-ll:#EBE6DE;
+  --gold:#B89A6A;--rule:rgba(27,25,22,.07);--rule2:rgba(27,25,22,.13)
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--ink);font-size:14px;line-height:1.6;overflow-x:hidden}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:300;height:56px;background:rgba(253,252,249,.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--rule);transition:box-shadow .2s}
+nav.scrolled{box-shadow:0 4px 32px rgba(27,25,22,.06)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 32px;height:100%;display:flex;align-items:center;gap:32px}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;letter-spacing:.05em;color:var(--ink);display:flex;align-items:center;gap:8px;text-decoration:none;flex-shrink:0}
+.nav-logo svg{width:18px;height:18px;flex-shrink:0}
+.nav-links{display:flex;gap:22px;margin-left:8px}
+.nav-links a{font-size:12px;color:var(--muted);letter-spacing:.03em;text-decoration:none;transition:color .15s;font-weight:300}
+.nav-links a:hover,.nav-links a.on{color:var(--ink);font-weight:400}
+.nav-r{margin-left:auto;display:flex;gap:8px;align-items:center}
+.nav-ghost{background:none;border:none;font-size:12px;color:var(--muted);cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.03em;transition:color .15s;padding:6px 10px}
+.nav-ghost:hover{color:var(--ink)}
+.nav-cta{padding:8px 22px;background:var(--ink);color:var(--white);border:none;font-size:12px;font-weight:500;letter-spacing:.05em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s;border-radius:0}
+.nav-cta:hover{background:var(--ink2)}
+
+/* ── HERO ── */
+.hero{min-height:100vh;padding-top:56px;background:var(--ink);display:grid;grid-template-columns:1.1fr .9fr;overflow:hidden;position:relative}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 60%,rgba(74,103,65,.22),transparent 55%),radial-gradient(ellipse at 75% 20%,rgba(110,104,96,.12),transparent 50%);pointer-events:none}
+.hero-l{padding:96px 56px 72px 72px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
+.hero-crumb{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(248,245,239,.3);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.hero-crumb span{color:rgba(196,212,191,.6)}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(196,212,191,.8);background:rgba(74,103,65,.2);border:1px solid rgba(74,103,65,.3);padding:4px 12px;border-radius:2px;margin-bottom:22px}
+.hero-h1{font-family:'Cormorant Garamond',serif;font-size:clamp(52px,5.5vw,80px);font-weight:300;line-height:1.04;letter-spacing:-.03em;color:rgba(248,245,239,.94);margin-bottom:20px}
+.hero-h1 em{font-style:italic;color:rgba(196,212,191,.85)}
+.hero-sub{font-size:16px;font-weight:300;line-height:1.8;color:rgba(248,245,239,.48);max-width:400px;margin-bottom:36px}
+.hero-btns{display:flex;gap:10px;align-items:center;margin-bottom:52px}
+.hero-btn-p{padding:14px 32px;background:var(--sage);color:#fff;border:none;font-size:13px;font-weight:500;letter-spacing:.06em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;border-radius:0}
+.hero-btn-p:hover{background:var(--sage-d);transform:translateY(-1px)}
+.hero-btn-o{padding:14px 24px;background:transparent;color:rgba(248,245,239,.55);border:1px solid rgba(248,245,239,.15);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;border-radius:0;letter-spacing:.03em}
+.hero-btn-o:hover{color:rgba(248,245,239,.85);border-color:rgba(248,245,239,.35)}
+.hero-proof{display:flex;gap:36px}
+.hp-item .hp-n{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:rgba(248,245,239,.75);line-height:1}
+.hp-item .hp-l{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(248,245,239,.3);margin-top:3px}
+.hero-r{background:rgba(255,255,255,.03);border-left:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;padding:48px 40px;position:relative;z-index:2}
+
+/* HERO APP PREVIEW */
+.hero-app{background:rgba(248,245,239,.05);border:1px solid rgba(248,245,239,.1);border-radius:12px;overflow:hidden;width:100%;max-width:500px;box-shadow:0 24px 80px rgba(0,0,0,.3)}
+.hap-bar{height:38px;background:rgba(248,245,239,.05);border-bottom:1px solid rgba(248,245,239,.07);display:flex;align-items:center;padding:0 14px;gap:10px}
+.hap-dots{display:flex;gap:5px}
+.hap-dot{width:8px;height:8px;border-radius:50%;background:rgba(248,245,239,.12)}
+.hap-title{font-family:'Cormorant Garamond',serif;font-size:12px;color:rgba(248,245,239,.5);letter-spacing:.04em;margin-left:10px}
+.hap-body{display:grid;grid-template-columns:150px 1fr;min-height:340px}
+.hap-sb{border-right:1px solid rgba(248,245,239,.07);padding:10px 8px;display:flex;flex-direction:column;gap:2px}
+.hap-sb-lbl{font-size:7px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:rgba(248,245,239,.2);padding:0 7px;margin:8px 0 2px}
+.hap-sb-item{padding:5px 7px;font-size:9px;color:rgba(248,245,239,.32);border-radius:0;display:flex;align-items:center;gap:5px}
+.hap-sb-item.on{color:rgba(248,245,239,.8);background:rgba(248,245,239,.07);font-weight:500}
+.hap-sb-dot{width:4px;height:4px;border-radius:50%;background:currentColor;flex-shrink:0;opacity:.6}
+.hap-main{padding:14px;display:flex;flex-direction:column;gap:10px}
+.hap-canvas{background:rgba(248,245,239,.04);border:1px solid rgba(248,245,239,.07);border-radius:6px;height:200px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.hap-canvas canvas{border-radius:4px}
+.hap-zones{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}
+.hap-zone{background:rgba(248,245,239,.05);border:1px solid rgba(248,245,239,.07);padding:7px 9px}
+.hap-zone-n{font-size:9px;color:rgba(248,245,239,.5);letter-spacing:.04em}
+.hap-zone-m{font-size:8px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,212,191,.7);margin-top:2px}
+
+/* ── SOCIAL PROOF STRIP ── */
+.proof-strip{background:var(--cream2);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);padding:18px 0;overflow:hidden}
+.proof-track{display:flex;gap:64px;align-items:center;animation:marquee 30s linear infinite;width:max-content}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.proof-track:hover{animation-play-state:paused}
+.proof-item{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:300;font-style:italic;color:var(--muted);white-space:nowrap;display:flex;align-items:center;gap:14px}
+.proof-item::before{content:'★ ★ ★ ★ ★';font-size:8px;letter-spacing:3px;color:var(--sage-ll);font-style:normal;font-family:'DM Sans',sans-serif}
+
+/* ── WHAT IT DOES ── */
+.what-sec{padding:112px 0;background:var(--white)}
+.what-inner{max-width:1200px;margin:0 auto;padding:0 40px;display:grid;grid-template-columns:1fr 1.1fr;gap:80px;align-items:center}
+.eyebrow{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--sage);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';display:block;width:24px;height:1px;background:var(--sage)}
+.what-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4vw,54px);font-weight:300;line-height:1.08;letter-spacing:-.025em;color:var(--ink);margin-bottom:20px}
+.what-h2 em{font-style:italic;color:var(--bark)}
+.what-body{font-size:15px;font-weight:300;color:var(--muted);line-height:1.85;margin-bottom:24px;max-width:440px}
+.why-box{background:var(--sage-bg);border:1px solid rgba(74,103,65,.14);padding:18px 20px;margin-bottom:28px}
+.why-label{font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--sage-d);margin-bottom:6px}
+.why-text{font-size:13px;font-weight:300;color:var(--ink2);line-height:1.75}
+.what-link{font-size:13px;font-weight:400;color:var(--sage);cursor:pointer;display:flex;align-items:center;gap:6px;transition:gap .15s}
+.what-link:hover{gap:10px}
+
+/* VISUAL PANEL */
+.what-visual{position:relative}
+.wv-card{background:var(--ink);border-radius:12px;overflow:hidden;box-shadow:0 24px 80px rgba(27,25,22,.2)}
+.wv-zones-vis{padding:24px;display:flex;flex-direction:column;gap:8px}
+.wv-zone-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid rgba(248,245,239,.08);transition:background .15s;cursor:pointer}
+.wv-zone-row:hover,.wv-zone-row.on{background:rgba(248,245,239,.07)}
+.wv-zone-swatch{width:12px;height:12px;border-radius:2px;flex-shrink:0}
+.wv-zone-name{font-size:11px;color:rgba(248,245,239,.65);flex:1}
+.wv-zone-mood{font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:rgba(196,212,191,.75);background:rgba(74,103,65,.2);padding:2px 7px;border-radius:2px}
+.wv-lock{font-size:10px;color:rgba(248,245,239,.3)}
+.wv-lock.on{color:rgba(196,212,191,.8)}
+.wv-float{position:absolute;bottom:-20px;right:-20px;background:var(--white);border:1px solid var(--rule2);padding:14px 16px;box-shadow:var(--shadow-sm);min-width:160px;border-radius:0}
+.wvf-label{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);margin-bottom:6px}
+.wvf-val{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--ink)}
+.wvf-sub{font-size:10px;color:var(--sage);margin-top:2px}
+
+/* ── HOW IT WORKS ── */
+.how-sec{padding:112px 0;background:var(--cream2)}
+.how-inner{max-width:1200px;margin:0 auto;padding:0 40px}
+.how-header{text-align:center;margin-bottom:64px}
+.how-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,3.5vw,48px);font-weight:300;line-height:1.1;letter-spacing:-.025em;color:var(--ink);margin-bottom:12px}
+.how-h2 em{font-style:italic;color:var(--bark)}
+.how-sub{font-size:14px;font-weight:300;color:var(--muted);max-width:440px;margin:0 auto;line-height:1.75}
+.steps-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule2);border:1px solid var(--rule2);overflow:hidden}
+.step{background:var(--white);padding:36px 30px;position:relative;transition:background .18s}
+.step:hover{background:var(--sage-bg)}
+.step-n{font-family:'Cormorant Garamond',serif;font-size:56px;font-weight:300;color:var(--cream3);line-height:1;margin-bottom:18px}
+.step-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--ink);margin-bottom:10px;letter-spacing:-.01em}
+.step-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.75}
+.step-connector{position:absolute;top:36px;right:-1px;width:20px;height:2px;background:var(--sage-ll);z-index:2}
+
+/* ── FEATURES ── */
+.feat-sec{padding:112px 0;background:var(--white)}
+.feat-inner{max-width:1200px;margin:0 auto;padding:0 40px}
+.feat-header{margin-bottom:56px}
+.feat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);overflow:hidden}
+.feat-card{background:var(--white);padding:32px 30px;transition:background .18s;position:relative;overflow:hidden}
+.feat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--sage);transform:scaleX(0);transform-origin:left;transition:transform .25s ease}
+.feat-card:hover{background:var(--sage-bg)}
+.feat-card:hover::after{transform:scaleX(1)}
+.feat-ico{width:38px;height:38px;border-radius:50%;background:var(--sage-bg);display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.feat-ico svg{width:16px;height:16px;stroke:var(--sage);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.feat-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--ink);margin-bottom:9px;letter-spacing:-.01em}
+.feat-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.8}
+
+/* ── JOURNEY SHOWCASE ── */
+.journey-sec{padding:112px 0;background:var(--ink);overflow:hidden;position:relative}
+.journey-sec::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 15% 80%,rgba(74,103,65,.18),transparent 50%),radial-gradient(ellipse at 85% 20%,rgba(110,104,96,.1),transparent 50%)}
+.journey-inner{max-width:1200px;margin:0 auto;padding:0 40px;position:relative;z-index:1}
+.journey-header{margin-bottom:52px}
+.journey-eyebrow{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:rgba(196,212,191,.5);margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.journey-eyebrow::before{content:'';display:block;width:24px;height:1px;background:rgba(196,212,191,.4)}
+.journey-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4vw,54px);font-weight:300;line-height:1.08;letter-spacing:-.025em;color:rgba(248,245,239,.9);margin-bottom:14px}
+.journey-h2 em{font-style:italic;color:rgba(196,212,191,.8)}
+.journey-sub{font-size:14px;font-weight:300;color:rgba(248,245,239,.4);max-width:420px;line-height:1.8}
+.journeys-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.journey-card{background:rgba(248,245,239,.04);border:1px solid rgba(248,245,239,.08);padding:22px 24px;cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.journey-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:rgba(196,212,191,.4);transform:scaleX(0);transform-origin:left;transition:transform .25s}
+.journey-card:hover{background:rgba(248,245,239,.07);border-color:rgba(248,245,239,.14)}
+.journey-card:hover::before{transform:scaleX(1)}
+.jc-name{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:rgba(248,245,239,.85);margin-bottom:8px;letter-spacing:-.01em}
+.jc-desc{font-size:12px;font-weight:300;color:rgba(248,245,239,.38);line-height:1.7;margin-bottom:14px}
+.jc-flow{display:flex;align-items:center;flex-wrap:wrap;gap:5px}
+.jc-mood-tag{font-size:9px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:rgba(196,212,191,.7);background:rgba(74,103,65,.2);border:1px solid rgba(74,103,65,.3);padding:2px 7px}
+.jc-arrow-sm{color:rgba(248,245,239,.2);font-size:9px}
+
+/* ── TESTIMONIALS ── */
+.testi-sec{padding:112px 0;background:var(--cream)}
+.testi-inner{max-width:1200px;margin:0 auto;padding:0 40px}
+.testi-header{margin-bottom:56px}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.testi{background:var(--white);border:1px solid var(--rule);padding:28px 26px;transition:all .18s}
+.testi:hover{box-shadow:0 12px 48px rgba(27,25,22,.07);transform:translateY(-3px)}
+.testi-stars{font-size:10px;letter-spacing:3px;color:var(--sage-ll);margin-bottom:12px}
+.testi-quote{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;font-style:italic;line-height:1.7;color:var(--ink);margin-bottom:20px}
+.testi-av{display:flex;align-items:center;gap:10px}
+.tav{width:34px;height:34px;border-radius:50%;background:var(--sage-bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--sage-d);flex-shrink:0}
+.tav-name{font-size:12px;font-weight:500;color:var(--ink)}
+.tav-handle{font-size:11px;color:var(--muted2)}
+
+/* ── CTA ── */
+.cta-sec{padding:120px 0;background:var(--cream2);text-align:center;position:relative;overflow:hidden}
+.cta-sec::before{content:'';position:absolute;top:-80px;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(ellipse,rgba(74,103,65,.08),transparent 70%);pointer-events:none}
+.cta-inner{max-width:580px;margin:0 auto;padding:0 40px;position:relative;z-index:1}
+.cta-script{font-family:'Dancing Script',cursive;font-size:22px;color:var(--sage-l);margin-bottom:8px}
+.cta-h2{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4.5vw,58px);font-weight:300;line-height:1.1;letter-spacing:-.025em;color:var(--ink);margin-bottom:16px}
+.cta-h2 em{font-style:italic;color:var(--bark)}
+.cta-sub{font-size:15px;font-weight:300;color:var(--muted);line-height:1.8;margin-bottom:36px}
+.cta-btns{display:flex;gap:10px;justify-content:center;margin-bottom:18px;flex-wrap:wrap}
+.cta-btn-p{padding:15px 36px;background:var(--ink);color:#fff;border:none;font-size:13px;font-weight:500;letter-spacing:.06em;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;border-radius:0}
+.cta-btn-p:hover{background:var(--ink2);transform:translateY(-1px)}
+.cta-btn-o{padding:15px 26px;background:transparent;color:var(--ink2);border:1px solid var(--rule2);font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;border-radius:0}
+.cta-btn-o:hover{background:var(--cream3);border-color:var(--bark-l)}
+.cta-fine{font-size:12px;color:var(--muted2)}
+
+/* ── RELATED ── */
+.related-sec{padding:72px 0;background:var(--white);border-top:1px solid var(--rule)}
+.related-inner{max-width:1200px;margin:0 auto;padding:0 40px}
+.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:32px}
+.related-card{background:var(--cream);border:1px solid var(--rule2);padding:22px 24px;cursor:pointer;transition:all .18s;text-decoration:none;display:block}
+.related-card:hover{box-shadow:0 8px 32px rgba(27,25,22,.07);transform:translateY(-2px);border-color:var(--rule2)}
+.rc-cat{font-size:9px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2);margin-bottom:7px}
+.rc-name{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--ink);margin-bottom:5px}
+.rc-price{font-size:12px;color:var(--sage-d);font-weight:500;margin-bottom:7px}
+.rc-tagline{font-size:12px;font-weight:300;color:var(--muted);line-height:1.65}
+
+/* ── FOOTER ── */
+footer{background:var(--ink);padding:56px 0 32px}
+.footer-inner{max-width:1200px;margin:0 auto;padding:0 40px}
+.footer-top{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;padding-bottom:40px;border-bottom:1px solid rgba(248,245,239,.08);margin-bottom:28px}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:500;color:rgba(248,245,239,.85);margin-bottom:8px}
+.footer-tag{font-size:12px;font-weight:300;color:rgba(248,245,239,.3);line-height:1.7;max-width:220px}
+.footer-col h4{font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(248,245,239,.3);margin-bottom:14px}
+.footer-col a{display:block;font-size:12px;color:rgba(248,245,239,.45);margin-bottom:8px;text-decoration:none;transition:color .15s;cursor:pointer;font-weight:300}
+.footer-col a:hover{color:rgba(248,245,239,.75)}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:rgba(248,245,239,.2)}
+
+/* ANIMATIONS */
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.reveal.on{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr}
+  .hero-r{display:none}
+  .hero-l{padding:72px 32px 56px}
+  .what-inner{grid-template-columns:1fr;gap:40px}
+  .steps-row{grid-template-columns:1fr}
+  .feat-grid,.testi-grid,.journeys-grid,.related-grid{grid-template-columns:1fr}
+  .footer-top{grid-template-columns:1fr 1fr;gap:28px}
+  .nav-links{display:none}
+}
+@media(max-width:600px){
+  .hero-h1{font-size:44px}
+  .hero-btns{flex-direction:column;align-items:flex-start}
+  .cta-btns{flex-direction:column;align-items:center}
+  .footer-top{grid-template-columns:1fr}
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--rule2)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#">
+      <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="var(--sage)" opacity=".7" transform="rotate(0,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="var(--sage)" opacity=".6" transform="rotate(72,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="var(--sage)" opacity=".7" transform="rotate(144,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="var(--sage)" opacity=".6" transform="rotate(216,10,10)"/>
+        <ellipse cx="10" cy="4.5" rx="3.2" ry="5.5" fill="var(--sage)" opacity=".7" transform="rotate(288,10,10)"/>
+        <circle cx="10" cy="10" r="2.2" fill="var(--bark)"/>
+      </svg>
+      Evercrafted
+    </a>
+    <div class="nav-links">
+      <a href="#">How it works</a>
+      <a href="#" class="on">Apps</a>
+      <a href="#">Pricing</a>
+      <a href="#">Marketplace</a>
+    </div>
+    <div class="nav-r">
+      <button class="nav-ghost">Sign in</button>
+      <button class="nav-cta" onclick="scrollToCTA()">Start free trial</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-l">
+    <div class="hero-crumb">All apps <span>›</span> Design & Planning <span>›</span> <span style="color:rgba(248,245,239,.5)">Design Studio</span></div>
+    <div class="hero-badge">◎ &nbsp; Design & Planning</div>
+    <h1 class="hero-h1">The full design<br>editor for <em>complex<br>wreaths.</em></h1>
+    <p class="hero-sub">Divide your wreath into zones. Set a mood for each. Apply a journey preset that transitions emotion from one section to another.</p>
+    <div class="hero-btns">
+      <button class="hero-btn-p" onclick="scrollToCTA()">Start free trial</button>
+      <button class="hero-btn-o" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">See how it works</button>
+    </div>
+    <div class="hero-proof">
+      <div class="hp-item"><div class="hp-n">4,200+</div><div class="hp-l">Designers</div></div>
+      <div class="hp-item"><div class="hp-n">91%</div><div class="hp-l">Client approval</div></div>
+      <div class="hp-item"><div class="hp-n">$9.95</div><div class="hp-l">Per month</div></div>
+    </div>
+  </div>
+  <div class="hero-r">
+    <div class="hero-app">
+      <div class="hap-bar">
+        <div class="hap-dots"><div class="hap-dot"></div><div class="hap-dot"></div><div class="hap-dot"></div></div>
+        <div class="hap-title">Design Studio — Autumn Client Brief</div>
+      </div>
+      <div class="hap-body">
+        <div class="hap-sb">
+          <div class="hap-sb-lbl">Design</div>
+          <div class="hap-sb-item on"><div class="hap-sb-dot"></div>Canvas</div>
+          <div class="hap-sb-item"><div class="hap-sb-dot"></div>Journeys</div>
+          <div class="hap-sb-lbl">Tools</div>
+          <div class="hap-sb-item"><div class="hap-sb-dot"></div>AI Engine</div>
+          <div class="hap-sb-item"><div class="hap-sb-dot"></div>Library</div>
+          <div class="hap-sb-item"><div class="hap-sb-dot"></div>Export</div>
+        </div>
+        <div class="hap-main">
+          <div class="hap-canvas" id="heroCanvas">
+            <canvas id="heroCanvasEl" width="240" height="200"></canvas>
+          </div>
+          <div class="hap-zones">
+            <div class="hap-zone"><div class="hap-zone-n">Focal Zone</div><div class="hap-zone-m">Romantic</div></div>
+            <div class="hap-zone" style="border-color:rgba(196,212,191,.3)"><div class="hap-zone-n" style="color:rgba(196,212,191,.8)">Accent Zone</div><div class="hap-zone-m" style="color:rgba(196,212,191,.6)">Bold · Active</div></div>
+            <div class="hap-zone"><div class="hap-zone-n">Fill Zone A</div><div class="hap-zone-m">Airy</div></div>
+            <div class="hap-zone"><div class="hap-zone-n">Fill Zone B</div><div class="hap-zone-m">Calm · 🔒</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROOF STRIP -->
+<div class="proof-strip">
+  <div class="proof-track" id="proofTrack">
+    <div class="proof-item">"Five minutes and it nailed the mood I described" — Leah F.</div>
+    <div class="proof-item">"Finally a tool that thinks in zones" — Maria K.</div>
+    <div class="proof-item">"Journey presets changed how I pitch clients" — Dana T.</div>
+    <div class="proof-item">"Worth every penny at $9.95" — Sarah M.</div>
+    <div class="proof-item">"Locked elements is the feature I didn't know I needed" — Priya R.</div>
+    <div class="proof-item">"Five minutes and it nailed the mood I described" — Leah F.</div>
+    <div class="proof-item">"Finally a tool that thinks in zones" — Maria K.</div>
+    <div class="proof-item">"Journey presets changed how I pitch clients" — Dana T.</div>
+    <div class="proof-item">"Worth every penny at $9.95" — Sarah M.</div>
+    <div class="proof-item">"Locked elements is the feature I didn't know I needed" — Priya R.</div>
+  </div>
+</div>
+
+<!-- WHAT IT DOES -->
+<section class="what-sec" id="what">
+  <div class="what-inner">
+    <div class="reveal">
+      <div class="eyebrow">What it does</div>
+      <h2 class="what-h2"><em>Design Studio</em> — for wreaths that need to tell a story.</h2>
+      <p class="what-body">For simple wreaths, Layout Studio is enough. When a client asks for a wreath that transitions in mood or colour from one section to another — calm morning at the top, warm evening at the base — that's what Design Studio is built for.</p>
+      <div class="why-box">
+        <div class="why-label">Why this matters</div>
+        <div class="why-text">Most design software doesn't understand that a wreath is a ring, not a canvas. Design Studio treats each arc of the ring as its own design zone — with its own emotional rules, density, and palette.</div>
+      </div>
+      <div class="what-link" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">
+        See how it works →
+      </div>
+    </div>
+    <div class="what-visual reveal reveal-delay-2">
+      <div class="wv-card">
+        <div style="padding:16px 18px;border-bottom:1px solid rgba(248,245,239,.07);display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:10px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:rgba(196,212,191,.6)">Zones — Autumn Client Brief</div>
+          <div style="font-size:9px;color:rgba(248,245,239,.3)">4 zones · 24 inch</div>
+        </div>
+        <div class="wv-zones-vis">
+          <div class="wv-zone-row on">
+            <div class="wv-zone-swatch" style="background:#D4B8A0"></div>
+            <div class="wv-zone-name">Focal Zone</div>
+            <div class="wv-zone-mood">romantic</div>
+            <div class="wv-lock">🔓</div>
+          </div>
+          <div class="wv-zone-row">
+            <div class="wv-zone-swatch" style="background:#8A7A6A"></div>
+            <div class="wv-zone-name">Accent Zone</div>
+            <div class="wv-zone-mood">bold</div>
+            <div class="wv-lock">🔓</div>
+          </div>
+          <div class="wv-zone-row">
+            <div class="wv-zone-swatch" style="background:#C5BDAF"></div>
+            <div class="wv-zone-name">Fill Zone A</div>
+            <div class="wv-zone-mood">airy</div>
+            <div class="wv-lock">🔓</div>
+          </div>
+          <div class="wv-zone-row">
+            <div class="wv-zone-swatch" style="background:#9BA89A"></div>
+            <div class="wv-zone-name">Fill Zone B</div>
+            <div class="wv-zone-mood">calm</div>
+            <div class="wv-lock on">🔒</div>
+          </div>
+          <div style="padding:12px 14px;border:1px solid rgba(248,245,239,.07);display:flex;align-items:center;justify-content:space-between;margin-top:4px">
+            <div style="font-size:9px;color:rgba(248,245,239,.28)">Journey Preset</div>
+            <div style="font-size:10px;font-style:italic;font-family:'Cormorant Garamond',serif;color:rgba(196,212,191,.75)">Warm Morning → Cool Evening</div>
+          </div>
+        </div>
+      </div>
+      <div class="wv-float">
+        <div class="wvf-label">AI Score</div>
+        <div class="wvf-val">94%</div>
+        <div class="wvf-sub">Emotion fit</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-sec" id="how">
+  <div class="how-inner">
+    <div class="how-header reveal">
+      <div class="eyebrow" style="justify-content:center">How it works</div>
+      <h2 class="how-h2">Simple to use from <em>day one.</em></h2>
+      <p class="how-sub">Three steps from blank canvas to client-ready blueprint.</p>
+    </div>
+    <div class="steps-row">
+      <div class="step reveal">
+        <div class="step-n">01</div>
+        <div class="step-title">Divide into zones</div>
+        <div class="step-desc">Split the ring into sections — romantic focal zone on the left, bold accent zone at the base, neutral fill zones between. Each zone has its own mood and rules.</div>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-n">02</div>
+        <div class="step-title">Design zone by zone</div>
+        <div class="step-desc">Work through each section independently. Lock the zones you're happy with. Adjust the ones that aren't working. Apply a journey preset to instantly set the mood arc.</div>
+        <div class="step-connector"></div>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-n">03</div>
+        <div class="step-title">Export the full blueprint</div>
+        <div class="step-desc">When every zone is right, export the complete multi-section blueprint — zone boundaries, element positions, mood tags, and a clean client-ready PDF.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="feat-sec" id="features">
+  <div class="feat-inner">
+    <div class="feat-header reveal">
+      <div class="eyebrow">Features</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.5vw,46px);font-weight:300;line-height:1.1;letter-spacing:-.025em;color:var(--ink)">Everything <em style="font-style:italic;color:var(--bark)">Design Studio</em> can do.</h2>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card reveal">
+        <div class="feat-ico"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx=".5"/><rect x="9" y="2" width="5" height="5" rx=".5"/><rect x="2" y="9" width="5" height="5" rx=".5"/><rect x="9" y="9" width="5" height="5" rx=".5"/></svg></div>
+        <div class="feat-name">Zone-by-zone control</div>
+        <div class="feat-desc">Control each arc of the wreath independently — useful for complex custom designs where one section tells a completely different visual story to another.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-ico"><svg viewBox="0 0 16 16"><path d="M2 8h12M8 2l4 6-4 6"/></svg></div>
+        <div class="feat-name">Journey presets</div>
+        <div class="feat-desc">Pre-built mood transitions — the design automatically shifts from one emotional tone to another across the wreath. Set it in one click.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-ico"><svg viewBox="0 0 16 16"><rect x="2" y="5" width="8" height="6" rx="1"/><path d="M4 5V3.5a2 2 0 0 1 4 0V5"/></svg></div>
+        <div class="feat-name">Element locking</div>
+        <div class="feat-desc">A client loves the big white peony at the bottom-left — lock it. Everything else adjusts around it. Locked elements survive preset changes and AI suggestions.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-3">
+        <div class="feat-ico"><svg viewBox="0 0 16 16"><path d="M3 8l4 4 6-8"/></svg></div>
+        <div class="feat-name">Client-ready export</div>
+        <div class="feat-desc">Export a clean version with no technical overlays — a polished blueprint PDF your client can review and approve without needing to understand the system.</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-ico"><svg viewBox="0 0 16 16"><path d="M8 1L9.5 5.5 14 7l-4.5 1.5L8 13 6.5 8.5 2 7l4.5-1.5z"/></svg></div>
+        <div class="feat-name">AI Blueprint Engine</div>
+        <div class="feat-desc">Type a design intent. The AI engine outputs a complete multi-zone blueprint with element counts, emotion formula, palette direction, and quality scores.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-ico"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg></div>
+        <div class="feat-name">Revision history</div>
+        <div class="feat-desc">Every version of your design is saved automatically. Roll back to any point in the design process — or fork a previous version as a new design.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNEY SHOWCASE -->
+<section class="journey-sec">
+  <div class="journey-inner">
+    <div class="journey-header reveal">
+      <div class="journey-eyebrow">Journey presets</div>
+      <h2 class="journey-h2">Mood arcs, built <em>in one click.</em></h2>
+      <p class="journey-sub">Each preset locks a mood transition across the full ring. Zones inherit their emotional tone from the preset — you just refine the details.</p>
+    </div>
+    <div class="journeys-grid">
+      <div class="journey-card reveal"><div class="jc-name">Winter Sunrise</div><div class="jc-desc">Opens cool and quiet, warms toward the base like early light through frost.</div><div class="jc-flow"><span class="jc-mood-tag">serene</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">quiet</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">luminous</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">warm</span></div></div>
+      <div class="journey-card reveal reveal-delay-1"><div class="jc-name">Harvest Moon</div><div class="jc-desc">Full, dramatic, earthy. Transitions from harvest gold into deep plum at the base.</div><div class="jc-flow"><span class="jc-mood-tag">golden</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">rich</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">bold</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">deep</span></div></div>
+      <div class="journey-card reveal reveal-delay-2"><div class="jc-name">Spring Afternoon</div><div class="jc-desc">Crisp botanical energy giving way to a loose, romantic focal cluster.</div><div class="jc-flow"><span class="jc-mood-tag">fresh</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">botanical</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">soft</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">romantic</span></div></div>
+      <div class="journey-card reveal"><div class="jc-name">Coastal Fog</div><div class="jc-desc">A muted, atmospheric palette. Every zone floats — nothing shouts.</div><div class="jc-flow"><span class="jc-mood-tag">muted</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">airy</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">quiet</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">still</span></div></div>
+      <div class="journey-card reveal reveal-delay-1"><div class="jc-name">Midnight Garden</div><div class="jc-desc">Opens dark and lush, dissolves into near-monochrome silver at the edge.</div><div class="jc-flow"><span class="jc-mood-tag">dramatic</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">lush</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">mysterious</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">quiet</span></div></div>
+      <div class="journey-card reveal reveal-delay-2"><div class="jc-name">Golden Hour</div><div class="jc-desc">The golden-light equivalent in wreath form — amber warmth blushing into tenderness.</div><div class="jc-flow"><span class="jc-mood-tag">warm</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">golden</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">tender</span><span class="jc-arrow-sm">→</span><span class="jc-mood-tag">glowing</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-sec">
+  <div class="testi-inner">
+    <div class="testi-header reveal">
+      <div class="eyebrow">Designers love it</div>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(30px,3.5vw,46px);font-weight:300;line-height:1.1;letter-spacing:-.025em;color:var(--ink)">What they're <em style="font-style:italic;color:var(--bark)">saying.</em></h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi reveal">
+        <div class="testi-stars">★ ★ ★ ★ ★</div>
+        <div class="testi-quote">"A client asked for a wreath that felt 'winter sunrise to spring afternoon'. I literally set a journey preset and it did it. Took me five minutes."</div>
+        <div class="testi-av"><div class="tav">L</div><div><div class="tav-name">Leah Fischer</div><div class="tav-handle">@wreathsbyleah</div></div></div>
+      </div>
+      <div class="testi reveal reveal-delay-1">
+        <div class="testi-stars">★ ★ ★ ★ ★</div>
+        <div class="testi-quote">"The zone locking feature saved my sanity. My client loved the bottom cluster — I locked it and everything else reorganised around it perfectly."</div>
+        <div class="testi-av"><div class="tav" style="background:#E6DFCF">M</div><div><div class="tav-name">Maria Kim</div><div class="tav-handle">Florist Studio</div></div></div>
+      </div>
+      <div class="testi reveal reveal-delay-2">
+        <div class="testi-stars">★ ★ ★ ★ ★</div>
+        <div class="testi-quote">"I never could articulate why a zone was 'off' before. Now I just look at the mood tag and adjust. It's like having a design vocabulary I didn't have before."</div>
+        <div class="testi-av"><div class="tav" style="background:#EBE6DE">D</div><div><div class="tav-name">Dana Torres</div><div class="tav-handle">Botanical Wreath Co.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec" id="cta">
+  <div class="cta-inner reveal">
+    <div class="cta-script">start designing</div>
+    <h2 class="cta-h2">Try <em>Design Studio</em> free for 14 days.</h2>
+    <p class="cta-sub">A full zone-based design editor for complex wreaths with multiple moods. No credit card until your trial ends.</p>
+    <div class="cta-btns">
+      <button class="cta-btn-p" onclick="toast('Starting free trial…')">Start free trial</button>
+      <button class="cta-btn-o" onclick="toast('Opening pricing…')">See all plans</button>
+    </div>
+    <div class="cta-fine">14-day free trial · $9.95/mo · Cancel anytime</div>
+  </div>
+</section>
+
+<!-- RELATED -->
+<section class="related-sec">
+  <div class="related-inner">
+    <div class="eyebrow">Works well alongside</div>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:clamp(26px,3vw,38px);font-weight:300;line-height:1.1;letter-spacing:-.02em;color:var(--ink);margin-top:8px">Design Studio <em style="font-style:italic;color:var(--bark)">pairs with.</em></h2>
+    <div class="related-grid">
+      <div class="related-card"><div class="rc-cat">Design & Planning</div><div class="rc-name">Layout Studio</div><div class="rc-price">$7.95/mo</div><div class="rc-tagline">Plan your wreath before you buy a single stem.</div></div>
+      <div class="related-card"><div class="rc-cat">Design & Planning</div><div class="rc-name">Parametric Lab</div><div class="rc-price">$9.95/mo</div><div class="rc-tagline">Choose a wreath shape and let the mood decide how it looks.</div></div>
+      <div class="related-card"><div class="rc-cat">Included free</div><div class="rc-name">Design Library</div><div class="rc-price">Free</div><div class="rc-tagline">Every wreath you design, saved and organised in one place.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">Evercrafted</div>
+        <div class="footer-tag">Design tools for wreath designers who take their craft seriously.</div>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <a>How it works</a><a>All apps</a><a>Marketplace</a><a>Pricing</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a>Documentation</a><a>Blog</a><a>Changelog</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a>About</a><a>Privacy</a><a>Terms</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2026 Evercrafted. All rights reserved.</div>
+      <div>Design Studio · Studio Plan</div>
+    </div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// NAV scroll effect
+window.addEventListener('scroll', () => {
+  document.getElementById('main-nav').classList.toggle('scrolled', window.scrollY > 30);
+});
+
+// Scroll reveal
+const revealEls = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on'); });
+}, { threshold: 0.1 });
+revealEls.forEach(el => observer.observe(el));
+
+// Hero canvas
+(function() {
+  const canvas = document.getElementById('heroCanvasEl');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = 240, H = 200, cx = W/2, cy = H/2;
+  const outerR = 88, innerR = 56;
+  const zones = [
+    { color:'#D4B8A0', name:'Focal' },
+    { color:'#7A9971', name:'Accent' },
+    { color:'#C5BDAF', name:'Fill A' },
+    { color:'#9BA89A', name:'Fill B' },
+  ];
+
+  ctx.fillStyle = 'rgba(248,245,239,0.04)';
+  ctx.fillRect(0,0,W,H);
+
+  zones.forEach((z, i) => {
+    const start = (i / 4) * Math.PI * 2 - Math.PI/2;
+    const end = ((i+1) / 4) * Math.PI * 2 - Math.PI/2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, outerR, start, end);
+    ctx.arc(cx, cy, innerR, end, start, true);
+    ctx.closePath();
+    ctx.fillStyle = z.color + (i === 1 ? 'FF' : '99');
+    ctx.fill();
+    ctx.strokeStyle = i === 1 ? 'rgba(196,212,191,0.5)' : 'rgba(248,245,239,0.08)';
+    ctx.lineWidth = i === 1 ? 1.5 : 1;
+    ctx.stroke();
+  });
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, innerR, 0, Math.PI*2);
+  ctx.fillStyle = 'rgba(27,25,22,0.4)';
+  ctx.fill();
+
+  ctx.font = '300 10px Cormorant Garamond, serif';
+  ctx.fillStyle = 'rgba(248,245,239,0.4)';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('4 zones', cx, cy);
+})();
+
+function scrollToCTA() {
+  document.getElementById('cta').scrollIntoView({ behavior: 'smooth' });
+}
+
+function toast(m) {
+  const t = document.getElementById('toast');
+  t.textContent = m;
+  t.classList.add('on');
+  setTimeout(() => t.classList.remove('on'), 2400);
+}
+</script>
+</body>
+</html>

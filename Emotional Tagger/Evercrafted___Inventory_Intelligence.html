@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inventory Intelligence — Evercrafted</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Dancing+Script:wght@600&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#F8F5EF;--cream2:#F0EBE2;--cream3:#E6DFCF;--white:#FDFCF9;
+  --ink:#1B1916;--ink2:#332F28;--muted:#8A8278;--muted2:#B4AFA8;
+  --sage:#506347;--sage-l:#C4D4BF;--sage-ll:#EBF1E8;--sage-d:#324030;--sage-dim:rgba(80,99,71,.1);
+  --bark:#8A6E52;--bark-l:#C2A98E;--bark-ll:#EDE5D8;--bark-d:#5A4535;
+  --rule:rgba(27,25,22,.07);--rule2:rgba(27,25,22,.13);
+  --warn:#C4922A;--warn-bg:#FEF3C7;--warn-t:#92400E;
+  --crit:#B94040;--crit-bg:#FEE2E2;--crit-t:#991B1B;
+}
+html{-webkit-font-smoothing:antialiased}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--ink);font-size:14px;line-height:1.6;min-height:100vh}
+
+/* ── HEADER ── */
+.header{background:var(--white);border-bottom:1px solid var(--rule);height:58px;display:flex;align-items:center;padding:0 28px;gap:12px;position:sticky;top:0;z-index:100}
+.logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;letter-spacing:.06em;color:var(--ink);display:flex;align-items:center;gap:7px}
+.logo-leaf svg{width:15px;height:15px}
+.header-sep{width:1px;height:20px;background:var(--rule2)}
+.app-name{font-size:12px;font-weight:400;color:var(--muted);letter-spacing:.03em}
+.tier-pill{font-size:9px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:99px;background:#EEF4F9;color:#4A6785;margin-left:auto}
+.header-actions{display:flex;gap:8px}
+.btn-sm{padding:7px 14px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;letter-spacing:.04em;cursor:pointer;transition:all .15s;border:none}
+.btn-sm-ink{background:var(--ink);color:var(--white)}
+.btn-sm-ink:hover{background:var(--ink2)}
+.btn-sm-outline{background:transparent;color:var(--ink2);border:1.5px solid var(--rule2)}
+.btn-sm-outline:hover{background:var(--cream2);border-color:var(--rule)}
+.btn-sm-green{background:var(--sage);color:var(--white)}
+.btn-sm-green:hover{background:var(--sage-d)}
+.btn-sm:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── LAYOUT ── */
+.app-shell{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 58px)}
+.sidebar{background:var(--white);border-right:1px solid var(--rule);display:flex;flex-direction:column;overflow-y:auto}
+.main{overflow-y:auto;display:flex;flex-direction:column}
+
+/* ── SIDEBAR ── */
+.sb-section{padding:16px 18px;border-bottom:1px solid var(--rule)}
+.sb-lbl{font-size:9px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--muted2);margin-bottom:10px}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat-card{background:var(--cream);border-radius:6px;padding:10px 12px;border:1px solid var(--rule)}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--ink);line-height:1}
+.stat-l{font-size:10px;font-weight:300;color:var(--muted);margin-top:2px}
+
+/* Category filter */
+.cat-list{display:flex;flex-direction:column;gap:2px}
+.cat-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:4px;cursor:pointer;transition:all .14s}
+.cat-item:hover{background:var(--cream2)}
+.cat-item.on{background:var(--sage-ll)}
+.cat-item-name{font-size:12px;color:var(--ink2);display:flex;align-items:center;gap:8px}
+.cat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.cat-item.on .cat-item-name{color:var(--sage-d);font-weight:500}
+.cat-count{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2)}
+
+/* Emotion summary */
+.emotion-summary{display:flex;flex-direction:column;gap:6px}
+.emotion-bar-row{display:flex;align-items:center;gap:8px}
+.emotion-name{font-size:11px;font-weight:300;color:var(--ink2);width:80px;flex-shrink:0}
+.emotion-bar{flex:1;height:4px;background:var(--cream3);border-radius:2px;overflow:hidden}
+.emotion-fill{height:100%;background:var(--sage);border-radius:2px;transition:width .5s ease}
+.emotion-pct{font-family:'DM Mono',monospace;font-size:9px;color:var(--muted2);width:28px;text-align:right}
+
+/* AI key gate */
+.ai-gate{padding:14px 16px;background:var(--cream2);border:1px solid var(--rule2);border-radius:6px;margin:16px 18px}
+.ai-gate-title{font-size:11px;font-weight:500;color:var(--ink);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.ai-gate-sub{font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.ai-key-input{width:100%;padding:7px 10px;background:var(--white);border:1.5px solid var(--rule2);border-radius:4px;font-family:'DM Mono',monospace;font-size:10px;color:var(--ink);outline:none;transition:border-color .16s}
+.ai-key-input:focus{border-color:var(--sage)}
+.ai-activate-btn{margin-top:6px;width:100%;padding:7px;background:var(--ink);color:var(--white);border:none;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:background .14s}
+.ai-activate-btn:hover{background:var(--ink2)}
+.ai-active-badge{padding:6px 10px;background:var(--sage-ll);border:1px solid rgba(80,99,71,.2);border-radius:4px;font-size:10px;color:var(--sage-d);display:flex;align-items:center;gap:6px;margin:16px 18px}
+
+/* ── MAIN AREA ── */
+.main-topbar{padding:14px 24px;border-bottom:1px solid var(--rule);background:var(--white);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-input{flex:1;min-width:180px;padding:8px 14px;background:var(--cream);border:1.5px solid var(--rule2);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color .16s}
+.search-input:focus{border-color:var(--sage);background:var(--white)}
+.sort-select{padding:8px 12px;background:var(--cream);border:1.5px solid var(--rule2);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:none}
+
+/* Inventory table */
+.inv-table-wrap{padding:20px 24px;flex:1}
+.inv-table{width:100%;border-collapse:collapse}
+.inv-table th{text-align:left;font-size:9px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);padding:8px 10px;border-bottom:1.5px solid var(--rule2);white-space:nowrap}
+.inv-table td{padding:10px 10px;border-bottom:1px solid var(--rule);vertical-align:middle}
+.inv-table tr:last-child td{border-bottom:none}
+.inv-table tr:hover td{background:rgba(248,245,239,.6)}
+.item-name{font-size:13px;font-weight:400;color:var(--ink)}
+.item-sku{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted2);margin-top:1px}
+.cat-badge{font-size:9px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border-radius:2px;white-space:nowrap}
+.cat-focal{background:var(--bark-ll);color:var(--bark-d)}
+.cat-greenery{background:var(--sage-ll);color:var(--sage-d)}
+.cat-filler{background:var(--cream2);color:var(--muted)}
+.cat-accent{background:#F5EEF4;color:#7A4A85}
+.cat-base{background:#EEF4F9;color:#4A6785}
+.cat-ribbon{background:#F5F0F8;color:#8A5A9A}
+.cat-texture{background:var(--cream3);color:var(--bark-d)}
+.qty-cell{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--ink);line-height:1;white-space:nowrap}
+.qty-unit{font-size:10px;font-weight:300;color:var(--muted);font-family:'DM Sans',sans-serif;display:block}
+.stock-pill{font-size:9px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:99px;white-space:nowrap}
+.stock-ok{background:var(--sage-ll);color:var(--sage-d)}
+.stock-low{background:var(--warn-bg);color:var(--warn-t)}
+.stock-crit{background:var(--crit-bg);color:var(--crit-t)}
+
+/* Emotion tags on items */
+.emotion-tags{display:flex;flex-wrap:wrap;gap:4px}
+.etag{font-size:9px;padding:2px 7px;border-radius:99px;border:1px solid var(--rule2);color:var(--muted);background:var(--white);white-space:nowrap}
+.etag.primary{background:var(--sage-ll);border-color:rgba(80,99,71,.18);color:var(--sage-d)}
+.etag.loading{background:var(--cream2);color:var(--muted2);animation:shimmer 1.2s linear infinite}
+@keyframes shimmer{0%,100%{opacity:.6}50%{opacity:.3}}
+
+/* Row actions */
+.row-actions{display:flex;gap:5px;opacity:0;transition:opacity .15s}
+.inv-table tr:hover .row-actions{opacity:1}
+.row-btn{width:26px;height:26px;border-radius:3px;border:1px solid var(--rule2);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:12px;transition:all .14s}
+.row-btn:hover{border-color:var(--sage-l);background:var(--sage-ll)}
+.row-btn.del:hover{border-color:var(--crit-bg);background:var(--crit-bg)}
+
+/* Add item panel (slide-in) */
+.add-panel-overlay{position:fixed;inset:0;background:rgba(27,25,22,.3);z-index:200;opacity:0;pointer-events:none;transition:opacity .22s;backdrop-filter:blur(2px)}
+.add-panel-overlay.on{opacity:1;pointer-events:all}
+.add-panel{position:fixed;top:0;right:0;bottom:0;width:380px;background:var(--white);z-index:201;padding:28px 28px 32px;display:flex;flex-direction:column;gap:16px;transform:translateX(100%);transition:transform .25s ease;overflow-y:auto;box-shadow:-8px 0 32px rgba(27,25,22,.12)}
+.add-panel-overlay.on .add-panel{transform:translateX(0)}
+.add-panel-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--ink);letter-spacing:-.01em}
+.field-group{display:flex;flex-direction:column;gap:5px}
+.field-lbl{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--muted2)}
+.field-input{padding:10px 12px;background:var(--cream);border:1.5px solid var(--rule2);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;transition:border-color .16s}
+.field-input:focus{border-color:var(--sage);background:var(--white)}
+.field-select{padding:10px 12px;background:var(--cream);border:1.5px solid var(--rule2);border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);outline:none;cursor:pointer;-webkit-appearance:none}
+.add-panel-actions{margin-top:auto;display:flex;gap:8px;padding-top:16px;border-top:1px solid var(--rule)}
+
+/* AI Tag CTA bar */
+.ai-tag-bar{background:var(--ink);margin:16px 24px;border-radius:8px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.ai-tag-bar-text strong{font-size:13px;color:rgba(253,252,249,.9);font-weight:500;display:block}
+.ai-tag-bar-text span{font-size:11px;color:rgba(253,252,249,.4);font-weight:300}
+.ai-tag-bar.active-key{background:var(--sage-d)}
+.btn-tag-all{padding:9px 18px;background:var(--sage);color:var(--white);border:none;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;cursor:pointer;transition:background .15s;white-space:nowrap;flex-shrink:0}
+.btn-tag-all:hover{background:var(--sage-d)}
+.btn-tag-all:disabled{opacity:.4;cursor:not-allowed}
+
+/* Empty state */
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 32px;text-align:center;gap:14px;flex:1}
+.empty-icon{font-size:36px;opacity:.5}
+.empty-title{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;color:var(--ink)}
+.empty-sub{font-size:13px;font-weight:300;color:var(--muted);max-width:280px;line-height:1.7}
+
+/* Progress */
+.tag-progress{height:3px;background:var(--rule2);border-radius:2px;overflow:hidden;margin:0 24px 4px}
+.tag-progress-fill{height:100%;background:var(--sage);border-radius:2px;transition:width .4s ease;width:0}
+.tag-progress-label{font-size:10px;color:var(--muted2);text-align:right;margin:0 24px 12px;font-weight:300}
+
+/* Toast */
+.toast{position:fixed;bottom:18px;right:18px;z-index:999;background:var(--ink);color:var(--white);padding:9px 16px;border-radius:4px;font-size:11px;opacity:0;transform:translateY(6px);transition:all .22s;pointer-events:none;display:flex;align-items:center;gap:8px}
+.toast.on{opacity:1;transform:none}
+
+@media(max-width:780px){
+  .app-shell{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .add-panel{width:100%;max-width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <span class="logo-leaf"><svg viewBox="0 0 16 16" fill="none"><path d="M8 14C8 14 3 9 3 5.5C3 3.5 5.2 2 8 2C10.8 2 13 3.5 13 5.5C13 9 8 14 8 14Z" stroke="#506347" stroke-width="1.3" fill="none"/><path d="M8 14L8 5" stroke="#506347" stroke-width=".9" stroke-dasharray="1.5 2"/></svg></span>
+    Evercrafted
+  </div>
+  <div class="header-sep"></div>
+  <div class="app-name">Inventory Intelligence</div>
+  <div class="tier-pill">Craft Tier</div>
+  <div class="header-actions">
+    <button class="btn-sm btn-sm-outline" onclick="toggleAddPanel()">+ Add Item</button>
+    <button class="btn-sm btn-sm-outline" onclick="importCSV()">Import CSV</button>
+    <button class="btn-sm btn-sm-ink" onclick="exportInventory()">↓ Export</button>
+  </div>
+</div>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <!-- Stats -->
+    <div class="sb-section">
+      <div class="sb-lbl">Inventory Summary</div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-n" id="stat-total">0</div><div class="stat-l">Total items</div></div>
+        <div class="stat-card"><div class="stat-n" id="stat-stems">0</div><div class="stat-l">Total stems</div></div>
+        <div class="stat-card"><div class="stat-n" id="stat-low" style="color:var(--warn)">0</div><div class="stat-l">Low stock</div></div>
+        <div class="stat-card"><div class="stat-n" id="stat-tagged">0</div><div class="stat-l">Tagged</div></div>
+      </div>
+    </div>
+
+    <!-- Category filter -->
+    <div class="sb-section">
+      <div class="sb-lbl">Category</div>
+      <div class="cat-list" id="cat-list">
+        <div class="cat-item on" data-cat="all" onclick="filterCat('all',this)">
+          <div class="cat-item-name"><div class="cat-dot" style="background:var(--ink)"></div>All items</div>
+          <div class="cat-count" id="cat-count-all">0</div>
+        </div>
+        <div class="cat-item" data-cat="focal" onclick="filterCat('focal',this)">
+          <div class="cat-item-name"><div class="cat-dot" style="background:var(--bark)"></div>Focal</div>
+          <div class="cat-count" id="cat-count-focal">0</div>
+        </div>
+        <div class="cat-item" data-cat="greenery" onclick="filterCat('greenery',this)">
+          <div class="cat-item-name"><div class="cat-dot" style="background:var(--sage)"></div>Greenery</div>
+          <div class="cat-count" id="cat-count-greenery">0</div>
+        </div>
+        <div class="cat-item" data-cat="filler" onclick="filterCat('filler',this)">
+          <div class="cat-item-name"><div class="cat-dot" style="background:var(--muted2)"></div>Filler</div>
+          <div class="cat-count" id="cat-count-filler">0</div>
+        </div>
+        <div class="cat-item" data-cat="accent" onclick="filterCat('accent',this)">
+          <div class="cat-item-name"><div class="cat-dot" style="background:#9B7ABF"></div>Accent</div>
+          <div class="cat-count" id="cat-count-accent">0</div>
+        </div>
+        <div class="cat-item" data-cat="base" onclick="filterCat('base',this)">
+          <div class="cat-item-name"><div class="cat-dot" style="background:#4A6785"></div>Base</div>
+          <div class="cat-count" id="cat-count-base">0</div>
+        </div>
+        <div class="cat-item" data-cat="ribbon" onclick="filterCat('ribbon',this)">
+          <div class="cat-item-name"><div class="cat-dot" style="background:#8A5A9A"></div>Ribbon</div>
+          <div class="cat-count" id="cat-count-ribbon">0</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emotion summary -->
+    <div class="sb-section">
+      <div class="sb-lbl">Emotion Palette</div>
+      <div class="emotion-summary" id="emotion-summary">
+        <div style="font-size:11px;font-weight:300;color:var(--muted2)">Tag items to see emotion coverage.</div>
+      </div>
+    </div>
+
+    <!-- API Key -->
+    <div id="ai-gate-wrap">
+      <div class="ai-gate">
+        <div class="ai-gate-title">🔑 AI Emotion Tagger</div>
+        <div class="ai-gate-sub">Enter your Anthropic API key to auto-tag every item with emotion data.</div>
+        <input class="ai-key-input" type="password" id="ai-key" placeholder="sk-ant-…">
+        <button class="ai-activate-btn" onclick="activateAI()">Activate AI Tagger</button>
+      </div>
+    </div>
+    <div class="ai-active-badge" id="ai-active-badge" style="display:none">
+      ✅ <span>AI tagger active</span>
+      <button onclick="deactivateAI()" style="margin-left:auto;background:none;border:none;font-size:10px;color:var(--sage);cursor:pointer">Change</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <!-- AI Tag bar -->
+    <div class="ai-tag-bar" id="ai-tag-bar" style="background:var(--ink2)">
+      <div class="ai-tag-bar-text">
+        <strong>Emotion Tagger</strong>
+        <span id="ai-tag-bar-sub">Activate AI to tag all items with emotion data for the design engine.</span>
+      </div>
+      <button class="btn-tag-all" id="btn-tag-all" onclick="tagAllItems()">Tag All Items</button>
+    </div>
+    <div class="tag-progress" id="tag-progress" style="display:none"><div class="tag-progress-fill" id="tag-fill"></div></div>
+    <div class="tag-progress-label" id="tag-label" style="display:none"></div>
+
+    <!-- Topbar -->
+    <div class="main-topbar">
+      <input class="search-input" type="text" id="search-input" placeholder="Search items…" oninput="renderTable()">
+      <select class="sort-select" id="sort-select" onchange="renderTable()">
+        <option value="name">Sort: Name</option>
+        <option value="qty">Sort: Quantity</option>
+        <option value="cat">Sort: Category</option>
+        <option value="stock">Sort: Stock status</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="inv-table-wrap">
+      <div id="empty-state" class="empty-state" style="display:none">
+        <div class="empty-icon">📦</div>
+        <div class="empty-title">No inventory yet</div>
+        <div class="empty-sub">Add your first item manually or import a CSV to get started.</div>
+        <button class="btn-sm btn-sm-green" style="margin-top:4px" onclick="toggleAddPanel()">+ Add First Item</button>
+      </div>
+      <table class="inv-table" id="inv-table" style="display:none">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Category</th>
+            <th>Qty</th>
+            <th>Stock</th>
+            <th>Color</th>
+            <th>Emotion Tags</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="inv-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ADD PANEL OVERLAY -->
+<div class="add-panel-overlay" id="add-panel-overlay" onclick="closeAddPanel(event)">
+  <div class="add-panel" onclick="event.stopPropagation()">
+    <div class="add-panel-title" id="panel-title">Add Inventory Item</div>
+
+    <div class="field-group">
+      <div class="field-lbl">Item Name</div>
+      <input class="field-input" type="text" id="f-name" placeholder="e.g. White Peony Stem">
+    </div>
+    <div class="field-group">
+      <div class="field-lbl">SKU / Code (optional)</div>
+      <input class="field-input" type="text" id="f-sku" placeholder="e.g. WP-STM-001">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field-group">
+        <div class="field-lbl">Category</div>
+        <select class="field-select" id="f-cat">
+          <option value="focal">Focal</option>
+          <option value="greenery">Greenery</option>
+          <option value="filler">Filler</option>
+          <option value="accent">Accent</option>
+          <option value="base">Base</option>
+          <option value="ribbon">Ribbon</option>
+          <option value="texture">Texture</option>
+        </select>
+      </div>
+      <div class="field-group">
+        <div class="field-lbl">Quantity</div>
+        <input class="field-input" type="number" id="f-qty" min="0" placeholder="0">
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="field-group">
+        <div class="field-lbl">Color</div>
+        <input class="field-input" type="text" id="f-color" placeholder="e.g. blush pink">
+      </div>
+      <div class="field-group">
+        <div class="field-lbl">Reorder At</div>
+        <input class="field-input" type="number" id="f-reorder" min="0" placeholder="5">
+      </div>
+    </div>
+    <div class="field-group">
+      <div class="field-lbl">Notes (optional)</div>
+      <input class="field-input" type="text" id="f-notes" placeholder="Supplier, season, etc.">
+    </div>
+
+    <div class="add-panel-actions">
+      <button class="btn-sm btn-sm-outline" onclick="closeAddPanelDirect()" style="flex:1">Cancel</button>
+      <button class="btn-sm btn-sm-ink" onclick="saveItem()" style="flex:2">Save Item</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">🌿 <span id="toast-msg"></span></div>
+
+<script>
+// ── STATE ────────────────────────────────────────────────────────
+let inventory = [];
+let editingId = null;
+let activeFilter = 'all';
+let aiKey = '';
+
+// Seed data
+inventory = [
+  {id:1,name:'White Peony Stem',sku:'WP-STM',cat:'focal',qty:12,color:'white',reorder:4,emotions:[],tagged:false,notes:''},
+  {id:2,name:'Dried Eucalyptus',sku:'DE-SPR',cat:'greenery',qty:24,color:'sage green',reorder:8,emotions:[],tagged:false,notes:''},
+  {id:3,name:'Seeded Eucalyptus',sku:'SE-SPR',cat:'greenery',qty:18,color:'sage green',reorder:6,emotions:[],tagged:false,notes:''},
+  {id:4,name:'Dusty Miller',sku:'DM-SPR',cat:'filler',qty:3,color:'silver grey',reorder:5,emotions:[],tagged:false,notes:'Low stock'},
+  {id:5,name:'Cream Garden Rose',sku:'CGR-STM',cat:'focal',qty:8,color:'cream',reorder:3,emotions:[],tagged:false,notes:''},
+  {id:6,name:'Dried Thistle',sku:'DT-STM',cat:'accent',qty:10,color:'dusty purple',reorder:4,emotions:[],tagged:false,notes:''},
+  {id:7,name:'Cotton Stem',sku:'CT-STM',cat:'accent',qty:15,color:'white',reorder:5,emotions:[],tagged:false,notes:''},
+  {id:8,name:'Dried Orange Slice',sku:'DOS-ACC',cat:'accent',qty:20,color:'burnt orange',reorder:6,emotions:[],tagged:false,notes:''},
+  {id:9,name:'Pampas Grass',sku:'PG-SPR',cat:'filler',qty:2,color:'cream ivory',reorder:4,emotions:[],tagged:false,notes:'Critical'},
+  {id:10,name:'Grapevine Base 24in',sku:'GV-24',cat:'base',qty:7,color:'natural brown',reorder:3,emotions:[],tagged:false,notes:''},
+  {id:11,name:'Velvet Ribbon Burgundy',sku:'VR-BU',cat:'ribbon',qty:4,color:'burgundy',reorder:2,emotions:[],tagged:false,notes:''},
+  {id:12,name:'Ranunculus Blush',sku:'RN-BL',cat:'focal',qty:9,color:'blush pink',reorder:3,emotions:[],tagged:false,notes:''},
+];
+
+let nextId = 13;
+
+// ── AI ───────────────────────────────────────────────────────────
+function activateAI(){
+  const val=document.getElementById('ai-key').value.trim();
+  if(!val.startsWith('sk-')){toast('Key must start with sk-','⚠️');return;}
+  aiKey=val;
+  document.getElementById('ai-gate-wrap').style.display='none';
+  document.getElementById('ai-active-badge').style.display='flex';
+  document.getElementById('ai-tag-bar').style.background='var(--sage-d)';
+  document.getElementById('ai-tag-bar-sub').textContent='AI active — tag all items with emotion data for the design engine.';
+  toast('AI tagger activated','✅');
+}
+function deactivateAI(){
+  aiKey='';
+  document.getElementById('ai-gate-wrap').style.display='block';
+  document.getElementById('ai-active-badge').style.display='none';
+  document.getElementById('ai-tag-bar').style.background='var(--ink2)';
+  document.getElementById('ai-tag-bar-sub').textContent='Activate AI to tag all items with emotion data for the design engine.';
+}
+
+const EMOTION_SYSTEM = `You are Evercrafted's Floral Emotion Tagger. Tag each inventory item with emotion data.
+
+Respond ONLY with a JSON array — no markdown, no preamble:
+[
+  {
+    "id": <number>,
+    "emotions": ["emotion1","emotion2","emotion3"],
+    "primary_emotion": "emotion1",
+    "intensity": "soft|medium|strong",
+    "season": "spring|summer|fall|winter|evergreen",
+    "notes": "one sentence describing emotional quality"
+  }
+]
+
+Emotion vocabulary: romance, love, warmth, nostalgia, calm, clarity, abundance, grace, strength, mystery, joy, grounded, renewal, harvest, comfort, elegance, wildness, resilience, peace, tenderness, celebration, rustic, seasonal, earthy, minimal.
+
+Base emotions on: floral type symbolism + color psychology. Cap at 3 emotions per item.`;
+
+async function tagAllItems(){
+  if(!aiKey){toast('Activate AI first','🔑');return;}
+  const untagged=inventory.filter(i=>!i.tagged);
+  if(untagged.length===0){toast('All items already tagged','✦');return;}
+
+  const btn=document.getElementById('btn-tag-all');
+  btn.disabled=true;btn.textContent='Tagging…';
+  const prog=document.getElementById('tag-progress');
+  const fill=document.getElementById('tag-fill');
+  const label=document.getElementById('tag-label');
+  prog.style.display='block';label.style.display='block';
+
+  // Mark all as loading
+  untagged.forEach(i=>{i.emotions=['loading'];i.tagged=false;});
+  renderTable();
+
+  // Batch in groups of 6
+  const batchSize=6;
+  let done=0;
+  for(let i=0;i<untagged.length;i+=batchSize){
+    const batch=untagged.slice(i,i+batchSize);
+    const payload=batch.map(item=>({id:item.id,name:item.name,color:item.color,category:item.cat}));
+    try{
+      const res=await fetch('https://api.anthropic.com/v1/messages',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':aiKey},
+        body:JSON.stringify({
+          model:'claude-sonnet-4-20250514',
+          max_tokens:1024,
+          system:EMOTION_SYSTEM,
+          messages:[{role:'user',content:`Tag these items:\n${JSON.stringify(payload,null,2)}`}]
+        })
+      });
+      const data=await res.json();
+      const text=data.content.filter(b=>b.type==='text').map(b=>b.text).join('\n');
+      const clean=text.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
+      const tags=JSON.parse(clean.match(/\[[\s\S]+\]/)[0]);
+      tags.forEach(t=>{
+        const item=inventory.find(i=>i.id===t.id);
+        if(item){item.emotions=t.emotions||[];item.tagged=true;item.season=t.season;item.primary_emotion=t.primary_emotion;}
+      });
+    }catch(e){
+      batch.forEach(item=>{item.emotions=['—'];item.tagged=false;});
+    }
+    done+=batch.length;
+    const pct=Math.round((done/untagged.length)*100);
+    fill.style.width=pct+'%';
+    label.textContent=`${done} / ${untagged.length} items tagged`;
+    renderTable();
+    updateSidebar();
+  }
+
+  btn.disabled=false;btn.textContent='Tag All Items';
+  toast(`${done} items tagged with emotion data ✦`,'🧬');
+  setTimeout(()=>{prog.style.display='none';label.style.display='none';},2000);
+}
+
+// ── CRUD ─────────────────────────────────────────────────────────
+function saveItem(){
+  const name=document.getElementById('f-name').value.trim();
+  const sku=document.getElementById('f-sku').value.trim();
+  const cat=document.getElementById('f-cat').value;
+  const qty=parseInt(document.getElementById('f-qty').value)||0;
+  const color=document.getElementById('f-color').value.trim();
+  const reorder=parseInt(document.getElementById('f-reorder').value)||5;
+  const notes=document.getElementById('f-notes').value.trim();
+  if(!name){toast('Name is required','⚠️');return;}
+  if(editingId!==null){
+    const item=inventory.find(i=>i.id===editingId);
+    if(item){Object.assign(item,{name,sku,cat,qty,color,reorder,notes});item.tagged=false;item.emotions=[];}
+    toast('Item updated','✦');
+  } else {
+    inventory.push({id:nextId++,name,sku,cat,qty,color,reorder,notes,emotions:[],tagged:false});
+    toast('Item added','✦');
+  }
+  closeAddPanelDirect();
+  renderTable();updateSidebar();
+}
+
+function editItem(id){
+  editingId=id;
+  const item=inventory.find(i=>i.id===id);
+  if(!item)return;
+  document.getElementById('panel-title').textContent='Edit Item';
+  document.getElementById('f-name').value=item.name;
+  document.getElementById('f-sku').value=item.sku||'';
+  document.getElementById('f-cat').value=item.cat;
+  document.getElementById('f-qty').value=item.qty;
+  document.getElementById('f-color').value=item.color||'';
+  document.getElementById('f-reorder').value=item.reorder||5;
+  document.getElementById('f-notes').value=item.notes||'';
+  toggleAddPanel();
+}
+
+function deleteItem(id){
+  if(!confirm('Remove this item?'))return;
+  inventory=inventory.filter(i=>i.id!==id);
+  renderTable();updateSidebar();
+  toast('Item removed','🗑');
+}
+
+// ── RENDER TABLE ─────────────────────────────────────────────────
+function stockStatus(qty,reorder){
+  if(qty===0)return{cls:'stock-crit',label:'Critical'};
+  if(qty<=reorder)return{cls:'stock-low',label:'Low'};
+  return{cls:'stock-ok',label:'OK'};
+}
+
+function renderTable(){
+  const search=document.getElementById('search-input').value.toLowerCase();
+  const sort=document.getElementById('sort-select').value;
+  let items=[...inventory];
+  if(activeFilter!=='all')items=items.filter(i=>i.cat===activeFilter);
+  if(search)items=items.filter(i=>i.name.toLowerCase().includes(search)||(i.sku||'').toLowerCase().includes(search)||(i.color||'').toLowerCase().includes(search));
+  items.sort((a,b)=>{
+    if(sort==='qty')return b.qty-a.qty;
+    if(sort==='cat')return a.cat.localeCompare(b.cat);
+    if(sort==='stock'){const sa=stockStatus(a.qty,a.reorder).label,sb=stockStatus(b.qty,b.reorder).label;const o={Critical:0,Low:1,OK:2};return o[sa]-o[sb];}
+    return a.name.localeCompare(b.name);
+  });
+
+  const empty=document.getElementById('empty-state');
+  const table=document.getElementById('inv-table');
+  if(items.length===0){empty.style.display='flex';table.style.display='none';return;}
+  empty.style.display='none';table.style.display='table';
+
+  const tbody=document.getElementById('inv-tbody');
+  tbody.innerHTML=items.map(item=>{
+    const st=stockStatus(item.qty,item.reorder);
+    const catCls='cat-'+item.cat;
+    let emotionHtml='<span style="font-size:10px;color:var(--muted2)">—</span>';
+    if(item.emotions.length>0&&item.emotions[0]==='loading'){
+      emotionHtml='<div class="emotion-tags"><span class="etag loading">tagging…</span></div>';
+    } else if(item.emotions.length>0&&item.emotions[0]!=='—'){
+      emotionHtml='<div class="emotion-tags">'+item.emotions.map((e,i)=>`<span class="etag ${i===0?'primary':''}">${e}</span>`).join('')+'</div>';
+    }
+    return `<tr>
+      <td>
+        <div class="item-name">${escHtml(item.name)}</div>
+        ${item.sku?`<div class="item-sku">${item.sku}</div>`:''}
+      </td>
+      <td><span class="cat-badge ${catCls}">${item.cat}</span></td>
+      <td><div class="qty-cell">${item.qty}<span class="qty-unit">stems</span></div></td>
+      <td><span class="stock-pill ${st.cls}">${st.label}</span></td>
+      <td><div style="font-size:12px;font-weight:300;color:var(--ink2)">${item.color||'—'}</div></td>
+      <td>${emotionHtml}</td>
+      <td>
+        <div class="row-actions">
+          <div class="row-btn" onclick="editItem(${item.id})" title="Edit">✏️</div>
+          <div class="row-btn del" onclick="deleteItem(${item.id})" title="Delete">🗑</div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function updateSidebar(){
+  document.getElementById('stat-total').textContent=inventory.length;
+  document.getElementById('stat-stems').textContent=inventory.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('stat-low').textContent=inventory.filter(i=>stockStatus(i.qty,i.reorder).label!=='OK').length;
+  document.getElementById('stat-tagged').textContent=inventory.filter(i=>i.tagged).length;
+  const cats=['focal','greenery','filler','accent','base','ribbon'];
+  cats.forEach(c=>{
+    const el=document.getElementById('cat-count-'+c);
+    if(el)el.textContent=inventory.filter(i=>i.cat===c).length;
+  });
+  document.getElementById('cat-count-all').textContent=inventory.length;
+
+  // Emotion summary
+  const emotionCounts={};
+  inventory.forEach(i=>{
+    if(i.tagged&&i.emotions.length>0&&i.emotions[0]!=='—'){
+      i.emotions.forEach(e=>{emotionCounts[e]=(emotionCounts[e]||0)+1;});
+    }
+  });
+  const sorted=Object.entries(emotionCounts).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const total=sorted.reduce((s,[,v])=>s+v,0)||1;
+  const summEl=document.getElementById('emotion-summary');
+  if(sorted.length===0){
+    summEl.innerHTML='<div style="font-size:11px;font-weight:300;color:var(--muted2)">Tag items to see emotion coverage.</div>';
+    return;
+  }
+  summEl.innerHTML=sorted.map(([name,count])=>`
+    <div class="emotion-bar-row">
+      <div class="emotion-name">${name}</div>
+      <div class="emotion-bar"><div class="emotion-fill" style="width:${Math.round(count/total*100)}%"></div></div>
+      <div class="emotion-pct">${count}</div>
+    </div>`).join('');
+}
+
+function filterCat(cat,el){
+  activeFilter=cat;
+  document.querySelectorAll('.cat-item').forEach(i=>i.classList.remove('on'));
+  el.classList.add('on');
+  renderTable();
+}
+
+// ── PANEL ────────────────────────────────────────────────────────
+function toggleAddPanel(){
+  editingId=null;
+  document.getElementById('panel-title').textContent='Add Inventory Item';
+  ['f-name','f-sku','f-color','f-notes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-qty').value='';
+  document.getElementById('f-reorder').value='5';
+  document.getElementById('f-cat').value='focal';
+  document.getElementById('add-panel-overlay').classList.add('on');
+}
+function closeAddPanel(e){if(e.target===document.getElementById('add-panel-overlay'))closeAddPanelDirect();}
+function closeAddPanelDirect(){document.getElementById('add-panel-overlay').classList.remove('on');editingId=null;}
+
+// ── IMPORT / EXPORT ──────────────────────────────────────────────
+function importCSV(){
+  const input=document.createElement('input');input.type='file';input.accept='.csv,.txt';
+  input.onchange=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=r=>{
+      const lines=r.result.split('\n').filter(Boolean);
+      let imported=0;
+      lines.slice(1).forEach(line=>{
+        const cols=line.split(',').map(c=>c.trim().replace(/^"|"$/g,''));
+        const name=cols[0]||cols[1];
+        if(!name)return;
+        const qty=parseInt(cols[2]||cols[3])||0;
+        const cat=(cols[4]||'filler').toLowerCase();
+        const color=cols[5]||'';
+        inventory.push({id:nextId++,name,sku:'',cat,qty,color,reorder:5,notes:'',emotions:[],tagged:false});
+        imported++;
+      });
+      renderTable();updateSidebar();
+      toast(`${imported} items imported`,'📦');
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+function exportInventory(){
+  const headers=['ID','Name','SKU','Category','Quantity','Color','Reorder At','Emotions','Notes'];
+  const rows=inventory.map(i=>[i.id,i.name,i.sku||'',i.cat,i.qty,i.color||'',i.reorder,i.emotions.join('|'),i.notes||'']);
+  const csv=[headers,...rows].map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='evercrafted-inventory.csv';a.click();
+  URL.revokeObjectURL(url);
+  toast('Inventory exported','📄');
+}
+
+// ── UTILS ────────────────────────────────────────────────────────
+function toast(msg,icon='🌿'){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.querySelector('span')||t;
+  t.innerHTML=icon+' <span>'+msg+'</span>';
+  t.classList.add('on');setTimeout(()=>t.classList.remove('on'),2600);
+}
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── INIT ─────────────────────────────────────────────────────────
+renderTable();updateSidebar();
+</script>
+</body>
+</html>

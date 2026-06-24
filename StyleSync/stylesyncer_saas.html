@@ -1,0 +1,975 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#1a1510;
+  --ink2:#3d3528;
+  --ink3:#6b5f52;
+  --fog:#f5f0e8;
+  --fog2:#ede6d8;
+  --fog3:#e0d5c3;
+  --wine:#7c2d3e;
+  --wine2:#a33d52;
+  --wine-pale:#f7eaed;
+  --sage:#4a6741;
+  --sage-pale:#eaf3e6;
+  --amber:#c47a2b;
+  --white:#fefcf8;
+  --radius:10px;
+  --transition:0.18s ease;
+}
+body{font-family:'Outfit',sans-serif;background:var(--white);color:var(--ink);min-height:100vh;overflow-x:hidden}
+h1,h2,h3,.serif{font-family:'Cormorant Garamond',serif}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:rgba(254,252,248,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--fog3);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:58px}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:300;color:var(--ink);letter-spacing:1px;cursor:pointer}
+.nav-logo span{color:var(--wine)}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-link{font-size:13px;color:var(--ink3);cursor:pointer;transition:color var(--transition);font-weight:400;background:none;border:none;font-family:'Outfit',sans-serif}
+.nav-link:hover{color:var(--ink)}
+.nav-cta{background:var(--ink);color:var(--white);padding:8px 20px;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all var(--transition)}
+.nav-cta:hover{background:var(--wine)}
+.nav-badge{font-size:11px;background:var(--wine-pale);color:var(--wine);padding:2px 8px;border-radius:99px;margin-left:4px;font-weight:500}
+
+/* PAGES */
+.page{display:none;animation:fadeIn 0.3s ease}
+.page.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* LANDING */
+.hero{min-height:88vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:4rem 2rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,#f0e8d8 0%,transparent 70%);pointer-events:none}
+.hero-wreath{position:absolute;opacity:0.06;font-size:420px;top:-80px;left:50%;transform:translateX(-50%);pointer-events:none;line-height:1;user-select:none}
+.hero-tag{display:inline-block;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--wine);background:var(--wine-pale);padding:5px 14px;border-radius:99px;margin-bottom:2rem;font-weight:500}
+.hero h1{font-size:clamp(42px,7vw,80px);font-weight:300;line-height:1.05;color:var(--ink);margin-bottom:1.5rem;letter-spacing:-1px}
+.hero h1 em{font-style:italic;color:var(--wine)}
+.hero-sub{font-size:17px;color:var(--ink3);max-width:520px;line-height:1.7;margin-bottom:2.5rem;font-weight:300}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero{padding:14px 32px;font-size:15px;font-weight:500;border-radius:var(--radius);cursor:pointer;transition:all var(--transition);font-family:'Outfit',sans-serif;border:none}
+.btn-hero-primary{background:var(--ink);color:var(--white)}
+.btn-hero-primary:hover{background:var(--wine)}
+.btn-hero-ghost{background:transparent;color:var(--ink);border:1px solid var(--fog3)}
+.btn-hero-ghost:hover{border-color:var(--ink3);background:var(--fog)}
+.hero-proof{margin-top:4rem;font-size:12px;color:var(--ink3);display:flex;gap:2rem;justify-content:center;align-items:center;flex-wrap:wrap}
+.hero-proof-item{display:flex;align-items:center;gap:6px}
+.proof-dot{width:5px;height:5px;background:var(--sage);border-radius:50%}
+
+/* FEATURE STRIP */
+.features{padding:6rem 2rem;max-width:1000px;margin:0 auto}
+.section-eyebrow{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--wine);font-weight:500;margin-bottom:1rem}
+.section-title{font-size:clamp(30px,4vw,46px);font-weight:300;color:var(--ink);line-height:1.15;margin-bottom:1rem}
+.section-title em{font-style:italic;color:var(--wine)}
+.section-sub{font-size:15px;color:var(--ink3);max-width:480px;line-height:1.7;font-weight:300;margin-bottom:3.5rem}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+.feat-card{padding:1.75rem;border:1px solid var(--fog3);border-radius:14px;background:var(--white);transition:all var(--transition)}
+.feat-card:hover{border-color:var(--fog2);box-shadow:0 8px 32px rgba(26,21,16,0.06);transform:translateY(-2px)}
+.feat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:1rem}
+.feat-card h3{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:400;color:var(--ink);margin-bottom:8px}
+.feat-card p{font-size:13px;color:var(--ink3);line-height:1.7;font-weight:300}
+
+/* HOW IT WORKS */
+.how{background:var(--fog);padding:6rem 2rem}
+.how-inner{max-width:900px;margin:0 auto}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:3rem;position:relative}
+.steps::before{content:'';position:absolute;top:24px;left:12%;right:12%;height:1px;background:var(--fog3)}
+.step{text-align:center;position:relative}
+.step-num{width:48px;height:48px;border-radius:50%;background:var(--white);border:1px solid var(--fog3);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--wine);font-weight:400;position:relative;z-index:1}
+.step h4{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:6px}
+.step p{font-size:12px;color:var(--ink3);line-height:1.6}
+
+/* PRICING */
+.pricing{padding:6rem 2rem;max-width:1000px;margin:0 auto}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.pricing-card{border:1px solid var(--fog3);border-radius:16px;padding:2rem;background:var(--white);position:relative;transition:all var(--transition)}
+.pricing-card.featured{border-color:var(--wine);background:var(--ink)}
+.pricing-card.featured *{--fog3:rgba(255,255,255,0.12)}
+.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--wine);color:var(--white);font-size:11px;font-weight:500;padding:4px 14px;border-radius:99px;white-space:nowrap}
+.plan-name{font-size:12px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:0.75rem}
+.featured .plan-name{color:rgba(255,255,255,0.5)}
+.plan-price{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;color:var(--ink);line-height:1;margin-bottom:4px}
+.featured .plan-price{color:var(--white)}
+.plan-price span{font-size:16px;font-family:'Outfit',sans-serif;font-weight:300}
+.plan-period{font-size:12px;color:var(--ink3);margin-bottom:1.5rem}
+.featured .plan-period{color:rgba(255,255,255,0.4)}
+.plan-divider{height:1px;background:var(--fog3);margin-bottom:1.5rem}
+.plan-features{list-style:none;margin-bottom:2rem}
+.plan-features li{font-size:13px;color:var(--ink3);padding:5px 0;display:flex;align-items:center;gap:8px;font-weight:300}
+.featured .plan-features li{color:rgba(255,255,255,0.65)}
+.plan-check{width:16px;height:16px;border-radius:50%;background:var(--sage-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--sage)}
+.featured .plan-check{background:rgba(74,103,65,0.3);color:#9dc992}
+.plan-btn{width:100%;padding:12px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;transition:all var(--transition);border:none}
+.plan-btn-outline{background:transparent;color:var(--ink);border:1px solid var(--fog3)}
+.plan-btn-outline:hover{background:var(--fog);border-color:var(--ink3)}
+.plan-btn-primary{background:var(--wine);color:var(--white)}
+.plan-btn-primary:hover{background:var(--wine2)}
+.plan-btn-dark{background:var(--white);color:var(--ink)}
+.plan-btn-dark:hover{background:var(--fog)}
+
+/* TESTIMONIALS */
+.testimonials{background:var(--fog);padding:5rem 2rem}
+.test-inner{max-width:900px;margin:0 auto}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+.test-card{background:var(--white);border-radius:14px;padding:1.5rem;border:1px solid var(--fog3)}
+.test-quote{font-family:'Cormorant Garamond',serif;font-size:17px;font-style:italic;color:var(--ink);line-height:1.6;margin-bottom:1.25rem}
+.test-author{display:flex;align-items:center;gap:10px}
+.test-avatar{width:34px;height:34px;border-radius:50%;background:var(--fog2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;color:var(--ink3)}
+.test-name{font-size:13px;font-weight:500;color:var(--ink)}
+.test-handle{font-size:11px;color:var(--ink3)}
+
+/* CTA BANNER */
+.cta-banner{padding:6rem 2rem;text-align:center;background:var(--ink);position:relative;overflow:hidden}
+.cta-banner::before{content:'◯';position:absolute;font-size:600px;color:rgba(255,255,255,0.02);top:-100px;right:-100px;line-height:1}
+.cta-banner h2{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,56px);font-weight:300;color:var(--white);margin-bottom:1rem;line-height:1.1}
+.cta-banner h2 em{font-style:italic;color:var(--wine2)}
+.cta-banner p{font-size:15px;color:rgba(255,255,255,0.5);margin-bottom:2.5rem;font-weight:300}
+
+/* FOOTER */
+footer{padding:3rem 2rem;border-top:1px solid var(--fog3);display:flex;justify-content:space-between;align-items:center;flex-wrap:gap}
+.footer-logo{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:300;color:var(--ink3)}
+.footer-links{display:flex;gap:1.5rem}
+.footer-link{font-size:12px;color:var(--ink3);cursor:pointer;transition:color var(--transition)}
+.footer-link:hover{color:var(--ink)}
+
+/* APP */
+.app-shell{display:flex;height:calc(100vh - 58px);overflow:hidden}
+.sidebar{width:220px;flex-shrink:0;border-right:1px solid var(--fog3);background:var(--white);padding:1.5rem 0;display:flex;flex-direction:column;overflow-y:auto}
+.sidebar-section{padding:0 1rem;margin-bottom:1.5rem}
+.sidebar-label{font-size:10px;font-weight:500;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink3);padding:0 0.75rem;margin-bottom:6px}
+.sidebar-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;cursor:pointer;font-size:13px;color:var(--ink3);transition:all var(--transition);font-weight:400;background:none;border:none;width:100%;text-align:left;font-family:'Outfit',sans-serif}
+.sidebar-item:hover{background:var(--fog);color:var(--ink)}
+.sidebar-item.active{background:var(--wine-pale);color:var(--wine);font-weight:500}
+.sidebar-icon{font-size:14px;width:18px;text-align:center}
+.sidebar-count{margin-left:auto;font-size:10px;background:var(--fog2);color:var(--ink3);padding:2px 7px;border-radius:99px}
+.sidebar-bottom{margin-top:auto;padding:1rem;border-top:1px solid var(--fog3)}
+.user-chip{display:flex;align-items:center;gap:10px;padding:8px 4px}
+.user-avatar{width:32px;height:32px;border-radius:50%;background:var(--wine-pale);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--wine);flex-shrink:0}
+.user-info{flex:1;min-width:0}
+.user-name{font-size:13px;font-weight:500;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-plan{font-size:10px;color:var(--wine);background:var(--wine-pale);padding:1px 7px;border-radius:99px;font-weight:500;display:inline-block;margin-top:2px}
+
+.main-content{flex:1;overflow-y:auto;padding:2rem;background:var(--fog)}
+.app-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2rem}
+.app-title{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:300;color:var(--ink)}
+.app-subtitle{font-size:13px;color:var(--ink3);margin-top:4px;font-weight:300}
+.header-actions{display:flex;gap:8px}
+.btn-sm{padding:7px 16px;font-size:13px;font-weight:500;border-radius:8px;cursor:pointer;transition:all var(--transition);font-family:'Outfit',sans-serif;border:none}
+.btn-ink{background:var(--ink);color:var(--white)}
+.btn-ink:hover{background:var(--wine)}
+.btn-ghost{background:var(--white);color:var(--ink);border:1px solid var(--fog3)}
+.btn-ghost:hover{border-color:var(--ink3)}
+.btn-wine{background:var(--wine);color:var(--white)}
+.btn-wine:hover{background:var(--wine2)}
+
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--white);border-radius:12px;padding:1.25rem;border:1px solid var(--fog3)}
+.stat-label{font-size:11px;color:var(--ink3);font-weight:400;margin-bottom:6px}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:300;color:var(--ink);line-height:1}
+.stat-change{font-size:11px;color:var(--sage);margin-top:4px}
+.stat-change.down{color:var(--wine)}
+
+.two-col-layout{display:grid;grid-template-columns:1fr 380px;gap:1.5rem}
+.panel-card{background:var(--white);border-radius:14px;border:1px solid var(--fog3);overflow:hidden}
+.panel-head{padding:1.25rem 1.5rem;border-bottom:1px solid var(--fog3);display:flex;justify-content:space-between;align-items:center}
+.panel-title{font-size:14px;font-weight:500;color:var(--ink)}
+.panel-body{padding:1.5rem}
+
+/* Form elements */
+.field{margin-bottom:1.25rem}
+.field-label{font-size:12px;font-weight:500;color:var(--ink);margin-bottom:6px;display:block}
+input[type=text],select,textarea{width:100%;padding:8px 12px;font-size:13px;font-family:'Outfit',sans-serif;border:1px solid var(--fog3);border-radius:8px;background:var(--white);color:var(--ink);outline:none;transition:border-color var(--transition)}
+input[type=text]:focus,select:focus,textarea:focus{border-color:var(--ink3)}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+
+.chip-row{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:5px 12px;font-size:12px;border-radius:99px;border:1px solid var(--fog3);cursor:pointer;transition:all var(--transition);background:var(--white);color:var(--ink3);font-family:'Outfit',sans-serif}
+.chip.on{background:var(--ink);color:var(--white);border-color:var(--ink)}
+
+.mat-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.mat-row input{flex:1}
+.role-pill{font-size:10px;font-weight:500;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.rp-base{background:var(--sage-pale);color:var(--sage)}
+.rp-focal{background:var(--wine-pale);color:var(--wine)}
+.rp-accent{background:#fef3e2;color:var(--amber)}
+.btn-x{width:22px;height:22px;border-radius:50%;background:var(--fog);border:none;cursor:pointer;color:var(--ink3);font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all var(--transition)}
+.btn-x:hover{background:var(--fog2)}
+
+.emo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.emo-card{padding:10px;border:1px solid var(--fog3);border-radius:8px;cursor:pointer;transition:all var(--transition);background:var(--white)}
+.emo-card.on{border-color:var(--wine);background:var(--wine-pale)}
+.emo-card .en{font-size:12px;font-weight:500;color:var(--ink)}
+.emo-card .ev{font-size:10px;color:var(--ink3);margin-top:2px}
+.emo-card.on .en,.emo-card.on .ev{color:var(--wine)}
+
+.prompt-box{background:var(--fog);border-radius:8px;padding:1rem;font-size:13px;font-style:italic;line-height:1.7;color:var(--ink);min-height:80px;border:1px solid var(--fog3)}
+.prompt-placeholder{color:var(--ink3);font-style:normal}
+
+.variant-item{border:1px solid var(--fog3);border-radius:10px;padding:1rem;margin-bottom:10px;background:var(--white)}
+.variant-item.best{border-color:var(--sage)}
+.vtag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:99px}
+.vt-short{background:var(--sage-pale);color:var(--sage)}
+.vt-emo{background:var(--wine-pale);color:var(--wine)}
+.vt-lay{background:#fef3e2;color:var(--amber)}
+.vt-best{background:var(--sage-pale);color:var(--sage)}
+.vtext{font-size:13px;font-style:italic;color:var(--ink);line-height:1.6;margin:8px 0}
+.score-mini{display:flex;gap:12px;margin-top:8px}
+.sm-item{flex:1}
+.sm-label{font-size:10px;color:var(--ink3);margin-bottom:3px}
+.sm-bar{height:3px;background:var(--fog);border-radius:2px;overflow:hidden}
+.sm-fill{height:100%;border-radius:2px}
+
+.history-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--fog3)}
+.history-item:last-child{border-bottom:none}
+.h-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.h-info{flex:1;min-width:0}
+.h-name{font-size:13px;font-weight:400;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.h-meta{font-size:11px;color:var(--ink3);margin-top:2px}
+.h-score{font-size:12px;font-weight:500;color:var(--ink);flex-shrink:0}
+
+.loading-dots{display:inline-flex;gap:4px;vertical-align:middle}
+.loading-dots span{width:5px;height:5px;background:var(--ink3);border-radius:50%;animation:bop 1.2s infinite}
+.loading-dots span:nth-child(2){animation-delay:.2s}
+.loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes bop{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
+
+.tab-row{display:flex;gap:0;border-bottom:1px solid var(--fog3);margin-bottom:1.5rem}
+.app-tab{padding:8px 16px;font-size:13px;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-family:'Outfit',sans-serif;transition:all var(--transition)}
+.app-tab.on{color:var(--ink);border-bottom-color:var(--wine);font-weight:500}
+.app-tab:hover:not(.on){color:var(--ink)}
+
+.usage-bar-wrap{background:var(--fog);border-radius:99px;height:6px;overflow:hidden;margin-top:6px}
+.usage-bar{height:100%;background:var(--wine);border-radius:99px;transition:width 0.5s ease}
+
+.upgrade-banner{background:var(--ink);border-radius:12px;padding:1.25rem;display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem}
+.ub-text h4{font-size:14px;font-weight:500;color:var(--white);margin-bottom:4px}
+.ub-text p{font-size:12px;color:rgba(255,255,255,0.45);font-weight:300}
+.ub-btn{padding:8px 16px;background:var(--wine);color:var(--white);border:none;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;flex-shrink:0;margin-left:1rem}
+
+.section-divider{height:1px;background:var(--fog3);margin:1.5rem 0}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,21,16,0.5);z-index:200;display:flex;align-items:center;justify-content:center;padding:2rem;animation:fadeIn 0.2s ease}
+.modal{background:var(--white);border-radius:16px;max-width:520px;width:100%;padding:2rem;position:relative}
+.modal-close{position:absolute;top:1rem;right:1rem;background:var(--fog);border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--ink3);display:flex;align-items:center;justify-content:center}
+.modal h2{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;color:var(--ink);margin-bottom:6px}
+.modal p{font-size:13px;color:var(--ink3);margin-bottom:1.5rem;line-height:1.6;font-weight:300}
+.auth-input{margin-bottom:1rem}
+.auth-input label{font-size:12px;font-weight:500;color:var(--ink);display:block;margin-bottom:5px}
+.auth-switch{font-size:13px;color:var(--ink3);text-align:center;margin-top:1rem}
+.auth-switch a{color:var(--wine);cursor:pointer}
+
+.color-swatches{display:flex;gap:8px;flex-wrap:wrap}
+.csw{width:28px;height:28px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform var(--transition)}
+.csw.on{transform:scale(1.2);border-color:var(--ink)}
+
+.int-row{display:flex;gap:8px;margin-top:8px}
+.int-btn{flex:1;padding:7px;font-size:12px;border:1px solid var(--fog3);border-radius:8px;background:var(--white);cursor:pointer;font-family:'Outfit',sans-serif;color:var(--ink3);transition:all var(--transition)}
+.int-btn.on{background:var(--ink);color:var(--white);border-color:var(--ink)}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-logo" onclick="showPage('landing')">Style<span>Sync</span></div>
+  <div class="nav-links" id="navLinks">
+    <button class="nav-link" onclick="scrollToSection('features')">Features</button>
+    <button class="nav-link" onclick="scrollToSection('pricing')">Pricing</button>
+    <button class="nav-link" onclick="showPage('app')">Demo</button>
+    <button class="nav-cta" onclick="showModal('signup')">Start Free Trial</button>
+  </div>
+  <div class="nav-links" id="navApp" style="display:none">
+    <button class="nav-link">Docs</button>
+    <div style="font-size:13px;color:var(--ink3);padding:6px 12px;background:var(--wine-pale);border-radius:99px;font-weight:500;font-size:12px;">Pro Plan <span style="color:var(--wine)">●</span></div>
+    <button class="nav-cta" onclick="showPage('landing')">← Back to Site</button>
+  </div>
+</nav>
+
+<!-- MODAL -->
+<div id="authModal" style="display:none">
+  <div class="modal-overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <h2 id="modalTitle">Start your free trial</h2>
+      <p id="modalSub">14 days free. No credit card required. Cancel anytime.</p>
+      <div class="auth-input"><label>Full name</label><input type="text" placeholder="Jane Smith" /></div>
+      <div class="auth-input"><label>Email address</label><input type="text" placeholder="jane@studio.com" /></div>
+      <div class="auth-input" id="passField"><label>Password</label><input type="text" placeholder="Create a password" /></div>
+      <button class="btn-sm btn-ink" style="width:100%;padding:12px;font-size:14px;margin-top:0.5rem" onclick="enterApp()">Create Account →</button>
+      <div class="auth-switch" id="authSwitch">Already have an account? <a onclick="toggleAuth()">Sign in</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- LANDING PAGE -->
+<div id="page-landing" class="page active">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-wreath">◯</div>
+    <div class="hero-tag">AI-Powered Wreath Design Studio</div>
+    <h1>Turn your blueprint<br>into a <em>Midjourney</em><br>masterpiece</h1>
+    <p class="hero-sub">StyleSync transforms your wreath design blueprints — materials, emotion, season, style — into precision-engineered Midjourney prompts. Built for professional wreath designers.</p>
+    <div class="hero-actions">
+      <button class="btn-hero btn-hero-primary" onclick="showModal('signup')">Start Free Trial — 14 days</button>
+      <button class="btn-hero btn-hero-ghost" onclick="showPage('app')">View Live Demo →</button>
+    </div>
+    <div class="hero-proof">
+      <div class="hero-proof-item"><div class="proof-dot"></div><span>No credit card required</span></div>
+      <div class="hero-proof-item"><div class="proof-dot"></div><span>500+ designers using StyleSync</span></div>
+      <div class="hero-proof-item"><div class="proof-dot"></div><span>3× faster concept visualization</span></div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div class="features" id="features">
+    <div class="section-eyebrow">Why StyleSync</div>
+    <h2 class="section-title">Every feature built<br>for <em>wreath designers</em></h2>
+    <p class="section-sub">Generic prompt tools don't understand materials, emotion mapping, or seasonal design constraints. StyleSync does.</p>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-icon" style="background:var(--wine-pale)">🌿</div>
+        <h3>Blueprint Engine</h3>
+        <p>Configure materials by role (base, focal, accent), color palette, layout, and season in a structured blueprint that drives every prompt.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#fef3e2">✦</div>
+        <h3>Emotion Mapping</h3>
+        <p>Translate feelings into visual language — romantic nostalgia becomes warm golden-hour lighting with shallow depth of field automatically.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:var(--sage-pale)">⚡</div>
+        <h3>AI Optimizer</h3>
+        <p>Generate 3 strategic prompt variants (shortened, emotion-amplified, composition-first) scored and ranked by alignment metrics.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:var(--fog2)">📐</div>
+        <h3>StyleLock™</h3>
+        <p>Lock your brand aesthetic — rustic luxury, English countryside, or your own signature — so every generation stays on-brand.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:var(--wine-pale)">📊</div>
+        <h3>Prompt History</h3>
+        <p>Every prompt, variant, and rating is saved. Build a performance dataset over time and watch your prompt quality compound.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:var(--sage-pale)">🔗</div>
+        <h3>Blueprint JSON API</h3>
+        <p>Export any blueprint as clean JSON to feed into your own pipeline, Zapier automations, or design management system.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="how">
+    <div class="how-inner">
+      <div style="text-align:center;margin-bottom:0;">
+        <div class="section-eyebrow" style="text-align:center">How it works</div>
+        <h2 class="section-title" style="text-align:center;max-width:500px;margin:0 auto">From blueprint to<br><em>visual concept</em> in minutes</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>Build your blueprint</h4>
+          <p>Select materials, colors, season, layout and emotional intent</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>Generate base prompt</h4>
+          <p>AI crafts a Midjourney-optimized prompt from your blueprint</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>Run the optimizer</h4>
+          <p>Get 3 strategic variants with alignment scores and insights</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <h4>Copy & create</h4>
+          <p>Paste into Midjourney. Rate results to improve future generations</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRICING -->
+  <div class="pricing" id="pricing">
+    <div style="text-align:center">
+      <div class="section-eyebrow" style="text-align:center">Pricing</div>
+      <h2 class="section-title" style="text-align:center">Simple, <em>transparent</em> pricing</h2>
+      <p class="section-sub" style="margin:0 auto 3rem;text-align:center">Start free. Scale as your studio grows. No per-seat surprises.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">$0<span>/mo</span></div>
+        <div class="plan-period">Free forever</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><div class="plan-check">✓</div>10 prompt generations / mo</li>
+          <li><div class="plan-check">✓</div>Blueprint builder</li>
+          <li><div class="plan-check">✓</div>3 saved blueprints</li>
+          <li><div class="plan-check">✓</div>Base prompt only</li>
+          <li><div class="plan-check">✓</div>JSON export</li>
+        </ul>
+        <button class="plan-btn plan-btn-outline" onclick="showModal('signup')">Get started free</button>
+      </div>
+      <div class="pricing-card featured">
+        <div class="popular-badge">Most popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price">$29<span>/mo</span></div>
+        <div class="plan-period">Billed monthly · $24/mo annual</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><div class="plan-check">✓</div>Unlimited generations</li>
+          <li><div class="plan-check">✓</div>AI Prompt Optimizer</li>
+          <li><div class="plan-check">✓</div>Unlimited blueprints</li>
+          <li><div class="plan-check">✓</div>StyleLock™ brand profiles</li>
+          <li><div class="plan-check">✓</div>Prompt history & analytics</li>
+          <li><div class="plan-check">✓</div>Priority support</li>
+        </ul>
+        <button class="plan-btn plan-btn-primary" onclick="showModal('signup')">Start 14-day free trial</button>
+      </div>
+      <div class="pricing-card">
+        <div class="plan-name">Studio</div>
+        <div class="plan-price">$79<span>/mo</span></div>
+        <div class="plan-period">Up to 5 seats</div>
+        <div class="plan-divider"></div>
+        <ul class="plan-features">
+          <li><div class="plan-check">✓</div>Everything in Pro</li>
+          <li><div class="plan-check">✓</div>Team blueprint library</li>
+          <li><div class="plan-check">✓</div>API access</div></li>
+          <li><div class="plan-check">✓</div>Custom brand training</li>
+          <li><div class="plan-check">✓</div>Dedicated onboarding</li>
+          <li><div class="plan-check">✓</div>White-label option</li>
+        </ul>
+        <button class="plan-btn plan-btn-outline" onclick="showModal('signup')">Start free trial</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTIMONIALS -->
+  <div class="testimonials">
+    <div class="test-inner">
+      <div style="text-align:center;margin-bottom:0">
+        <div class="section-eyebrow" style="text-align:center">Designers love it</div>
+        <h2 class="section-title" style="text-align:center">Trusted by wreath <em>studios worldwide</em></h2>
+      </div>
+      <div class="test-grid">
+        <div class="test-card">
+          <div class="test-quote">"StyleSync cut my concept visualization time from hours to minutes. My clients can finally see what I'm imagining before I build it."</div>
+          <div class="test-author">
+            <div class="test-avatar">MK</div>
+            <div><div class="test-name">Margaret Kim</div><div class="test-handle">@margaretkimwreaths</div></div>
+          </div>
+        </div>
+        <div class="test-card">
+          <div class="test-quote">"The emotion mapping is genuinely magical. 'Romantic nostalgia' actually translates to exactly the warm, dreamy aesthetic I had in mind."</div>
+          <div class="test-author">
+            <div class="test-avatar">SB</div>
+            <div><div class="test-name">Sophie Beaumont</div><div class="test-handle">Beaumont Floral Studio</div></div>
+          </div>
+        </div>
+        <div class="test-card">
+          <div class="test-quote">"I use the optimizer on every seasonal collection now. The composition-first variant consistently produces my best Midjourney results."</div>
+          <div class="test-author">
+            <div class="test-avatar">RN</div>
+            <div><div class="test-name">Rachel Novak</div><div class="test-handle">The Gathered Wreath Co.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-banner">
+    <h2>Ready to visualize<br>your <em>best work</em>?</h2>
+    <p>Join 500+ designers already using StyleSync to close the gap<br>between imagination and Midjourney output.</p>
+    <button class="btn-hero btn-hero-primary" onclick="showModal('signup')">Start your free trial →</button>
+  </div>
+
+  <footer>
+    <div class="footer-logo">StyleSync</div>
+    <div class="footer-links">
+      <span class="footer-link">Privacy</span>
+      <span class="footer-link">Terms</span>
+      <span class="footer-link">Docs</span>
+      <span class="footer-link">Contact</span>
+    </div>
+    <div style="font-size:12px;color:var(--ink3)">© 2026 StyleSync Inc.</div>
+  </footer>
+</div>
+
+<!-- APP PAGE -->
+<div id="page-app" class="page">
+  <div class="app-shell">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Studio</div>
+        <button class="sidebar-item active" onclick="setAppView('studio')">
+          <span class="sidebar-icon">✦</span> Blueprint Studio
+        </button>
+        <button class="sidebar-item" onclick="setAppView('library')">
+          <span class="sidebar-icon">◫</span> My Blueprints <span class="sidebar-count">12</span>
+        </button>
+        <button class="sidebar-item" onclick="setAppView('history')">
+          <span class="sidebar-icon">◷</span> Prompt History <span class="sidebar-count">47</span>
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Tools</div>
+        <button class="sidebar-item" onclick="setAppView('optimizer')">
+          <span class="sidebar-icon">⚡</span> Optimizer
+        </button>
+        <button class="sidebar-item" onclick="setAppView('stylelock')">
+          <span class="sidebar-icon">🔒</span> StyleLock™
+        </button>
+        <button class="sidebar-item" onclick="setAppView('analytics')">
+          <span class="sidebar-icon">◈</span> Analytics
+        </button>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Account</div>
+        <button class="sidebar-item" onclick="setAppView('settings')">
+          <span class="sidebar-icon">⚙</span> Settings
+        </button>
+        <button class="sidebar-item" onclick="showPage('landing')">
+          <span class="sidebar-icon">↩</span> Back to Site
+        </button>
+      </div>
+      <div class="sidebar-bottom">
+        <div class="user-chip">
+          <div class="user-avatar">BB</div>
+          <div class="user-info">
+            <div class="user-name">BretBadenStudio</div>
+            <div class="user-plan">Pro Plan</div>
+          </div>
+        </div>
+        <div style="margin-top:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div style="font-size:11px;color:var(--ink3)">Generations this month</div>
+            <div style="font-size:11px;font-weight:500;color:var(--ink)">∞</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN -->
+    <div class="main-content">
+
+      <!-- STUDIO VIEW -->
+      <div id="view-studio">
+        <div class="app-header">
+          <div>
+            <div class="app-title">Blueprint Studio</div>
+            <div class="app-subtitle">Build a wreath blueprint and generate optimized Midjourney prompts</div>
+          </div>
+          <div class="header-actions">
+            <button class="btn-sm btn-ghost" onclick="clearBlueprint()">Clear</button>
+            <button class="btn-sm btn-ink" onclick="generatePrompt()" id="genBtn">Generate Prompt</button>
+          </div>
+        </div>
+
+        <div class="two-col-layout">
+          <!-- LEFT: Blueprint Form -->
+          <div>
+            <div class="panel-card" style="margin-bottom:1.5rem">
+              <div class="panel-head"><div class="panel-title">Wreath Structure</div></div>
+              <div class="panel-body">
+                <div class="field">
+                  <div class="field-label">Type</div>
+                  <div class="chip-row" id="s-type">
+                    <button class="chip on" data-v="door">Door</button>
+                    <button class="chip" data-v="mantel">Mantel</button>
+                    <button class="chip" data-v="table">Centerpiece</button>
+                    <button class="chip" data-v="window">Window</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field-label">Shape</div>
+                  <div class="chip-row" id="s-shape">
+                    <button class="chip on" data-v="round">Round</button>
+                    <button class="chip" data-v="oval">Oval</button>
+                    <button class="chip" data-v="asymmetric">Asymmetric</button>
+                  </div>
+                </div>
+                <div class="field">
+                  <div class="field-label">Focal Layout</div>
+                  <div class="chip-row" id="s-layout">
+                    <button class="chip on" data-v="centered">Centered</button>
+                    <button class="chip" data-v="lower_right">Lower Right</button>
+                    <button class="chip" data-v="upper_left">Upper Left</button>
+                    <button class="chip" data-v="cascading">Cascading</button>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div class="field" style="margin:0">
+                    <div class="field-label">Season</div>
+                    <select id="s-season"><option>autumn</option><option>winter</option><option>spring</option><option>summer</option></select>
+                  </div>
+                  <div class="field" style="margin:0">
+                    <div class="field-label">Occasion</div>
+                    <input type="text" id="s-occasion" value="Thanksgiving" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card" style="margin-bottom:1.5rem">
+              <div class="panel-head">
+                <div class="panel-title">Materials</div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn-sm btn-ghost" style="font-size:11px;padding:4px 10px" onclick="addMat('base')">+ base</button>
+                  <button class="btn-sm btn-ghost" style="font-size:11px;padding:4px 10px" onclick="addMat('focal')">+ focal</button>
+                  <button class="btn-sm btn-ghost" style="font-size:11px;padding:4px 10px" onclick="addMat('accent')">+ accent</button>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div id="mat-list">
+                  <div class="mat-row" data-role="base"><input type="text" value="eucalyptus" /><span class="role-pill rp-base">base</span><button class="btn-x" onclick="this.parentElement.remove()">×</button></div>
+                  <div class="mat-row" data-role="focal"><input type="text" value="dried hydrangea" /><span class="role-pill rp-focal">focal</span><button class="btn-x" onclick="this.parentElement.remove()">×</button></div>
+                  <div class="mat-row" data-role="accent"><input type="text" value="velvet ribbon" /><span class="role-pill rp-accent">accent</span><button class="btn-x" onclick="this.parentElement.remove()">×</button></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card">
+              <div class="panel-head"><div class="panel-title">Color & Style</div></div>
+              <div class="panel-body">
+                <div class="field">
+                  <div class="field-label">Color Palette</div>
+                  <div class="color-swatches">
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div class="csw on" style="background:#87a878" data-c="sage green" onclick="toggleC(this)"></div><span style="font-size:9px;color:var(--ink3)">sage</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div class="csw on" style="background:#f5f0e8" data-c="cream" onclick="toggleC(this)"></div><span style="font-size:9px;color:var(--ink3)">cream</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div class="csw on" style="background:#8b2545" data-c="wine" onclick="toggleC(this)"></div><span style="font-size:9px;color:var(--ink3)">wine</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div class="csw" style="background:#c47a2b" data-c="amber" onclick="toggleC(this)"></div><span style="font-size:9px;color:var(--ink3)">amber</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div class="csw" style="background:#4a6741" data-c="forest" onclick="toggleC(this)"></div><span style="font-size:9px;color:var(--ink3)">forest</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div class="csw" style="background:#d4a0a0" data-c="dusty rose" onclick="toggleC(this)"></div><span style="font-size:9px;color:var(--ink3)">rose</span></div>
+                    <div style="display:flex;flex-direction:column;align-items:center;gap:3px"><div class="csw" style="background:#d4c5a9" data-c="champagne" onclick="toggleC(this)"></div><span style="font-size:9px;color:var(--ink3)">champagne</span></div>
+                  </div>
+                </div>
+                <div class="field" style="margin-bottom:0">
+                  <div class="field-label">Style Tags</div>
+                  <div class="chip-row" id="s-style">
+                    <button class="chip on" data-v="rustic">Rustic</button>
+                    <button class="chip on" data-v="refined">Refined</button>
+                    <button class="chip on" data-v="traditional">Traditional</button>
+                    <button class="chip" data-v="modern">Modern</button>
+                    <button class="chip" data-v="whimsical">Whimsical</button>
+                    <button class="chip" data-v="luxe">Luxe</button>
+                    <button class="chip" data-v="cottage-core">Cottage-core</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: Emotion + Output -->
+          <div>
+            <div class="panel-card" style="margin-bottom:1.5rem">
+              <div class="panel-head"><div class="panel-title">Emotional Profile</div></div>
+              <div class="panel-body">
+                <div class="emo-grid" id="emo-grid">
+                  <div class="emo-card on" data-e="romantic nostalgia" onclick="pickEmo(this)"><div class="en">Romantic Nostalgia</div><div class="ev">warm · shallow dof</div></div>
+                  <div class="emo-card" data-e="joyful warmth" onclick="pickEmo(this)"><div class="en">Joyful Warmth</div><div class="ev">bright · saturated</div></div>
+                  <div class="emo-card" data-e="quiet elegance" onclick="pickEmo(this)"><div class="en">Quiet Elegance</div><div class="ev">muted · soft</div></div>
+                  <div class="emo-card" data-e="cozy comfort" onclick="pickEmo(this)"><div class="en">Cozy Comfort</div><div class="ev">amber · warm</div></div>
+                  <div class="emo-card" data-e="refined abundance" onclick="pickEmo(this)"><div class="en">Refined Abundance</div><div class="ev">cinematic · rich</div></div>
+                  <div class="emo-card" data-e="festive celebration" onclick="pickEmo(this)"><div class="en">Festive</div><div class="ev">vibrant · dramatic</div></div>
+                </div>
+                <div style="margin-top:12px">
+                  <div class="field-label">Intensity</div>
+                  <div class="int-row" id="s-int">
+                    <button class="int-btn" data-v="low" onclick="pickInt(this)">Low</button>
+                    <button class="int-btn on" data-v="medium" onclick="pickInt(this)">Medium</button>
+                    <button class="int-btn" data-v="high" onclick="pickInt(this)">High</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel-card" style="margin-bottom:1rem">
+              <div class="panel-head">
+                <div class="panel-title">Generated Prompt</div>
+                <button class="btn-sm btn-ghost" style="font-size:11px;padding:4px 10px" id="copyBtn" onclick="copyPrompt()">Copy</button>
+              </div>
+              <div class="panel-body">
+                <div class="prompt-box" id="promptOutput"><span class="prompt-placeholder">Configure blueprint and click Generate Prompt</span></div>
+                <div id="promptParams" style="margin-top:10px;display:none;display:flex;gap:6px;flex-wrap:wrap"></div>
+              </div>
+            </div>
+
+            <button class="btn-sm btn-wine" style="width:100%;padding:10px;font-size:13px" onclick="openOptimizer()" id="optBtn">⚡ Run Optimizer</button>
+
+            <div id="variantsOut" style="margin-top:1rem"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY VIEW -->
+      <div id="view-history" style="display:none">
+        <div class="app-header">
+          <div><div class="app-title">Prompt History</div><div class="app-subtitle">All generated prompts and their performance scores</div></div>
+          <button class="btn-sm btn-ghost">Export CSV</button>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Total prompts</div><div class="stat-val">47</div><div class="stat-change">↑ 12 this week</div></div>
+          <div class="stat-card"><div class="stat-label">Avg alignment score</div><div class="stat-val">84%</div><div class="stat-change">↑ 3% vs last week</div></div>
+          <div class="stat-card"><div class="stat-label">Best emotion</div><div class="stat-val" style="font-size:20px;font-family:'Outfit'">Romantic</div><div class="stat-change">highest avg 91%</div></div>
+          <div class="stat-card"><div class="stat-label">Blueprints used</div><div class="stat-val">12</div></div>
+        </div>
+        <div class="panel-card">
+          <div class="panel-head"><div class="panel-title">Recent Prompts</div></div>
+          <div class="panel-body">
+            ${[
+              {name:'Autumn Door — Romantic Nostalgia',meta:'door · round · eucalyptus, hydrangea',score:'91%',c:'#4a6741'},
+              {name:'Winter Mantel — Quiet Elegance',meta:'mantel · oval · pine, silver ribbon',score:'87%',c:'#4a6741'},
+              {name:'Spring Door — Joyful Warmth',meta:'door · asymmetric · tulips, lavender',score:'79%',c:'#c47a2b'},
+              {name:'Thanksgiving — Cozy Comfort',meta:'door · round · wheat, pumpkin, ribbon',score:'84%',c:'#4a6741'},
+              {name:'Holiday — Festive Celebration',meta:'door · round · pine, berries, gold',score:'76%',c:'#c47a2b'},
+            ].map(h=>`<div class="history-item"><div class="h-dot" style="background:${h.c}"></div><div class="h-info"><div class="h-name">${h.name}</div><div class="h-meta">${h.meta}</div></div><div class="h-score">${h.score}</div></div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- LIBRARY VIEW -->
+      <div id="view-library" style="display:none">
+        <div class="app-header">
+          <div><div class="app-title">Blueprint Library</div><div class="app-subtitle">Saved blueprints ready to generate or duplicate</div></div>
+          <button class="btn-sm btn-ink" onclick="setAppView('studio')">+ New Blueprint</button>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem">
+          ${[
+            {name:'Autumn Classic',tags:'door · rustic · romantic',mats:'eucalyptus, hydrangea, ribbon'},
+            {name:'Winter Luxury',tags:'mantel · luxe · quiet elegance',mats:'pine, silver bells, velvet'},
+            {name:'Spring Door',tags:'door · whimsical · joyful',mats:'tulips, lavender, twine'},
+            {name:'Thanksgiving Harvest',tags:'door · traditional · cozy',mats:'wheat, pumpkin, burlap'},
+            {name:'Holiday Festive',tags:'door · traditional · festive',mats:'pine, berries, gold bow'},
+            {name:'Modern Minimal',tags:'window · minimalist · elegant',mats:'eucalyptus, dried cotton'},
+          ].map(b=>`<div class="panel-card" style="cursor:pointer" onclick="setAppView('studio')">
+            <div class="panel-body">
+              <div style="font-size:15px;font-weight:500;color:var(--ink);margin-bottom:4px">${b.name}</div>
+              <div style="font-size:11px;color:var(--wine);margin-bottom:8px">${b.tags}</div>
+              <div style="font-size:12px;color:var(--ink3)">${b.mats}</div>
+              <div style="margin-top:12px;display:flex;gap:6px">
+                <button class="btn-sm btn-ghost" style="font-size:11px;padding:4px 10px;flex:1" onclick="event.stopPropagation()">Duplicate</button>
+                <button class="btn-sm btn-ink" style="font-size:11px;padding:4px 10px;flex:1" onclick="event.stopPropagation();setAppView('studio')">Open</button>
+              </div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- ANALYTICS VIEW -->
+      <div id="view-analytics" style="display:none">
+        <div class="app-header"><div><div class="app-title">Analytics</div><div class="app-subtitle">Prompt performance and emotion mapping insights</div></div></div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Avg blueprint fidelity</div><div class="stat-val">88%</div><div class="stat-change">↑ 5% this month</div></div>
+          <div class="stat-card"><div class="stat-label">Top strategy</div><div class="stat-val" style="font-size:18px;font-family:'Outfit'">Layout-first</div><div class="stat-change">wins 61% of tests</div></div>
+          <div class="stat-card"><div class="stat-label">Most-used material</div><div class="stat-val" style="font-size:18px;font-family:'Outfit'">Eucalyptus</div><div class="stat-change">in 34 blueprints</div></div>
+          <div class="stat-card"><div class="stat-label">Generations saved vs MJ alone</div><div class="stat-val">3.2×</div></div>
+        </div>
+        <div class="panel-card">
+          <div class="panel-head"><div class="panel-title">Emotion Performance</div></div>
+          <div class="panel-body">
+            ${[
+              {e:'Romantic Nostalgia',score:91,bar:'#7c2d3e'},
+              {e:'Quiet Elegance',score:87,bar:'#4a6741'},
+              {e:'Refined Abundance',score:85,bar:'#c47a2b'},
+              {e:'Cozy Comfort',score:84,bar:'#6b5f52'},
+              {e:'Joyful Warmth',score:79,bar:'#4a6741'},
+              {e:'Festive Celebration',score:76,bar:'#7c2d3e'},
+            ].map(e=>`<div style="margin-bottom:14px">
+              <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+                <span style="font-size:13px;color:var(--ink)">${e.e}</span>
+                <span style="font-size:13px;font-weight:500;color:var(--ink)">${e.score}%</span>
+              </div>
+              <div style="background:var(--fog);border-radius:99px;height:6px;overflow:hidden">
+                <div style="width:${e.score}%;height:100%;background:${e.bar};border-radius:99px;transition:width 0.5s"></div>
+              </div>
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- STYLELOCK VIEW -->
+      <div id="view-stylelock" style="display:none">
+        <div class="app-header"><div><div class="app-title">StyleLock™</div><div class="app-subtitle">Lock your brand aesthetic into every generation</div></div><button class="btn-sm btn-ink">Save Profile</button></div>
+        <div class="two-col-layout">
+          <div class="panel-card">
+            <div class="panel-head"><div class="panel-title">Brand Profile — BretBadenStudio</div></div>
+            <div class="panel-body">
+              <div class="field"><div class="field-label">Brand Signature Tag</div><input type="text" value="BretBadenStudio" /></div>
+              <div class="field"><div class="field-label">Aesthetic Lock</div><div class="chip-row"><button class="chip on">Rustic Luxury</button><button class="chip">English Countryside</button><button class="chip">Modern Farmhouse</button><button class="chip">+ Custom</button></div></div>
+              <div class="field"><div class="field-label">Lighting Signature</div><div class="chip-row"><button class="chip on">Golden Hour</button><button class="chip">Soft Studio</button><button class="chip">Cinematic Side</button></div></div>
+              <div class="field"><div class="field-label">Photography Style</div><textarea>photographed like an upscale interior design catalog, editorial home decor aesthetic, shallow depth of field</textarea></div>
+              <div class="field"><div class="field-label">Forbidden Terms</div><input type="text" value="cartoon, illustrated, flat lay, stock photo" /></div>
+            </div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-head"><div class="panel-title">Preview Lock Effect</div></div>
+            <div class="panel-body">
+              <div style="font-size:12px;color:var(--ink3);margin-bottom:10px">Without StyleLock:</div>
+              <div class="prompt-box" style="font-size:12px;margin-bottom:16px">autumn door wreath, eucalyptus, dried hydrangea, wine ribbon, rustic style, warm tones</div>
+              <div style="font-size:12px;color:var(--wine);margin-bottom:10px;font-weight:500">✦ With StyleLock applied:</div>
+              <div class="prompt-box" style="font-size:12px;border-color:var(--wine)">autumn door wreath, eucalyptus base, dried hydrangea focal blooms, wine velvet ribbon accents, sage and cream palette, rustic luxury style, soft golden-hour lighting, shallow depth of field, evoking romantic nostalgia, photographed like an upscale interior design catalog by BretBadenStudio --ar 3:4 --s 120</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS VIEW -->
+      <div id="view-settings" style="display:none">
+        <div class="app-header"><div><div class="app-title">Settings</div></div></div>
+        <div class="two-col-layout">
+          <div>
+            <div class="panel-card" style="margin-bottom:1.5rem">
+              <div class="panel-head"><div class="panel-title">Account</div></div>
+              <div class="panel-body">
+                <div class="field"><div class="field-label">Studio Name</div><input type="text" value="BretBadenStudio" /></div>
+                <div class="field"><div class="field-label">Email</div><input type="text" value="bret@badenstudio.com" /></div>
+                <button class="btn-sm btn-ink" style="margin-top:4px">Save Changes</button>
+              </div>
+            </div>
+            <div class="panel-card">
+              <div class="panel-head"><div class="panel-title">Plan & Billing</div></div>
+              <div class="panel-body">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                  <div><div style="font-size:14px;font-weight:500;color:var(--ink)">Pro Plan</div><div style="font-size:12px;color:var(--ink3)">$29/month · renews Apr 15, 2026</div></div>
+                  <button class="btn-sm btn-ghost">Manage</button>
+                </div>
+                <div style="background:var(--fog);border-radius:10px;padding:1rem">
+                  <div style="font-size:12px;color:var(--ink3);margin-bottom:4px">Generations this month</div>
+                  <div style="font-size:22px;font-weight:500;color:var(--ink)">∞ <span style="font-size:13px;font-weight:300;color:var(--ink3)">unlimited</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="panel-card">
+            <div class="panel-head"><div class="panel-title">API Access</div></div>
+            <div class="panel-body">
+              <div class="field"><div class="field-label">API Key</div><input type="text" value="sk-ss-●●●●●●●●●●●●●●●●" /></div>
+              <div style="font-size:12px;color:var(--ink3);margin-bottom:1rem;line-height:1.6">Use the StyleSync API to integrate blueprint-to-prompt generation into your own workflows, Zapier automations, or design management system.</div>
+              <button class="btn-sm btn-ghost">Regenerate Key</button>
+              <button class="btn-sm btn-ink" style="margin-left:8px">View API Docs →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+let bp = {type:'door',shape:'round',layout:'centered',season:'autumn',occasion:'Thanksgiving',emotion:'romantic nostalgia',intensity:'medium',colors:['sage green','cream','wine'],styles:['rustic','refined','traditional'],basePrompt:''};
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('navLinks').style.display = p==='landing'?'flex':'none';
+  document.getElementById('navApp').style.display = p==='app'?'flex':'none';
+}
+function showModal(t){
+  document.getElementById('authModal').style.display='block';
+  if(t==='signin'){document.getElementById('modalTitle').textContent='Welcome back';document.getElementById('modalSub').textContent='Sign in to your StyleSync account.';document.getElementById('passField').style.display='block';document.getElementById('authSwitch').innerHTML='No account yet? <a onclick="toggleAuth()">Sign up</a>';}
+}
+function closeModal(){document.getElementById('authModal').style.display='none';}
+function toggleAuth(){const t=document.getElementById('modalTitle').textContent;if(t.includes('trial')||t.includes('free')){document.getElementById('modalTitle').textContent='Welcome back';document.getElementById('modalSub').textContent='Sign in to your StyleSync account.';document.getElementById('authSwitch').innerHTML='No account? <a onclick="toggleAuth()">Sign up</a>';}else{document.getElementById('modalTitle').textContent='Start your free trial';document.getElementById('modalSub').textContent='14 days free. No credit card required.';document.getElementById('authSwitch').innerHTML='Already have an account? <a onclick="toggleAuth()">Sign in</a>';}}
+function enterApp(){closeModal();showPage('app');}
+function scrollToSection(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth'});}
+
+function setAppView(v){
+  document.querySelectorAll('[id^="view-"]').forEach(el=>el.style.display='none');
+  document.getElementById('view-'+v).style.display='block';
+  document.querySelectorAll('.sidebar-item').forEach(el=>el.classList.remove('active'));
+  const map={studio:0,library:1,history:2,optimizer:3,stylelock:4,analytics:5,settings:6};
+  const items=document.querySelectorAll('.sidebar-item');
+  const idx=map[v];
+  if(idx!==undefined&&items[idx])items[idx].classList.add('active');
+}
+
+function initSingleChip(id,key){
+  document.querySelectorAll(`#${id} .chip`).forEach(c=>{
+    c.onclick=()=>{document.querySelectorAll(`#${id} .chip`).forEach(x=>x.classList.remove('on'));c.classList.add('on');bp[key]=c.dataset.v;};
+  });
+}
+function initMultiChip(id,key){
+  document.querySelectorAll(`#${id} .chip`).forEach(c=>{
+    c.onclick=()=>{c.classList.toggle('on');bp[key]=Array.from(document.querySelectorAll(`#${id} .chip.on`)).map(x=>x.dataset.v);};
+  });
+}
+initSingleChip('s-type','type');
+initSingleChip('s-shape','shape');
+initSingleChip('s-layout','layout');
+initMultiChip('s-style','styles');
+document.getElementById('s-season').onchange=e=>bp.season=e.target.value;
+document.getElementById('s-occasion').oninput=e=>bp.occasion=e.target.value;
+
+function toggleC(el){el.classList.toggle('on');bp.colors=Array.from(document.querySelectorAll('.csw.on')).map(s=>s.dataset.c);}
+function pickEmo(el){document.querySelectorAll('.emo-card').forEach(e=>e.classList.remove('on'));el.classList.add('on');bp.emotion=el.dataset.e;}
+function pickInt(el){document.querySelectorAll('.int-btn').forEach(b=>b.classList.remove('on'));el.classList.add('on');bp.intensity=el.dataset.v;}
+function addMat(role){const list=document.getElementById('mat-list');const d=document.createElement('div');d.className='mat-row';d.dataset.role=role;const rp=role==='base'?'rp-base':role==='focal'?'rp-focal':'rp-accent';d.innerHTML=`<input type="text" placeholder="material name"/><span class="role-pill ${rp}">${role}</span><button class="btn-x" onclick="this.parentElement.remove()">×</button>`;list.appendChild(d);}
+function getMats(){return Array.from(document.querySelectorAll('#mat-list .mat-row')).map(r=>({name:r.querySelector('input').value,role:r.dataset.role})).filter(m=>m.name.trim());}
+
+function clearBlueprint(){document.querySelectorAll('#mat-list input').forEach((inp,i)=>{const defaults=['eucalyptus','dried hydrangea','velvet ribbon'];inp.value=defaults[i]||'';});document.getElementById('promptOutput').innerHTML='<span class="prompt-placeholder">Configure blueprint and click Generate Prompt</span>';document.getElementById('variantsOut').innerHTML='';}
+
+async function generatePrompt(){
+  const btn=document.getElementById('genBtn');
+  btn.disabled=true;btn.textContent='Generating…';
+  const mats=getMats();
+  const systemP=`You are a Midjourney prompt engineer for BretBadenStudio luxury wreath brand. Given a wreath blueprint, write a single optimized Midjourney prompt. Max 42 words in text portion. Focus on materials, emotion, atmosphere. End with --ar ${bp.type==='mantel'?'16:9':'3:4'} --s ${bp.intensity==='low'?80:bp.intensity==='high'?180:120} --seed ${Math.floor(Math.random()*99999)+10000}. Return ONLY the prompt string.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:250,system:systemP,messages:[{role:'user',content:`Blueprint: type=${bp.type}, shape=${bp.shape}, layout=${bp.layout}, season=${bp.season}, emotion=${bp.emotion}, intensity=${bp.intensity}, materials=${mats.map(m=>m.name+' ('+m.role+')').join(', ')}, colors=${bp.colors.join(', ')}, style=${bp.styles.join(', ')}`}]})});
+    const d=await res.json();
+    bp.basePrompt=d.content?.[0]?.text?.trim()||buildFallback();
+  }catch(e){bp.basePrompt=buildFallback();}
+  document.getElementById('promptOutput').innerHTML=`<span style="font-style:italic">${bp.basePrompt}</span>`;
+  btn.disabled=false;btn.textContent='Generate Prompt';
+  document.getElementById('variantsOut').innerHTML='';
+}
+
+function buildFallback(){const arMap={door:'3:4',mantel:'16:9',table:'1:1',window:'3:4'};const sMap={low:80,medium:120,high:180};const mats=getMats().map(m=>m.name+(m.role==='base'?' base':m.role==='focal'?' blooms':' accents')).join(', ');return `highly detailed ${bp.season} ${bp.type} wreath, ${bp.shape} shape, made with ${mats}, ${bp.colors.join(', ')} palette, ${bp.styles.join(', ')} style, evoking ${bp.emotion}, soft golden-hour lighting, shallow depth of field, editorial home decor, BretBadenStudio --ar ${arMap[bp.type]||'3:4'} --s ${sMap[bp.intensity]||120} --seed ${Math.floor(Math.random()*99999)+10000}`;}
+
+function copyPrompt(){const t=document.getElementById('promptOutput').textContent;navigator.clipboard.writeText(t);const b=document.getElementById('copyBtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000);}
+
+async function openOptimizer(){
+  if(!bp.basePrompt){generatePrompt().then(openOptimizer);return;}
+  const area=document.getElementById('variantsOut');
+  area.innerHTML=`<div style="padding:1rem;text-align:center;color:var(--ink3);font-size:13px">Generating variants <span class="loading-dots"><span></span><span></span><span></span></span></div>`;
+  const systemP=`You are a Midjourney prompt optimizer for a luxury wreath brand. Create 3 variants of the given prompt using strategies: 1) shortened, 2) emotion-amplified, 3) composition-first. Return ONLY JSON no markdown: {"variants":[{"strategy":"shortened","label":"Short & Focused","prompt":"...","rationale":"..."},{"strategy":"emotion","label":"Emotion Amplified","prompt":"...","rationale":"..."},{"strategy":"layout","label":"Composition First","prompt":"...","rationale":"..."}]}`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:800,system:systemP,messages:[{role:'user',content:`Base prompt: "${bp.basePrompt}"\nEmotion: ${bp.emotion}, Season: ${bp.season}, Materials: ${getMats().map(m=>m.name).join(', ')}`}]})});
+    const d=await res.json();
+    let txt=d.content?.map(b=>b.text||'').join('').replace(/```json|```/g,'').trim();
+    const parsed=JSON.parse(txt);
+    renderVariants(area,parsed.variants);
+  }catch(e){area.innerHTML=`<div style="font-size:13px;color:var(--wine);padding:0.5rem">Error generating variants — try again</div>`;}
+}
+
+function renderVariants(area,variants){
+  const tagClass={shortened:'vt-short',emotion:'vt-emo',layout:'vt-lay'};
+  const scores={shortened:{a:82,f:91,e:74},emotion:{a:76,f:80,e:95},layout:{a:88,f:87,e:82}};
+  area.innerHTML='<div style="font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);margin-bottom:10px">Optimized Variants</div>';
+  variants.forEach((v,i)=>{
+    const sc=scores[v.strategy]||{a:80,f:80,e:80};
+    const isBest=v.strategy==='layout';
+    const d=document.createElement('div');
+    d.className=`variant-item${isBest?' best':''}`;
+    d.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div style="display:flex;gap:6px;align-items:center"><span class="vtag ${tagClass[v.strategy]||'vt-short'}">${v.label}</span>${isBest?'<span class="vtag vt-best">Best</span>':''}</div><button onclick="navigator.clipboard.writeText(this.closest('.variant-item').querySelector('.vtext').textContent);this.textContent='✓'" style="font-size:11px;padding:3px 8px;background:var(--fog);border:none;border-radius:6px;cursor:pointer;color:var(--ink3);font-family:Outfit,sans-serif">Copy</button></div><div class="vtext">${v.prompt}</div>${v.rationale?`<div style="font-size:11px;color:var(--ink3);margin-top:6px;font-style:italic">${v.rationale}</div>`:''}<div class="score-mini"><div class="sm-item"><div class="sm-label">Alignment</div><div class="sm-bar"><div class="sm-fill" style="width:${sc.a}%;background:#4a6741"></div></div><div style="font-size:11px;font-weight:500;color:var(--ink);margin-top:2px">${sc.a}%</div></div><div class="sm-item"><div class="sm-label">Fidelity</div><div class="sm-bar"><div class="sm-fill" style="width:${sc.f}%;background:#7c2d3e"></div></div><div style="font-size:11px;font-weight:500;color:var(--ink);margin-top:2px">${sc.f}%</div></div><div class="sm-item"><div class="sm-label">Emotion</div><div class="sm-bar"><div class="sm-fill" style="width:${sc.e}%;background:#c47a2b"></div></div><div style="font-size:11px;font-weight:500;color:var(--ink);margin-top:2px">${sc.e}%</div></div></div>`;
+    area.appendChild(d);
+  });
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+</script>
+</body>
+</html>
