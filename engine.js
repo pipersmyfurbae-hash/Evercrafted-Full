@@ -1122,6 +1122,61 @@ function validatePrompt(prompt, opts) {
   return { status: fails ? "FAIL" : warns ? "WARN" : "PASS", checks, summary: `${fails} failures, ${warns} warnings` };
 }
 
+// ════════════════════════════════════════════════════════════════════════════
+//  EMOTION_MAP — the single canonical emotion reference the LLM and the engine
+//  both point at. Reconciles v2's emotion palette + direction with the formula
+//  arcs and the inventory's own emotion→species tags. COMPASS convention
+//  (0°=12 o'clock, cw) and the muted brand palette — NOT the math/CCW
+//  convention or saturated web primaries of external mappers.
+//
+//  CARDINAL RULE preserved: the LLM emotion layer returns TAGS + intensity
+//  weights ONLY (use emotionTags() for its vocabulary). It never emits angles
+//  or radii. The deterministic engine maps a tag → direction → formula → arc.
+//  An emotion resolves to a COMPOSITION (a formula/sweep), never a single point.
+//
+//  · color   — brand hex (muted, memorial-luxury)
+//  · dir     — emotional motion; selects the formula family (still/draping/
+//              traveling/expansive/contained), which carries the compass arc
+//  · zone    — intensity→radius (the salvaged "inner/outer ring" idea):
+//              'inner' = grounding/private core · 'outer' = ambient/reaching edge
+//  · formula — the canonical formula this emotion leads toward
+//  · region  — human-readable compass placement (reference only, never an LLM target)
+//  · species — approved silk botanicals (inventory-grounded; ~suggested where noted)
+const DIR_GEOMETRY = {
+  still:     { formula: "half-ring",      region: "lower hemisphere, even & grounded · 4–8 o'clock" },
+  draping:   { formula: "crescent",       region: "lower-left draping sweep · 7–9 o'clock" },
+  traveling: { formula: "side-sweep",     region: "trailing diagonal pull · 9 → 1 o'clock" },
+  expansive: { formula: "focal-burst",    region: "upper expansive cascade · 11–1 o'clock" },
+  contained: { formula: "wild-asymmetry", region: "contained structural tension · 8–11 o'clock" },
+};
+const EMOTION_MAP = [
+  { tag: "peace",        label: "Peace",        color: "#8aaa8a", dir: "still",     zone: "inner", species: ["Weeping Silver Eucalyptus", "Sweeping White Magnolia"] },
+  { tag: "trust",        label: "Trust",        color: "#6b7c5c", dir: "still",     zone: "inner", species: ["Matte Sage Seeded Eucalyptus", "Olive Branch ~"] },
+  { tag: "joy",          label: "Joy",          color: "#b89a5c", dir: "expansive", zone: "inner", species: ["Champagne-Dusted Faux Fern", "Champagne Metallic Grass"] },
+  { tag: "anticipation", label: "Anticipation", color: "#a06040", dir: "traveling", zone: "inner", species: ["Champagne Metallic Grass", "Dried Wheat Sheaf ~"] },
+  { tag: "sadness",      label: "Sadness",      color: "#607888", dir: "draping",   zone: "inner", species: ["Matte Charcoal Manzanita Branch"] },
+  { tag: "grief",        label: "Grief",        color: "#485060", dir: "draping",   zone: "inner", species: ["Bare Black Architectural Branch", "Deep Burgundy Velvet Rose", "Stark White Bleached Branch"] },
+  { tag: "fear",         label: "Fear",         color: "#3a5242", dir: "contained", zone: "inner", species: ["High-Gloss Black Magnolia Leaf"] },
+  { tag: "anger",        label: "Anger",        color: "#8a3030", dir: "contained", zone: "inner", species: ["Deep Burgundy Velvet Rose", "Dark Plum Scabiosa ~"] },
+  { tag: "nostalgia",    label: "Nostalgia",    color: "#9a8ab0", dir: "draping",   zone: "outer", species: ["Dusty Mauve Peony"] },
+  { tag: "melancholy",   label: "Melancholy",   color: "#7080a0", dir: "traveling", zone: "outer", species: ["Charcoal Thistle Head"] },
+  { tag: "reverence",    label: "Reverence",    color: "#6a5a78", dir: "still",     zone: "outer", species: ["Sweeping White Magnolia", "Dried Lavender Bundle ~"] },
+  { tag: "awe",          label: "Awe",          color: "#4a5a7a", dir: "traveling", zone: "outer", species: ["Matte Silver-Leaf Spray", "Blue Thistle ~"] },
+  { tag: "romance",      label: "Romance",      color: "#a07080", dir: "still",     zone: "outer", species: ["Dusty Mauve Peony", "Dusty Rose Garden Rose ~"] },
+  { tag: "hope",         label: "Hope",         color: "#7a9a7a", dir: "expansive", zone: "outer", species: ["Luminous Ivory Ranunculus", "Pale Champagne Berry Cluster"] },
+  { tag: "reflective",   label: "Reflective",   color: "#8a9aaa", dir: "still",     zone: "outer", species: ["Matte Silver-Leaf Spray"] },
+  { tag: "longing",      label: "Longing",      color: "#7878a0", dir: "traveling", zone: "outer", species: ["Dried Pampas Whisp"] },
+].map(e => ({ ...e, formula: DIR_GEOMETRY[e.dir].formula, region: DIR_GEOMETRY[e.dir].region }));
+const EMOTION_BY_TAG = Object.fromEntries(EMOTION_MAP.map(e => [e.tag, e]));
+// Vocabulary + Cardinal-Rule framing for the LLM emotion layer's system prompt.
+function emotionTags() { return EMOTION_MAP.map(e => e.tag); }
+function emotionPromptVocab() {
+  return "Return ONLY emotion tags from this set, each with an intensity weight 0.0–1.0. "
+    + "Do NOT output angles, radii, coordinates, colors, or species — the deterministic "
+    + "engine derives all geometry and palette from the tags. Valid tags: "
+    + emotionTags().join(", ") + ".";
+}
+
 // ─── Geometry & transforms ───────────────────────────────────────────────────
 const toCart = (angle, radius) => {
   const rad = ((angle - 90) * Math.PI) / 180;
@@ -1141,5 +1196,6 @@ function placementTransform(slot, pos, pi, adjust, override) {
   return { rot, flip };
 }
   return { C, SLOTS, SLOT_MAP, ROLE_FACTOR, ROLE_TEX, colorGroupOf, GROUP_COLORS, COVERAGE_CLASSES, TOTAL_STACK_BANDS, BLOOM_STACK_BAND, BASE_WIDTHS, SIZE_TABLE, ARC_ANCHORS, rWorkIn, degPerInch, clamp, degToClock, out, ccw, cw, LAYOUTS, mulberry32, pickInBand, sampleClusterAngles, visualWeight, computeCentroid, angDist, generateLayout, computeValidation, compositionTokens, toCart, placementTransform,
-    WREATH_STYLE_DNA, STYLE_DNA_NEGATIVES, MJ_PARAMS, mjParamString, compileWreathPrompt, validatePrompt };
+    WREATH_STYLE_DNA, STYLE_DNA_NEGATIVES, MJ_PARAMS, mjParamString, compileWreathPrompt, validatePrompt,
+    EMOTION_MAP, EMOTION_BY_TAG, DIR_GEOMETRY, emotionTags, emotionPromptVocab };
 });
