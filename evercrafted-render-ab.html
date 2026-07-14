@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Render A/B — Before vs After (V7)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f3ef;--sf:#fff;--s2:#f0ede8;--bd:#ddd8d0;--bd2:#c8c2b8;
+  --tx:#2a2420;--mu:#6a6058;--fa:#9a9088;
+  --sage:#687859;--sageP:#eef1ea;--gold:#9a7a40;--goldP:#f5efe4;
+  --dust:#8a7d9e;--dustP:#f2eef6;--red:#a8584f;--redP:#f6ecea;
+  --serif:'Cormorant Garamond',Georgia,serif;--sans:'Jost',system-ui,sans-serif;
+  --r:12px;--rsm:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--tx);font-size:13px;line-height:1.6;padding:2rem 1.5rem 4rem}
+.wrap{max-width:1180px;margin:0 auto}
+.head{text-align:center;margin-bottom:1.4rem}
+.head h1{font-family:var(--serif);font-size:2.4rem;font-weight:400;line-height:1.1}
+.head h1 em{font-style:italic;color:var(--sage)}
+.head p{color:var(--mu);font-weight:300;margin-top:.3rem}
+.design-bar{display:flex;align-items:center;justify-content:center;gap:.5rem;flex-wrap:wrap;margin:1rem auto 1.6rem;max-width:760px;
+  background:var(--sf);border:1px solid var(--bd);border-radius:100px;padding:.5rem 1rem;font-size:12px;color:var(--mu)}
+.design-bar b{color:var(--tx);font-weight:500}
+.chip{font-size:11px;padding:2px 9px;border-radius:20px;background:var(--sageP);color:var(--sage);border:1px solid rgba(104,120,89,.25)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:1.1rem}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.col{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column}
+.col.b{border-color:var(--sage);box-shadow:0 4px 22px rgba(104,120,89,.13)}
+.col-h{padding:.7rem 1rem;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.col.a .col-h{background:var(--s2)}
+.col.b .col-h{background:var(--sageP)}
+.tag{font-family:var(--serif);font-size:1.25rem;font-weight:500}
+.col.a .tag{color:var(--mu)}.col.b .tag{color:var(--sage)}
+.tag small{font-family:var(--sans);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);display:block;margin-top:1px}
+.badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px}
+.col.a .badge{background:#efe7e5;color:var(--red)}
+.col.b .badge{background:#fff;color:var(--sage);border:1px solid rgba(104,120,89,.3)}
+.drop{position:relative;aspect-ratio:4/5;background:var(--s2);display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;border-bottom:1px solid var(--bd);transition:background .2s;text-align:center;padding:1rem;overflow:hidden}
+.drop:hover{background:#ece8e2}
+.drop.over{background:var(--sageP);outline:2px dashed var(--sage);outline-offset:-8px}
+.drop img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.drop .ph{color:var(--fa);pointer-events:none}
+.drop .ph .ic{font-size:1.8rem;display:block;margin-bottom:.3rem}
+.drop .ph small{display:block;font-size:11px;margin-top:.2rem}
+.clearbtn{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:20px;
+  font-family:var(--sans);font-size:10px;font-weight:600;padding:4px 10px;cursor:pointer;display:none;z-index:2}
+.drop.filled .clearbtn{display:block}
+.pbody{padding:.9rem 1rem;display:flex;flex-direction:column;gap:.55rem;flex:1}
+.plabel{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--fa);display:flex;justify-content:space-between;align-items:center}
+.copy{font-size:10px;font-weight:600;color:var(--sage);background:none;border:none;cursor:pointer;letter-spacing:.05em;text-transform:uppercase}
+.copy:hover{color:#46502f}
+textarea.prompt{width:100%;min-height:150px;resize:vertical;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);
+  color:var(--tx);font-family:var(--sans);font-size:11.5px;line-height:1.55;padding:.6rem .7rem;outline:none}
+textarea.prompt:focus{border-color:var(--sage)}
+.diff{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);margin-top:1.3rem;padding:1.1rem 1.3rem}
+.diff h2{font-family:var(--serif);font-size:1.4rem;font-weight:500;margin-bottom:.7rem}
+.diff table{width:100%;border-collapse:collapse;font-size:12px}
+.diff td,.diff th{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--bd);vertical-align:top}
+.diff th{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--fa)}
+.diff td.k{font-weight:600;white-space:nowrap;width:130px}
+.diff .x{color:var(--red)}.diff .y{color:var(--sage)}
+.tip{font-size:11.5px;color:var(--mu);margin-top:.9rem;line-height:1.6}
+.tip b{color:var(--tx)}
+.foot{text-align:center;color:var(--fa);font-size:11px;margin-top:1.6rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <h1>Render <em>A / B</em></h1>
+    <p>Internal QA · run both prompts in Midjourney V7, drop each result in its panel, compare side by side.</p>
+  </div>
+
+  <div class="design-bar">
+    <span class="chip">Same design</span>
+    <b>22″ Crescent</b> · memorial · emotions <b>sadness + nostalgia</b> · low intensity ·
+    arc 210°–330° · seed <b>set the same seed on both for a fair test</b>
+  </div>
+
+  <div class="grid">
+    <!-- A -->
+    <div class="col a">
+      <div class="col-h">
+        <div class="tag">A<small>Before — generic v6.1</small></div>
+        <span class="badge">no composition · no inventory · no version</span>
+      </div>
+      <div class="drop" id="dropA" data-k="A">
+        <button class="clearbtn" data-clear="A">clear</button>
+        <div class="ph"><span class="ic">⊕</span>Drop / paste / click<small>the A render here</small></div>
+      </div>
+      <div class="pbody">
+        <div class="plabel">Prompt A <button class="copy" data-copy="pA">Copy</button></div>
+        <textarea class="prompt" id="pA">Luxury faux botanical wreath, crescent composition, 22-inch grapevine base. Emotional tone: sadness, nostalgia. Structural foundation: Matte Charcoal Manzanita Branch, Dusty Mauve Peony, Dusty Mauve Peony — architectural, still forms, placed in the 210°–330° foundational arc. Secondary textural layer: Charcoal Thistle Head, Champagne Metallic Grass Bundle, Matte Sage Seeded Eucalyptus, Pale Champagne Berry Cluster. Finish palette: matte, metallic. Color palette: neutral-dark, neutral-mid, champagne, botanical-green. Intensity expression: low contrast unified matte. Intentional negative space exposes raw grapevine. Premium silk and preserved botanicals — no fresh flowers, no plastic, no craft-store aesthetic. Editorial product photography, shallow depth of field, warm diffused natural light from upper left, matte aged plaster wall, luxury handcrafted decor. --ar 4:5 --style raw --q 2</textarea>
+      </div>
+    </div>
+
+    <!-- B -->
+    <div class="col b">
+      <div class="col-h">
+        <div class="tag">B<small>After — engine-composed V7</small></div>
+        <span class="badge">+ clock geometry · + inventory lock · --v 7</span>
+      </div>
+      <div class="drop" id="dropB" data-k="B">
+        <button class="clearbtn" data-clear="B">clear</button>
+        <div class="ph"><span class="ic">⊕</span>Drop / paste / click<small>the B render here</small></div>
+      </div>
+      <div class="pbody">
+        <div class="plabel">Prompt B <button class="copy" data-copy="pB">Copy</button></div>
+        <textarea class="prompt" id="pB">Luxury faux botanical wreath, crescent composition, 22-inch grapevine base. Emotional tone: sadness, nostalgia. floral mass gathered left around 9 o'clock, asymmetric sweep from 7 to 11 o'clock, exposed grapevine arc from 11 to 7 o'clock as intentional negative space, airy minimal density, strong diagonal visual flow. Structural foundation: Matte Charcoal Manzanita Branch, Dusty Mauve Peony, Dusty Mauve Peony — architectural, still forms, placed in the 210°–330° foundational arc. Secondary textural layer: Charcoal Thistle Head, Champagne Metallic Grass Bundle, Matte Sage Seeded Eucalyptus, Pale Champagne Berry Cluster. Finish palette: matte, metallic. Color palette: neutral-dark, neutral-mid, champagne, botanical-green. Intensity expression: low contrast unified matte. Built from exactly: 7× Matte Charcoal Manzanita Branch, 6× Dusty Mauve Peony, 11× Charcoal Thistle Head, 11× Champagne Metallic Grass Bundle, 9× Matte Sage Seeded Eucalyptus, 9× Pale Champagne Berry Cluster. Premium silk and preserved botanicals — no fresh flowers, no plastic, no craft-store aesthetic. Editorial product photography, shallow depth of field, warm diffused natural light from upper left, matte aged plaster wall, luxury handcrafted decor. --ar 4:5 --style raw --s 150 --q 2 --v 7</textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff">
+    <h2>What changed (everything else is identical)</h2>
+    <table>
+      <tr><th>Element</th><th>A — Before</th><th>B — After</th></tr>
+      <tr><td class="k">Composition</td>
+        <td class="x">none — MJ places the mass anywhere</td>
+        <td class="y">floral mass left @ 9 o'clock, sweep 7→11, exposed grapevine 11→7, airy density, diagonal flow</td></tr>
+      <tr><td class="k">Bill of materials</td>
+        <td class="x">none — MJ invents quantities</td>
+        <td class="y">7× Manzanita, 6× Peony, 11× Thistle, 11× Champagne Grass, 9× Eucalyptus, 9× Berry</td></tr>
+      <tr><td class="k">Parameters</td>
+        <td class="x">--style raw --q 2 <em>(no version → raw can drop)</em></td>
+        <td class="y">--style raw --s 150 --q 2 --v 7</td></tr>
+    </table>
+    <p class="tip"><b>For a fair test:</b> add the same <b>--seed</b> (any number) to the end of both prompts before running, so the only variable is the prompt text — then differences you see are the wording, not luck. <b>What to look for in B:</b> the floral mass sitting on the lower-left, clean exposed grapevine on the opposite side, and stem counts/varieties matching the bill of materials.</p>
+  </div>
+
+  <div class="foot">Drag an image file, paste from clipboard (click a panel first), or click to browse. Everything stays local in your browser.</div>
+</div>
+
+<script>
+function wireDrop(k){
+  const zone=document.getElementById('drop'+k);
+  const setImg=(src)=>{
+    let img=zone.querySelector('img'); if(!img){img=document.createElement('img');zone.appendChild(img);}
+    img.src=src; zone.classList.add('filled');
+  };
+  const readFile=(file)=>{ if(!file||!file.type.startsWith('image/'))return; const r=new FileReader(); r.onload=e=>setImg(e.target.result); r.readAsDataURL(file); };
+  zone.addEventListener('click',()=>{ const i=document.createElement('input'); i.type='file'; i.accept='image/*'; i.onchange=e=>readFile(e.target.files[0]); i.click(); });
+  zone.addEventListener('dragover',e=>{e.preventDefault();zone.classList.add('over');});
+  zone.addEventListener('dragleave',()=>zone.classList.remove('over'));
+  zone.addEventListener('drop',e=>{e.preventDefault();zone.classList.remove('over');readFile(e.dataTransfer.files[0]);});
+  zone.tabIndex=0;
+  zone.addEventListener('paste',e=>{ const it=[...(e.clipboardData||{}).items||[]].find(i=>i.type.startsWith('image/')); if(it)readFile(it.getAsFile()); });
+}
+['A','B'].forEach(wireDrop);
+document.querySelectorAll('[data-clear]').forEach(b=>b.addEventListener('click',e=>{
+  e.stopPropagation(); const z=document.getElementById('drop'+b.dataset.clear); const img=z.querySelector('img'); if(img)img.remove(); z.classList.remove('filled');
+}));
+document.querySelectorAll('[data-copy]').forEach(b=>b.addEventListener('click',()=>{
+  const t=document.getElementById(b.dataset.copy); t.select(); document.execCommand('copy');
+  const o=b.textContent; b.textContent='Copied ✓'; setTimeout(()=>b.textContent=o,1200);
+}));
+// let the whole panel receive paste after a click
+document.querySelectorAll('.drop').forEach(d=>d.addEventListener('click',()=>d.focus()));
+</script>
+</body>
+</html>

@@ -8,7 +8,9 @@ const EC = require('./evercrafted-schema.js'); // single source of truth: vocab 
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const MODEL = 'claude-sonnet-4-20250514';
+// Model is overridable via env so it can be updated without a code change.
+// Default tracks a current Claude model (the previous claude-sonnet-4-20250514 was retired).
+const MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-5';
 
 // ── Input Sanitization ────────────────────────────────────────────────────────
 function sanitizeInput(text) {
@@ -108,8 +110,10 @@ app.use(cors({
       'http://127.0.0.1:5500',
       ...EXTRA_ORIGINS,
     ];
-    // Allow file:// origins (origin is 'null' as a string) and listed origins
-    if (!origin || origin === 'null' || allowed.includes(origin)) return cb(null, true);
+    // Allow file:// origins (origin is 'null' as a string), listed origins,
+    // and any of this project's own Vercel deployments (production + previews).
+    const isVercel = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin || '');
+    if (!origin || origin === 'null' || allowed.includes(origin) || isVercel) return cb(null, true);
     cb(new Error(`CORS: origin ${origin} not allowed`));
   },
 }));
@@ -159,6 +163,7 @@ app.get('/', (_req, res) => res.sendFile(path.join(__dirname, 'evercrafted-marke
 app.get('/evercrafted-schema.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-schema.js')));
 app.get('/engine.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'engine.js')));
 app.get('/evercrafted-nav.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-nav.js')));
+app.get('/evercrafted-watercolor.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-watercolor.js')));
 app.get('/evercrafted-tier-gate.js', (_req, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-tier-gate.js')));
 app.get('/evercrafted-auth.js', (_q, res) => res.type('application/javascript').sendFile(path.join(__dirname, 'evercrafted-auth.js')));
 // Entitlements — which tier + packs the current user has. DEMO: query overrides

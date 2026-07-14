@@ -988,15 +988,24 @@ function computeValidation(layout, slotAttrs) {
 // ─── R11: composition → prompt tokens (geometry generates language) ─────────
 function compositionTokens(v, layout) {
   if (!v) return "";
+  const full = !!(layout && layout.meta && layout.meta.symmetry === "full");
   const parts = [];
-  if (v.centroid) {
+  if (full) {
+    // Full-ring (e.g. classic-balanced): no single centroid or silence arc —
+    // describe the even distribution instead so the sentence still reads.
+    parts.push("even balanced full-ring composition, botanical mass distributed evenly around the full circumference");
+  } else if (v.centroid) {
     const cl = degToClock(v.centroid.angle);
     const region = cl >= 7 && cl <= 8 ? "lower-left" : cl >= 4 && cl <= 5 ? "lower-right" : cl >= 10 && cl <= 11 ? "upper-left" : cl >= 1 && cl <= 2 ? "upper-right" : cl === 6 ? "bottom" : cl === 12 ? "top" : cl === 9 ? "left" : "right";
     parts.push(`floral mass gathered ${region} around ${cl} o'clock`);
   }
-  if (layout.meta?.symmetry !== "full") {
+  if (!full) {
     parts.push(`asymmetric sweep from ${degToClock(v.arcStartDeg)} to ${degToClock(v.arcEndDeg)} o'clock`);
-    parts.push(`exposed grapevine arc from ${degToClock(v.arcEndDeg)} to ${degToClock(v.arcStartDeg)} o'clock as intentional negative space`);
+    // silence-arc % (handoff R11: coverage → "revealing X% of grapevine"). The
+    // bare fraction is the angular span outside the mass arc, normalized to 360.
+    const coveredSpan = ((((v.arcEndDeg - v.arcStartDeg) % 360) + 360) % 360) || 360;
+    const silencePct = clamp(Math.round(((360 - coveredSpan) / 360) * 100), 0, 95);
+    parts.push(`exposed grapevine arc from ${degToClock(v.arcEndDeg)} to ${degToClock(v.arcStartDeg)} o'clock revealing ${silencePct}% of the base as intentional negative space`);
   }
   const density = v.stackTotal >= 2.2 ? "lush layered density" : v.stackTotal >= 1.7 ? "balanced handcrafted density" : "airy minimal density";
   parts.push(density);
@@ -1004,6 +1013,168 @@ function compositionTokens(v, layout) {
     parts.push(v.asymScore > 0.6 ? "strong diagonal visual flow" : "gentle off-center composition");
   }
   return parts.join(", ");
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  WREATH_STYLE_DNA + EC_PROMPT_V1 compiler + PCValidator (handoff §7/§8/§11).
+//  These make engine.js the single source of truth for the geometry→language
+//  pass: compileWreathPrompt() ASSEMBLES the canonical prompt (Style DNA + R11
+//  composition tokens + locked negatives + locked params) and validatePrompt()
+//  is the SAME module's checker — so the generator is the validator's reference.
+// ════════════════════════════════════════════════════════════════════════════
+const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+
+// §7 — the 13 locked constants. Injected verbatim into every compiled prompt.
+const WREATH_STYLE_DNA = {
+  IDENTITY:     "luxury faux botanical wreath",
+  MATERIALS:    "high-end faux silk botanicals, indistinguishable from real blooms",
+  PETALS:       "soft matte petals, natural texture, complete absence of plastic sheen",
+  FOLIAGE:      "semi-gloss fabric leaves with visible vein structure",
+  CONSTRUCTION: "stems inserted into the grapevine base, intentional styled composition",
+  STYLE:        "editorial and breathing, significant negative space where density calls for it",
+  PHOTOGRAPHY:  "photorealistic professional product photograph",
+  LENS:         "85mm lens, shallow controlled depth of field, minimal lens distortion",
+  LIGHTING:     "soft neutral studio illumination, gentle grounded shadows, no hotspots",
+  ENVIRONMENT:  "controlled studio environment, cool gray plaster background",
+  FRAMING:      "entire wreath visible in frame, true-to-life scale accuracy",
+  INTENT:       "gallery-quality product documentation, not creative art, not illustration, not romanticized",
+};
+// "Not creative art / illustration / romanticized" intentionally live only in
+// INTENT (below) to avoid duplicating semantic weight (handoff Failure Mode 1).
+const STYLE_DNA_NEGATIVES = "No fresh flowers. No dew. No water droplets. No wild garden look. No overly organic irregularity. No outdoor field styling.";
+// §7/§18 — locked params. ar defaults to the portrait product variant (4:5);
+// pass ar:'5:4' for the canonical landscape or '1:1' for square catalog.
+const MJ_PARAMS = { ar: "4:5", style: "raw", s: 150, q: 2, v: 7 };
+const mjParamString = (ar) => `--ar ${ar || MJ_PARAMS.ar} --style ${MJ_PARAMS.style} --s ${MJ_PARAMS.s} --q ${MJ_PARAMS.q} --v ${MJ_PARAMS.v}`;
+
+// EC_PROMPT_V1 — assemble the human-facing prompt. `composition` should be the
+// compositionTokens() string (carries clock position + silence %); `florals` is
+// the variable species/inventory block. Output passes validatePrompt by design.
+function compileWreathPrompt(spec) {
+  const s = spec || {};
+  const size = s.sizeIn || 24;
+  const base = s.base || "natural grapevine base";
+  const mood = s.moodAdjective || "quiet and intentional";
+  const D = WREATH_STYLE_DNA;
+  const sent = [];
+  sent.push(`${cap(D.PHOTOGRAPHY)} of a ${size}-inch ${D.IDENTITY} on a ${base}, designed with quiet editorial restraint.`);
+  if (s.composition) sent.push(cap(s.composition) + ".");
+  sent.push(`Feels ${mood}, never busy or ornate.`);
+  if (s.florals) sent.push(String(s.florals).trim());
+  sent.push(`${cap(D.MATERIALS)}; ${D.PETALS}; ${D.FOLIAGE}; ${D.CONSTRUCTION}.`);
+  sent.push(cap(D.STYLE) + ".");
+  sent.push(STYLE_DNA_NEGATIVES);
+  sent.push(`${cap(D.LENS)}, ${D.LIGHTING}, ${D.ENVIRONMENT}.`);
+  sent.push(`${cap(D.FRAMING)}. ${cap(D.INTENT)}.`);
+  const seedPart = (s.seed !== undefined && s.seed !== null && s.seed !== "") ? ` --seed ${s.seed}` : "";
+  return `${sent.join(" ")}\n${mjParamString(s.ar)}${seedPart}`;
+}
+
+// §11 Fix 1 — Prompt Constitution Validator. Checks every required phrase + the
+// 1500-char budget. Block dispatch on FAIL; WARN is advisory; PASS proceeds.
+const PCV_REQUIRED = [
+  { name: "photography_intent", pattern: /photorealistic professional product photograph/i },
+  { name: "identity", pattern: /luxury faux botanical wreath/i },
+  { name: "silk_materials", pattern: /high-end faux silk/i },
+  { name: "matte_petals", pattern: /soft matte petals/i },
+  { name: "no_plastic_sheen", pattern: /complete absence of plastic sheen/i },
+  { name: "semi_gloss_foliage", pattern: /semi-gloss fabric/i },
+  { name: "studio_environment", pattern: /controlled studio environment/i },
+  { name: "lens_85mm", pattern: /85mm lens/i },
+  { name: "framing", pattern: /entire wreath visible in frame/i },
+  { name: "gallery_intent", pattern: /gallery-quality product documentation/i },
+  { name: "not_romanticized", pattern: /not romanticized/i },
+  { name: "no_fresh_flowers", pattern: /no fresh flowers/i },
+  { name: "clock_position", pattern: /o'clock/i },
+  { name: "silence_arc", pattern: /(silence arc|completely bare|revealing \d)/i },
+  { name: "params_style_raw", pattern: /--style raw/i },
+  { name: "params_s_150", pattern: /--s 150/i },
+  { name: "params_v7", pattern: /--v 7/i },
+];
+// Budget raised from the doc's original 1500: that number predates mandatory
+// Style DNA injection (~640 fixed chars). With Style DNA + R11 + a real
+// inventory lock, 1500 is unreachable without dropping the lock — which the doc
+// itself forbids (never silently cap). 1800 fits the full canonical prompt;
+// override per-call via opts.maxLength.
+const PCV_MAX_LENGTH = 1800;
+// opts: { maxLength, fullRing }. Full-ring compositions (classic-balanced,
+// garden-scatter) legitimately have no clock position or silence arc, so those
+// two checks are marked N/A rather than FAIL when fullRing is set.
+function validatePrompt(prompt, opts) {
+  const o = opts || {};
+  const maxLength = o.maxLength || PCV_MAX_LENGTH;
+  const fullRing = !!o.fullRing;
+  const p = String(prompt == null ? "" : prompt);
+  const checks = PCV_REQUIRED.map((c) => {
+    if (fullRing && (c.name === "clock_position" || c.name === "silence_arc")) {
+      return { name: c.name, status: "N/A", note: "not applicable to full-ring composition" };
+    }
+    const ok = c.pattern.test(p);
+    return { name: c.name, status: ok ? "PASS" : "FAIL", note: ok ? "found" : `missing: ${c.name}` };
+  });
+  checks.push({
+    name: "prompt_length",
+    status: p.length <= maxLength ? "PASS" : "WARN",
+    note: `${p.length} chars (limit ${maxLength})`,
+  });
+  const fails = checks.filter((c) => c.status === "FAIL").length;
+  const warns = checks.filter((c) => c.status === "WARN").length;
+  return { status: fails ? "FAIL" : warns ? "WARN" : "PASS", checks, summary: `${fails} failures, ${warns} warnings` };
+}
+
+// ════════════════════════════════════════════════════════════════════════════
+//  EMOTION_MAP — the single canonical emotion reference the LLM and the engine
+//  both point at. Reconciles v2's emotion palette + direction with the formula
+//  arcs and the inventory's own emotion→species tags. COMPASS convention
+//  (0°=12 o'clock, cw) and the muted brand palette — NOT the math/CCW
+//  convention or saturated web primaries of external mappers.
+//
+//  CARDINAL RULE preserved: the LLM emotion layer returns TAGS + intensity
+//  weights ONLY (use emotionTags() for its vocabulary). It never emits angles
+//  or radii. The deterministic engine maps a tag → direction → formula → arc.
+//  An emotion resolves to a COMPOSITION (a formula/sweep), never a single point.
+//
+//  · color   — brand hex (muted, memorial-luxury)
+//  · dir     — emotional motion; selects the formula family (still/draping/
+//              traveling/expansive/contained), which carries the compass arc
+//  · zone    — intensity→radius (the salvaged "inner/outer ring" idea):
+//              'inner' = grounding/private core · 'outer' = ambient/reaching edge
+//  · formula — the canonical formula this emotion leads toward
+//  · region  — human-readable compass placement (reference only, never an LLM target)
+//  · species — approved silk botanicals (inventory-grounded; ~suggested where noted)
+const DIR_GEOMETRY = {
+  still:     { formula: "half-ring",      region: "lower hemisphere, even & grounded · 4–8 o'clock" },
+  draping:   { formula: "crescent",       region: "lower-left draping sweep · 7–9 o'clock" },
+  traveling: { formula: "side-sweep",     region: "trailing diagonal pull · 9 → 1 o'clock" },
+  expansive: { formula: "focal-burst",    region: "upper expansive cascade · 11–1 o'clock" },
+  contained: { formula: "wild-asymmetry", region: "contained structural tension · 8–11 o'clock" },
+};
+const EMOTION_MAP = [
+  { tag: "peace",        label: "Peace",        color: "#8aaa8a", dir: "still",     zone: "inner", species: ["Weeping Silver Eucalyptus", "Sweeping White Magnolia"] },
+  { tag: "trust",        label: "Trust",        color: "#6b7c5c", dir: "still",     zone: "inner", species: ["Matte Sage Seeded Eucalyptus", "Olive Branch ~"] },
+  { tag: "joy",          label: "Joy",          color: "#b89a5c", dir: "expansive", zone: "inner", species: ["Champagne-Dusted Faux Fern", "Champagne Metallic Grass"] },
+  { tag: "anticipation", label: "Anticipation", color: "#a06040", dir: "traveling", zone: "inner", species: ["Champagne Metallic Grass", "Dried Wheat Sheaf ~"] },
+  { tag: "sadness",      label: "Sadness",      color: "#607888", dir: "draping",   zone: "inner", species: ["Matte Charcoal Manzanita Branch"] },
+  { tag: "grief",        label: "Grief",        color: "#485060", dir: "draping",   zone: "inner", species: ["Bare Black Architectural Branch", "Deep Burgundy Velvet Rose", "Stark White Bleached Branch"] },
+  { tag: "fear",         label: "Fear",         color: "#3a5242", dir: "contained", zone: "inner", species: ["High-Gloss Black Magnolia Leaf"] },
+  { tag: "anger",        label: "Anger",        color: "#8a3030", dir: "contained", zone: "inner", species: ["Deep Burgundy Velvet Rose", "Dark Plum Scabiosa ~"] },
+  { tag: "nostalgia",    label: "Nostalgia",    color: "#9a8ab0", dir: "draping",   zone: "outer", species: ["Dusty Mauve Peony"] },
+  { tag: "melancholy",   label: "Melancholy",   color: "#7080a0", dir: "traveling", zone: "outer", species: ["Charcoal Thistle Head"] },
+  { tag: "reverence",    label: "Reverence",    color: "#6a5a78", dir: "still",     zone: "outer", species: ["Sweeping White Magnolia", "Dried Lavender Bundle ~"] },
+  { tag: "awe",          label: "Awe",          color: "#4a5a7a", dir: "traveling", zone: "outer", species: ["Matte Silver-Leaf Spray", "Blue Thistle ~"] },
+  { tag: "romance",      label: "Romance",      color: "#a07080", dir: "still",     zone: "outer", species: ["Dusty Mauve Peony", "Dusty Rose Garden Rose ~"] },
+  { tag: "hope",         label: "Hope",         color: "#7a9a7a", dir: "expansive", zone: "outer", species: ["Luminous Ivory Ranunculus", "Pale Champagne Berry Cluster"] },
+  { tag: "reflective",   label: "Reflective",   color: "#8a9aaa", dir: "still",     zone: "outer", species: ["Matte Silver-Leaf Spray"] },
+  { tag: "longing",      label: "Longing",      color: "#7878a0", dir: "traveling", zone: "outer", species: ["Dried Pampas Whisp"] },
+].map(e => ({ ...e, formula: DIR_GEOMETRY[e.dir].formula, region: DIR_GEOMETRY[e.dir].region }));
+const EMOTION_BY_TAG = Object.fromEntries(EMOTION_MAP.map(e => [e.tag, e]));
+// Vocabulary + Cardinal-Rule framing for the LLM emotion layer's system prompt.
+function emotionTags() { return EMOTION_MAP.map(e => e.tag); }
+function emotionPromptVocab() {
+  return "Return ONLY emotion tags from this set, each with an intensity weight 0.0–1.0. "
+    + "Do NOT output angles, radii, coordinates, colors, or species — the deterministic "
+    + "engine derives all geometry and palette from the tags. Valid tags: "
+    + emotionTags().join(", ") + ".";
 }
 
 // ─── Geometry & transforms ───────────────────────────────────────────────────
@@ -1024,5 +1195,7 @@ function placementTransform(slot, pos, pi, adjust, override) {
   if (override?.flip) flip = !flip;
   return { rot, flip };
 }
-  return { C, SLOTS, SLOT_MAP, ROLE_FACTOR, ROLE_TEX, colorGroupOf, GROUP_COLORS, COVERAGE_CLASSES, TOTAL_STACK_BANDS, BLOOM_STACK_BAND, BASE_WIDTHS, SIZE_TABLE, ARC_ANCHORS, rWorkIn, degPerInch, clamp, degToClock, out, ccw, cw, LAYOUTS, mulberry32, pickInBand, sampleClusterAngles, visualWeight, computeCentroid, angDist, generateLayout, computeValidation, compositionTokens, toCart, placementTransform };
+  return { C, SLOTS, SLOT_MAP, ROLE_FACTOR, ROLE_TEX, colorGroupOf, GROUP_COLORS, COVERAGE_CLASSES, TOTAL_STACK_BANDS, BLOOM_STACK_BAND, BASE_WIDTHS, SIZE_TABLE, ARC_ANCHORS, rWorkIn, degPerInch, clamp, degToClock, out, ccw, cw, LAYOUTS, mulberry32, pickInBand, sampleClusterAngles, visualWeight, computeCentroid, angDist, generateLayout, computeValidation, compositionTokens, toCart, placementTransform,
+    WREATH_STYLE_DNA, STYLE_DNA_NEGATIVES, MJ_PARAMS, mjParamString, compileWreathPrompt, validatePrompt,
+    EMOTION_MAP, EMOTION_BY_TAG, DIR_GEOMETRY, emotionTags, emotionPromptVocab };
 });

@@ -295,6 +295,13 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
           <button onclick="saveDesign()" style="padding:8px 18px;border-radius:100px;border:none;background:var(--sage,#687859);color:#fff;font-family:var(--sans,system-ui,sans-serif);font-size:11px;font-weight:600;letter-spacing:.05em;cursor:pointer">Save this design</button>
           <span id="save-msg" style="font-size:11px;color:var(--fa)"></span>
         </div>
+        <div style="margin-top:1.1rem;border-top:1px solid var(--bd,#ddd8d0);padding-top:1rem">
+          <div class="cl" style="margin-bottom:.5rem">Watercolor concept · deterministic, on-brand</div>
+          <canvas id="wc-canvas" style="width:100%;max-width:340px;aspect-ratio:1;display:block;margin:0 auto;border-radius:8px;box-shadow:0 6px 22px rgba(0,0,0,.10)"></canvas>
+          <div style="text-align:center;margin-top:.6rem">
+            <button onclick="downloadWatercolor()" style="padding:7px 16px;border-radius:100px;border:1px solid var(--bd,#ddd8d0);background:transparent;color:var(--mu,#6a6058);font-family:var(--sans,system-ui,sans-serif);font-size:11px;cursor:pointer">Download concept</button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -304,6 +311,7 @@ hr{border:none;border-top:1px solid var(--bd);margin:.9rem 0}
 </div>
 
 <script src="/engine.js"></script>
+<script src="/evercrafted-watercolor.js"></script>
 <script>
 /* ─── EMOTION DATA ─── */
 const EMOTIONS = [
@@ -866,12 +874,12 @@ function renderPrompt(){
   // positions, asymmetric sweep, negative space, density) instead of a generic
   // "asymmetric crescent" that ignores the actual layout.
   const E=window.EvercraftedEngine;
-  let compTokens='';
+  let compTokens='', fullRing=false;
   if(f&&E&&E.compositionTokens){
     const nums=(f.arc.match(/\d+/g)||[]).map(Number);
     const aStart=nums.length?nums[0]:0, aEnd=nums.length>1?nums[1]:360;
     const span=((aEnd-aStart)%360+360)%360;
-    const fullRing=span===0||span>=355;
+    fullRing=span===0||span>=355;
     const mid=(aStart+span/2)%360;
     const stackTotal=r.intensityLevel>=3?2.3:r.intensityLevel>=2?1.9:1.5;
     const moving=['traveling','draping','expansive'].indexOf(f.dir)>=0;
@@ -888,10 +896,81 @@ function renderPrompt(){
   const bom=[...bomMap].map(([name,n])=>n+'× '+name).join(', ');
   const lock=bom?'Built from exactly: '+bom+'. ':'';
 
-  const prompt=`Luxury faux botanical wreath, ${f?.label.toLowerCase()} composition, ${r.diam}-inch grapevine base. Emotional tone: ${r.emotions.join(', ')}. ${composition}Structural foundation: ${str(r.p1.filter(s=>s.role==='structural'||s.role==='focal'))} — ${arch} forms, placed in the ${f?.arc} foundational arc. Secondary textural layer: ${str(r.p2)}. Finish palette: ${finishes.join(', ')}. Color palette: ${palettes.join(', ')}. Intensity expression: ${intLabel}. ${lock}Premium silk and preserved botanicals — no fresh flowers, no plastic, no craft-store aesthetic. Editorial product photography, shallow depth of field, warm diffused natural light from upper left, matte aged plaster wall, luxury handcrafted decor. --ar 4:5 --style raw --s 150 --q 2 --v 7`;
-  document.getElementById('ptext').textContent=prompt;
   const id='EC_WR_V2_'+(Math.floor(Math.random()*9000)+1000);
-  document.getElementById('pmeta').innerHTML=`<strong style="color:var(--mu)">ID:</strong> ${id} &nbsp;·&nbsp; <strong style="color:var(--mu)">Formula:</strong> ${f?.label} &nbsp;·&nbsp; <strong style="color:var(--mu)">Intensity:</strong> ${r.intensityLevel}/3 &nbsp;·&nbsp; <strong style="color:var(--mu)">Total stems:</strong> ${r.all.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0)}`;
+  const totalStems=r.all.filter(s=>s.item).reduce((a,b)=>a+b.stemCount,0);
+  let prompt, metaTail;
+  if(E&&E.compileWreathPrompt){
+    // Canonical EC_PROMPT_V1 compile — engine.js injects the 13 WREATH_STYLE_DNA
+    // constants, the locked negatives and locked params, then PCValidator grades
+    // the result. The studio's domain specifics ride in the variable florals slot.
+    const moods={1:'quiet and restrained',2:'composed and intentional',3:'bold and resolved'};
+    // Concise florals: name the focal mass + structural movement + finish/palette,
+    // and let the inventory lock carry the full species list (no double-listing,
+    // which keeps the compiled prompt inside the char budget).
+    const focal=[...new Set(r.p1.filter(s=>s.role==='focal'&&s.item).map(s=>s.item.name))].join(', ')||str(r.p1.filter(s=>s.role==='structural'));
+    const florals=`Emotional tone: ${r.emotions.join(', ')}. ${arch} structural forms anchor the ${f?.arc} arc with ${focal} as focal mass; ${finishes.join('/')} finish, ${palettes.join(', ')} palette, ${intLabel}. ${lock}`;
+    prompt=E.compileWreathPrompt({sizeIn:r.diam, base:'natural grapevine base', composition:compTokens, florals, moodAdjective:moods[r.intensityLevel]||'composed and intentional', ar:'4:5'});
+    const val=E.validatePrompt(prompt,{fullRing});
+    const col=val.status==='PASS'?'#687859':val.status==='WARN'?'#9a7a40':'#a8584f';
+    const bad=val.checks.filter(c=>c.status!=='PASS').map(c=>c.name);
+    metaTail=`<strong style="color:${col}">Constitution: ${val.status}</strong>${bad.length?' · '+bad.join(', '):''} &nbsp;·&nbsp; ${prompt.length} chars`;
+  } else {
+    // Fallback if engine.js failed to load — legacy self-contained prompt.
+    prompt=`Luxury faux botanical wreath, ${f?.label.toLowerCase()} composition, ${r.diam}-inch grapevine base. Emotional tone: ${r.emotions.join(', ')}. ${composition}Structural foundation: ${str(r.p1.filter(s=>s.role==='structural'||s.role==='focal'))} — ${arch} forms, placed in the ${f?.arc} foundational arc. Secondary textural layer: ${str(r.p2)}. Finish palette: ${finishes.join(', ')}. Color palette: ${palettes.join(', ')}. Intensity expression: ${intLabel}. ${lock}Premium silk and preserved botanicals — no fresh flowers, no plastic, no craft-store aesthetic. Editorial product photography, shallow depth of field, warm diffused natural light from upper left, matte aged plaster wall, luxury handcrafted decor. --ar 4:5 --style raw --s 150 --q 2 --v 7`;
+    metaTail=`<strong style="color:var(--mu)">Total stems:</strong> ${totalStems}`;
+  }
+  document.getElementById('ptext').textContent=prompt;
+  document.getElementById('pmeta').innerHTML=`<strong style="color:var(--mu)">ID:</strong> ${id} &nbsp;·&nbsp; <strong style="color:var(--mu)">Formula:</strong> ${f?.label} &nbsp;·&nbsp; <strong style="color:var(--mu)">Intensity:</strong> ${r.intensityLevel}/3 &nbsp;·&nbsp; ${metaTail}`;
+  renderWatercolorConcept(r);
+}
+
+/* ─── WATERCOLOR CONCEPT ─── deterministic painterly render of the design's
+   formula, tinted to its emotional palette. v2 stores formula + items (no
+   per-element geometry), so we map the formula to an engine layout and paint
+   that — a beautiful on-brand concept alongside the Midjourney prompt. */
+function watercolorLayout(formulaId,D,drama,seed){
+  const E=window.EvercraftedEngine; if(!E) return null;
+  const gen=(style,anchor,asym,formula)=>E.generateLayout({D,style,drama,seed,anchor,asym,formula:formula||'crescent'});
+  switch(formulaId){
+    case 'classic-balanced': case 'garden-scatter': return E.LAYOUTS.classicBalanced;
+    case 'bottom-heavy': case 'half-ring': return E.LAYOUTS.bottomHeavy;
+    case 'side-sweep': return gen('minimal','10:00 swag',0.45);
+    case 'diagonal': case 'wild-asymmetry': return gen('classic','4:30 lower-right',0.55);
+    case 'twin-cluster': return gen('lush','7:30 classic',0.7,'twin');
+    case 'focal-burst': case 'spiral-flow': return gen('lush','7:30 classic',0.62);
+    case 'crescent': default: return E.LAYOUTS.crescent;
+  }
+}
+function renderWatercolorConcept(r){
+  const WC=window.EvercraftedWatercolor, cv=document.getElementById('wc-canvas');
+  if(!WC||!cv||!r) return;
+  const drama=r.intensityLevel>=3?'high':r.intensityLevel>=2?'med':'low';
+  // stable seed from the design → same design renders the same painting
+  let seed=r.diam*131+r.intensityLevel*17; r.emotions.forEach(e=>{for(const c of e)seed=(Math.imul(seed,31)+c.charCodeAt(0))>>>0;});
+  const layout=watercolorLayout(r.formula,r.diam,drama,seed); if(!layout) return;
+  // #1 — paint with the design's ACTUAL materials: pool each item's real color
+  // by role, then hand the renderer the true colors per placement so the concept
+  // reflects the specific bill of materials, not just the formula + mood.
+  const byRole={};
+  r.all.filter(s=>s.item&&s.item.color).forEach(s=>{(byRole[s.role]=byRole[s.role]||[]).push(s.item.color);});
+  const poolFor=roles=>{for(const ro of roles){if(byRole[ro]&&byRole[ro].length)return byRole[ro];}return null;};
+  const pools={
+    focal:     poolFor(['focal','structural','secondary']),
+    secondary: poolFor(['secondary','focal','texture']),
+    filler:    poolFor(['texture','secondary','accent']),
+    greenery:  poolFor(['greenery','structural']),
+    accent:    poolFor(['accent','texture','secondary'])
+  };
+  const ctr={};
+  const colorFor=(key,role,def)=>{
+    const pool=pools[role]; if(!pool||!pool.length) return def;
+    const i=(ctr[key]=(ctr[key]||0)+1)-1; return pool[i%pool.length];
+  };
+  WC.render(cv, layout, {seed, colorFor});
+}
+function downloadWatercolor(){
+  const cv=document.getElementById('wc-canvas'); if(!cv) return;
+  const a=document.createElement('a'); a.download='evercrafted-watercolor-concept.png'; a.href=cv.toDataURL('image/png'); a.click();
 }
 
 function switchTab(id,el){
