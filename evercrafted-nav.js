@@ -23,6 +23,7 @@
     { label: 'Waitlist',     href: WAITLIST },
   ];
   const TOOLS = [
+    { label: 'MJ V7 Prompt Studio', href: 'evercrafted-mj-v7-studio.html' },
     { label: 'Memory Scene',       href: 'evercrafted-memory-scene.html' },
     { label: 'Commercial Creator', href: 'evercrafted-commercial-creator.html' },
     { label: 'Studio',             href: 'evercrafted-studio.html' },

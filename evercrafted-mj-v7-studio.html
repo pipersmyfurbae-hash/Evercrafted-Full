@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evercrafted — MJ V7 Prompt Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --sage:#7a9e7e;--ivory:#faf7f2;--dark:#1c1816;--mid:#5a5248;--faint:#9a9088;
+  --accent:#c4a882;--accent-deep:#b8965a;--green-dark:#3d5c38;--green-mid:#4a6741;
+  --green-light:#7a9e7e;--card:#ffffff;--border:#e4ddd4;--border-light:#ede8e0;
+  --surface:#f5f0e8;--prompt-bg:#141f12;--prompt-text:#c8e8c2;
+  --ai-bg:#1a1430;--ai-accent:#8b7fd4;--shadow-sm:0 1px 4px rgba(0,0,0,.06);
+  --shadow-md:0 4px 16px rgba(0,0,0,.10);
+  --font-serif:'Cormorant Garamond',Georgia,serif;
+  --font-mono:'DM Mono','Courier New',monospace;
+  --font-sans:'Inter',system-ui,sans-serif;
+}
+html{font-size:15px;}
+body{font-family:var(--font-serif);background:var(--ivory);color:var(--dark);min-height:100vh;-webkit-font-smoothing:antialiased;}
+
+/* ── HEADER ── */
+header{background:var(--green-dark);color:white;padding:0 32px;height:62px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,.08);}
+.header-left{display:flex;align-items:center;gap:16px;}
+.header-logo{font-family:var(--font-serif);font-size:1.4rem;letter-spacing:4px;text-transform:uppercase;font-weight:300;}
+.header-sep{width:1px;height:24px;background:rgba(255,255,255,.2);}
+.header-title{font-family:var(--font-mono);font-size:.65rem;letter-spacing:3px;text-transform:uppercase;opacity:.8;}
+.header-badge{font-family:var(--font-mono);font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;background:rgba(139,127,212,.25);border:1px solid rgba(139,127,212,.4);color:#b8aff0;padding:3px 10px;border-radius:20px;}
+
+/* ── HERO STRIP ── */
+.hero-strip{background:linear-gradient(135deg,#141f12 0%,#1c2a18 55%,#141f12 100%);padding:28px 32px 24px;border-bottom:1px solid rgba(122,158,126,.12);}
+.hero-inner{max-width:1280px;margin:0 auto;display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.hero-text .eyebrow{font-family:var(--font-mono);font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:#7aab74;margin-bottom:8px;}
+.hero-text h1{font-family:var(--font-serif);font-size:1.7rem;font-weight:300;color:#f5f2ec;letter-spacing:-.01em;margin-bottom:6px;}
+.hero-text p{font-size:.82rem;color:rgba(245,242,236,.6);line-height:1.7;max-width:560px;}
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap;}
+.hero-pill{font-family:var(--font-mono);font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;padding:5px 11px;border-radius:20px;border:1px solid rgba(255,255,255,.15);color:rgba(245,242,236,.6);}
+.hero-pill.v7{background:rgba(139,127,212,.2);border-color:rgba(139,127,212,.4);color:#c0b8f0;}
+.hero-pill.phase{background:rgba(122,171,116,.15);border-color:rgba(122,171,116,.3);color:#9adc94;}
+
+/* ── MAIN LAYOUT ── */
+.layout{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:380px 1fr;gap:0;min-height:calc(100vh - 160px);}
+@media(max-width:900px){.layout{grid-template-columns:1fr;}}
+
+/* ── INPUT PANEL ── */
+.input-panel{background:var(--card);border-right:1px solid var(--border);padding:24px 24px 60px;overflow-y:auto;position:sticky;top:62px;height:calc(100vh - 62px);}
+@media(max-width:900px){.input-panel{position:static;height:auto;border-right:none;border-bottom:1px solid var(--border);}}
+.section-head{font-family:var(--font-mono);font-size:.58rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--sage);margin-bottom:10px;margin-top:20px;padding-bottom:6px;border-bottom:1px solid var(--border-light);}
+.section-head:first-child{margin-top:0;}
+
+textarea.brief{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:6px;font-family:var(--font-serif);font-size:.88rem;color:var(--dark);background:var(--ivory);resize:vertical;min-height:80px;line-height:1.65;transition:border-color .15s;}
+textarea.brief:focus{outline:none;border-color:var(--sage);}
+textarea.brief::placeholder{color:var(--faint);font-style:italic;}
+
+.pill-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.pill{padding:5px 12px;border-radius:20px;border:1px solid var(--border);font-family:var(--font-mono);font-size:.62rem;letter-spacing:.5px;cursor:pointer;background:var(--ivory);transition:all .15s;color:var(--mid);user-select:none;}
+.pill:hover{border-color:var(--sage);color:var(--green-dark);}
+.pill.active{background:var(--green-dark);color:white;border-color:var(--green-dark);}
+.pill.hero-active{background:linear-gradient(135deg,#4a6741,#3d5c38);color:white;border-color:#3d5c38;}
+.pill.foliage-active{background:linear-gradient(135deg,#5a7860,#4a6741);color:white;border-color:#4a6741;}
+.pill.disabled{opacity:.4;cursor:not-allowed;}
+.pill-hint{font-family:var(--font-mono);font-size:.58rem;color:var(--faint);margin-top:5px;letter-spacing:.5px;}
+
+.palette-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;}
+.swatch{position:relative;border-radius:6px;aspect-ratio:1;cursor:pointer;border:2px solid transparent;transition:all .15s;overflow:hidden;}
+.swatch:hover{transform:scale(1.05);box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.swatch.selected-dom{border-color:var(--green-dark);box-shadow:0 0 0 3px rgba(61,92,56,.3);}
+.swatch.selected-sec{border-color:var(--accent-deep);box-shadow:0 0 0 3px rgba(184,150,90,.3);}
+.swatch.selected-acc{border-color:#8b7fd4;box-shadow:0 0 0 3px rgba(139,127,212,.3);}
+.swatch-inner{width:100%;height:100%;display:flex;align-items:flex-end;padding:4px;}
+.swatch-name{font-family:var(--font-mono);font-size:.5rem;letter-spacing:.5px;color:white;text-shadow:0 1px 3px rgba(0,0,0,.6);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:rgba(0,0,0,.25);padding:2px 4px;border-radius:2px;width:100%;}
+
+.palette-legend{display:flex;gap:12px;margin-top:10px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:.62rem;color:var(--mid);}
+.legend-dot{width:10px;height:10px;border-radius:50%;border:2px solid;}
+.legend-dot.dom{background:var(--green-dark);border-color:var(--green-dark);}
+.legend-dot.sec{background:var(--accent-deep);border-color:var(--accent-deep);}
+.legend-dot.acc{background:#8b7fd4;border-color:#8b7fd4;}
+
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+label.field-label{font-family:var(--font-mono);font-size:.62rem;color:var(--mid);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:4px;}
+select.field-sel{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:5px;font-family:var(--font-serif);font-size:.85rem;background:var(--ivory);color:var(--dark);cursor:pointer;}
+select.field-sel:focus{outline:none;border-color:var(--sage);}
+
+.slider-pair{margin-top:10px;}
+.slider-row{display:flex;align-items:center;gap:10px;margin-top:4px;}
+.slider-row input[type=range]{flex:1;accent-color:var(--green-mid);}
+.slider-val{min-width:30px;text-align:center;font-family:var(--font-mono);font-size:.78rem;color:var(--green-dark);}
+
+.generate-btn{width:100%;margin-top:24px;padding:14px;background:var(--green-dark);color:white;border:none;border-radius:8px;font-family:var(--font-serif);font-size:.9rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.generate-btn:hover:not(:disabled){background:#2e4529;}
+.generate-btn:disabled{opacity:.5;cursor:not-allowed;}
+.generate-btn .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .8s linear infinite;display:none;}
+.generate-btn.loading .spinner{display:block;}
+.generate-btn.loading .btn-text{opacity:.7;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.draft-toggle{display:flex;align-items:center;gap:10px;margin-top:12px;padding:10px 12px;background:rgba(139,127,212,.06);border:1px solid rgba(139,127,212,.2);border-radius:6px;}
+.toggle-track{width:32px;height:18px;background:#ccc;border-radius:9px;cursor:pointer;transition:background .2s;flex-shrink:0;position:relative;}
+.toggle-track.on{background:#8b7fd4;}
+.toggle-thumb{width:14px;height:14px;background:white;border-radius:50%;position:absolute;top:2px;left:2px;transition:left .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.toggle-track.on .toggle-thumb{left:16px;}
+.toggle-label{font-family:var(--font-mono);font-size:.62rem;letter-spacing:1px;color:var(--mid);}
+.toggle-desc{font-family:var(--font-mono);font-size:.58rem;color:var(--faint);margin-left:auto;}
+
+/* ── OUTPUT PANEL ── */
+.output-panel{background:var(--surface);padding:24px 28px 60px;min-height:100%;}
+
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;text-align:center;gap:16px;opacity:.8;}
+.empty-icon{font-size:3rem;}
+.empty-state h2{font-family:var(--font-serif);font-size:1.4rem;font-weight:normal;color:var(--mid);}
+.empty-state p{font-size:.82rem;color:var(--faint);max-width:380px;line-height:1.7;font-style:italic;}
+.empty-steps{display:flex;flex-direction:column;gap:8px;text-align:left;margin-top:8px;}
+.empty-step{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:.68rem;color:var(--faint);letter-spacing:.5px;}
+.empty-step-num{width:22px;height:22px;border-radius:50%;background:var(--border);color:var(--mid);display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;}
+
+/* result area */
+.result-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.result-title{font-family:var(--font-serif);font-size:1.1rem;color:var(--dark);font-weight:normal;}
+.result-meta{font-family:var(--font-mono);font-size:.6rem;color:var(--faint);letter-spacing:1px;}
+.result-actions{display:flex;gap:8px;}
+
+.profile-bar{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:12px 16px;margin-bottom:20px;display:flex;gap:14px;flex-wrap:wrap;}
+.profile-tag{font-family:var(--font-mono);font-size:.6rem;color:var(--mid);display:flex;align-items:center;gap:5px;}
+.profile-tag strong{color:var(--green-dark);}
+
+/* tabs */
+.tabs-bar{display:flex;gap:2px;background:var(--card);border:1px solid var(--border);border-radius:8px 8px 0 0;padding:4px;}
+.tab-btn{padding:8px 18px;border-radius:6px;border:none;background:transparent;font-family:var(--font-mono);font-size:.62rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;color:var(--faint);transition:all .15s;white-space:nowrap;}
+.tab-btn:hover{color:var(--green-dark);}
+.tab-btn.active{background:var(--green-dark);color:white;}
+.tab-content{background:var(--card);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:20px;}
+.tab-pane{display:none;}
+.tab-pane.active{display:block;}
+
+/* prompt blocks */
+.prompt-wrap{margin-bottom:20px;}
+.prompt-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;gap:10px;}
+.prompt-label{font-family:var(--font-mono);font-size:.62rem;letter-spacing:2px;text-transform:uppercase;}
+.label-phase1{color:#7adc8c;}
+.label-phase2{color:#b8aff0;}
+.label-phase3{color:#f0c88a;}
+.label-single{color:#7a9e7e;}
+.label-variant{color:var(--accent);}
+.label-tool{color:var(--faint);}
+.prompt-actions{display:flex;gap:6px;flex-shrink:0;}
+.copy-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#c8e8c2;padding:4px 12px;border-radius:3px;cursor:pointer;font-family:var(--font-mono);font-size:.6rem;letter-spacing:1px;transition:all .15s;white-space:nowrap;}
+.copy-btn:hover{background:rgba(255,255,255,.16);}
+.copy-btn.copied{background:rgba(122,171,116,.7);border-color:rgba(122,171,116,.9);color:white;}
+.prompt-block{background:var(--prompt-bg);color:var(--prompt-text);border-radius:6px;padding:16px 18px;font-family:var(--font-mono);font-size:.73rem;line-height:1.85;white-space:pre-wrap;word-break:break-word;position:relative;}
+.prompt-block .url-placeholder{color:#f0c88a;font-style:italic;}
+
+.phase-step{display:flex;align-items:flex-start;gap:10px;background:rgba(122,171,116,.08);border:1px solid rgba(122,171,116,.2);border-radius:6px;padding:10px 14px;margin-top:10px;margin-bottom:16px;}
+.phase-step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.7rem;font-weight:bold;flex-shrink:0;}
+.step-num-1{background:#7adc8c;color:#141f12;}
+.step-num-2{background:#b8aff0;color:#1a1430;}
+.step-num-3{background:#f0c88a;color:#2a1e08;}
+.phase-step-text{font-family:var(--font-mono);font-size:.68rem;color:var(--mid);line-height:1.65;}
+.phase-step-text strong{color:var(--green-dark);}
+.phase-step-text code{background:rgba(61,92,56,.1);padding:2px 6px;border-radius:3px;font-size:.65rem;}
+
+.single-note{background:rgba(61,92,56,.05);border-left:3px solid var(--sage);padding:10px 14px;border-radius:0 5px 5px 0;font-family:var(--font-sans);font-size:.75rem;color:var(--mid);margin-bottom:16px;line-height:1.65;}
+.single-note em{color:var(--green-dark);}
+
+.variant-context{font-family:var(--font-mono);font-size:.6rem;color:var(--faint);letter-spacing:.5px;margin-bottom:6px;}
+
+.toolkit-block{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:14px 16px;margin-bottom:14px;}
+.toolkit-label{font-family:var(--font-mono);font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--sage);margin-bottom:10px;}
+.toolkit-text{font-family:var(--font-mono);font-size:.72rem;color:var(--mid);line-height:1.75;}
+.toolkit-text code{background:rgba(61,92,56,.1);padding:2px 6px;border-radius:3px;color:var(--green-dark);}
+
+.param-table{width:100%;border-collapse:collapse;font-family:var(--font-mono);font-size:.65rem;}
+.param-table th{text-align:left;padding:6px 10px;background:rgba(61,92,56,.08);color:var(--green-dark);letter-spacing:1px;border:1px solid var(--border);}
+.param-table td{padding:6px 10px;border:1px solid var(--border);color:var(--mid);line-height:1.5;}
+.param-table td:first-child{color:var(--green-dark);font-weight:bold;white-space:nowrap;}
+
+/* loading overlay */
+.loading-state{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;gap:20px;}
+.loading-phases{display:flex;gap:10px;}
+.phase-dot{width:10px;height:10px;border-radius:50%;animation:pulseDot 1.4s ease-in-out infinite;}
+.phase-dot:nth-child(1){background:#7adc8c;animation-delay:0s;}
+.phase-dot:nth-child(2){background:#b8aff0;animation-delay:.2s;}
+.phase-dot:nth-child(3){background:#f0c88a;animation-delay:.4s;}
+@keyframes pulseDot{0%,100%{transform:scale(1);opacity:.6;}50%{transform:scale(1.4);opacity:1;}}
+.loading-label{font-family:var(--font-mono);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--mid);}
+.loading-sub{font-family:var(--font-serif);font-size:.85rem;color:var(--faint);font-style:italic;}
+
+/* error */
+.error-block{background:#fde8e8;border:1px solid #e8a0a0;border-radius:8px;padding:16px 20px;}
+.error-block p{font-family:var(--font-sans);font-size:.82rem;color:#c05050;line-height:1.65;}
+.error-block code{font-family:var(--font-mono);font-size:.75rem;background:rgba(200,80,80,.1);padding:2px 6px;border-radius:3px;}
+
+/* history strip */
+.history-strip{background:rgba(245,240,232,.6);border-top:1px solid var(--border-light);padding:10px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;}
+.history-label{font-family:var(--font-mono);font-size:.58rem;letter-spacing:2px;text-transform:uppercase;color:var(--faint);flex-shrink:0;}
+.history-item{font-family:var(--font-mono);font-size:.6rem;padding:4px 10px;background:var(--ivory);border:1px solid var(--border);border-radius:4px;cursor:pointer;color:var(--mid);transition:all .15s;}
+.history-item:hover{border-color:var(--sage);color:var(--green-dark);}
+
+footer{text-align:center;padding:18px;font-size:.72rem;color:#bbb;letter-spacing:1.5px;text-transform:uppercase;border-top:1px solid var(--border);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="header-logo">Evercrafted</div>
+    <div class="header-sep"></div>
+    <div class="header-title">MJ V7 Prompt Studio</div>
+  </div>
+  <div class="header-badge">Midjourney V7</div>
+</header>
+
+<div class="hero-strip">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="eyebrow">Render Architecture</div>
+      <h1>Midjourney V7 Wreath Prompt Engine</h1>
+      <p>Configure your faux botanical wreath design. The engine generates a complete V7 prompt set: 3-phase stack for maximum fidelity, single-shot for speed, and variants for every context.</p>
+    </div>
+    <div class="hero-pills">
+      <div class="hero-pill v7">--v 7</div>
+      <div class="hero-pill v7">--style raw</div>
+      <div class="hero-pill phase">Phase Stack</div>
+      <div class="hero-pill phase">--iw 1.5</div>
+      <div class="hero-pill">--oref ready</div>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+
+  <!-- ── INPUT PANEL ── -->
+  <div class="input-panel" id="inputPanel">
+
+    <div class="section-head">Creative Brief</div>
+    <textarea class="brief" id="brief" rows="3" placeholder="Optional — describe the feeling, occasion, or specific vision. E.g. 'moody autumn, deep burgundy and copper, layered and lush for a front door.'"></textarea>
+
+    <div class="section-head">Wreath Size</div>
+    <div class="pill-group" id="sizeGroup">
+      <div class="pill" data-group="size" data-val="16">16"</div>
+      <div class="pill" data-group="size" data-val="20">20"</div>
+      <div class="pill active" data-group="size" data-val="24">24" (Default)</div>
+      <div class="pill" data-group="size" data-val="26">26"</div>
+      <div class="pill" data-group="size" data-val="30">30"</div>
+    </div>
+
+    <div class="section-head">Season / Occasion</div>
+    <div class="pill-group" id="seasonGroup">
+      <div class="pill active" data-group="season" data-val="Year-round / Everyday">Everyday</div>
+      <div class="pill" data-group="season" data-val="Spring">Spring</div>
+      <div class="pill" data-group="season" data-val="Summer">Summer</div>
+      <div class="pill" data-group="season" data-val="Autumn / Fall">Fall</div>
+      <div class="pill" data-group="season" data-val="Winter">Winter</div>
+      <div class="pill" data-group="season" data-val="Christmas / Holiday">Holiday</div>
+      <div class="pill" data-group="season" data-val="Thanksgiving">Thanksgiving</div>
+      <div class="pill" data-group="season" data-val="Wedding">Wedding</div>
+      <div class="pill" data-group="season" data-val="Memorial / Sympathy">Memorial</div>
+      <div class="pill" data-group="season" data-val="Easter / Spring Celebration">Easter</div>
+    </div>
+
+    <div class="section-head">Hero Blooms <span id="heroCount" style="color:var(--faint);font-size:.55rem;">(select up to 3)</span></div>
+    <div class="pill-group" id="heroGroup">
+      <div class="pill" data-group="hero" data-val="Garden Rose" data-mat="silk" data-size="3–4&quot;">Garden Rose</div>
+      <div class="pill" data-group="hero" data-val="Peony" data-mat="silk" data-size="4–6&quot;">Peony</div>
+      <div class="pill" data-group="hero" data-val="Dahlia" data-mat="silk" data-size="3–5&quot;">Dahlia</div>
+      <div class="pill" data-group="hero" data-val="Hydrangea" data-mat="silk" data-size="3–4&quot;">Hydrangea</div>
+      <div class="pill" data-group="hero" data-val="Ranunculus" data-mat="silk" data-size="2–3&quot;">Ranunculus</div>
+      <div class="pill" data-group="hero" data-val="Magnolia" data-mat="parchment" data-size="4–5&quot;">Magnolia</div>
+      <div class="pill" data-group="hero" data-val="Protea" data-mat="silk" data-size="4–6&quot;">Protea</div>
+      <div class="pill" data-group="hero" data-val="Anemone" data-mat="silk" data-size="2–3&quot;">Anemone</div>
+      <div class="pill" data-group="hero" data-val="Poppy" data-mat="tissue silk" data-size="3–4&quot;">Poppy</div>
+      <div class="pill" data-group="hero" data-val="Camellia" data-mat="silk" data-size="3–4&quot;">Camellia</div>
+      <div class="pill" data-group="hero" data-val="Tulip" data-mat="silk" data-size="2–3&quot;">Tulip</div>
+      <div class="pill" data-group="hero" data-val="Clematis" data-mat="silk" data-size="2–3&quot;">Clematis</div>
+      <div class="pill" data-group="hero" data-val="Lisianthus" data-mat="silk" data-size="2–3&quot;">Lisianthus</div>
+      <div class="pill" data-group="hero" data-val="Hellebore" data-mat="parchment" data-size="2–3&quot;">Hellebore</div>
+      <div class="pill" data-group="hero" data-val="Garden Spray Rose" data-mat="silk" data-size="1–2&quot;">Spray Rose</div>
+    </div>
+    <div class="pill-hint" id="heroHint">Choose 1–3 blooms that will anchor the focal zone.</div>
+
+    <div class="section-head">Supporting Foliage &amp; Texture <span id="foliageCount" style="color:var(--faint);font-size:.55rem;">(select up to 4)</span></div>
+    <div class="pill-group" id="foliageGroup">
+      <div class="pill" data-group="foliage" data-val="Silver Dollar Eucalyptus">Silver Eucalyptus</div>
+      <div class="pill" data-group="foliage" data-val="Seeded Eucalyptus">Seeded Eucalyptus</div>
+      <div class="pill" data-group="foliage" data-val="Preserved Olive Branch">Olive Branch</div>
+      <div class="pill" data-group="foliage" data-val="Dusty Sage">Dusty Sage</div>
+      <div class="pill" data-group="foliage" data-val="Lamb's Ear">Lamb's Ear</div>
+      <div class="pill" data-group="foliage" data-val="Dusty Miller">Dusty Miller</div>
+      <div class="pill" data-group="foliage" data-val="Pampas Grass">Pampas Grass</div>
+      <div class="pill" data-group="foliage" data-val="Fern Fronds">Fern Fronds</div>
+      <div class="pill" data-group="foliage" data-val="Cedar Sprigs">Cedar Sprigs</div>
+      <div class="pill" data-group="foliage" data-val="Magnolia Leaves">Magnolia Leaves</div>
+      <div class="pill" data-group="foliage" data-val="Brunia Berries">Brunia Berries</div>
+      <div class="pill" data-group="foliage" data-val="Champagne Berry Clusters">Berry Clusters</div>
+      <div class="pill" data-group="foliage" data-val="Dried Pampas Plumes">Pampas Plumes</div>
+      <div class="pill" data-group="foliage" data-val="Dried Wheat Sprigs">Wheat Sprigs</div>
+      <div class="pill" data-group="foliage" data-val="Dried Thistle Heads">Thistle Heads</div>
+    </div>
+
+    <div class="section-head">Color Palette</div>
+    <div id="paletteMode" style="display:flex;gap:6px;margin-bottom:10px;">
+      <div class="pill active" data-group="pmode" data-val="preset">Palette Presets</div>
+      <div class="pill" data-group="pmode" data-val="custom">Custom Pick</div>
+    </div>
+
+    <!-- Palette presets -->
+    <div id="palettePresets">
+      <div class="pill-group" id="presetGroup" style="gap:7px;">
+        <div class="pill active" data-group="preset" data-val="Ivory &amp; Blush" data-desc="warm ivory 60% / soft blush rose 30% / dusty mauve accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#f0e8d8;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#e8c4b8;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c4a0a0;border:1px solid #ccc;"></span>
+            Ivory &amp; Blush
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Autumn Ember" data-desc="burnt orange 60% / honey amber 30% / burgundy wine accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#d45020;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c4a040;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#6a2838;border:1px solid #ccc;"></span>
+            Autumn Ember
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Forest &amp; Champagne" data-desc="deep forest green 60% / warm champagne gold 30% / ivory cream accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#3d5c38;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c8b080;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#f0e8d8;border:1px solid #ccc;"></span>
+            Forest &amp; Champagne
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Dusty Rose &amp; Sage" data-desc="dusty muted rose 60% / soft sage green 30% / warm taupe accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#c4a0a0;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#7a9e7e;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#b0a090;border:1px solid #ccc;"></span>
+            Dusty Rose &amp; Sage
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Burgundy &amp; Gold" data-desc="deep burgundy wine 60% / antique gold 30% / warm champagne accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#6a2838;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#d4a040;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c8b080;border:1px solid #ccc;"></span>
+            Burgundy &amp; Gold
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Winter White &amp; Silver" data-desc="crisp clean white 60% / cool silver grey 30% / champagne gold accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#f8f5f0;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#b0b8c0;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c8b080;border:1px solid #ccc;"></span>
+            Winter White &amp; Silver
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Moody Plum" data-desc="deep plum berry 60% / dusty mauve 30% / muted silver accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#8a5060;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c4a0a0;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#b0b8c0;border:1px solid #ccc;"></span>
+            Moody Plum
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Terra &amp; Stone" data-desc="warm terracotta 60% / warm stone taupe 30% / sage green accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#c86040;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#b0a090;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#7a9e7e;border:1px solid #ccc;"></span>
+            Terra &amp; Stone
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Lavender Fog" data-desc="soft dusty lavender 60% / warm ivory 30% / sage green accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#a090b8;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#f0e8d8;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#7a9e7e;border:1px solid #ccc;"></span>
+            Lavender Fog
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Deep Botanical" data-desc="deep forest green 60% / deep burgundy 30% / antique gold accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#3d5c38;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#6a2838;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#d4a040;border:1px solid #ccc;"></span>
+            Deep Botanical
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Harvest" data-desc="warm rust orange 60% / wheat gold 30% / deep plum accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#c86040;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#c4a040;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#6a2838;border:1px solid #ccc;"></span>
+            Harvest
+          </span>
+        </div>
+        <div class="pill" data-group="preset" data-val="Blush &amp; Copper" data-desc="blush rose pink 60% / warm copper bronze 30% / ivory cream accent 10%">
+          <span style="display:inline-flex;gap:3px;align-items:center;">
+            <span style="width:8px;height:8px;border-radius:50%;background:#e8c4b8;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#b07040;border:1px solid #ccc;"></span>
+            <span style="width:8px;height:8px;border-radius:50%;background:#f0e8d8;border:1px solid #ccc;"></span>
+            Blush &amp; Copper
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Custom palette (hidden by default) -->
+    <div id="customPalette" style="display:none;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:8px;">
+        <div>
+          <div class="field-label" style="font-size:.58rem;">Dominant (60%)</div>
+          <input type="text" id="colDom" placeholder="e.g. deep burgundy" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:5px;font-family:var(--font-serif);font-size:.82rem;background:var(--ivory);">
+        </div>
+        <div>
+          <div class="field-label" style="font-size:.58rem;">Secondary (30%)</div>
+          <input type="text" id="colSec" placeholder="e.g. champagne gold" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:5px;font-family:var(--font-serif);font-size:.82rem;background:var(--ivory);">
+        </div>
+        <div>
+          <div class="field-label" style="font-size:.58rem;">Accent (10%)</div>
+          <input type="text" id="colAcc" placeholder="e.g. ivory cream" style="width:100%;padding:7px 9px;border:1px solid var(--border);border-radius:5px;font-family:var(--font-serif);font-size:.82rem;background:var(--ivory);">
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head">Composition</div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Substrate</label>
+        <select class="field-sel" id="substrate">
+          <option value="exposed grapevine base with warm brown texture">Grapevine (Default)</option>
+          <option value="moss-wrapped wire base with dark green surface">Moss-Wrapped</option>
+          <option value="clean wire ring base with minimal substrate">Wire Ring</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Coverage</label>
+        <select class="field-sel" id="coverage">
+          <option value="classic coverage with intentional negative space">Classic</option>
+          <option value="minimal coverage with generous negative space">Minimal</option>
+          <option value="lush full coverage with dense layered blooms">Lush / Full</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row" style="margin-top:10px;">
+      <div>
+        <label class="field-label">Focal Zone (clock)</label>
+        <select class="field-sel" id="focalZone">
+          <option value="6 to 9">6–9 o'clock (lower left)</option>
+          <option value="7 to 10" selected>7–10 o'clock (left sweep)</option>
+          <option value="8 to 11">8–11 o'clock (upper left)</option>
+          <option value="9 to 12">9–12 o'clock (top)</option>
+          <option value="4 to 7">4–7 o'clock (lower right)</option>
+          <option value="3 to 6">3–6 o'clock (right sweep)</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Silence Arc (clock)</label>
+        <select class="field-sel" id="silenceArc">
+          <option value="1 to 4">1–4 o'clock (upper right)</option>
+          <option value="12 to 3" selected>12–3 o'clock (top right)</option>
+          <option value="2 to 5">2–5 o'clock (right)</option>
+          <option value="10 to 1">10–1 o'clock (top)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="section-head">Photography &amp; Context</div>
+    <div class="field-row">
+      <div>
+        <label class="field-label">Lighting</label>
+        <select class="field-sel" id="lighting">
+          <option value="soft diffused studio daylight, gentle shadow falloff, no hotspots">Soft Studio</option>
+          <option value="diffused window light from upper left, soft warm cast">Window Light</option>
+          <option value="directional warm light from left, defined shadow and depth">Directional Warm</option>
+          <option value="cool overcast light, even and shadowless, clean product feel">Overcast Clean</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">Context / Surface</label>
+        <select class="field-sel" id="context">
+          <option value="hung on a matte charcoal painted front door">Front Door</option>
+          <option value="displayed flat against a pale grey painted wall">Studio Wall</option>
+          <option value="styled flat on aged linen, overhead flat-lay view">Flat Lay</option>
+          <option value="hung above a white painted fireplace mantel">Mantel</option>
+          <option value="displayed on a covered porch with natural wood door">Porch Door</option>
+          <option value="styled in an airy editorial interior vignette">Styled Interior</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Draft mode toggle -->
+    <div class="draft-toggle" onclick="toggleDraft()" style="cursor:pointer;">
+      <div class="toggle-track" id="draftTrack"><div class="toggle-thumb"></div></div>
+      <div class="toggle-label">Draft Mode Hints</div>
+      <div class="toggle-desc">Add --draft notes for fast exploration</div>
+    </div>
+
+    <button class="generate-btn" id="generateBtn" onclick="generatePrompts()">
+      <div class="spinner"></div>
+      <span class="btn-text">Generate V7 Prompt Set</span>
+    </button>
+
+    <div id="historyStrip" class="history-strip" style="display:none;">
+      <span class="history-label">Recent</span>
+      <span id="historyItems"></span>
+    </div>
+
+  </div>
+  <!-- end input panel -->
+
+  <!-- ── OUTPUT PANEL ── -->
+  <div class="output-panel" id="outputPanel">
+    <div class="empty-state" id="emptyState">
+      <div class="empty-icon">◎</div>
+      <h2>Configure your wreath design</h2>
+      <p>Select hero blooms, foliage, and palette on the left — then generate your complete Midjourney V7 prompt set.</p>
+      <div class="empty-steps">
+        <div class="empty-step"><div class="empty-step-num">1</div>Select hero blooms + foliage + palette</div>
+        <div class="empty-step"><div class="empty-step-num">2</div>Set size, season, lighting + context</div>
+        <div class="empty-step"><div class="empty-step-num">3</div>Generate your V7 prompt set</div>
+        <div class="empty-step"><div class="empty-step-num">4</div>Run Phase Stack in Midjourney (3 sequential passes)</div>
+      </div>
+    </div>
+
+    <div id="loadingState" class="loading-state" style="display:none;">
+      <div class="loading-phases">
+        <div class="phase-dot"></div>
+        <div class="phase-dot"></div>
+        <div class="phase-dot"></div>
+      </div>
+      <div class="loading-label">Composing V7 Prompt Architecture</div>
+      <div class="loading-sub">Building greenery phase · hero phase · accent phase…</div>
+    </div>
+
+    <div id="resultArea" style="display:none;">
+      <div class="result-header">
+        <div>
+          <div class="result-title" id="resultTitle">Faux Botanical Wreath Prompt Set</div>
+          <div class="result-meta" id="resultMeta"></div>
+        </div>
+        <div class="result-actions">
+          <button class="copy-btn" style="padding:6px 14px;font-size:.65rem;" onclick="copyAll()">Copy All</button>
+        </div>
+      </div>
+
+      <div class="profile-bar" id="profileBar"></div>
+
+      <div class="tabs-bar">
+        <button class="tab-btn active" data-tab="phase">Phase Stack</button>
+        <button class="tab-btn" data-tab="single">Single Shot</button>
+        <button class="tab-btn" data-tab="variants">Variants</button>
+        <button class="tab-btn" data-tab="toolkit">V7 Toolkit</button>
+      </div>
+      <div class="tab-content">
+
+        <!-- PHASE STACK TAB -->
+        <div class="tab-pane active" id="tab-phase">
+          <div class="single-note">
+            <em>Phase Stack = maximum fidelity.</em> Run each prompt sequentially in Midjourney. Each phase locks the previous layer with <code>--iw 1.5</code> — MJ focuses its full attention on one layer at a time.
+          </div>
+
+          <div class="prompt-wrap">
+            <div class="prompt-header">
+              <div class="prompt-label label-phase1">Phase 1 — Greenery + Base</div>
+              <div class="prompt-actions">
+                <button class="copy-btn" onclick="copyPrompt('phase1')">Copy</button>
+              </div>
+            </div>
+            <div class="prompt-block" id="phase1">…</div>
+            <div class="phase-step">
+              <div class="phase-step-num step-num-1">1</div>
+              <div class="phase-step-text">
+                <strong>Run in Midjourney.</strong> Pick the best result → right-click the image → <strong>Copy image address</strong> → paste that URL into Phase 2 where it says <code>[PASTE PHASE 1 URL HERE]</code>.
+              </div>
+            </div>
+          </div>
+
+          <div class="prompt-wrap">
+            <div class="prompt-header">
+              <div class="prompt-label label-phase2">Phase 2 — Hero Floral</div>
+              <div class="prompt-actions">
+                <button class="copy-btn" onclick="copyPrompt('phase2')">Copy</button>
+              </div>
+            </div>
+            <div class="prompt-block" id="phase2">…</div>
+            <div class="phase-step">
+              <div class="phase-step-num step-num-2">2</div>
+              <div class="phase-step-text">
+                <strong>Replace the URL placeholder</strong> with your Phase 1 image URL, then run in Midjourney. Pick the best result → copy image address → paste into Phase 3.
+              </div>
+            </div>
+          </div>
+
+          <div class="prompt-wrap">
+            <div class="prompt-header">
+              <div class="prompt-label label-phase3">Phase 3 — Structural Accents</div>
+              <div class="prompt-actions">
+                <button class="copy-btn" onclick="copyPrompt('phase3')">Copy</button>
+              </div>
+            </div>
+            <div class="prompt-block" id="phase3">…</div>
+            <div class="phase-step">
+              <div class="phase-step-num step-num-3">3</div>
+              <div class="phase-step-text">
+                <strong>Replace the URL placeholder</strong> with your Phase 2 image URL and run. <strong>This is your finished render.</strong> Phase 3 output is the source for all variants.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SINGLE SHOT TAB -->
+        <div class="tab-pane" id="tab-single">
+          <div class="single-note">
+            Single-shot prompts compete for attention budget across all elements — expect lower material fidelity than the phase stack. Use for rapid exploration or when iteration speed matters more than per-layer perfection.
+          </div>
+
+          <div class="prompt-wrap">
+            <div class="prompt-header">
+              <div class="prompt-label label-single">Machine-Facing (token blocks)</div>
+              <div class="prompt-actions">
+                <button class="copy-btn" onclick="copyPrompt('singleMachine')">Copy</button>
+              </div>
+            </div>
+            <div class="prompt-block" id="singleMachine">…</div>
+          </div>
+
+          <div class="prompt-wrap">
+            <div class="prompt-header">
+              <div class="prompt-label label-single">Human-Facing (prose, paste-ready)</div>
+              <div class="prompt-actions">
+                <button class="copy-btn" onclick="copyPrompt('singleHuman')">Copy</button>
+              </div>
+            </div>
+            <div class="prompt-block" id="singleHuman">…</div>
+          </div>
+        </div>
+
+        <!-- VARIANTS TAB -->
+        <div class="tab-pane" id="tab-variants">
+          <div class="single-note">
+            All variants derive from the Phase 3 composition. Composition language is unchanged — only surface, context, and framing shift.
+          </div>
+
+          <div class="prompt-wrap">
+            <div class="prompt-header">
+              <div class="prompt-label label-variant">Variant A — Alternate Context</div>
+              <div class="prompt-actions">
+                <button class="copy-btn" onclick="copyPrompt('variantA')">Copy</button>
+              </div>
+            </div>
+            <div class="variant-context" id="variantACtx">Same composition, different placement surface</div>
+            <div class="prompt-block" id="variantA">…</div>
+          </div>
+
+          <div class="prompt-wrap">
+            <div class="prompt-header">
+              <div class="prompt-label label-variant">Variant B — Detail Crop (--ar 4:5)</div>
+              <div class="prompt-actions">
+                <button class="copy-btn" onclick="copyPrompt('variantB')">Copy</button>
+              </div>
+            </div>
+            <div class="variant-context">Close-up macro of the focal cluster — emphasizes material physics and depth</div>
+            <div class="prompt-block" id="variantB">…</div>
+          </div>
+
+          <div class="prompt-wrap">
+            <div class="prompt-header">
+              <div class="prompt-label label-variant">Variant C — Styled Scene (--ar 16:9)</div>
+              <div class="prompt-actions">
+                <button class="copy-btn" onclick="copyPrompt('variantC')">Copy</button>
+              </div>
+            </div>
+            <div class="variant-context">Wreath in a lifestyle vignette — wreath is subject, scene props stay quiet</div>
+            <div class="prompt-block" id="variantC">…</div>
+          </div>
+        </div>
+
+        <!-- TOOLKIT TAB -->
+        <div class="tab-pane" id="tab-toolkit">
+
+          <div class="prompt-wrap">
+            <div class="prompt-header">
+              <div class="prompt-label label-tool">Shared --no Block</div>
+              <div class="prompt-actions">
+                <button class="copy-btn" onclick="copyPrompt('noBlock')">Copy</button>
+              </div>
+            </div>
+            <div class="prompt-block" id="noBlock">…</div>
+          </div>
+
+          <div class="toolkit-block">
+            <div class="toolkit-label">Oref Guidance</div>
+            <div class="toolkit-text" id="orefGuidance">…</div>
+          </div>
+
+          <div class="toolkit-block">
+            <div class="toolkit-label">Draft Mode Note</div>
+            <div class="toolkit-text">
+              Add <code>--draft</code> to any prompt for <strong>~10× speed, ~1/10 cost</strong> — great for rapid palette and composition exploration before committing to full-quality renders. Draft mode is <em>incompatible</em> with <code>--oref</code> and Conversational Mode. Use draft to find your winner, then rerun at full quality without <code>--draft</code>.
+            </div>
+          </div>
+
+          <div class="toolkit-block">
+            <div class="toolkit-label">V7 Parameter Quick Reference</div>
+            <table class="param-table">
+              <tr><th>Parameter</th><th>Value</th><th>Purpose</th></tr>
+              <tr><td>--v 7</td><td>always</td><td>Locks Midjourney V7 model</td></tr>
+              <tr><td>--style raw</td><td>always</td><td>Suppresses MJ's artistic bias — literal prompt adherence</td></tr>
+              <tr><td>--s 50</td><td>Phase 1 only</td><td>Low stylize for clean greenery base</td></tr>
+              <tr><td>--s 100</td><td>Phase 2, 3, variants</td><td>Slight stylize for material quality</td></tr>
+              <tr><td>--ar 1:1</td><td>hero prompts</td><td>Square format — standard wreath crop</td></tr>
+              <tr><td>--ar 4:5</td><td>Variant B</td><td>Portrait — detail crop format</td></tr>
+              <tr><td>--ar 16:9</td><td>Variant C</td><td>Wide — lifestyle / scene format</td></tr>
+              <tr><td>--iw 1.5</td><td>Phase 2 + 3</td><td>Locks previous phase image strongly</td></tr>
+              <tr><td>--oref [url]</td><td>with --ow</td><td>Omni reference — locks a specific stem or bloom</td></tr>
+              <tr><td>--ow 180–220</td><td>atmosphere ref</td><td>Influence palette/texture, not exact form</td></tr>
+              <tr><td>--ow 300–380</td><td>exact match ref</td><td>High-fidelity match to specific stem/product</td></tr>
+              <tr><td>--draft</td><td>optional</td><td>~10× faster, ~1/10 cost — exploration only</td></tr>
+              <tr><td>--q 2</td><td>finals</td><td>Higher detail pass — add for hero final renders</td></tr>
+              <tr><td>--seed [N]</td><td>iteration</td><td>Repeat prompt with same seed for A/B variants</td></tr>
+              <tr><td>--chaos 0–30</td><td>optional</td><td>Low chaos for consistent product look</td></tr>
+            </table>
+          </div>
+
+          <div class="toolkit-block">
+            <div class="toolkit-label">Render Failure Diagnosis</div>
+            <table class="param-table">
+              <tr><th>Symptom</th><th>Fix</th></tr>
+              <tr><td>Symmetrical result</td><td>Add "absolute rejection of symmetry" + explicit clock positions</td></tr>
+              <tr><td>Bouquet / center stems</td><td>Add "stems inserted radially, no convergence to center point"</td></tr>
+              <tr><td>Blue or grey pine</td><td>Add "rich warm [color] pine — not blue not grey not silver"</td></tr>
+              <tr><td>Plastic sheen on petals</td><td>Add "soft matte petals, complete absence of plastic sheen"</td></tr>
+              <tr><td>Painterly / illustrated</td><td>Move photography register to front; check --s ≤ 200</td></tr>
+              <tr><td>Flat, no depth</td><td>Add "foreground blooms overlapping midground foliage, background wisps receding"</td></tr>
+              <tr><td>Cotton bolls appeared</td><td>Add "no cotton no cotton bolls" + cotton bolls to --no block</td></tr>
+              <tr><td>Ribbon appeared</td><td>Add ribbon, bow to --no block</td></tr>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div><!-- end resultArea -->
+
+    <div id="errorArea" style="display:none;" class="error-block">
+      <p>Generation failed: <code id="errorMsg"></code></p>
+      <p style="margin-top:8px;font-size:.75rem;">Check that the server is running with a valid <code>ANTHROPIC_API_KEY</code>.</p>
+    </div>
+
+  </div>
+  <!-- end output panel -->
+
+</div>
+
+<footer>Evercrafted · MJ V7 Prompt Studio · Faux Botanical Render Engine</footer>
+
+<script>
+// ── STATE ────────────────────────────────────────────────────────────────────
+const state = {
+  size: '24',
+  season: 'Year-round / Everyday',
+  hero: [],
+  foliage: [],
+  paletteMode: 'preset',
+  palettePreset: 'Ivory & Blush',
+  palettePresetDesc: 'warm ivory 60% / soft blush rose 30% / dusty mauve accent 10%',
+  substrate: '',
+  coverage: '',
+  focalZone: '',
+  silenceArc: '',
+  lighting: '',
+  context: '',
+  draftMode: false,
+};
+
+let lastResult = null;
+
+// ── PILL SINGLE-SELECT ────────────────────────────────────────────────────────
+document.querySelectorAll('.pill[data-group]').forEach(p => {
+  const g = p.dataset.group;
+  if (['hero','foliage'].includes(g)) return; // handled separately
+  p.addEventListener('click', () => {
+    document.querySelectorAll(`.pill[data-group="${g}"]`).forEach(x => x.classList.remove('active'));
+    p.classList.add('active');
+    if (g === 'size') state.size = p.dataset.val;
+    if (g === 'season') state.season = p.dataset.val;
+    if (g === 'pmode') {
+      state.paletteMode = p.dataset.val;
+      document.getElementById('palettePresets').style.display = p.dataset.val === 'preset' ? '' : 'none';
+      document.getElementById('customPalette').style.display = p.dataset.val === 'custom' ? '' : 'none';
+    }
+    if (g === 'preset') {
+      state.palettePreset = p.dataset.val;
+      state.palettePresetDesc = p.dataset.desc;
+    }
+  });
+});
+
+// ── HERO MULTI-SELECT (max 3) ─────────────────────────────────────────────────
+document.querySelectorAll('.pill[data-group="hero"]').forEach(p => {
+  p.addEventListener('click', () => {
+    const val = p.dataset.val;
+    if (p.classList.contains('hero-active')) {
+      state.hero = state.hero.filter(x => x.val !== val);
+      p.classList.remove('hero-active');
+    } else {
+      if (state.hero.length >= 3) return;
+      state.hero.push({ val, mat: p.dataset.mat, size: p.dataset.size });
+      p.classList.add('hero-active');
+    }
+    updateHeroHint();
+  });
+});
+
+function updateHeroHint() {
+  const el = document.getElementById('heroHint');
+  const ct = document.getElementById('heroCount');
+  if (state.hero.length === 0) el.textContent = 'Choose 1–3 blooms that will anchor the focal zone.';
+  else el.textContent = state.hero.map(h => `${h.val} (${h.mat}, ${h.size})`).join(' · ');
+  ct.textContent = `(${state.hero.length}/3 selected)`;
+  document.querySelectorAll('.pill[data-group="hero"]').forEach(p => {
+    if (!p.classList.contains('hero-active') && state.hero.length >= 3) p.classList.add('disabled');
+    else p.classList.remove('disabled');
+  });
+}
+
+// ── FOLIAGE MULTI-SELECT (max 4) ──────────────────────────────────────────────
+document.querySelectorAll('.pill[data-group="foliage"]').forEach(p => {
+  p.addEventListener('click', () => {
+    const val = p.dataset.val;
+    if (p.classList.contains('foliage-active')) {
+      state.foliage = state.foliage.filter(x => x !== val);
+      p.classList.remove('foliage-active');
+    } else {
+      if (state.foliage.length >= 4) return;
+      state.foliage.push(val);
+      p.classList.add('foliage-active');
+    }
+    const ct = document.getElementById('foliageCount');
+    ct.textContent = `(${state.foliage.length}/4 selected)`;
+    document.querySelectorAll('.pill[data-group="foliage"]').forEach(p2 => {
+      if (!p2.classList.contains('foliage-active') && state.foliage.length >= 4) p2.classList.add('disabled');
+      else p2.classList.remove('disabled');
+    });
+  });
+});
+
+// ── DRAFT TOGGLE ─────────────────────────────────────────────────────────────
+function toggleDraft() {
+  state.draftMode = !state.draftMode;
+  const track = document.getElementById('draftTrack');
+  track.classList.toggle('on', state.draftMode);
+}
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── BUILD USER PROMPT ─────────────────────────────────────────────────────────
+function buildUserPrompt() {
+  const brief = document.getElementById('brief').value.trim();
+  const substrate = document.getElementById('substrate').value;
+  const coverage = document.getElementById('coverage').value;
+  const focalZone = document.getElementById('focalZone').value;
+  const silenceArc = document.getElementById('silenceArc').value;
+  const lighting = document.getElementById('lighting').value;
+  const context = document.getElementById('context').value;
+
+  let palette = '';
+  if (state.paletteMode === 'preset') {
+    palette = `${state.palettePreset}: ${state.palettePresetDesc}`;
+  } else {
+    const d = document.getElementById('colDom').value.trim() || 'ivory';
+    const s = document.getElementById('colSec').value.trim() || 'cream';
+    const a = document.getElementById('colAcc').value.trim() || 'sage';
+    palette = `Custom: ${d} (60%) / ${s} (30%) / ${a} (10%)`;
+  }
+
+  const heroStr = state.hero.length
+    ? state.hero.map(h => `${h.val} (${h.mat} silk, ${h.size})`).join(', ')
+    : 'Garden Rose (silk, 3–4")';
+
+  const foliageStr = state.foliage.length
+    ? state.foliage.join(', ')
+    : 'Silver Dollar Eucalyptus, Seeded Eucalyptus';
+
+  const lines = [
+    brief ? `Creative Brief: ${brief}` : null,
+    `Wreath Size: ${state.size}-inch diameter`,
+    `Season / Occasion: ${state.season}`,
+    `Hero Blooms (dominant focal elements): ${heroStr}`,
+    `Supporting Foliage & Texture: ${foliageStr}`,
+    `Color Palette: ${palette}`,
+    `Substrate: ${substrate}`,
+    `Coverage: ${coverage}`,
+    `Focal Zone: ${focalZone} o'clock (where hero bloom mass concentrates)`,
+    `Silence Arc: ${silenceArc} o'clock (where grapevine base breathes / intentional negative space)`,
+    `Lighting: ${lighting}`,
+    `Context / Surface: ${context}`,
+    state.draftMode ? 'Include draft mode note: add --draft suggestion for Phase 1 exploration' : null,
+  ].filter(Boolean);
+
+  return lines.join('\n');
+}
+
+// ── SYSTEM PROMPT ─────────────────────────────────────────────────────────────
+const SYSTEM = `You are the Evercrafted Midjourney V7 Render Engine. Generate a complete, production-ready Midjourney V7 prompt set for a luxury handcrafted faux botanical wreath.
+
+WREATH_STYLE_DNA (inject naturally as prose in every prompt — never as a list):
+- Identity anchor: "luxury handcrafted faux botanical wreath"
+- Material register: "premium artificial silk and polyester florals, home decor product photography"
+- Photography register: "photorealistic commercial product photography, real photograph not illustration not painting"
+- Base: "complete circular grapevine ring base forming a full unbroken [X]-inch loop"
+- Construction physics: "stems inserted radially into grapevine base, naturally grown-in-place, no convergence to center point"
+- Asymmetry lock: "deliberately asymmetric, absolute rejection of symmetry"
+- Petal quality: "soft matte petals, natural petal texture, complete absence of plastic sheen"
+- Foliage quality: "semi-gloss fabric leaves with visible vein structure"
+- Lens: "85mm lens, shallow controlled depth of field"
+- Lighting: "soft studio daylight, gentle grounded shadows, no hotspots"
+- Framing: "entire wreath visible in frame, true-to-life scale accuracy"
+- Intent: "gallery-quality product documentation, not creative art, not illustration"
+
+9-BLOCK PROMPT ARCHITECTURE (order is mandatory — MJ front-weights):
+Block 1 — Material + product register: what the object IS and MADE OF
+Block 2 — Photography register: photorealistic commercial product photography
+Block 3 — Base structure: circular grapevine ring, size in inches, unbroken loop
+Block 4 — Greenery with clock-position distribution (named clock positions, named silence arc)
+Block 5 — Focal hierarchy: hero species named dominant, each bloom with count + clock position + facing direction + openness stage
+Block 6 — Per-element material specs: every accent/texture element with size + finish + clock position + relationship to hero
+Block 7 — Camera + lighting: specific lens, angle, surface description, light direction
+Block 8 — In-prompt negatives: what each key element IS NOT (fighting MJ defaults)
+Block 9 — Technical parameters
+
+DECLARATIVE RULES — every floral element must have all 5:
+1. Count — exact number (never "several", "some", "many")
+2. Size — inches range (e.g. "4 to 5 inches across")
+3. Finish — material quality (e.g. "wax-finish matte silk petals", "structured parchment texture")
+4. Position — clock position only (e.g. "at 9 o'clock"), never vague directions
+5. Relationship — spatial/compositional role (e.g. "subordinate in scale to the hero dahlias but commanding in surface texture")
+
+PHASE STACK ARCHITECTURE:
+Phase 1 (Greenery + Base) — uses Blocks 1,2,3,4,7,8,9. ZERO floral language — not one flower name. Full attention on substrate and foliage only.
+  Parameters: --ar 1:1 --style raw --s 50 --v 7
+
+Phase 2 (Hero Floral) — uses Blocks 1,2,5,7,8,9. Greenery is locked in Phase 1 image — do NOT mention it.
+  Parameters: --iw [PASTE PHASE 1 URL HERE] 1.5 --ar 1:1 --style raw --s 100 --v 7
+
+Phase 3 (Structural Accents) — uses Blocks 1,2,6,7,8,9. Greenery and hero are locked — do NOT mention them.
+  Parameters: --iw [PASTE PHASE 2 URL HERE] 1.5 --ar 1:1 --style raw --s 100 --v 7
+
+BANNED LANGUAGE (never use in any prompt):
+- Adjective superlatives: beautiful, stunning, gorgeous, amazing, perfect, high quality
+- AI keywords: 8k, ultra detailed, masterpiece, trending on artstation, hyperrealistic (use photorealistic instead)
+- Fresh-flower vocabulary: fresh-cut, dewy, in water, in a vase, bouquet, wilting, water droplets
+- Species never to use unless explicitly specified: cherry blossom, pussy willow, forsythia, twig blossom
+- Never include ribbon or bow unless the user specified it
+
+OUTPUT FORMAT — respond with ONLY a raw JSON object (absolutely no markdown, no code fences, no prose before or after):
+{
+  "profile": {
+    "tone": "2–3 word emotional descriptor",
+    "palette": "60% / 30% / 10% color description",
+    "focalZone": "clock position range description",
+    "silenceArc": "clock position range description",
+    "asymmetry": "brief description of weight distribution"
+  },
+  "phase1": "complete Phase 1 prompt — Blocks 1,2,3,4,7,8,9 — ends with: --ar 1:1 --style raw --s 50 --v 7",
+  "phase2": "complete Phase 2 prompt — Blocks 1,2,5,7,8,9 — ends with: --iw [PASTE PHASE 1 URL HERE] 1.5 --ar 1:1 --style raw --s 100 --v 7",
+  "phase3": "complete Phase 3 prompt — Blocks 1,2,6,7,8,9 — ends with: --iw [PASTE PHASE 2 URL HERE] 1.5 --ar 1:1 --style raw --s 100 --v 7",
+  "singleShotMachine": "[IDENTITY] luxury handcrafted faux botanical wreath... [PHOTOGRAPHY] photorealistic commercial... [BASE] complete circular... [GREENERY] ... [FOCAL] ... [ACCENTS] ... [CAMERA] ... [NEGATIVE] no fresh flowers... [PARAMS] --ar 1:1 --style raw --s 100 --v 7",
+  "singleShotHuman": "complete prose prompt — one continuous string — ends with --ar 1:1 --style raw --s 100 --v 7",
+  "variantA": "Variant A: same composition, different surface context — ends with --ar 1:1 --style raw --s 100 --v 7",
+  "variantB": "Variant B: close-up detail crop of focal cluster — starts with 'close-up editorial detail photograph' — ends with --ar 4:5 --style raw --s 100 --v 7",
+  "variantC": "Variant C: wreath in a lifestyle scene — wreath is subject, props stay quiet — ends with --ar 16:9 --style raw --s 100 --v 7",
+  "noBlock": "--no [complete comma-separated negative list including symmetry, bouquet, fresh flowers, specific problem elements for this design]",
+  "orefGuidance": "1–2 sentences: when to use --oref for this specific design, and what --ow weight range to use (e.g. 180–220 for atmosphere, 300–380 for exact stem match)"
+}`;
+
+// ── GENERATE ─────────────────────────────────────────────────────────────────
+async function generatePrompts() {
+  const btn = document.getElementById('generateBtn');
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.querySelector('.btn-text').textContent = 'Generating…';
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultArea').style.display = 'none';
+  document.getElementById('errorArea').style.display = 'none';
+  document.getElementById('loadingState').style.display = 'flex';
+
+  try {
+    const content = buildUserPrompt();
+    const res = await fetch('/api/ai-generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ system: SYSTEM, content, max_tokens: 4000 }),
+    });
+    const json = await res.json();
+
+    if (!res.ok || !json.success) throw new Error(json.error || 'Generation failed');
+
+    let data;
+    try {
+      const cleaned = (json.text || '').replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/i, '').trim();
+      data = JSON.parse(cleaned);
+    } catch (e) {
+      throw new Error('Could not parse response. Raw: ' + (json.text || '').slice(0, 200));
+    }
+
+    lastResult = data;
+    renderResult(data);
+    saveToHistory(data);
+
+  } catch (err) {
+    document.getElementById('errorArea').style.display = '';
+    document.getElementById('errorMsg').textContent = err.message;
+  } finally {
+    document.getElementById('loadingState').style.display = 'none';
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.querySelector('.btn-text').textContent = 'Generate V7 Prompt Set';
+  }
+}
+
+// ── RENDER RESULT ─────────────────────────────────────────────────────────────
+function renderResult(data) {
+  const p = data.profile || {};
+  const titleBloom = state.hero.length ? state.hero[0].val : 'Botanical';
+  document.getElementById('resultTitle').textContent = `${titleBloom} Wreath — ${state.size}" · ${state.season}`;
+  document.getElementById('resultMeta').textContent = `Generated ${new Date().toLocaleTimeString()} · V7 Phase Stack + Single Shot + 3 Variants`;
+
+  // Profile bar
+  const pb = document.getElementById('profileBar');
+  pb.innerHTML = [
+    p.tone && `<div class="profile-tag">Tone <strong>${p.tone}</strong></div>`,
+    p.palette && `<div class="profile-tag">Palette <strong>${p.palette}</strong></div>`,
+    p.focalZone && `<div class="profile-tag">Focal <strong>${p.focalZone}</strong></div>`,
+    p.silenceArc && `<div class="profile-tag">Silence <strong>${p.silenceArc}</strong></div>`,
+    p.asymmetry && `<div class="profile-tag">Asymmetry <strong>${p.asymmetry}</strong></div>`,
+  ].filter(Boolean).join('');
+
+  // Prompts — highlight URL placeholders
+  function formatPrompt(str) {
+    return (str || '').replace(/\[PASTE PHASE \d URL HERE\]/g,
+      m => `<span class="url-placeholder">${m}</span>`);
+  }
+
+  document.getElementById('phase1').innerHTML = formatPrompt(data.phase1 || '');
+  document.getElementById('phase2').innerHTML = formatPrompt(data.phase2 || '');
+  document.getElementById('phase3').innerHTML = formatPrompt(data.phase3 || '');
+  document.getElementById('singleMachine').innerHTML = formatPrompt(data.singleShotMachine || '');
+  document.getElementById('singleHuman').innerHTML = formatPrompt(data.singleShotHuman || '');
+  document.getElementById('variantA').innerHTML = formatPrompt(data.variantA || '');
+  document.getElementById('variantB').innerHTML = formatPrompt(data.variantB || '');
+  document.getElementById('variantC').innerHTML = formatPrompt(data.variantC || '');
+  document.getElementById('noBlock').innerHTML = formatPrompt(data.noBlock || '');
+  document.getElementById('orefGuidance').innerHTML = data.orefGuidance || '';
+
+  // Variant A context description
+  const ctxSel = document.getElementById('context');
+  const ctxVal = ctxSel.options[ctxSel.selectedIndex].text;
+  document.getElementById('variantACtx').textContent = `Same composition, shifted from: ${ctxVal}`;
+
+  document.getElementById('resultArea').style.display = '';
+
+  // Switch to Phase Stack tab
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelector('.tab-btn[data-tab="phase"]').classList.add('active');
+  document.getElementById('tab-phase').classList.add('active');
+}
+
+// ── COPY HELPERS ──────────────────────────────────────────────────────────────
+function copyPrompt(key) {
+  const map = {
+    phase1: 'phase1', phase2: 'phase2', phase3: 'phase3',
+    singleMachine: 'singleMachine', singleHuman: 'singleHuman',
+    variantA: 'variantA', variantB: 'variantB', variantC: 'variantC',
+    noBlock: 'noBlock',
+  };
+  const elId = map[key];
+  if (!elId || !lastResult) return;
+  const dataKey = {
+    phase1: 'phase1', phase2: 'phase2', phase3: 'phase3',
+    singleMachine: 'singleShotMachine', singleHuman: 'singleShotHuman',
+    variantA: 'variantA', variantB: 'variantB', variantC: 'variantC',
+    noBlock: 'noBlock',
+  }[key];
+  const text = lastResult[dataKey] || document.getElementById(elId).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyAll() {
+  if (!lastResult) return;
+  const sections = [
+    '=== PHASE 1 — Greenery + Base ===',
+    lastResult.phase1 || '',
+    '',
+    '=== PHASE 2 — Hero Floral ===',
+    lastResult.phase2 || '',
+    '',
+    '=== PHASE 3 — Structural Accents ===',
+    lastResult.phase3 || '',
+    '',
+    '=== SINGLE SHOT (Human-Facing) ===',
+    lastResult.singleShotHuman || '',
+    '',
+    '=== VARIANT A ===',
+    lastResult.variantA || '',
+    '',
+    '=== VARIANT B (Detail Crop) ===',
+    lastResult.variantB || '',
+    '',
+    '=== VARIANT C (Styled Scene) ===',
+    lastResult.variantC || '',
+    '',
+    '=== --no BLOCK ===',
+    lastResult.noBlock || '',
+  ];
+  navigator.clipboard.writeText(sections.join('\n')).then(() => {
+    const btn = event.target;
+    btn.textContent = 'All Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy All'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+// ── HISTORY ───────────────────────────────────────────────────────────────────
+function saveToHistory(data) {
+  try {
+    const profile = data.profile || {};
+    const label = `${state.hero[0]?.val || 'Botanical'} · ${state.season} · ${state.size}"`;
+    const entry = { label, ts: Date.now(), data };
+    let history = JSON.parse(localStorage.getItem('mj_v7_history') || '[]');
+    history.unshift(entry);
+    history = history.slice(0, 5);
+    localStorage.setItem('mj_v7_history', JSON.stringify(history));
+    renderHistory(history);
+  } catch(e) {}
+}
+
+function renderHistory(history) {
+  if (!history || !history.length) return;
+  const strip = document.getElementById('historyStrip');
+  const items = document.getElementById('historyItems');
+  strip.style.display = 'flex';
+  items.innerHTML = history.map((h, i) =>
+    `<span class="history-item" onclick="loadHistory(${i})">${h.label}</span>`
+  ).join('');
+}
+
+function loadHistory(idx) {
+  try {
+    const history = JSON.parse(localStorage.getItem('mj_v7_history') || '[]');
+    const entry = history[idx];
+    if (!entry) return;
+    lastResult = entry.data;
+    renderResult(entry.data);
+    document.getElementById('emptyState').style.display = 'none';
+  } catch(e) {}
+}
+
+// Load history on boot
+try {
+  const history = JSON.parse(localStorage.getItem('mj_v7_history') || '[]');
+  if (history.length) renderHistory(history);
+} catch(e) {}
+</script>
+</body>
+</html>
