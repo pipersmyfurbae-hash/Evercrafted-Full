@@ -131,6 +131,30 @@ app.use((req, res, next) => {
 // ── Health ────────────────────────────────────────────────────────────────────
 app.get('/api/health', (_, res) => res.json({ ok: true, service: 'evercrafted-api' }));
 
+// ── Diagnostics ───────────────────────────────────────────────────────────────
+// Safe self-test: confirms the AI key + model actually work, and reports the exact
+// reason in plain language if they don't. Never returns the key itself.
+app.get('/api/diag', async (_req, res) => {
+  const keySet = !!process.env.ANTHROPIC_API_KEY;
+  const out = { model: MODEL, apiKeyPresent: keySet, apiKeyLength: (process.env.ANTHROPIC_API_KEY || '').length };
+  if (!keySet) {
+    return res.json({ ...out, ok: false, verdict: 'NO_KEY', message: 'ANTHROPIC_API_KEY is not set on the server. Add it in Vercel > Settings > Environment Variables, then redeploy.' });
+  }
+  try {
+    const text = await callClaude({ system: 'Reply with the single word: ok', prompt: 'ping', maxTokens: 16 });
+    return res.json({ ...out, ok: true, verdict: 'WORKING', reply: (text || '').trim().slice(0, 40), message: 'AI is reachable and the key + model both work. If the app still errors, the problem is elsewhere.' });
+  } catch (err) {
+    const status = err.status || err.statusCode || null;
+    const type = err.error?.type || err.type || null;
+    let verdict = 'UNKNOWN', message = err.message || String(err);
+    if (status === 401 || type === 'authentication_error') { verdict = 'BAD_KEY'; message = 'The API key is being rejected as invalid. Re-copy the whole sk-ant-... key into Vercel (no extra spaces) and redeploy.'; }
+    else if (status === 404 || type === 'not_found_error') { verdict = 'MODEL_NOT_AVAILABLE'; message = `This account cannot use the model "${MODEL}". Set an ANTHROPIC_MODEL your account can access, or add access in the Anthropic console.`; }
+    else if (status === 400 && /credit|balance|billing/i.test(message)) { verdict = 'NO_CREDIT'; message = 'The Anthropic account has no credit balance. Add credit at console.anthropic.com > Billing.'; }
+    else if (status === 429) { verdict = 'RATE_LIMITED'; message = 'Rate limited by Anthropic. Wait a moment and try again.'; }
+    return res.json({ ...out, ok: false, verdict, status, type, message });
+  }
+});
+
 // GET /api/usage — this month's usage + plan limits (null limit = unlimited)
 app.get('/api/usage', async (req, res) => {
   try {
